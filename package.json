@@ -1,0 +1,45 @@
+{
+  "name": "tungstenjs",
+  "version": "0.1.0",
+  "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
+  "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wayfair/tungstenjs.git"
+  },
+  "bugs": "https://github.com/wayfair/tungstenjs/issues",
+  "main": "tungsten.js",
+  "files": [
+    "src",
+    "adaptors",
+    "precompile",
+    "test"
+  ],
+  "scripts": {
+    "test": "node node_modules/jasmine-node/bin/jasmine-node test/tungsten_spec.js --forceexit",
+    "build-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/backbone ./dist/tungsten.backbone.js -d",
+    "build-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p"
+  },
+  "dependencies": {
+    "backbone": "^1.1.2",
+    "data-set": "^4.0.0",
+    "ractive": "^0.6.1",
+    "underscore": "^1.7.0",
+    "virtual-dom": "^2.0.1",
+    "x-is-array": "^0.1.0",
+    "backbone.native": "~1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "glob": "^4.3.5",
+    "jasmine-node": "^1.14.5",
+    "jsdom-nogyp": "^0.8.3",
+    "mkdirp": "~0.5.0",
+    "webpack": "^1.5.1"
+  },
+  "directories": {
+    "example": "./examples",
+    "lib": "./src"
+  }
+}

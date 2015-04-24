@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tungsten.js • dbmon</title>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="DBMON TUNGSTEN" />
+</head>
+<body>
+<div id="link">
+  You're looking at a Tungsten.js<br>
+  version of <a href="https://dbmonster.firebaseapp.com/">DBMonster</a>.<br>
+  <a class="center" href="https://github.com/wayfair/tungstenjs">See it on GitHub</a>
+</div>
+<!-- In a production app, initial content would be rendered on the server -->
+<div id="appwrapper"></div>
+<script src="js/app.min.js"></script>
+<script src="js/ENV.js"></script>
+<script type="text/javascript">
+  function redraw() {
+    table.setDBs(getDatabases());
+    setTimeout(redraw, ENV.timeout);
+  }
+  redraw();
+</script>
+</body>
+</html>
