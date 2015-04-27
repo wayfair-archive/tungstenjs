@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -10,12 +10,6 @@
   },
   "bugs": "https://github.com/wayfair/tungstenjs/issues",
   "main": "tungsten.js",
-  "files": [
-    "src",
-    "adaptors",
-    "precompile",
-    "test"
-  ],
   "scripts": {
     "test": "node node_modules/jasmine-node/bin/jasmine-node test/tungsten_spec.js --forceexit",
     "build-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/backbone ./dist/tungsten.backbone.js -d",
