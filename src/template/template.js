@@ -154,7 +154,7 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
       if (partialTemplate.templateObj) {
         partialTemplate = partialTemplate.templateObj;
       }
-      template = attachViews(view, _.clone(partialTemplate), widgetWrapper, partialTemplate.partials || registeredPartials, childClasses);
+      template = attachViews(view, _.clone(partialTemplate), widgetWrapper, partials[partialName].partials || registeredPartials, childClasses);
     }
   }
 
@@ -178,6 +178,25 @@ Template.prototype.attachView = function(view, widgetWrapper) {
       'e': view.el.nodeName,
       'f': templateObj
     };
+    // If there's a mismatch in childNode counts, it's usually extra whitespace from the server
+    // We can trim those off so that the VTree is unaffected during lookups
+    // Since this is in the form of whitespace around the template, it's a simple type check on the first and last node
+    if (templateObj.f.length !== view.el.childNodes.length) {
+      // If the first part of the template is a string or the first node isn't a textNode, assume that's fine
+      if (typeof templateObj.f[0] !== 'string' && view.el.childNodes[0].nodeType === 3) {
+        view.el.removeChild(view.el.childNodes[0]);
+      }
+      // If the last part of the template is a string or the last node isn't a textNode, assume that's fine
+      var lastNode = view.el.childNodes[view.el.childNodes.length - 1];
+      if (typeof templateObj.f[templateObj.f.length - 1] !== 'string' && lastNode.nodeType === 3) {
+        view.el.removeChild(lastNode);
+      }
+
+      // If neither of the above, something's borked
+      if (templateObj.f.length !== view.el.childNodes.length) {
+        logger.warn('DOM does not match given template, consider using dynamicInitialize');
+      }
+    }
   }
   templateObj = attachViews(view, templateObj, widgetWrapper, this.partials || registeredPartials);
   return new Template(templateObj, this.partials, view);

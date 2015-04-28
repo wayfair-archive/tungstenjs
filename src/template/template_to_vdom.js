@@ -253,7 +253,7 @@ function renderVdom(template, context, partials, parentView, firstRender) {
         if (partialTemplate.templateObj) {
           partialTemplate = partialTemplate.templateObj;
         }
-        result = renderVdom(partialTemplate, context, partials, parentView, firstRender);
+        result = renderVdom(partialTemplate, context, partials[partialName].partials || partials, parentView, firstRender);
       } else {
         // @TODO, perhaps return this string as the partial result so it renders to the page?
         logger.warn('Warning: no partial registered with the name ' + partialName);
