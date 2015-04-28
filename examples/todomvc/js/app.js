@@ -7,7 +7,7 @@ module.exports = new AppView({
   template: template,
   model: new AppModel({
     todoItems: [{title: 'lorem ipsum'}, {title: 'foo'}],
-    todoCount: 2
-  }),
-  dynamicInitialize: true
+    todoCount: 2,
+    todoCountPlural: true
+  })
 });
