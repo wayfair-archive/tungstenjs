@@ -5,8 +5,7 @@ Example application showing how [TodoMVC](http://todomvc.com/) can be implemente
 ## Run
 
     npm install
-    npm run build
-    # Open index.html
+    npm start
     
 ## License
 
