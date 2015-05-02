@@ -5,9 +5,5 @@ var template = require('../templates/todo_app_view.mustache');
 module.exports = new AppView({
   el: '#appwrapper',
   template: template,
-  model: new AppModel({
-    todoItems: [{title: 'lorem ipsum'}, {title: 'foo'}],
-    todoCount: 2,
-    todoCountPlural: true
-  })
+  model: new AppModel(window.data)
 });
