@@ -7,8 +7,7 @@ Note: there's currently [no good solution](https://github.com/jashkenas/backbone
 ## Run
 
     npm install
-    npm run build
-    # Open index.html
+    npm start
     
 ## License
 

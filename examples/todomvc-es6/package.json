@@ -1,11 +1,13 @@
 {
   "name": "tungstenjs-todomvc-es6",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "node ./node_modules/webpack/bin/webpack.js -d",
+    "start": "node ./server.js",
+    "preStart": "npm run build"
   },
   "devDependencies": {
     "babel-core": "^5.1.11",
@@ -13,6 +15,9 @@
     "webpack": "^1.8.4"
   },
   "dependencies": {
+    "express": "3.20.2",
+    "hogan-express": "^0.5.2",
+    "opener": "^1.4.1",
     "todomvc-app-css": "^1.0.1",
     "tungstenjs": "*",
     "underscore": "^1.8.3"
