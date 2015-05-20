@@ -16,13 +16,17 @@
     "build-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p"
   },
   "dependencies": {
+    "ampersand-collection": "^1.4.5",
+    "ampersand-model": "^5.0.3",
+    "ampersand-view": "^7.3.0",
     "backbone": "^1.1.2",
+    "backbone.native": "~1.0.0",
+    "browsernizr": "^1.0.2",
     "data-set": "^4.0.0",
     "ractive": "^0.6.1",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
-    "x-is-array": "^0.1.0",
-    "backbone.native": "~1.0.0"
+    "x-is-array": "^0.1.0"
   },
   "devDependencies": {
     "chai": "^2.2.0",

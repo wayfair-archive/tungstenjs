@@ -51,7 +51,8 @@ if (typeof document.createEvent === 'function') {
   var dbltapThreshold = window.DBL_TAP_THRESHOLD || 200;
   // touch events boundaries ( 60px by default )
   var tapPrecision = window.TAP_PRECISION / 2 || 60 / 2;
-  var justTouchEvents = true || window.JUST_ON_TOUCH_DEVICES || isTouch;
+  // @todo make more consistent with other handlers
+  var justTouchEvents = true;
   var tapNum = 0;
   var currX, currY, cachedX, cachedY, tapTimer, timestamp;
 
@@ -116,8 +117,9 @@ if (typeof document.createEvent === 'function') {
     if (deltaY >= swipeThreshold) {
       eventsArr.push('swipeup');
     }
-    if (eventsArr.length) {
-      for (var i = 0; i < eventsArr.length; i++) {
+    var eventsArrLength = eventsArr.length;
+    if (eventsArrLength) {
+      for (var i = 0; i < eventsArrLength; i++) {
         var eventName = eventsArr[i];
         sendEvent(e.target, eventName, e, {
           distance: {

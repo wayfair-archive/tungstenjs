@@ -10,6 +10,7 @@ var tungsten = require('./../tungsten');
 var Context = require('./template_context');
 var logger = require('./../utils/logger');
 var ractiveTypes = require('./ractive_types');
+var FocusHook = require('./hooks/focus_hook');
 var exports = {};
 
 // IE8 and back don't create whitespace-only nodes from the DOM
@@ -295,6 +296,8 @@ function renderVdom(template, context, partials, parentView, firstRender) {
         if (propName === false) {
           properties.attributes = properties.attributes || {};
           properties.attributes[attr] = attrString;
+        } else if (propName === 'autofocus') {
+          properties.autofocus = new FocusHook();
         } else {
           properties[propName] = attrString;
         }

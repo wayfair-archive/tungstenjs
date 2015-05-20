@@ -5,7 +5,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'jquery': 'backbone.native'
+      'jquery': 'backbone.native',
+      'featuredetect': 'browsernizr'
     }
   },
   resolveLoader: {

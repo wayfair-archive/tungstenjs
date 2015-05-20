@@ -1,13 +1,13 @@
 /**
- * Base backbone view for vdom- see class declaration for more information
+ * Base ampersand view for vdom- see class declaration for more information
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
 'use strict';
 var _ = require('underscore');
-var Backbone = require('backbone');
+var AmpersandView = require('ampersand-view');
 var tungsten = require('../../src/tungsten');
-var ViewWidget = require('./backbone_view_widget');
+var ViewWidget = require('./ampersand_view_widget');
 
 // Cached regex to split keys for `delegate`.
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -15,29 +15,14 @@ var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 /**
  * Provides generic reusable methods that child views can inherit from
  */
-var BaseView = Backbone.View.extend({
-  /*
-   * Default to an empty hash
-   */
-  eventOptions: {},
+var BaseView = AmpersandView.extend({
+  tungstenView: true,
   /**
    * Shared init logic
    */
   initialize: function(options) {
-    if (!this.el) {
-      return false;
-    }
     this.options = options || {};
 
-    // Pass router through options, setting router.view if not already set
-    if (options.router) {
-      this.router = options.router;
-      this.router.view = this.router.view || this;
-    }
-    // Template object
-    if (options.template) {
-      this.compiledTemplate = options.template;
-    }
     // VTree is passable as an option if we are transitioning in from a different view
     if (options.vtree) {
       this.vtree = options.vtree;
@@ -53,17 +38,17 @@ var BaseView = Backbone.View.extend({
 
     var dataItem = this.serialize();
 
-    // Sanity check that compiledTemplate exists and has a toVdom method
-    if (this.compiledTemplate && this.compiledTemplate.toVdom) {
+    // Sanity check that template exists and has a toVdom method
+    if (this.template && this.template.toVdom) {
       if (options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
         }
-        this.el.appendChild(this.compiledTemplate.toDom(dataItem));
+        this.el.appendChild(this.template.toDom(dataItem));
       }
       // Run attachView with this instance to attach childView widget points
-      this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
+      this.template = this.template.attachView(this, ViewWidget);
 
       // render the inital view
       this.render();
@@ -72,12 +57,11 @@ var BaseView = Backbone.View.extend({
     this.initializeRenderListener(dataItem);
     this.postInitialize();
   },
-  tungstenViewInstance: true,
+
   debouncer: null,
   initializeRenderListener: function(dataItem) {
     // If this has a model and is the top level view, set up the listener for rendering
-    // @todo add `&& !this.parentView` back in once child model rendering issues are resolved
-    if (dataItem && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
+    if (dataItem && !this.parentView && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
       var render = _.bind(this.render, this);
       var self = this;
       this.listenTo(dataItem, 'all', function() {
@@ -109,16 +93,11 @@ var BaseView = Backbone.View.extend({
    * @param  {Object?} events  Event object o bind to. Falls back to this.events
    */
   delegateEvents: function(events) {
-    if (!this.el) {
-      return;
-    }
     if (!(events || (events = _.result(this, 'events')))) {
-      return;
+      return this;
     }
     // Unbind any current events
     this.undelegateEvents();
-    // Get any options that may  have been set
-    var eventOptions = _.result(this, 'eventOptions');
     // Event / selector strings
     var keys = _.keys(events);
     var key;
@@ -128,7 +107,7 @@ var BaseView = Backbone.View.extend({
       key = keys[i];
       // Sanity check that value maps to a function
       var method = events[key];
-      if (!_.isFunction(method)) {
+      if (typeof method !== 'function') {
         method = this[events[key]];
       }
       if (!method) {
@@ -140,7 +119,7 @@ var BaseView = Backbone.View.extend({
       method = _.bind(method, this);
 
       // throws an error if invalid
-      this.eventsToRemove[i] = tungsten.bindEvent(this.el, eventName, selector, method, eventOptions[key]);
+      this.eventsToRemove[i] = tungsten.bindEvent(this.el, eventName, selector, method);
     }
   },
 
@@ -148,15 +127,11 @@ var BaseView = Backbone.View.extend({
    * Override of the base Backbone function
    */
   undelegateEvents: function() {
-    if (!this.el) {
-      return;
-    }
     // Uses array created in delegateEvents to unbind events
     if (this.eventsToRemove) {
       for (var i = 0; i < this.eventsToRemove.length; i++) {
         tungsten.unbindEvent(this.eventsToRemove[i]);
       }
-      this.eventsToRemove = null;
     }
   },
 
@@ -165,15 +140,15 @@ var BaseView = Backbone.View.extend({
    * @return {Object} the view itself for chainability
    */
   render: function() {
-    if (!this.compiledTemplate) {
+    if (!this.template) {
       return;
     }
 
     // let the view have a say in what context to pass to the template
     // defaults to an empty object for context so that our view render won't fail
     var serializedModel = this.context || this.serialize();
-    var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize(), true);
-    this.vtree = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    var initialTree = this.vtree || this.template.toVdom(this.serialize(), true);
+    this.vtree = tungsten.updateTree(this.el, initialTree, this.template.toVdom(serializedModel));
     // Repool VDom used in initial tree
     initialTree.recycle();
 
@@ -210,7 +185,7 @@ var BaseView = Backbone.View.extend({
     }
     if (newTemplate) {
       // @Todo figure out how to check template equality
-      this.compiledTemplate = newTemplate.attachView(this, ViewWidget);
+      this.template = newTemplate.attachView(this, ViewWidget);
       flag = true;
     }
 
@@ -254,8 +229,8 @@ var BaseView = Backbone.View.extend({
       childInstances[i].destroy();
     }
   }
-}, {
-  tungstenView: true
 });
+
+BaseView.tungstenView = true;
 
 module.exports = BaseView;

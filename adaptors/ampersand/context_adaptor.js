@@ -29,9 +29,7 @@ var initialize = function(view, parentContext) {
  */
 var lookupValue = function(view, name) {
   var value = null;
-  if (this.isModel(view) && view.has(name)) {
-    value = view.get(name);
-  } else if (view[name]) {
+  if (view[name] != null) {
     value = view[name];
   }
 

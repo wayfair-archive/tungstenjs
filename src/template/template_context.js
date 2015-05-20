@@ -8,6 +8,10 @@
  */
 'use strict';
 
+var isArray = require('../utils/is_array');
+var _ = require('underscore');
+var IS_DEV = require('../tungsten.js').IS_DEV;
+
 /**
  * Represents a rendering context by wrapping a view object and
  * maintaining a reference to the parent context.
@@ -49,6 +53,28 @@ Context.prototype.isModel = function(object) {
 };
 
 /**
+ * Debug Helpers for determining context
+ */
+var debugHelpers = {
+  context: function() {
+    if (arguments.length) {
+      window.console.log('W/CONTEXT:', this, arguments);
+    } else {
+      window.console.log('W/CONTEXT:', this);
+    }
+  },
+  lastModel: function() {
+    window.console.log('W/LASTMODEL:', this.lastModel);
+  },
+  debug: function() {
+    var self = this;
+    for (var i = 0; i < arguments.length; i++) {
+      window.console.log('W/DEBUG:', arguments[i], '=>', self.lookup(arguments[i]));
+    }
+  }
+};
+
+/**
  * Creates a new context using the given view with this context
  * as the parent.
  */
@@ -61,6 +87,20 @@ Context.prototype.push = function(view) {
  * up the context hierarchy if the value is absent in this context's view.
  */
 Context.prototype.lookup = function(name) {
+  // Sometimes comment blocks get registered as interpolators
+  // Just return empty string and nothing will render anyways
+  if (name.substr(0, 1) === '!') {
+    if (IS_DEV) {
+      var debugName = name.substr(1).split('/');
+      if (debugName[0] === 'w' && debugHelpers[debugName[1]]) {
+        var fn = debugHelpers[debugName[1]];
+        debugName = debugName.slice(2);
+        fn.apply(this, debugName);
+      }
+    }
+    return null;
+  }
+
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
@@ -112,17 +152,6 @@ Context.prototype.lookup = function(name) {
   return value;
 };
 
-var ObjectToString = Object.prototype.toString;
-
-/**
- * Check if the object is a native array
- * @param  {Any}     object Any value referenced by a mustache section
- * @return {Boolean}        If the value is an Array
- */
-var isArray = Array.isArray || function(object) {
-  return ObjectToString.call(object) === '[object Array]';
-};
-
 /**
  * Check if object is an Array or Backbone Collection
  * @param  {Any}     object Any value referenced by a mustache section
@@ -137,7 +166,7 @@ Context.isArray = function(object) {
  * @param  {Any}    value Value from the template data
  * @return {Object}       Parsed value with convenience helpers
  */
-Context.parseValue = function (value) {
+Context.parseValue = function(value) {
   var valueIsArray = Context.isArray(value);
   var valueIsTruthy = valueIsArray ? value.length !== 0 : !!value;
   return {
@@ -157,7 +186,7 @@ Context.getInterpolatorKey = function(template) {
   if (template.x) {
     key = template.x.s;
     var values = template.x.r;
-    for (var i = values.length; i--; ) {
+    for (var i = values.length; i--;) {
       key = key.replace('_' + i, values[i]);
     }
   } else if (template.r) {
