@@ -1,5 +1,5 @@
 /**
- * Base ampersand view for vdom- see class declaration for more information
+ * Base backbone view for vdom- see class declaration for more information
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
@@ -17,10 +17,17 @@ var delegateEventSplitter = /^(\S+)\s*(.*)$/;
  */
 var BaseView = AmpersandView.extend({
   tungstenView: true,
+  /*
+   * Default to an empty hash
+   */
+  eventOptions: {},
   /**
    * Shared init logic
    */
   initialize: function(options) {
+    if (!this.el) {
+      return false;
+    }
     this.options = options || {};
 
     // VTree is passable as an option if we are transitioning in from a different view
@@ -93,11 +100,16 @@ var BaseView = AmpersandView.extend({
    * @param  {Object?} events  Event object o bind to. Falls back to this.events
    */
   delegateEvents: function(events) {
+    if (!this.el) {
+      return;
+    }
     if (!(events || (events = _.result(this, 'events')))) {
       return this;
     }
     // Unbind any current events
     this.undelegateEvents();
+    // Get any options that may  have been set
+    var eventOptions = _.result(this, 'eventOptions');
     // Event / selector strings
     var keys = _.keys(events);
     var key;
@@ -119,7 +131,7 @@ var BaseView = AmpersandView.extend({
       method = _.bind(method, this);
 
       // throws an error if invalid
-      this.eventsToRemove[i] = tungsten.bindEvent(this.el, eventName, selector, method);
+      this.eventsToRemove[i] = tungsten.bindEvent(this.el, eventName, selector, method, eventOptions[key]);
     }
   },
 
@@ -127,11 +139,15 @@ var BaseView = AmpersandView.extend({
    * Override of the base Backbone function
    */
   undelegateEvents: function() {
+    if (!this.el) {
+      return;
+    }
     // Uses array created in delegateEvents to unbind events
     if (this.eventsToRemove) {
       for (var i = 0; i < this.eventsToRemove.length; i++) {
         tungsten.unbindEvent(this.eventsToRemove[i]);
       }
+      this.eventsToRemove = null;
     }
   },
 

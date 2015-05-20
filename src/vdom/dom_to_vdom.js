@@ -45,10 +45,12 @@ var props = [
 ];
 
 function getElementProperties(el) {
-  var obj = {}
+  var obj = {};
 
   _.forEach(props, function(propName) {
-    if(!el[propName]) return
+    if (!el[propName]) {
+      return;
+    }
 
     // Special case: style
     // .style is a DOMStyleDeclaration, thus we need to iterate over all
@@ -56,15 +58,15 @@ function getElementProperties(el) {
     //
     // You can directly set a specific .style[prop] = value so patching with vdom
     // is possible.
-    if("style" == propName) {
+    if ("style" == propName) {
       var css = {}
-        , styleProp
-      for(var i=0; i<el.style.length; i++) {
-        styleProp = el.style[i]
-        css[styleProp] = el.style.getPropertyValue(styleProp) // XXX: add support for "!important" via getPropertyPriority()!
+        , styleProp;
+      for (var i = 0; i < el.style.length; i++) {
+        styleProp = el.style[i];
+        css[styleProp] = el.style.getPropertyValue(styleProp); // XXX: add support for "!important" via getPropertyPriority()!
       }
 
-      obj[propName] = css
+      obj[propName] = css;
       return
     }
 
@@ -76,27 +78,31 @@ function getElementProperties(el) {
     //
     // .dataset properties are directly accessible as transparent getters/setters, so
     // patching with vdom is possible.
-    if("dataset" == propName) {
-      var data = {}
-      for(var p in el.dataset) {
+    if ("dataset" == propName) {
+      var data = {};
+      for (var p in el.dataset) {
         data[p] = el.dataset[p]
       }
 
-      obj[propName] = data
+      obj[propName] = data;
       return
     }
 
     // Special case: attributes
     // some properties are only accessible via .attributes, so
     // that's what we'd do, if vdom-create-element could handle this.
-    if("attributes" == propName) return
-    if("tabIndex" == propName && el.tabIndex === -1) return
+    if ("attributes" == propName) {
+      return;
+    }
+    if ("tabIndex" == propName && el.tabIndex === -1) {
+      return;
+    }
 
 
     // default: just copy the property
-    obj[propName] = el[propName]
-    return
-  })
+    obj[propName] = el[propName];
+    return;
+  });
 
   return obj
 }
@@ -112,7 +118,7 @@ function createFromElement(el) {
     children = [];
 
   for (var i = 0; i < el.childNodes.length; i++) {
-    children.push(createVNode(el.childNodes[i] ));
+    children.push(createVNode(el.childNodes[i]));
   }
 
   var vnode = new VNode(tagName, properties, children, null, namespace);
