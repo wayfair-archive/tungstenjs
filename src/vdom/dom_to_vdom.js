@@ -58,12 +58,12 @@ function getElementProperties(el) {
     //
     // You can directly set a specific .style[prop] = value so patching with vdom
     // is possible.
-    if ("style" == propName) {
+    if ('style' == propName) {
       var css = {}
         , styleProp;
       for (var i = 0; i < el.style.length; i++) {
         styleProp = el.style[i];
-        css[styleProp] = el.style.getPropertyValue(styleProp); // XXX: add support for "!important" via getPropertyPriority()!
+        css[styleProp] = el.style.getPropertyValue(styleProp); // XXX: add support for '!important' via getPropertyPriority()!
       }
 
       obj[propName] = css;
@@ -78,7 +78,7 @@ function getElementProperties(el) {
     //
     // .dataset properties are directly accessible as transparent getters/setters, so
     // patching with vdom is possible.
-    if ("dataset" == propName) {
+    if ('dataset' == propName) {
       var data = {};
       for (var p in el.dataset) {
         data[p] = el.dataset[p]
@@ -91,10 +91,10 @@ function getElementProperties(el) {
     // Special case: attributes
     // some properties are only accessible via .attributes, so
     // that's what we'd do, if vdom-create-element could handle this.
-    if ("attributes" == propName) {
+    if ('attributes' == propName) {
       return;
     }
-    if ("tabIndex" == propName && el.tabIndex === -1) {
+    if ('tabIndex' == propName && el.tabIndex === -1) {
       return;
     }
 
