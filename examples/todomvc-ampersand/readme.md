@@ -1,6 +1,6 @@
-# Tungsten.js + Backbone TodoMVC Example
+# Tungsten.js + Ampersand TodoMVC Example
 
-Example application showing how [TodoMVC](http://todomvc.com/) can be implemented with Tungsten.js and [Backbone.js](http://backbonejs.org/).
+Example application showing how [TodoMVC](http://todomvc.com/) can be implemented with Tungsten.js and [Ampersand.js](http://ampersandjs.com/).
 
 ## Run
 

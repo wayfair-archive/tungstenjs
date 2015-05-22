@@ -1,6 +1,6 @@
-# Tungsten.js TodoMVC Example
+# Tungsten.js + Backbone ES6 TodoMVC Example
 
-Example application showing how [TodoMVC](http://todomvc.com/) can be implemented with Tungsten.js and Backbone.js, implemented with ES6/ES2015.
+Example application showing how [TodoMVC](http://todomvc.com/) can be implemented with Tungsten.js and [Backbone.js](http://backbonejs.org/), implemented with ES6/ES2015.
 
 Note: there's currently [no good solution](https://github.com/jashkenas/backbone/issues/3560) to handling Backbone + ES6 classes, so class properties are currently attached via the prototype.
 

@@ -1,5 +1,5 @@
 {
-  "name": "tungstenjs-todomvc-es6",
+  "name": "tungstenjs-backbone-todomvc-es6",
   "version": "0.2.0",
   "private": true,
   "main": "app.js",
