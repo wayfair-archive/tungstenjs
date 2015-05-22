@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.4",
+    "browsernizr": "^1.0.2",
     "tungstenjs": "*"
   }
 }

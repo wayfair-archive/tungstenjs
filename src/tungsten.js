@@ -18,19 +18,22 @@ var vdom = virtualDomImplementation.vdom;
 var domToVdom = virtualDomImplementation.domToVdom;
 var exports = {};
 
-exports.bindEvent = function(el, eventName, selector, method) {
+exports.IS_DEV = false;
+
+exports.addEventPlugin = globalEvents.registerEventHandler;
+
+exports.bindEvent = function(el, eventName, selector, method, options) {
   globalEvents.validateSelector(selector);
-  return globalEvents.bindVirtualEvent(el, eventName, selector, method);
+  if (selector === '') {
+    selector = 'self';
+  } else {
+    selector = selector.substr(1);
+  }
+  return globalEvents.bindVirtualEvent(el, eventName, selector, method, options);
 };
 
-exports.unbindEvents = function(events) {
-  if (events && events.length) {
-    var evt;
-    for (var i = 0; i < events.length; i++) {
-      evt = events[i];
-      globalEvents.unbindVirtualEvent(evt[0], evt[1], evt[2], evt[3]);
-    }
-  }
+exports.unbindEvent = function(event) {
+  globalEvents.unbindVirtualEvent(event);
 };
 
 function updateTree(container, initialTree, newTree) {

@@ -47,7 +47,7 @@ var props = [
 function getElementProperties(el) {
   var obj = {};
 
-  props.forEach(function(propName) {
+  _.forEach(props, function(propName) {
     if (!el[propName]) {
       return;
     }
@@ -58,16 +58,16 @@ function getElementProperties(el) {
     //
     // You can directly set a specific .style[prop] = value so patching with vdom
     // is possible.
-    if ('style' === propName) {
-      var css = {},
-        styleProp;
+    if ('style' == propName) {
+      var css = {}
+        , styleProp;
       for (var i = 0; i < el.style.length; i++) {
         styleProp = el.style[i];
         css[styleProp] = el.style.getPropertyValue(styleProp); // XXX: add support for '!important' via getPropertyPriority()!
       }
 
       obj[propName] = css;
-      return;
+      return
     }
 
     // Special case: dataset
@@ -78,32 +78,33 @@ function getElementProperties(el) {
     //
     // .dataset properties are directly accessible as transparent getters/setters, so
     // patching with vdom is possible.
-    if ('dataset' === propName) {
+    if ('dataset' == propName) {
       var data = {};
-      _.each(el.dataset, function(p) {
-        data[p] = el.dataset[p];
-      });
+      for (var p in el.dataset) {
+        data[p] = el.dataset[p]
+      }
 
       obj[propName] = data;
-      return;
+      return
     }
 
     // Special case: attributes
     // some properties are only accessible via .attributes, so
     // that's what we'd do, if vdom-create-element could handle this.
-    if ('attributes' === propName) {
+    if ('attributes' == propName) {
       return;
     }
-    if ('tabIndex' === propName && el.tabIndex === -1) {
+    if ('tabIndex' == propName && el.tabIndex === -1) {
       return;
     }
+
 
     // default: just copy the property
     obj[propName] = el[propName];
     return;
   });
 
-  return obj;
+  return obj
 }
 
 function createFromTextNode(tNode) {
@@ -117,7 +118,7 @@ function createFromElement(el) {
     children = [];
 
   for (var i = 0; i < el.childNodes.length; i++) {
-    children.push(createVNode(el.childNodes[i] ));
+    children.push(createVNode(el.childNodes[i]));
   }
 
   var vnode = new VNode(tagName, properties, children, null, namespace);

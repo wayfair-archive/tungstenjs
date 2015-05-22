@@ -1,6 +1,6 @@
 {
-  "name": "tungstenjs-backbone-todomvc",
-  "version": "0.2.0",
+  "name": "tungstenjs-ampersand-todomvc",
+  "version": "0.1.0",
   "private": true,
   "main": "app.js",
   "scripts": {

@@ -188,13 +188,14 @@ Template.prototype.attachView = function(view, widgetWrapper) {
       }
       // If the last part of the template is a string or the last node isn't a textNode, assume that's fine
       var lastNode = view.el.childNodes[view.el.childNodes.length - 1];
-      if (typeof templateObj.f[templateObj.f.length - 1] !== 'string' && lastNode.nodeType === 3) {
+      if (typeof templateObj.f[templateObj.f.length - 1] !== 'string' && lastNode && lastNode.nodeType === 3) {
         view.el.removeChild(lastNode);
       }
 
       // If neither of the above, something's borked
       if (templateObj.f.length !== view.el.childNodes.length) {
-        logger.warn('DOM does not match given template, consider using dynamicInitialize');
+        // This is also logged if there are HTML comments in your template; @todo find an alternative solution
+        logger.info('DOM does not match given template, consider using dynamicInitialize.');
       }
     }
   }
