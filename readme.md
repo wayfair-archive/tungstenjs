@@ -7,7 +7,7 @@ Tungsten.js is a modular framework for creating web UIs with high-performance re
 * High-performance virtual DOM updates powered by [virtual-dom](https://github.com/Matt-Esch/virtual-dom)
 * Mustache templates, parsed with [Ractive.js](https://github.com/ractivejs/ractive), which render to virtual DOM objects
 * Event system which binds and delegates each event type to the document root
-* Adaptor for [Backbone.js](https://github.com/jashkenas/backbone) views
+* Adaptor for [Backbone.js](https://github.com/jashkenas/backbone) or [Ampersand.js](https://github.com/ampersandjs) views
 
 ## Motivation
 
@@ -21,7 +21,7 @@ Tungsten.js was built as an alternative to existing front-end JavaScript librari
 
 In Tungsten.js, the initial page loaded is rendered with [Mustache](http://mustache.github.io/) templates on the server (in, say, [C++](https://github.com/mrtazz/plustache), [PHP](https://github.com/bobthecow/mustache.php), or [Go](https://github.com/hoisie/mustache)) then rehydrated by Tungsten.js on the client.  Subsequent DOM updates are made with those same mustache templates which have been [pre-compiled](precompile/tungsten_template/index.js) to functions which return virtual DOM objects used by [virtual-dom](https://github.com/Matt-Esch/virtual-dom) to diff and patch the existing DOM.
 
-An adaptor layer is used to connect with Tungsten.js with your favorite modular client-side framework to handle data and view management.  The default (and currently only) adaptor is a thin layer on top of [Backbone.js](https://github.com/jashkenas/backbone) with a `childViews` hash to define relationships between views and a `compiledTemplate` property to define the root pre-compiled template function.
+An adaptor layer is used to connect with Tungsten.js with your favorite modular client-side framework to handle data and view management.  The default adaptor is a thin layer on top of [Backbone.js](https://github.com/jashkenas/backbone) with a `childViews` hash to define relationships between views and a `compiledTemplate` property to define the root pre-compiled template function.  There is also a similar Ampersand.js adaptor available.
 
 Tungsten.js has no hard dependency on [jQuery](https://github.com/jquery/jquery), and uses the jQuery-less [backbone.native](https://github.com/inkling/backbone.native) in its Backbone adaptor.
 
@@ -50,6 +50,10 @@ The Backbone.js adaptor includes a forked version of [backbone-nested-models](ht
 ### Include Backbone Adaptor
 
 The Backbone.js adaptor can be included by requiring `tungstenjs/adaptors/backbone` after installing the `tungstenjs` Node module.
+
+### Include Ampersand Adaptor
+
+The Ampersand.js adaptor can be included by requiring `tungstenjs/adaptors/ampersand` after installing the `tungstenjs` Node module.
 
 ### Example with Backbone
 
@@ -104,10 +108,11 @@ This is a simple view using the included Backbone.js adaptor.  See the Tungsten.
 
 ## Versioning
 
-`master`  changes regularly and so is unsafe and may break existing APIs.  Tagged releases, however, attempt to follow [semver](http://semver.org/).
+`master`  changes regularly and so is unsafe and may break existing APIs.  Published releases, however, attempt to follow [semver](http://semver.org/).
 
 ## Changelog
 
+* 0.2.0 Add event plugin system and Ampersand.js adaptor
 * 0.1.0 Open source initial code at [tungstenjs](https://github.com/wayfair/tungstenjs)
 
 ## Credits
