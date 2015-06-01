@@ -57,8 +57,11 @@ var BaseView = AmpersandView.extend({
       // Run attachView with this instance to attach childView widget points
       this.template = this.template.attachView(this, ViewWidget);
 
-      // render the inital view
-      this.render();
+      // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
+      if (!options.deferRender) {
+        // Render the initial view
+        this.render();
+      }
     }
 
     this.initializeRenderListener(dataItem);
