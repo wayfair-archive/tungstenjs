@@ -80,6 +80,7 @@ function compileTemplate(contents, srcFile) {
   var parsed;
   try {
     parsed = Ractive.parse(contents, {
+      stripComments: false,
       preserveWhitespace: true
     });
   } catch (ex) {
@@ -91,6 +92,38 @@ function compileTemplate(contents, srcFile) {
   return parsed.t;
 }
 
+function handleDynamicComments(template) {
+  if (typeof template === 'string' || typeof template === 'undefined') {
+    // String or undefined means we've bottomed out
+    return;
+  } else if (template instanceof Array) {
+    // Arrays need mapping over
+    for (var i = 0; i < template.length; i++) {
+      handleDynamicComments(template[i]);
+    }
+    return;
+  }
+
+  switch (template.t) {
+    // Comment means we found one
+    case ractiveTypes.COMMENT:
+      var parsed = Ractive.parse(template.c, {
+        stripComments: false,
+        preserveWhitespace: true
+      });
+      template.c = parsed.t;
+      break;
+
+    // Element or Sections should be iterated into
+    case ractiveTypes.ELEMENT:
+    case ractiveTypes.SECTION:
+      handleDynamicComments(template.f);
+      break;
+  }
+
+  return;
+}
+
 /**
  * Compiles given templates
  * @param  {String} contents Root directory of templates to get stripped off partials
@@ -99,6 +132,7 @@ module.exports = function(contents) {
   this.cacheable();
   var parsedTemplate = compileTemplate(contents, module.src);
   var partials = findPartials(parsedTemplate);
+  handleDynamicComments(parsedTemplate);
   var template = JSON.stringify(parsedTemplate);
 
   var templatePath = path.relative(path.dirname(module.dest), __dirname + '/template');

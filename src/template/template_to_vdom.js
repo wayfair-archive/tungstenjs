@@ -13,6 +13,8 @@ var ractiveTypes = require('./ractive_types');
 var FocusHook = require('./hooks/focus_hook');
 var exports = {};
 
+var HTMLCommentWidget = require('./widgets/html_comment');
+
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either
 var whitespaceOnlyRegex = /^\s*$/;
@@ -227,6 +229,9 @@ function renderVdom(template, context, partials, parentView, firstRender) {
   }
 
   switch (template.t) {
+    // <!-- comment -->
+    case ractiveTypes.COMMENT:
+      return new HTMLCommentWidget(renderVdom(template.c, context, partials, parentView, firstRender));
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
     case ractiveTypes.TRIPLE:
