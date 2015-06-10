@@ -236,7 +236,7 @@ var BaseView = Backbone.View.extend({
         child = vnode.children[i];
         if (child.type === 'VirtualNode' && child.hasWidgets) {
           recurse(child);
-        } else if (child.type === 'Widget') {
+        } else if (child.type === 'Widget' && child.view) {
           childInstances.push(child.view);
         }
       }
