@@ -16,13 +16,13 @@ var IS_DEV = require('../tungsten.js').IS_DEV;
  * Represents a rendering context by wrapping a view object and
  * maintaining a reference to the parent context.
  */
-function Context(view, parentContext) {
+function Context(view, parentContext, isIterator) {
   this.view = view;
   this.cache = {
     '.': this.view
   };
+  this.isIterator = isIterator;
 
-  // If parent context isn't passed, but the model has parents, build the chain
   this.initialize(view, parentContext);
   if (this.isModel(view)) {
     this.lastModel = view;
@@ -34,7 +34,9 @@ function Context(view, parentContext) {
 /**
  * Default initialize function
  */
-Context.prototype.initialize = function() {};
+Context.prototype.initialize = function(view, parentContext) {
+  this.parent = parentContext;
+};
 
 /**
  * Default lookup function to clearly indicate that it wasn't set
@@ -78,8 +80,8 @@ var debugHelpers = {
  * Creates a new context using the given view with this context
  * as the parent.
  */
-Context.prototype.push = function(view) {
-  return new Context(view, this);
+Context.prototype.push = function(view, isIterator) {
+  return new Context(view, this, isIterator);
 };
 
 /**

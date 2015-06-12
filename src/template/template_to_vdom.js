@@ -279,7 +279,7 @@ function renderVdom(template, context, partials, parentView, firstRender) {
           result = new Array(value.value.length);
           // Iterate over the collection
           for (j = 0, valueLength = value.value.length; j < valueLength; ++j) {
-            result[j] = renderVdom(template.f, context.push(value.value[j]), partials, parentView, firstRender);
+            result[j] = renderVdom(template.f, context.push(value.value[j], true), partials, parentView, firstRender);
           }
           return result;
         } else if (typeof value.value === 'object' || typeof value.value === 'string') {

@@ -1,0 +1,12 @@
+<li class="js-todo-item {{#isComplete}} completed {{/isComplete}} {{#isEditing}} editing {{/isEditing}}">
+  {{^isEditing}}
+    <div class="view">
+      <input class="toggle js-toggle" type="checkbox" {{#isComplete}}checked="checked"{{/isComplete}}>
+      <label class="js-todo-title">{{label}}</label>
+      <button class="destroy js-destroy"></button>
+    </div>
+  {{/isEditing}}
+  {{#isEditing}}
+    <input class="edit js-todo-edit" value="{{label}}">
+  {{/isEditing}}
+</li>

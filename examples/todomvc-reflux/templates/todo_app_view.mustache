@@ -1,0 +1,25 @@
+<div id="app">
+  <div id="todoapp">
+    {{#state}}
+    <header id="header">
+      <h1>todos</h1>
+      <input id="new-todo" placeholder="What needs to be done?" type="text" autofocus="true" class="js-new-todo" value="{{newValue}}">
+    </header>
+    <div id="main">
+      <input id="toggle-all" class="js-toggle-all" type="checkbox">
+      <label for="toggle-all">Mark all as complete</label>
+      <ul id="todo-list" class="js-todo-list">
+        {{#todoItems}}
+        {{> todo_item_view }}
+        {{/todoItems}}
+      </ul>
+    </div>
+    <footer id="footer">
+      <span class="js-todo-count" id="todo-count"><strong>{{todoLeftCount}}</strong> item{{#todoLeftCountPlural}}s{{/todoLeftCountPlural}} left</span>
+      {{#hasCompletedItems}}
+      <button id="clear-completed" class="js-clear-completed">Clear completed</button>
+      {{/hasCompletedItems}}
+    </footer>
+    {{/state}}
+  </div>
+</div>
