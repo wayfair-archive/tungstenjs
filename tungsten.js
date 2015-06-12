@@ -10,4 +10,4 @@
  */
 'use strict';
 
-module.exports = require('../tungsten');
+module.exports = require('./src/tungsten');
