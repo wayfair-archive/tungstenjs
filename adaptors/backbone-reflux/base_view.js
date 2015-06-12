@@ -100,6 +100,9 @@ var BaseView = Backbone.View.extend({
    * @param  {Object?} events  Event object o bind to. Falls back to this.events
    */
   delegateEvents: function(events) {
+    if (!this.el) {
+      return;
+    }
     if (!(events || (events = _.result(this, 'events')))) {
       return;
     }
@@ -136,8 +139,16 @@ var BaseView = Backbone.View.extend({
    * Override of the base Backbone function
    */
   undelegateEvents: function() {
+    if (!this.el) {
+      return;
+    }
     // Uses array created in delegateEvents to unbind events
-    tungsten.unbindEvents(this.eventsToRemove);
+    if (this.eventsToRemove) {
+      for (var i = 0; i < this.eventsToRemove.length; i++) {
+        tungsten.unbindEvent(this.eventsToRemove[i]);
+      }
+      this.eventsToRemove = null;
+    }
   },
 
   /**

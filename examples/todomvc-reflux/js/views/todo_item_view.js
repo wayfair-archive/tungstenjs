@@ -29,7 +29,6 @@ var TodoItemView = View.extend({
     TodoActions.removeItem(this.model.id);
   },
   handleClickToggle: function() {
-    debugger;
     TodoActions.toggleItem(this.model.id);
   },
   handleDblClickTodoTitle: function(e) {
