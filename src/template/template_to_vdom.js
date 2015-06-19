@@ -358,7 +358,13 @@ exports.renderToVdom = function renderToVdom(template, data, partials, parentVie
  */
 exports.renderToDom = function renderToDom(template, data, partials) {
   var vdom = exports.renderToVdom(template, data, partials);
-  return tungsten.toDOM(vdom);
+  var dom = tungsten.toDOM(vdom);
+  if (Context.isArray(vdom)) {
+    _.invoke(vdom, 'recycle');
+  } else if (typeof vdom.recycle === 'function') {
+    vdom.recycle();
+  }
+  return dom;
 };
 
 /**
@@ -370,7 +376,13 @@ exports.renderToDom = function renderToDom(template, data, partials) {
  */
 exports.renderToString = function renderToString(template, data, partials) {
   var vdom = exports.renderToVdom(template, data, partials);
-  return tungsten.toString(vdom);
+  var str = tungsten.toString(vdom);
+  if (Context.isArray(vdom)) {
+    _.invoke(vdom, 'recycle');
+  } else if (typeof vdom.recycle === 'function') {
+    vdom.recycle();
+  }
+  return str;
 };
 
 module.exports = exports;

@@ -91,7 +91,6 @@ AmpersandViewWidget.prototype.destroy = function destroy() {
  */
 AmpersandViewWidget.prototype.update = function update(prev, elem) {
   var vtree = null;
-  var template = null;
   // If the previous tree was instantiated, check if it's usable
   if (prev.view) {
     if (this.ViewConstructor === prev.ViewConstructor) {
@@ -100,11 +99,12 @@ AmpersandViewWidget.prototype.update = function update(prev, elem) {
       this.view.el = elem;
       this.view.parentView = this.parentView;
     } else {
-      // if they are different, destroy the old one to remove events
+      // if they are different
+      //   save the vtree off so we can diff against what's on the DOM
       vtree = prev.view.vtree;
+      //   and destroy the old one to remove events
       prev.destroy();
     }
-    template = prev.template;
   }
 
   // If the view for this instance isn't created, we need to make one
@@ -113,15 +113,17 @@ AmpersandViewWidget.prototype.update = function update(prev, elem) {
     this.view = new this.ViewConstructor({
       el: elem,
       model: prev.model,
+      context: this.context,
       parentView: this.parentView,
       vtree: vtree,
-      template: template || this.template
+      template: this.template
     });
+  } else {
+    this.view.compiledTemplate = this.template.attachView(this.view, AmpersandViewWidget);
   }
 
   // Call the update model to run and updates if the model has changed
-  this.view.context = this.context;
-  this.view.update(this.model, this.template);
+  this.view.update(this.model);
 };
 
 module.exports = AmpersandViewWidget;

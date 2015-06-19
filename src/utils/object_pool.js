@@ -3,12 +3,13 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 function ObjectPool(limit, constructorFunc) {
   this.allocatedObjects = new Array(limit);
   this.constructorFunc = constructorFunc;
   this.limit = limit;
   this.size = 0;
-  this.key = constructorFunc.name;
 
   var self = this;
   constructorFunc.prototype.recycle = function() {
@@ -22,13 +23,15 @@ function ObjectPool(limit, constructorFunc) {
  * @param  {Number} num  Number of objects to allocate into the pool
  */
 ObjectPool.prototype.preallocate = function(num) {
-  var objs = new Array(num);
-  for (var i = num; i--;) {
+  var size = Math.min(num, this.limit);
+  var objs = new Array(size);
+  for (var i = size; i--;) {
     objs[i] = this.allocate();
   }
-  for (i = num; i--;) {
+  for (i = size; i--;) {
     objs[i].recycle();
   }
+  this.size = size;
 };
 
 /**
@@ -40,15 +43,16 @@ ObjectPool.prototype.allocate = function() {
   var temp;
   if (this.size > 0) {
     // Reduce the available pool size
-    this.size--;
+    this.size -= 1;
     // Grab the object at the pointer and null it from the array
     temp = this.allocatedObjects[this.size];
-    this.allocatedObjects[this.size] = null;
-  } else {
-    // If we don't have any preallocated ones available, make a new one
-    temp = new this.constructorFunc();
+    this.allocatedObjects[this.size] = undefined;
   }
 
+  if (!temp) {
+    // If we don't have any preallocated ones available, make a new one
+    temp = _.create(this.constructorFunc.prototype);
+  }
   this.constructorFunc.apply(temp, arguments);
   return temp;
 };
@@ -59,12 +63,12 @@ ObjectPool.prototype.allocate = function() {
  * @param  {Any} recyclable  Object to recycle
  */
 ObjectPool.prototype.recycle = function(recyclable) {
+  if (typeof recyclable.recycleObj === 'function') {
+    recyclable.recycleObj();
+  }
   if (this.size < this.limit) {
-    if (typeof recyclable.recycleObj === 'function') {
-      recyclable.recycleObj();
-    }
     this.allocatedObjects[this.size] = recyclable;
-    this.size++;
+    this.size += 1;
   }
 };
 

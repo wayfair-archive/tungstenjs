@@ -168,8 +168,6 @@ var BaseView = AmpersandView.extend({
     var serializedModel = this.context || this.serialize();
     var initialTree = this.vtree || this.template.toVdom(this.serialize(), true);
     this.vtree = tungsten.updateTree(this.el, initialTree, this.template.toVdom(serializedModel));
-    // Repool VDom used in initial tree
-    initialTree.recycle();
 
     // Clear any passed context
     this.context = null;
@@ -190,27 +188,17 @@ var BaseView = AmpersandView.extend({
   /**
    * Updates the function with a new model and template
    * @param  {Object}  newModel     Model to update to
-   * @param  {Object?} newTemplate  Template object to change to
    */
-  update: function(newModel, newTemplate) {
+  update: function(newModel) {
     // Track if anything has changed in order to trigger a render
-    var flag = false;
     if (newModel !== this.model) {
       // If the model has changed, change listener to new model
       this.stopListening(this.model);
       this.model = newModel;
       this.initializeRenderListener(newModel);
-      flag = true;
-    }
-    if (newTemplate) {
-      // @Todo figure out how to check template equality
-      this.template = newTemplate.attachView(this, ViewWidget);
-      flag = true;
     }
 
-    if (flag) {
-      this.render();
-    }
+    this.render();
   },
 
   /**
