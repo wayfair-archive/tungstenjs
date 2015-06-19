@@ -60,8 +60,13 @@ exports.setNestedModel = function(Model) {
   Model.prototype.getDeep = function(attr) {
     var modelData = this;
     var properties = attr.split(':');
+    var prop;
     for (var i = 0; i < properties.length; i++) {
-      modelData = modelData.get ? modelData.get(properties[i]) : modelData[properties[i]];
+      prop = properties[i];
+      modelData = modelData.get && modelData.has(prop) ? modelData.get(prop) : modelData[prop];
+      if (modelData == null) {
+        break;
+      }
     }
 
     return modelData;
