@@ -71,14 +71,25 @@ var BaseView = AmpersandView.extend({
   debouncer: null,
   initializeRenderListener: function(dataItem) {
     // If this has a model and is the top level view, set up the listener for rendering
-    if (dataItem && !this.parentView && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
-      var render = _.bind(this.render, this);
+    if (dataItem && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
+      var runOnChange;
       var self = this;
-      this.listenTo(dataItem, 'all', function() {
-        // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
-        clearTimeout(self.debouncer);
-        self.debouncer = setTimeout(render, 1);
-      });
+      if (!this.parentView) {
+        runOnChange = _.bind(this.render, this);
+      } else if (!dataItem.parentProp && this.parentView.model !== dataItem) {
+        // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
+        runOnChange = function() {
+          // trigger event on parent to start a render
+          self.parentView.model.trigger('render');
+        };
+      }
+      if (runOnChange) {
+        this.listenTo(dataItem, 'all', function() {
+          // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
+          clearTimeout(self.debouncer);
+          self.debouncer = setTimeout(runOnChange, 1);
+        });
+      }
     }
   },
 
