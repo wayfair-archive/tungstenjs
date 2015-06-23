@@ -360,7 +360,11 @@ exports.renderToDom = function renderToDom(template, data, partials) {
   var vdom = exports.renderToVdom(template, data, partials);
   var dom = tungsten.toDOM(vdom);
   if (Context.isArray(vdom)) {
-    _.invoke(vdom, 'recycle');
+    _.each(vdom, function(node) {
+      if (typeof node.recycle === 'function') {
+        node.recycle();
+      }
+    });
   } else if (typeof vdom.recycle === 'function') {
     vdom.recycle();
   }
@@ -378,7 +382,11 @@ exports.renderToString = function renderToString(template, data, partials) {
   var vdom = exports.renderToVdom(template, data, partials);
   var str = tungsten.toString(vdom);
   if (Context.isArray(vdom)) {
-    _.invoke(vdom, 'recycle');
+    _.each(vdom, function(node) {
+      if (typeof node.recycle === 'function') {
+        node.recycle();
+      }
+    });
   } else if (typeof vdom.recycle === 'function') {
     vdom.recycle();
   }
