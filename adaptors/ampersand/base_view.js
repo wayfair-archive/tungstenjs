@@ -240,6 +240,7 @@ var BaseView = AmpersandView.extend({
    * Removes model listeners and DOM events from this and all child views
    */
   destroy: function() {
+    clearTimeout(this.debouncer);
     this.stopListening();
     this.undelegateEvents();
     var childInstances = this.getChildViews();
