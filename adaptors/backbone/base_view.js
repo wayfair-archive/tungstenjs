@@ -218,7 +218,7 @@ var BaseView = Backbone.View.extend({
     }
     this.render();
   },
- 
+
   /**
    * Parse this.vtree for childViews
    * This ensures DOM order and only gets the list on demand rather than each render cycle

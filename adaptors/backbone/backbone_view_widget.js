@@ -109,22 +109,25 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
 
   // If the view for this instance isn't created, we need to make one
   if (!this.view) {
-    // initialize with previous model so previous vtree is created
+    // Pass in vtree from previous view, if available
+    // Constructing the view automatically calls render
     this.view = new this.ViewConstructor({
       el: elem,
-      model: prev.model,
+      model: this.model,
       parentView: this.parentView,
       context: this.context,
       vtree: vtree,
       template: this.template
     });
   } else {
+    // If prev.view is the same type, set the context and template
+    this.view.context = this.context;
+    // @TODO figure out how to compare template objects to avoid this operation
     this.view.compiledTemplate = this.template.attachView(this.view, BackboneViewWidget);
+    // Call the update model to run and updates if the model has changed
+    this.view.update(this.model);
   }
 
-  // Call the update model to run and updates if the model has changed
-  this.view.context = this.context;
-  this.view.update(this.model);
 };
 
 module.exports = BackboneViewWidget;
