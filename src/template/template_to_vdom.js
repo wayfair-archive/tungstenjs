@@ -116,8 +116,27 @@ function renderAttributeString(values, context) {
  * @type {Object}
  */
 var propertiesToTransform = {
+  // transformed name
   'class': 'className',
-  'for': 'htmlFor'
+  'for': 'htmlFor',
+  'http-equiv': 'httpEquiv',
+  // case specificity
+  'accesskey': 'accessKey',
+  'autocomplete': 'autoComplete',
+  'autoplay': 'autoPlay',
+  'colspan': 'colSpan',
+  'contenteditable': 'contentEditable',
+  'contextmenu': 'contextMenu',
+  'enctype': 'encType',
+  'formnovalidate': 'formNoValidate',
+  'hreflang': 'hrefLang',
+  'novalidate': 'noValidate',
+  'readonly': 'readOnly',
+  'rowspan': 'rowSpan',
+  'spellcheck ': 'spellCheck',
+  'srcdoc': 'srcDoc',
+  'srcset': 'srcSet',
+  'tabindex': 'tabIndex'
 };
 /**
  * Returns property name to use or false if it should be treated as attribute
@@ -125,8 +144,9 @@ var propertiesToTransform = {
  * @return {String|Boolean}              False if it should be an attribute, otherwise property name
  */
 function transformPropertyName(attributeName) {
-  if (propertiesToTransform[attributeName]) {
-    return propertiesToTransform[attributeName];
+  var attributeNameLower = attributeName.toLowerCase();
+  if (propertiesToTransform[attributeNameLower]) {
+    return propertiesToTransform[attributeNameLower];
   }
   // Data attributes are a special case..
   // Persisting them as attributes as they are often accessed via jQuery (i.e. data-click-location)
