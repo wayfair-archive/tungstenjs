@@ -30,32 +30,32 @@ var BaseView = Backbone.View.extend({
     this.options = options || {};
 
     // Pass router through options, setting router.view if not already set
-    if (options.router) {
-      this.router = options.router;
+    if (this.options.router) {
+      this.router = this.options.router;
       this.router.view = this.router.view || this;
     }
     // Template object
-    if (options.template) {
-      this.compiledTemplate = options.template;
+    if (this.options.template) {
+      this.compiledTemplate = this.options.template;
     }
     // VTree is passable as an option if we are transitioning in from a different view
-    if (options.vtree) {
-      this.vtree = options.vtree;
+    if (this.options.vtree) {
+      this.vtree = this.options.vtree;
     }
     // First-pass rendering context
-    if (options.context) {
-      this.context = options.context;
+    if (this.options.context) {
+      this.context = this.options.context;
     }
     // Handle to the parent view
-    if (options.parentView) {
-      this.parentView = options.parentView;
+    if (this.options.parentView) {
+      this.parentView = this.options.parentView;
     }
 
     var dataItem = this.serialize();
 
     // Sanity check that compiledTemplate exists and has a toVdom method
     if (this.compiledTemplate && this.compiledTemplate.toVdom) {
-      if (options.dynamicInitialize) {
+      if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
@@ -66,7 +66,7 @@ var BaseView = Backbone.View.extend({
       this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
 
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
-      if (!options.deferRender) {
+      if (!this.options.deferRender) {
         // Render the initial view
         this.render();
       }

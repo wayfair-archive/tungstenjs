@@ -31,23 +31,23 @@ var BaseView = AmpersandView.extend({
     this.options = options || {};
 
     // VTree is passable as an option if we are transitioning in from a different view
-    if (options.vtree) {
-      this.vtree = options.vtree;
+    if (this.options.vtree) {
+      this.vtree = this.options.vtree;
     }
     // First-pass rendering context
-    if (options.context) {
-      this.context = options.context;
+    if (this.options.context) {
+      this.context = this.options.context;
     }
     // Handle to the parent view
-    if (options.parentView) {
-      this.parentView = options.parentView;
+    if (this.options.parentView) {
+      this.parentView = this.options.parentView;
     }
 
     var dataItem = this.serialize();
 
     // Sanity check that template exists and has a toVdom method
     if (this.template && this.template.toVdom) {
-      if (options.dynamicInitialize) {
+      if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
@@ -58,7 +58,7 @@ var BaseView = AmpersandView.extend({
       this.template = this.template.attachView(this, ViewWidget);
 
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
-      if (!options.deferRender) {
+      if (!this.options.deferRender) {
         // Render the initial view
         this.render();
       }
