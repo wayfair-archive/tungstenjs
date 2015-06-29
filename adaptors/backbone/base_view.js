@@ -30,32 +30,32 @@ var BaseView = Backbone.View.extend({
     this.options = options || {};
 
     // Pass router through options, setting router.view if not already set
-    if (options.router) {
-      this.router = options.router;
+    if (this.options.router) {
+      this.router = this.options.router;
       this.router.view = this.router.view || this;
     }
     // Template object
-    if (options.template) {
-      this.compiledTemplate = options.template;
+    if (this.options.template) {
+      this.compiledTemplate = this.options.template;
     }
     // VTree is passable as an option if we are transitioning in from a different view
-    if (options.vtree) {
-      this.vtree = options.vtree;
+    if (this.options.vtree) {
+      this.vtree = this.options.vtree;
     }
     // First-pass rendering context
-    if (options.context) {
-      this.context = options.context;
+    if (this.options.context) {
+      this.context = this.options.context;
     }
     // Handle to the parent view
-    if (options.parentView) {
-      this.parentView = options.parentView;
+    if (this.options.parentView) {
+      this.parentView = this.options.parentView;
     }
 
     var dataItem = this.serialize();
 
     // Sanity check that compiledTemplate exists and has a toVdom method
     if (this.compiledTemplate && this.compiledTemplate.toVdom) {
-      if (options.dynamicInitialize) {
+      if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
@@ -66,7 +66,7 @@ var BaseView = Backbone.View.extend({
       this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
 
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
-      if (!options.deferRender) {
+      if (!this.options.deferRender) {
         // Render the initial view
         this.render();
       }
@@ -79,15 +79,25 @@ var BaseView = Backbone.View.extend({
   debouncer: null,
   initializeRenderListener: function(dataItem) {
     // If this has a model and is the top level view, set up the listener for rendering
-    // @todo add `&& !this.parentView` back in once child model rendering issues are resolved
     if (dataItem && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
-      var render = _.bind(this.render, this);
+      var runOnChange;
       var self = this;
-      this.listenTo(dataItem, 'all', function() {
-        // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
-        clearTimeout(self.debouncer);
-        self.debouncer = setTimeout(render, 1);
-      });
+      if (!this.parentView) {
+        runOnChange = _.bind(this.render, this);
+      } else if (!dataItem.parentProp && this.parentView.model !== dataItem) {
+        // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
+        runOnChange = function() {
+          // trigger event on parent to start a render
+          self.parentView.model.trigger('render');
+        };
+      }
+      if (runOnChange) {
+        this.listenTo(dataItem, 'all', function() {
+          // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
+          clearTimeout(self.debouncer);
+          self.debouncer = setTimeout(runOnChange, 1);
+        });
+      }
     }
   },
 
@@ -177,8 +187,6 @@ var BaseView = Backbone.View.extend({
     var serializedModel = this.context || this.serialize();
     var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize(), true);
     this.vtree = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
-    // Repool VDom used in initial tree
-    initialTree.recycle();
 
     // Clear any passed context
     this.context = null;
@@ -199,27 +207,16 @@ var BaseView = Backbone.View.extend({
   /**
    * Updates the function with a new model and template
    * @param  {Object}  newModel     Model to update to
-   * @param  {Object?} newTemplate  Template object to change to
    */
-  update: function(newModel, newTemplate) {
+  update: function(newModel) {
     // Track if anything has changed in order to trigger a render
-    var flag = false;
     if (newModel !== this.model) {
       // If the model has changed, change listener to new model
       this.stopListening(this.model);
       this.model = newModel;
       this.initializeRenderListener(newModel);
-      flag = true;
     }
-    if (newTemplate) {
-      // @Todo figure out how to check template equality
-      this.compiledTemplate = newTemplate.attachView(this, ViewWidget);
-      flag = true;
-    }
-
-    if (flag) {
-      this.render();
-    }
+    this.render();
   },
 
   /**
@@ -250,6 +247,7 @@ var BaseView = Backbone.View.extend({
    * Removes model listeners and DOM events from this and all child views
    */
   destroy: function() {
+    clearTimeout(this.debouncer);
     this.stopListening();
     this.undelegateEvents();
     var childInstances = this.getChildViews();
