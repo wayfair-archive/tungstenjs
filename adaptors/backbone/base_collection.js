@@ -4,7 +4,7 @@
 
 'use strict';
 var Backbone = require('backbone');
-var backboneNested = require('./backbone_nested');
+var backboneNested = require('./model_bubbler');
 
 /**
  * BaseCollection
