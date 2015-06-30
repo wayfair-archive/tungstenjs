@@ -4,7 +4,8 @@
 
 'use strict';
 var Backbone = require('backbone');
-var backboneNested = require('./model_bubbler');
+var _ = require('underscore');
+var BaseModel = require('./base_model');
 
 /**
  * BaseCollection
@@ -13,17 +14,49 @@ var backboneNested = require('./model_bubbler');
  * @class BaseCollection
  */
 var BaseCollection = Backbone.Collection.extend({
+  model: BaseModel,
   tungstenCollection: true,
   // Calling postInitialize to be consistent with other members
   initialize: function() {
     this.postInitialize();
   },
   // Empty default function
-  postInitialize: function() {}
-});
+  postInitialize: function() {},
+  
+  resetRelations: function(options) {
+    _.each(this.models, function(model) {
+      _.each(model.relations, function(rel, key) {
+        if (model.get(key) instanceof BaseCollection) {
+          model.get(key).trigger('reset', model, options);
+        }
+      });
+    });
+  },
 
-// Add nested collection support to models that implement backbone_nested.
-// See backbone_nested_spec for examples.
-backboneNested.setNestedCollection(BaseCollection);
+  reset: function(models, options) {
+    options = options || {};
+    for (var i = 0, l = this.models.length; i < l; i++) {
+      this._removeReference(this.models[i]);
+    }
+    options.previousModels = this.models;
+    this._reset();
+    this.add(models, _.extend({
+      silent: true
+    }, options));
+    if (!options.silent) {
+      this.trigger('reset', this, options);
+      this.resetRelations(options);
+    }
+    return this;
+  },
+
+  serialize: _.identity,
+
+  doSerialize: function() {
+    return this.serialize(this.map(function(model) {
+      return model.doSerialize();
+    }));
+  }
+});
 
 module.exports = BaseCollection;
