@@ -16,32 +16,29 @@ app.set('view engine', 'mustache');
 
 app.set('layout', 'index');
 
-app.set('partials', {
-  todo_app_view: 'todo_app_view'
+var partials = {}, name = '';
+_.forEach(fs.readdirSync('templates'), function(fileName) {
+  name = fileName.substr(0, fileName.indexOf('.mustache'));
+  partials[name] = name;
 });
+app.set('partials', partials);
 
-var filesToServe = ['/node_modules/todomvc-app-css/index.css', '/js/app.min.js', '/js/app.min.js.map', '/js/data.js'];
-
-filesToServe.forEach(function(fileName) {
-  app.get(fileName, function(req, res) {
-    res.sendfile(__dirname + fileName);
-  });
-});
+app.use('/node_modules', express.static(__dirname + '/node_modules'));
+app.use('/js', express.static(__dirname + '/js'));
 
 app.engine('mustache', hoganExpress);
 
 app.set('views', __dirname + '/templates');
 
 var appData = _.extend(data, {
-  partials: {
-    todo_item_view: 'todo_item_view'
-  }
+  partials: partials
 });
+
 app.get('/', function(req, res) {
   res.locals = {};
-  res.locals.data = 'default data';
   return res.render('index', appData);
 });
+
 var PORT = 8000;
 console.log('Listening on localhost:' + PORT + '...');
 opener(
