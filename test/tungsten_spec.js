@@ -39,11 +39,6 @@
         expect(typeof tungsten.bindEvent).toEqual('function');
       });
     });
-    describe('unbindEvents', function() {
-      it('should be a function', function() {
-        expect(typeof tungsten.unbindEvents).toEqual('function');
-      });
-    });
     describe('toDOM', function() {
       it('should be a function', function() {
         expect(typeof tungsten.toDOM).toEqual('function');
