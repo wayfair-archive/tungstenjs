@@ -7,7 +7,7 @@
 
 'use strict';
 
-var featureDetect = require('featuredetect');
+var featureDetect = require('../../utils/feature_detect');
 
 var isiOS = (function() {
   if (typeof featureDetect.isiOS === 'function') {
