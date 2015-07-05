@@ -10,8 +10,8 @@
     "prestart": "npm run build"
   },
   "devDependencies": {
-    "babel-core": "*",
-    "babel-loader": "*",
+    "babel-core": "5.6.15",
+    "babel-loader": "5.3.1",
     "webpack": "^1.8.4"
   },
   "dependencies": {
