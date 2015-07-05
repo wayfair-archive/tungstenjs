@@ -6,7 +6,9 @@
 'use strict';
 module.exports = {
   isiOS: function() {
-    if(!navigator) { return; }
+    if (!navigator) {
+      return;
+    }
     return /iPhone|iPad|iPod/i.test(navigator.userAgent);
   }
 };
