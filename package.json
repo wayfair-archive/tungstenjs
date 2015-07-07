@@ -23,7 +23,6 @@
     "ampersand-view": "^7.3.0",
     "backbone": "^1.1.2",
     "backbone.native": "~1.0.0",
-    "browsernizr": "^1.0.2",
     "data-set": "^4.0.0",
     "ractive": "^0.6.1",
     "underscore": "^1.7.0",
