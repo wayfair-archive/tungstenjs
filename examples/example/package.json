@@ -1,0 +1,21 @@
+{
+  "name": "tungstenjs-example-app",
+  "version": "0.2.0",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node ./node_modules/webpack/bin/webpack.js -d",
+    "start": "node ./server.js",
+    "prestart": "npm run build"
+  },
+  "devDependencies": {
+    "webpack": "^1.8.4"
+  },
+  "dependencies": {
+    "express": "4.13.0",
+    "hogan-express": "^0.5.2",
+    "opener": "^1.4.1",
+    "underscore": "^1.8.3"
+  }
+}
