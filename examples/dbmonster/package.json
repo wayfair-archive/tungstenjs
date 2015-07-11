@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs-dbmonster",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "main": "js/app.js",
   "scripts": {
@@ -11,8 +11,6 @@
     "webpack": "^1.8.4"
   },
   "dependencies": {
-    "bootstrap": "^3.3.4",
-    "browsernizr": "^1.0.2",
-    "tungstenjs": "*"
+    "bootstrap": "^3.3.4"
   }
 }
