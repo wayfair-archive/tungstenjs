@@ -1,6 +1,6 @@
 <div id="app">
     <paper-drawer-panel>
-        <div drawer>
+        <div drawer="drawer">
             <iron-selector>
                 <paper-toolbar></paper-toolbar>
               {{#cities}}
@@ -8,16 +8,16 @@
               {{/cities}}
             </iron-selector>
         </div>
-        <div main>
+        <div main="main" foo="foo">
             <paper-toolbar>
                 <paper-button>
                     <iron-icon icon="menu"></iron-icon>
                 </paper-button>
-                <span flex>Maps! (Web Components + Tungsten.js + Backbone)</span>
+                <span flex="flex">Maps! (Web Components + Tungsten.js + Backbone)</span>
             </paper-toolbar>
           {{! w/debug/context }}
           {{#selectedCity}}
-            {{title}}
+            <span>{{title}}</span>
               <div class="js-map-view">
                   <google-map latitude="{{latitude}}" longitude="{{longitude}}" class="js-map"></google-map>
               </div>

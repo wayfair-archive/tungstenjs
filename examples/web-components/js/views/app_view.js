@@ -13,7 +13,6 @@ var AppView = View.extend({
       self.model.set({title: 'changed'});
       self.model.set('selectedCity', self.model.get('cities').at(2).toJSON());
       self.model.get('selectedCity').trigger('change');
-      self.render();
       console.log('done');
     }, 3000);
   }
