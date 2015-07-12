@@ -24,6 +24,7 @@ _.forEach(fs.readdirSync('templates'), function(fileName) {
 app.set('partials', partials);
 
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
+app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/js', express.static(__dirname + '/js'));
 
 app.engine('mustache', hoganExpress);

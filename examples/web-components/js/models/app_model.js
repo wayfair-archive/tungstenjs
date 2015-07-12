@@ -7,8 +7,9 @@ var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
 
 var Model = TungstenBackboneBase.Model;
 var AppModel = Model.extend({
-  initialize: function() {
-    console.log('app model created');
+  relations: {
+    'cities' : TungstenBackboneBase.Collection,
+    'selectedCity': TungstenBackboneBase.Model
   }
 });
 module.exports = AppModel;

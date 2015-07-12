@@ -1,10 +1,11 @@
-# Tungsten.js Example
+# Tungsten.js Web Components Example
 
-Example application showing how [TodoMVC](http://todomvc.com/) can be implemented with Tungsten.js and [Backbone.js](http://backbonejs.org/).
+Example application showing how [TodoMVC](http://todomvc.com/) can be implemented with Tungsten.js, Web Components, and [Backbone.js](http://backbonejs.org/).
 
 ## Run
 
     npm install
+    bower install
     npm start
     
 ## License

@@ -1,5 +1,5 @@
 {
-  "name": "tungstenjs-example-app",
+  "name": "tungstenjs-web-components-example-app",
   "version": "0.2.0",
   "private": true,
   "main": "app.js",
