@@ -5,5 +5,4 @@ Example implementation of Ryan Florance's [DBMonster](https://github.com/ryanflo
 ## Run
 
     npm install
-    npm run build
-    # Open index.html
+    npm start
