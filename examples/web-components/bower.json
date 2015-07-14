@@ -19,7 +19,7 @@
   "dependencies": {
     "google-map": "~1.0.3",
     "paper-input": "PolymerElements/paper-input#~1.0.5",
-    "paper-drawer-panel": "PolymerElements/paper-drawer-panel#~1.0.3",
+    "paper-drawer-panel": "https://github.com/andrewrota/paper-drawer-panel.git#master",
     "paper-header-panel": "PolymerElements/paper-header-panel#~1.0.2",
     "paper-toolbar": "PolymerElements/paper-toolbar#~1.0.2",
     "paper-item": "PolymerElements/paper-item#~1.0.1",
