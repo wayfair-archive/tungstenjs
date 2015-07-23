@@ -7,7 +7,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var hashCollision = require('./hash_collisions');
+var hashCollision = require('./hash_collision');
 var ViewWidget = require('./backbone_view_widget');
 
 // Cached regex to split keys for `delegate`.

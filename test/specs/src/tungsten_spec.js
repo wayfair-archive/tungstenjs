@@ -3,15 +3,11 @@
  *
  * @author    Andrew Rota <anrota@wayfair.com>
  */
-(function() {
   /* global describe, it, expect, require */
   'use strict';
 
-  // Environment pulls in window and document references from jsdom
-  require('./environment.js');
-
   // Module to test is tungsten.js
-  var tungsten = require('../src/tungsten.js');
+  var tungsten = require('../../../src/tungsten.js');
 
   // VNode required for instanceof checks
   var VNode = require('virtual-dom/vnode/vnode');
@@ -100,5 +96,3 @@
       });
     });
   });
-
-}());
