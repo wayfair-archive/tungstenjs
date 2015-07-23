@@ -32,6 +32,20 @@ var exports = {};
 var BackboneModel = Backbone.Model,
   BackboneCollection = Backbone.Collection;
 
+// List of Backbone's native events that shouldn't bubble wholesale
+var builtInEvents = {
+  add: true,
+  remove: true,
+  update: true,
+  reset: true,
+  sort: true,
+  destroy: true,
+  request: true,
+  sync: true,
+  error: true,
+  route: true
+};
+
 var bubbleEvent = function(parent, parentProp, args) {
   var name = args[0];
   if (name.indexOf(' ') > -1) {
@@ -39,7 +53,7 @@ var bubbleEvent = function(parent, parentProp, args) {
     var names = name.split(/\s+/);
     for (var i = 0; i < names.length; i++) {
       var otherArgs = args.slice(1);
-      bubbleEvent(parent, [names[i]].concat(otherArgs));
+      bubbleEvent(parent, parentProp, [names[i]].concat(otherArgs));
     }
   } else if (name.indexOf(':') > -1) {
     // If we're bubbling a relation event, add this relation into the chain and bubble
@@ -57,9 +71,13 @@ var bubbleEvent = function(parent, parentProp, args) {
     args[0] = name;
     args[1] = parent;
     parent.trigger.apply(parent, args);
-  } else {
-    // If it's a regular non-change event, add the relation on and bubble
+  } else if (builtInEvents[name] === true) {
+    // If it's a built-in non-change event, add the relation on and bubble
     args[0] = name + ':' + parentProp;
+    parent.trigger.apply(parent, args);
+  } else {
+    // If it's a custom event, add the relation on and a raw form bubble
+    args[0] = name + ' ' + name + ':' + parentProp;
     parent.trigger.apply(parent, args);
   }
 };
