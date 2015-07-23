@@ -6,19 +6,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node ./node_modules/webpack/bin/webpack.js -d",
-    "start": "node ./server.js",
-    "prestart": "npm run build"
+    "start": "(node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -d --port 9090 &) && sleep 3 && node ./server.js"
   },
   "devDependencies": {
-    "webpack": "^1.8.4"
+    "node-libs-browser": "^0.5.2",
+    "webpack-dev-server": "^1.10.1",
+    "webpack": "^1.10.1"
   },
   "dependencies": {
-    "browsernizr": "^1.0.2",
-    "express": "3.20.2",
+    "express": "4.13.0",
     "hogan-express": "^0.5.2",
     "opener": "^1.4.1",
     "todomvc-app-css": "^1.0.1",
-    "tungstenjs": "*",
     "underscore": "^1.8.3"
   }
 }
