@@ -107,6 +107,7 @@ var BaseModel = Backbone.Model.extend({
           _.each(props.deps, function(dep) {
             self.listenTo(self, 'change:' + dep, update);
             self.listenTo(self, 'update:' + dep, update);
+            self.listenTo(self, 'reset:' + dep, update);
           });
           // Sets default value
           update();
