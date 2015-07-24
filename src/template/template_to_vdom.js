@@ -75,7 +75,7 @@ function parseUnescapedString(value) {
   if (value.indexOf('<') > -1 || value.indexOf('&') > -1) {
     domFrag.innerHTML = value;
     // @TODO investigate tokenizing
-    value = tungsten.parseDOM(domFrag, true);
+    value = tungsten.parseDOM(domFrag, attributesOnly);
     // Top level text values need to be put back to Strings so we can combine text nodes
     for (var i = value.children.length; i--; ) {
       if (value.children[i] && value.children[i].type === 'VirtualText') {
