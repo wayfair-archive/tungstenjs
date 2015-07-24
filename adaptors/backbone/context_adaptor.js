@@ -6,7 +6,32 @@
 
 'use strict';
 
+var _ = require('underscore');
 var Context = require('../../src/template/template_context');
+var Backbone = require('backbone');
+
+// List of properties that are allowed to be accessed from template
+var allowedModelProperties = _.invert(['validationError']);
+var allowedCollectionProperties = _.invert([]);
+
+// Use prototypeless objects to avoid unnecessary conflicts
+var blockedModelProperties = _.create(null);
+var blockedCollectionProperties = _.create(null);
+
+// Add properties that aren't on the prototype, but shouldn't be accessed anyways
+blockedModelProperties.attributes = true;
+blockedCollectionProperties.models = true;
+
+_.each(Backbone.Model.prototype, function(val, key) {
+  if (allowedModelProperties[key] == null) {
+    blockedModelProperties[key] = true;
+  }
+});
+_.each(Backbone.Collection.prototype, function(val, key) {
+  if (allowedCollectionProperties[key] == null) {
+    blockedCollectionProperties[key] = true;
+  }
+});
 
 /**
  * Set up parent context if the model has parents
@@ -14,6 +39,9 @@ var Context = require('../../src/template/template_context');
  * @param  {Context?} parentContext  parentContext to use for lookups
  */
 var initialize = function(view, parentContext) {
+  if (view == null) {
+    view = {};
+  }
   if (!parentContext && (view.collection || view.parent)) {
     this.parent = new Context(view.collection || view.parent);
   } else {
@@ -32,6 +60,12 @@ var lookupValue = function(view, name) {
   if (this.isModel(view) && view.has(name)) {
     value = view.get(name);
   } else if (view[name]) {
+    if (view.tungstenCollection && blockedCollectionProperties[name]) {
+      return null;
+    }
+    if (view.tungstenModel && blockedModelProperties[name]) {
+      return null;
+    }
     value = view[name];
   }
 
