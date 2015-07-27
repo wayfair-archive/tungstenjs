@@ -18,20 +18,53 @@ var HTMLCommentWidget = require('./widgets/html_comment');
 // Indicator to only render attributes rather than properties
 var attributesOnly = false;
 
-// IE8 and back don't create whitespace-only nodes from the DOM
-// This sets a flag so that templates don't create them either
-var whitespaceOnlyRegex = /^\s*$/;
-var supportsWhitespaceTextNodes = (function() {
-  var d = document.createElement('div');
-  d.innerHTML = ' ';
-  return d.childNodes.length === 1;
-})();
-
 /**
  * Element to be used for various off-Document operations
  * @type {Element}
  */
 var domFrag = document.createElement('div');
+
+// IE8 and back don't create whitespace-only nodes from the DOM
+// This sets a flag so that templates don't create them either
+var whitespaceOnlyRegex = /^\s*$/;
+var supports = (function() {
+  domFrag.innerHTML = '  <link/><table></table><a href="/a">a</a><input type="checkbox"/>';
+  return {
+    // If the first child is a text node, the browser respected the preceeding whitespace text
+    whitespace: domFrag.firstChild.nodeType === 3,
+    // If a link tag is parsed, we don't need to add a fix for IE, see wrapMap._default below
+    serialize: !!domFrag.getElementsByTagName( 'link' ).length
+  };
+})();
+
+/**
+ * Finds the first tag name
+ * Used to naively check the first tag inside HTML to parse to determine needed wrapper tags
+ * @type {RegExp}
+ */
+var tagName = /<([\w:]+)/;
+/**
+ * Depending on the first tag that's being parsed, a wrapper needs to be added to prevent parsing oddities
+ * Taken from https://github.com/jquery/jquery/blob/a644101ed04d0beacea864ce805e0c4f86ba1cd1/test/data/jquery-1.9.1.js#L5853
+ * @type {Object}
+ */
+var wrapMap = {
+  option: [ 1, '<select multiple="multiple">', '</select>' ],
+  legend: [ 1, '<fieldset>', '</fieldset>' ],
+  area: [ 1, '<map>', '</map>' ],
+  param: [ 1, '<object>', '</object>' ],
+  thead: [ 1, '<table>', '</table>' ],
+  tr: [ 2, '<table><tbody>', '</tbody></table>' ],
+  col: [ 2, '<table><tbody></tbody><colgroup>', '</colgroup></table>' ],
+  td: [ 3, '<table><tbody><tr>', '</tr></tbody></table>' ],
+
+  // IE6-8 can't serialize link, script, style, or any html5 (NoScope) tags,
+  // unless wrapped in a div with non-breaking characters in front of it.
+  _default: supports.serialize ? [ 0, '', '' ] : [ 1, 'X<div>', '</div>'  ]
+};
+wrapMap.optgroup = wrapMap.option;
+wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
+wrapMap.th = wrapMap.td;
 
 /**
  * Used to parse loose interpolators inside a opening tag
@@ -73,7 +106,15 @@ function parseStringAttrs(templates, context) {
 function parseUnescapedString(value) {
   // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
   if (value.indexOf('<') > -1 || value.indexOf('&') > -1) {
-    domFrag.innerHTML = value;
+    var tag = (tagName.exec(value) || ['', ''])[1].toLowerCase();
+    var wrap = wrapMap[tag] || wrapMap._default;
+    domFrag.innerHTML = wrap[1] + value + wrap[2];
+
+    // Descend through wrappers to the right content
+    var j = wrap[0];
+    while ( j-- ) {
+      domFrag = domFrag.lastChild;
+    }
     // @TODO investigate tokenizing
     value = tungsten.parseDOM(domFrag, attributesOnly);
     // Top level text values need to be put back to Strings so we can combine text nodes
@@ -217,7 +258,7 @@ function renderVdom(template, context, partials, parentView, firstRender) {
 
     // IE8 and back don't generate whitespace-only text nodes from downloaded HTML
     // to keep VDOM consistent, we strip any of those out
-    if (!supportsWhitespaceTextNodes) {
+    if (!supports.whitespace) {
       for (i = 0; i < result.length; i++) {
         if (whitespaceOnlyRegex.test(result[i])) {
           result[i] = undefined;
