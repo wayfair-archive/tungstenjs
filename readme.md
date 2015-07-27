@@ -179,7 +179,7 @@ Events are defined with the standard [`events` hash](http://backbonejs.org/#View
 * Window bindings - Adds an event binding to the window
     * Bindable by prepending `win-` to any event that the window fires (primarily scroll or resize, and height/width/scroll values are cached to prevent repeated reads) 
 
-They can be used directly in Backbone views by using the events hash as usual.  For example:
+They can be used directly in Tungsten.js views by using the events hash as usual.  For example:
 
     View.extend({
       // [...]
