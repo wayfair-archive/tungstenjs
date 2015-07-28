@@ -41,8 +41,12 @@ var domFrag = document.createElement('div');
  */
 function parseStringAttrs(templates, context) {
   var stringAttrs = '';
+  var attr;
   for (var i = 0; i < templates.length; i++) {
-    stringAttrs += ' ' + renderVdom(templates[i], context) + ' ';
+    attr = renderVdom(templates[i], context);
+    if (attr != null) {
+      stringAttrs += ' ' + attr + ' ';
+    }
   }
   domFrag.innerHTML = '<div ' + stringAttrs + '></div>';
   var childNodes = domFrag.childNodes;

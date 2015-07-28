@@ -51,6 +51,10 @@ var BaseView = Backbone.View.extend({
       this.parentView = this.options.parentView;
     }
 
+    /* develblock:start */
+    this.initDebug();
+    /* develblock:end */
+
     var dataItem = this.serialize();
 
     // Sanity check that compiledTemplate exists and has a toVdom method
@@ -106,6 +110,24 @@ var BaseView = Backbone.View.extend({
    * Currently unimplemented. Child views should override this if they would like to use it.
    */
   postInitialize: function() {},
+
+  /* develblock:start */
+  initDebug: function() {
+    tungsten.debug.registry.registerView(this);
+    // this.on('rendered', this.validateTemplate);
+  },
+  validateTemplate: function() {
+    tungsten.debug.validateVdom(
+      this,
+      this.compiledTemplate.toString(this.serialize()),
+      this.parentView ? this.el.outerHTML : this.el.innerHTML
+    );
+  },
+
+  getDebugName: function() {
+    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('view', '') : this.cid;
+  },
+  /* develblock:end */
 
   /**
    * Lets the child view dictate what to pass into the template as context. If not overriden, then it will simply use the default

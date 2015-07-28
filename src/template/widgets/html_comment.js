@@ -44,4 +44,8 @@ HTMLCommentWidget.prototype.update = function update(prev, elem) {
   }
 };
 
+HTMLCommentWidget.prototype.templateToString = function() {
+  return '<!-- ' + this.text + ' -->';
+};
+
 module.exports = HTMLCommentWidget;

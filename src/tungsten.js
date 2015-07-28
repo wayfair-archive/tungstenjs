@@ -55,6 +55,10 @@ function updateContainer(container, initialTree, updatedMarkup) {
   return newTree;
 }
 
+/* develblock:start */
+exports.debug = require('./debug');
+/* develblock:end */
+
 // Methods to parse DOM or String to vtree
 exports.parseDOM = domToVdom;
 // Methods to output the vtree as a browser-usable format
@@ -68,10 +72,47 @@ exports.toDOM = function(vtree) {
   }
   return result;
 };
+
+var noClosing = _.invert(['br', 'hr', 'img', 'input', 'meta', 'link']);
+var selfClosing = _.invert(['area', 'base', 'col', 'command', 'embed', 'hr', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
 exports.toString = function(vtree) {
-  var wrapper = virtualHyperscript('div', {}, vtree);
-  var elem = vdom.create(wrapper);
-  return elem.innerHTML;
+  var output = '';
+  var i;
+  if (virtualDomImplementation.isVNode(vtree)) {
+    var tagName = vtree.tagName.toLowerCase();
+    output += '<' + tagName;
+    _.each(vtree.properties.attributes, function(val, key) {
+      output += ' ' + key + '="' + val + '"';
+    });
+    if (noClosing[tagName] != null) {
+      output += '>';
+    } else if (selfClosing[tagName] != null) {
+      output += '/>';
+    } else {
+      output += '>';
+      for (i = 0; i < vtree.children.length; i++) {
+        output += exports.toString(vtree.children[i]);
+      }
+      output += '</' + tagName + '>';
+    }
+  } else if (virtualDomImplementation.isWidget(vtree)) {
+    if (typeof vtree.templateToString === 'function') {
+      output += vtree.templateToString();
+    } else {
+      console.warn('Widget type: ' + vtree.constructor.name + ' has no templateToString function, falling back to DOM');
+      var elem = vdom.create(virtualHyperscript('div', {}, vtree));
+      output += elem.innerHTML;
+    }
+  } else if (virtualDomImplementation.isVText(vtree)) {
+    output += vtree.text;
+  } else if (typeof vtree === 'string') {
+    output += vtree;
+  } else if (vtree.length) {
+    for (i = 0; i < vtree.length; i++) {
+      output += exports.toString(vtree[i]);
+    }
+  }
+  return output.toLowerCase();
 };
 // Create VNode from input (to obfuscate specific format)
 exports.createVNode = virtualHyperscript;

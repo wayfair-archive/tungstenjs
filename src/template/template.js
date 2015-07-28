@@ -40,7 +40,15 @@ Template.prototype.register = function(partialName) {
  * @return {String}      HTML string of the rendered template
  */
 Template.prototype.toString = function(data) {
-  return templateToVdom.renderToString(this.templateObj, data, this.partials || registeredPartials);
+  var templateToRender = this.templateObj;
+  var tempView = this.view;
+  if (this.view && !this.view.parentView) {
+    templateToRender = templateToRender.f;
+  }
+  this.view = null;
+  var output = templateToVdom.renderToString(templateToRender, data, this.partials || registeredPartials);
+  this.view = tempView;
+  return output;
 };
 /**
  * Outputs the template to a DocumentFragment
