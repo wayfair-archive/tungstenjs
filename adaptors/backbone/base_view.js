@@ -57,6 +57,7 @@ var BaseView = Backbone.View.extend({
     if (this.compiledTemplate && this.compiledTemplate.toVdom) {
       if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
+        // @TODO set this.vtree to an empty node and just call render?
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
         }
@@ -67,8 +68,11 @@ var BaseView = Backbone.View.extend({
 
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
-        // Render the initial view
-        this.render();
+        var self = this;
+        setTimeout(function() {
+          self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
+          self.attachChildViews();
+        }, 0);
       }
     }
 
@@ -128,33 +132,36 @@ var BaseView = Backbone.View.extend({
     if (!(events || (events = _.result(this, 'events')))) {
       return;
     }
-    // Unbind any current events
-    this.undelegateEvents();
-    // Get any options that may  have been set
-    var eventOptions = _.result(this, 'eventOptions');
-    // Event / selector strings
-    var keys = _.keys(events);
-    var key;
-    // Create an array to hold the information to detach events
-    this.eventsToRemove = new Array(keys.length);
-    for (var i = keys.length; i--;) {
-      key = keys[i];
-      // Sanity check that value maps to a function
-      var method = events[key];
-      if (!_.isFunction(method)) {
-        method = this[events[key]];
-      }
-      if (!method) {
-        throw new Error('Method "' + events[key] + '" does not exist');
-      }
-      var match = key.match(delegateEventSplitter);
-      var eventName = match[1],
-        selector = match[2];
-      method = _.bind(method, this);
+    var self = this;
+    setTimeout(function() {
+      // Unbind any current events
+      self.undelegateEvents();
+      // Get any options that may  have been set
+      var eventOptions = _.result(self, 'eventOptions');
+      // Event / selector strings
+      var keys = _.keys(events);
+      var key;
+      // Create an array to hold the information to detach events
+      self.eventsToRemove = new Array(keys.length);
+      for (var i = keys.length; i--;) {
+        key = keys[i];
+        // Sanity check that value maps to a function
+        var method = events[key];
+        if (!_.isFunction(method)) {
+          method = self[events[key]];
+        }
+        if (!method) {
+          throw new Error('Method "' + events[key] + '" does not exist');
+        }
+        var match = key.match(delegateEventSplitter);
+        var eventName = match[1],
+          selector = match[2];
+        method = _.bind(method, self);
 
-      // throws an error if invalid
-      this.eventsToRemove[i] = tungsten.bindEvent(this.el, eventName, selector, method, eventOptions[key]);
-    }
+        // throws an error if invalid
+        self.eventsToRemove[i] = tungsten.bindEvent(self.el, eventName, selector, method, eventOptions[key]);
+      }
+    }, 1);
   },
 
   /**
@@ -241,6 +248,28 @@ var BaseView = Backbone.View.extend({
     recurse(this.vtree);
 
     return childInstances;
+  },
+
+  /**
+   * Parse this.vtree for childViews and attach them to the DOM node
+   * Used during initialization where a render is unnecessary
+   */
+  attachChildViews: function() {
+    var recurse = function(vnode, elem) {
+      if (!elem) {
+        return;
+      }
+      var child;
+      for (var i = 0; i < vnode.children.length; i++) {
+        child = vnode.children[i];
+        if (child.type === 'VirtualNode' && child.hasWidgets) {
+          recurse(child, elem.childNodes[i]);
+        } else if (child.type === 'Widget' && !child.view && typeof child.attach === 'function') {
+          child.attach(elem.childNodes[i]);
+        }
+      }
+    };
+    recurse(this.vtree, this.el);
   },
 
   /**

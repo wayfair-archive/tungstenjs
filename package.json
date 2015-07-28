@@ -24,6 +24,7 @@
     "backbone": "^1.1.2",
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
+    "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
