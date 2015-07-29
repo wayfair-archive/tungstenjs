@@ -92,17 +92,17 @@ module.exports = new AppView({
 Each template and partial should be pre-compiled with the provided wrapper for the [Ractive](http://www.ractivejs.org/)-based precompiler.  A [webpack](http://webpack.github.io/) loader, `tungsten_template`, is provided for this purpose, and can be included like so in the `webpack.config.js`:
 
 ```javascript
-    module.exports = {
-      // [...]
-      resolveLoader: {
-        modulesDirectories: ['node_modules', 'node_modules/tungstenjs/precompile']
-      },
-      module: {
-        loaders: [
-          { test: /\.mustache$/, loader: 'tungsten_template' }
-        ]
-      }
-    }
+module.exports = {
+  // [...]
+  resolveLoader: {
+    modulesDirectories: ['node_modules', 'node_modules/tungstenjs/precompile']
+  },
+  module: {
+    loaders: [
+      { test: /\.mustache$/, loader: 'tungsten_template' }
+    ]
+  }
+}
 ```
 
 ### Server Side Rendering
