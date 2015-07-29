@@ -61,7 +61,21 @@ var BaseView = Backbone.View.extend({
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
         }
-        this.el.appendChild(this.compiledTemplate.toDom(dataItem));
+        var template = this.compiledTemplate;
+        var nestingDepth = 0;
+        if (!this.parentView) {
+          template = template.wrap(this.el.nodeName);
+          nestingDepth = 1;
+        }
+        this.vtree = template.toVdom(dataItem);
+        // toDOM returns a DocumentFragment so firstChild will be the div
+        var wrappedTemplate = tungsten.toDOM(this.vtree);
+        while (nestingDepth--) {
+          wrappedTemplate = wrappedTemplate.firstChild;
+        }
+        while (wrappedTemplate.firstChild) {
+          this.el.appendChild(wrappedTemplate.firstChild);
+        }
       }
       // Run attachView with this instance to attach childView widget points
       this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
@@ -72,7 +86,7 @@ var BaseView = Backbone.View.extend({
         setTimeout(function() {
           self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
           self.attachChildViews();
-        }, 0);
+        }, 1);
       }
     }
 
