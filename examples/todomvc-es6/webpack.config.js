@@ -20,13 +20,14 @@ module.exports = {
   },
   resolveLoader: {
     root: path.join(__dirname, 'node_modules'),
-    modulesDirectories: ['node_modules', path.join(__dirname, '../../precompile')]
+    modulesDirectories: ['node_modules', path.join(__dirname, '../../node_modules/'), path.join(__dirname, '../../precompile')]
   },
   devtool: '#source-map',
   module: {
     loaders: [
       { test: /\.mustache$/, loader: 'tungsten_template' },
-      {test: /\.js$/, loader: 'babel?stage=0', exclude: /node_modules/}
+      {test: /\.js$/, loader: 'babel?stage=0', exclude: /node_modules/},
+      { test: /\.json$/, loader: 'json-loader' }
     ]
   }
 };

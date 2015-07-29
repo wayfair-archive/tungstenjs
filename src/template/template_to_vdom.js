@@ -10,6 +10,7 @@ var tungsten = require('./../tungsten');
 var Context = require('./template_context');
 var logger = require('./../utils/logger');
 var ractiveTypes = require('./ractive_types');
+var htmlToVdom = require('./html_to_vdom');
 var FocusHook = require('./hooks/focus_hook');
 var exports = {};
 
@@ -28,12 +29,6 @@ var supportsWhitespaceTextNodes = (function() {
 })();
 
 /**
- * Element to be used for various off-Document operations
- * @type {Element}
- */
-var domFrag = document.createElement('div');
-
-/**
  * Used to parse loose interpolators inside a opening tag
  * @param  {Object}  templates Template object
  * @param  {Context} context   current Context to evaluate in
@@ -42,27 +37,16 @@ var domFrag = document.createElement('div');
 function parseStringAttrs(templates, context) {
   var stringAttrs = '';
   for (var i = 0; i < templates.length; i++) {
-    stringAttrs += ' ' + renderVdom(templates[i], context) + ' ';
-  }
-  domFrag.innerHTML = '<div ' + stringAttrs + '></div>';
-  var childNodes = domFrag.childNodes;
-  var elem;
-  // Pull the div from the domFrag
-  for (i = 0; i < childNodes.length; i++) {
-    elem = childNodes[i];
-    if (elem.nodeName.toUpperCase() === 'DIV') {
-      break;
+    var attr = renderVdom(templates[i], context);
+    if (attr != null) {
+      stringAttrs += ' ' + attr + ' ';
     }
   }
-
-  // Iterate over attributes object for resultant values
-  var result = {};
-  var attrs = elem.attributes;
-  for (i = 0; i < attrs.length; i++) {
-    result[attrs[i].name] = attrs[i].value;
+  if (stringAttrs === '') {
+    return null;
   }
-
-  return result;
+  var node = htmlToVdom('<div ' + stringAttrs + '></div>');
+  return node.properties.attributes;
 }
 
 /**
@@ -73,16 +57,7 @@ function parseStringAttrs(templates, context) {
 function parseUnescapedString(value) {
   // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
   if (value.indexOf('<') > -1 || value.indexOf('&') > -1) {
-    domFrag.innerHTML = value;
-    // @TODO investigate tokenizing
-    value = tungsten.parseDOM(domFrag, attributesOnly);
-    // Top level text values need to be put back to Strings so we can combine text nodes
-    for (var i = value.children.length; i--; ) {
-      if (value.children[i] && value.children[i].type === 'VirtualText') {
-        value.children[i] = value.children[i].text;
-      }
-    }
-    return value.children;
+    return htmlToVdom(value);
   } else {
     return value;
   }
@@ -260,10 +235,6 @@ function renderVdom(template, context, partials, parentView, firstRender) {
     case ractiveTypes.TRIPLE:
       value = context.lookup(Context.getInterpolatorKey(template));
       if (value != null) {
-        // @TODO is this duplicated functionality from template_context?
-        if (typeof value === 'function') {
-          value = value.call(context.view);
-        }
         value = value.toString();
         if (template.t === ractiveTypes.TRIPLE) {
           // TRIPLE is unescaped content, so parse that out into VDOM as needed
@@ -339,7 +310,10 @@ function renderVdom(template, context, partials, parentView, firstRender) {
       _.each(template.a, attributeHandler);
       // Handle dynamic values if need be
       if (template.m) {
-        _.each(parseStringAttrs(template.m, context), attributeHandler);
+        var attrs = parseStringAttrs(template.m, context);
+        if (attrs != null) {
+          _.each(attrs, attributeHandler);
+        }
       }
 
       // Recuse into the elements' children

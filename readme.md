@@ -89,7 +89,7 @@ module.exports = new AppView({
 });
 ```
 
-Each template and partial should be pre-compiled with the provided wrapper for the [Ractive](http://www.ractivejs.org/)-based precompiler.  A [webpack](http://webpack.github.io/) loader, `tungsten_template`, is provided for this purpose, and can be included like so in the `webpack.config.js`:
+Each template and partial should be pre-compiled with the provided wrapper for the [Ractive](http://www.ractivejs.org/)-based precompiler.  A [webpack](http://webpack.github.io/) loader, `tungsten_template`, is provided for this purpose, and can be included like so in the `webpack.config.js`  (currently we also include a json-loader for the HTML tokenizer)::
 
 ```javascript
 module.exports = {
@@ -99,7 +99,8 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.mustache$/, loader: 'tungsten_template' }
+      { test: /\.mustache$/, loader: 'tungsten_template' },
+      { test: /\.json$/, loader: 'json-loader' }
     ]
   }
 }
