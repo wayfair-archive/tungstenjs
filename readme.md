@@ -119,7 +119,7 @@ module.exports = new AppView({
 });
 ```
 
-`dynamicInitialize` should only be set when the application won't be rendered from the server and will instead by client-side rendered only.
+`dynamicInitialize` should only be set when the application won't be rendered from the server and will instead be client-side rendered only.
 
 Tungsten.js is agnostic to the server technology used to render the template.  The only restriction is that the output of the server-side rendered template mustache match the output of the bootstrapped data and client-side template.  There are implementations of mustache rendering engines available in a variety of server-side technologies, including [Node.js](https://github.com/raycmorgan/Mu), [Java](https://github.com/spullara/mustache.java), [C++](https://github.com/mrtazz/plustache), [PHP](https://github.com/bobthecow/mustache.php), and [Go](https://github.com/hoisie/mustache).
 
