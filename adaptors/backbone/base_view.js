@@ -83,15 +83,14 @@ var BaseView = Backbone.View.extend({
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
         var self = this;
+        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
+        self.initializeRenderListener(dataItem);
         setTimeout(function() {
-          self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
           self.attachChildViews();
+          self.postInitialize();
         }, 1);
       }
     }
-
-    this.initializeRenderListener(dataItem);
-    this.postInitialize();
   },
   tungstenViewInstance: true,
   debouncer: null,
