@@ -272,6 +272,7 @@ var TodoAppView = View.extend({
 
 ## Changelog
 
+* 0.3.0 Performance updates, especially when using `{{{ }}}` in templates
 * 0.2.0 Add event plugin system and Ampersand.js adaptor
 * 0.1.0 Open source initial code at [tungstenjs](https://github.com/wayfair/tungstenjs)
 
