@@ -107,7 +107,7 @@ By default, Tungsten.js expects that on page load the HTML for the initial state
       el: '#app',
       template: template,
       model: new AppModel(window.data),
-      // Set
+      // Set the following line for client-side only rendering
       dynamicInitialize: true
     });
 
