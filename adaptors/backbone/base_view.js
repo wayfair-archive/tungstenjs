@@ -55,41 +55,40 @@ var BaseView = Backbone.View.extend({
 
     // Sanity check that compiledTemplate exists and has a toVdom method
     if (this.compiledTemplate && this.compiledTemplate.toVdom) {
+      // Run attachView with this instance to attach childView widget points
+      this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
+
       if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
-        // @TODO set this.vtree to an empty node and just call render?
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
         }
-        var template = this.compiledTemplate;
-        var nestingDepth = 0;
-        if (!this.parentView) {
-          template = template.wrap(this.el.nodeName);
-          nestingDepth = 1;
-        }
-        this.vtree = template.toVdom(dataItem);
-        // toDOM returns a DocumentFragment so firstChild will be the div
-        var wrappedTemplate = tungsten.toDOM(this.vtree);
-        while (nestingDepth--) {
-          wrappedTemplate = wrappedTemplate.firstChild;
-        }
-        while (wrappedTemplate.firstChild) {
-          this.el.appendChild(wrappedTemplate.firstChild);
-        }
+        var tagName = this.el.tagName;
+        this.vtree = tungsten.parseString('<' + tagName + '></' + tagName + '>');
+        this.render();
       }
-      // Run attachView with this instance to attach childView widget points
-      this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
 
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
         var self = this;
         self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
         self.initializeRenderListener(dataItem);
-        setTimeout(function() {
-          self.attachChildViews();
+        if (this.options.dynamicInitialize) {
+          // If dynamicInitialize was set, render was already invoked, so childViews are attached
           self.postInitialize();
-        }, 1);
+        } else {
+          setTimeout(function() {
+            self.attachChildViews();
+            self.postInitialize();
+          }, 1);
+        }
+      } else {
+        this.initializeRenderListener(dataItem);
+        this.postInitialize();
       }
+    } else {
+      this.initializeRenderListener(dataItem);
+      this.postInitialize();
     }
   },
   tungstenViewInstance: true,
