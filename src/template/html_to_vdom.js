@@ -1,6 +1,6 @@
 'use strict';
 
-var tungsten = require('./../tungsten');
+var virtualHyperscript = require('../vdom/virtual_hyperscript');
 var HTMLCommentWidget = require('./widgets/html_comment');
 var entityMap = require('html-tokenizer/entity-map');
 
@@ -11,11 +11,16 @@ var stack = [];
 var Parser = require('html-tokenizer/parser');
 var parser = new Parser({ entities: entityMap });
 parser.on('open', function(name, attributes) {
+  var properties = {
+    attributes: attributes
+  };
+  if (!attributes.contenteditable) {
+    properties.contentEditable = 'inherit';
+  }
+
   stack.push({
     tagName: name,
-    properties: {
-      attributes: attributes
-    },
+    properties: properties,
     children: []
   });
 });
@@ -26,10 +31,13 @@ parser.on('open', function(name, attributes) {
  * @return {[type]}     [description]
  */
 function closeElem(obj) {
+  // if this is an element, create a VNode now so that count is set properly
+  if (obj.tagName) {
+    obj = virtualHyperscript(obj.tagName, obj.properties, obj.children);
+  }
+
   if (stack.length > 0) {
     stack[stack.length - 1].children.push(obj);
-  } else if (obj.tagName) {
-    result.push(tungsten.createVNode(obj.tagName, obj.properties, obj.children));
   } else {
     result.push(obj);
   }
