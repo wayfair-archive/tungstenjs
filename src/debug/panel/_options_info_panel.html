@@ -1,0 +1,27 @@
+<div class="js-options-panel-view">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0">
+    Options
+  </div>
+  {{#selectedView.attributes.options}}
+  <div class="sidebar-pane visible">
+    <div class="body">
+      <div class="section expanded">
+        <ol data-property-key="" class="properties properties-tree monospace">
+          <li data-property-name="model">
+            <span class="name">model cid</span><span class="separator">: </span>
+            <span class="value console-formatted-undefined">{{model.cid}}</span>
+          </li>
+          <li data-property-name="vtree" data-dom-element="">
+            <span class="name">vtree</span><span class="separator">: </span>
+            <span class="js-view-el value console-formatted-undefined">{{vtree}}</span>
+          </li>
+          <li data-property-name="parentView" data-dom-element="">
+            <span class="name">parentView</span><span class="separator">: </span>
+            <span class="js-view-el value console-formatted-undefined">{{parentView}}</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  {{/selectedView.attributes.options}}
+</div>

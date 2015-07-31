@@ -1,42 +1,26 @@
 'use strict';
 
 var _ = require('underscore');
+var eventBus = require('./event_bus');
 
-var registry = {
-  views: {},
-  models: {},
-  collections: {}
-};
+var registry = _.create(null);
 
-function bindDestroy(obj, collection) {
-  if (typeof obj.destroy === 'function') {
-    obj._destroy = obj.destroy;
-    obj.destroy = _.bind(function() {
-      registry[this.collection][this.obj.getDebugName()] = null;
-      this.obj._destroy();
-    }, {
-      obj: obj,
-      collection: collection
-    });
-  }
-}
-
-module.exports.registerView = function(view) {
+module.exports.register = function(view) {
   if (!view.parentView) {
-    registry.views[view.getDebugName()] = view;
-    bindDestroy(view, 'views');
+    registry[view.getDebugName()] = view;
+    eventBus.trigger(eventBus.CHANGED_REGISTERED, registry);
+    if (typeof view.destroy === 'function') {
+      view._destroy = view.destroy;
+      view.destroy = _.bind(function() {
+        eventBus.stopListeningTo(this);
+        registry[this.getDebugName()] = null;
+        eventBus.trigger(eventBus.CHANGED_REGISTERED, registry);
+        this._destroy();
+      }, view);
+    }
   }
 };
 
-module.exports.registerModel = function(model) {
-  registry.models[model.getDebugName()] = model;
-  bindDestroy(model, 'models');
-};
-
-module.exports.registerCollection = function(collection) {
-  registry.collections[collection.getDebugName()] = collection;
-};
-
-window.getRegistry = function() {
-  console.log(registry);
+module.exports.get = window.getRegistry = function() {
+  return registry;
 };

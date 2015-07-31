@@ -4,7 +4,6 @@
 'use strict';
 var Backbone = require('backbone');
 var backboneNested = require('./backbone_nested');
-var tungsten = require('../../src/tungsten');
 /**
  * BaseModel
  *
@@ -14,18 +13,10 @@ var tungsten = require('../../src/tungsten');
 var BaseModel = Backbone.Model.extend({
   tungstenModel: true,
   initialize: function() {
-    /* develblock:start */
-    this.initDebug();
-    /* develblock:end */
-
     this.postInitialize();
   },
 
   /* develblock:start */
-  initDebug: function() {
-    tungsten.debug.registry.registerModel(this);
-  },
-
   getDebugName: function() {
     return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('c', '') : this.cid;
   },

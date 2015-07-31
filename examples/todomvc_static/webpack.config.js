@@ -23,7 +23,10 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.mustache$/, loader: 'tungsten_template' }
+      { test: /\.html$/, loader: 'debug_template' },
+      { test: /\.css$/, loader: 'static_file' },
+      { test: /\.mustache$/, loader: 'tungsten_template' },
+      { test: /\.json$/, loader: 'json-loader' }
       // ,{ test: /\.js$/, loader: 'webpack-strip-block' }
     ]
   }

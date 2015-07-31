@@ -1,0 +1,30 @@
+<style>
+  {{{styles}}}
+</style>
+
+<div data-region="app-region" class="app js-app">
+  <div view="app-layout" class="app-layout">
+    <div class="app-layout-body">
+      <nav class="app-header navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+        </div>
+        <ul class="nav navbar-nav js-tabs-bar">
+          {{#tabs}}
+          <li data-tool="ui" data-route="ui" class="js-tab {{#isActive}}active{{/isActive}}">
+            <a href="#">{{name}}</a>
+          </li>
+          {{/tabs}}
+        </ul>
+      </nav>
+      <ul>
+        <li class="js-tab-content">
+          {{#tabs}}
+            {{#showViewTab}}
+            {{> _view_info_pane }}
+            {{/showViewTab}}
+          {{/tabs}}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

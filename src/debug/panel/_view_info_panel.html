@@ -1,0 +1,35 @@
+<div class="js-info-panel-view">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0" >
+    View
+  </div>
+  {{#selectedView}}
+  <div class="sidebar-pane visible">
+    <div class="body">
+      <div class="section expanded">
+        <ol data-property-key="" class="properties properties-tree monospace">
+          <li data-property-name="cid">
+            <span class="name">cid</span><span class="separator">: </span>
+            <span class="value console-formatted-undefined"> {{attributes.cid}} </span>
+          </li>
+          <li data-property-name="collection">
+            <span class="name">debugName</span><span class="separator">: </span>
+            <span class="value console-formatted-undefined"> {{debugName}} </span>
+          </li>
+          <li data-property-name="tagName">
+            <span class="name">tagName</span><span class="separator">: </span>
+            <span class="value console-formatted-undefined"> {{el.tagName}} </span>
+          </li>
+          <li data-property-name="className">
+            <span class="name">className</span><span class="separator">: </span>
+            <span class="value console-formatted-undefined"> {{el.className}} </span>
+          </li>
+          <li data-property-name="el" data-dom-element="">
+            <span class="name">el</span><span class="separator">: </span>
+            <span class="js-view-el value console-formatted-undefined clickable-property" patchedmarionette=""> <span class="source-code" style="-webkit-user-select: none;">{{el}}</span> </span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  {{/selectedView}}
+</div>

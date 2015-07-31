@@ -6,7 +6,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var backboneNested = require('./backbone_nested');
-var tungsten = require('../../src/tungsten');
 
 /**
  * BaseCollection
@@ -17,18 +16,10 @@ var tungsten = require('../../src/tungsten');
 var BaseCollection = Backbone.Collection.extend({
   tungstenCollection: true,
   initialize: function() {
-    /* develblock:start */
-    this.initDebug();
-    /* develblock:end */
-
     this.postInitialize();
   },
 
   /* develblock:start */
-  initDebug: function() {
-    tungsten.debug.registry.registerCollection(this);
-  },
-
   getDebugName: function() {
     if (!this.cid) {
       this.cid = _.uniqueId('collection');

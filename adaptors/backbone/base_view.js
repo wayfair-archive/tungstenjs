@@ -51,10 +51,6 @@ var BaseView = Backbone.View.extend({
       this.parentView = this.options.parentView;
     }
 
-    /* develblock:start */
-    this.initDebug();
-    /* develblock:end */
-
     var dataItem = this.serialize();
 
     // Sanity check that compiledTemplate exists and has a toVdom method
@@ -94,6 +90,10 @@ var BaseView = Backbone.View.extend({
       this.initializeRenderListener(dataItem);
       this.postInitialize();
     }
+
+    /* develblock:start */
+    this.initDebug();
+    /* develblock:end */
   },
   tungstenViewInstance: true,
   debouncer: null,
@@ -129,7 +129,7 @@ var BaseView = Backbone.View.extend({
 
   /* develblock:start */
   initDebug: function() {
-    tungsten.debug.registry.registerView(this);
+    tungsten.debug.registry.register(this);
     // this.on('rendered', this.validateTemplate);
   },
   validateTemplate: function() {
@@ -138,6 +138,11 @@ var BaseView = Backbone.View.extend({
       this.compiledTemplate.toString(this.serialize()),
       this.parentView ? this.el.outerHTML : this.el.innerHTML
     );
+  },
+
+  isParent: function() {
+    var children = this.getChildViews();
+    return children.length;
   },
 
   getDebugName: function() {

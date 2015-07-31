@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-  registry: require('./registry')
+  registry: require('./registry'),
+  panel: require('./window_manager')
 };
