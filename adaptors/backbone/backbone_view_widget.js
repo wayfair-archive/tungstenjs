@@ -85,6 +85,20 @@ BackboneViewWidget.prototype.destroy = function destroy() {
 };
 
 /**
+ * Attaches the childView to the given DOM node
+ * Used for initial startup where a full render and update is excessive
+ * @param  {Element}            elem DOM node to act upon
+ */
+BackboneViewWidget.prototype.attach = function attach(elem) {
+  this.view = new this.ViewConstructor({
+    el: elem,
+    model: this.model,
+    parentView: this.parentView,
+    template: this.template
+  });
+};
+
+/**
  * Updates an existing childView
  * @param  {BackboneViewWidget} prev Widget instance from old VTree
  * @param  {Element}            elem DOM node to act upon

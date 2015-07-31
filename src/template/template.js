@@ -170,6 +170,19 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
 };
 
 /**
+ * Wrap the template in a given tag, defaulting to <div>
+ * @param  {String} tagName Tag name to wrap the template in
+ * @return {Object}         Wrapped template
+ */
+Template.prototype.wrap = function(tagName) {
+  return new Template({
+    't': ractiveTypes.ELEMENT,
+    'e': tagName || 'div',
+    'f': this.templateObj
+  }, this.partials);
+};
+
+/**
  * Exposed function to attachView
  * @param  {Object}   view          View to attach to
  * @param  {Function} widgetWrapper Constructor function for widget from adaptor
@@ -189,9 +202,9 @@ Template.prototype.attachView = function(view, widgetWrapper) {
     // If there's a mismatch in childNode counts, it's usually extra whitespace from the server
     // We can trim those off so that the VTree is unaffected during lookups
     // Since this is in the form of whitespace around the template, it's a simple type check on the first and last node
-    if (templateObj.f.length !== view.el.childNodes.length) {
+    if (!view.options.dynamicInitialize && templateObj.f.length !== view.el.childNodes.length) {
       // If the first part of the template is a string or the first node isn't a textNode, assume that's fine
-      if (typeof templateObj.f[0] !== 'string' && view.el.childNodes[0].nodeType === 3) {
+      if (typeof templateObj.f[0] !== 'string' && view.el.childNodes[0] && view.el.childNodes[0].nodeType === 3) {
         view.el.removeChild(view.el.childNodes[0]);
       }
       // If the last part of the template is a string or the last node isn't a textNode, assume that's fine

@@ -1,5 +1,5 @@
 /**
- * Base backbone view for vdom- see class declaration for more information
+ * Base Ampersand view for vdom- see class declaration for more information
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
@@ -47,25 +47,40 @@ var BaseView = AmpersandView.extend({
 
     // Sanity check that template exists and has a toVdom method
     if (this.template && this.template.toVdom) {
+      // Run attachView with this instance to attach childView widget points
+      this.template = this.template.attachView(this, ViewWidget);
+
       if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
         }
-        this.el.appendChild(this.template.toDom(dataItem));
+        var tagName = this.el.tagName;
+        this.vtree = tungsten.parseString('<' + tagName + '></' + tagName + '>');
+        this.render();
       }
-      // Run attachView with this instance to attach childView widget points
-      this.template = this.template.attachView(this, ViewWidget);
 
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
-        // Render the initial view
-        this.render();
+        var self = this;
+        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
+        self.initializeRenderListener(dataItem);
+        if (this.options.dynamicInitialize) {
+          // If dynamicInitialize was set, render was already invoked, so childViews are attached
+          self.postInitialize();
+        } else {
+          setTimeout(function() {
+            self.attachChildViews();
+            self.postInitialize();
+          }, 1);
+        }
+      } else {
+        this.postInitialize();
       }
+    } else {
+      this.initializeRenderListener(dataItem);
+      this.postInitialize();
     }
-
-    this.initializeRenderListener(dataItem);
-    this.postInitialize();
   },
 
   debouncer: null,
@@ -234,6 +249,28 @@ var BaseView = AmpersandView.extend({
     recurse(this.vtree);
 
     return childInstances;
+  },
+
+  /**
+   * Parse this.vtree for childViews and attach them to the DOM node
+   * Used during initialization where a render is unnecessary
+   */
+  attachChildViews: function() {
+    var recurse = function(vnode, elem) {
+      if (!elem) {
+        return;
+      }
+      var child;
+      for (var i = 0; i < vnode.children.length; i++) {
+        child = vnode.children[i];
+        if (child.type === 'VirtualNode' && child.hasWidgets) {
+          recurse(child, elem.childNodes[i]);
+        } else if (child.type === 'Widget' && !child.view && typeof child.attach === 'function') {
+          child.attach(elem.childNodes[i]);
+        }
+      }
+    };
+    recurse(this.vtree, this.el);
   },
 
   /**
