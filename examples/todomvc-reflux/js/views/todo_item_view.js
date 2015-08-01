@@ -3,7 +3,7 @@
 */
 'use strict';
 
-var TungstenBackboneBase = require('../../../../adaptors/backbone-reflux');
+var TungstenBackboneBase = require('tungstenjs/adaptors/backbone-reflux');
 var TodoActions = require('../actions');
 var View = TungstenBackboneBase.View;
 var ENTER_KEY = 13;

@@ -1,6 +1,6 @@
 'use strict';
 
-var TungstenBackboneBase = require('../../../adaptors/backbone-reflux');
+var TungstenBackboneBase = require('tungstenjs/adaptors/backbone-reflux');
 var Reflux = TungstenBackboneBase.Reflux;
 var TodoActions = require('./actions');
 var _ = require('underscore');

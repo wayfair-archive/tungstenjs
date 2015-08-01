@@ -24,6 +24,9 @@ var BaseView = Backbone.View.extend({
    * Shared init logic
    */
   initialize: function(options) {
+    if (!this.el) {
+      return false;
+    }
     this.options = options || {};
 
     // Pass router through options, setting router.view if not already set

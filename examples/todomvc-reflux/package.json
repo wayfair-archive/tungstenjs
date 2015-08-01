@@ -6,16 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node ./node_modules/webpack/bin/webpack.js -d",
-    "start": "node ./server.js",
-    "prestart": "npm run build"
+    "start": "(node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -d --port 9090 &) && sleep 3 && node ./server.js"
   },
   "devDependencies": {
+    "node-libs-browser": "^0.5.2",
+    "webpack-dev-server": "^1.10.1",
     "babel-core": "^5.1.11",
     "babel-loader": "^5.0.0",
     "webpack": "^1.8.4"
   },
   "dependencies": {
-    "browsernizr": "^1.0.2",
     "backbone.cocktail": "^0.5.10",
     "reflux": "^0.2.7",
     "express": "3.20.2",
