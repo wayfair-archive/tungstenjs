@@ -13,12 +13,10 @@
     "webpack": "^1.8.4"
   },
   "dependencies": {
-    "browsernizr": "^1.0.2",
     "express": "3.20.2",
     "hogan-express": "^0.5.2",
     "opener": "^1.4.1",
     "todomvc-app-css": "^1.0.1",
-    "tungstenjs": "*",
     "underscore": "^1.8.3"
   }
 }

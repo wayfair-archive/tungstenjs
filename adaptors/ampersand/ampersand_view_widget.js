@@ -85,13 +85,26 @@ AmpersandViewWidget.prototype.destroy = function destroy() {
 };
 
 /**
+ * Attaches the childView to the given DOM node
+ * Used for initial startup where a full render and update is excessive
+ * @param  {Element}            elem DOM node to act upon
+ */
+AmpersandViewWidget.prototype.attach = function attach(elem) {
+  this.view = new this.ViewConstructor({
+    el: elem,
+    model: this.model,
+    parentView: this.parentView,
+    template: this.template
+  });
+};
+
+/**
  * Updates an existing childView
  * @param  {AmpersandViewWidget} prev Widget instance from old VTree
  * @param  {Element}            elem DOM node to act upon
  */
 AmpersandViewWidget.prototype.update = function update(prev, elem) {
   var vtree = null;
-  var template = null;
   // If the previous tree was instantiated, check if it's usable
   if (prev.view) {
     if (this.ViewConstructor === prev.ViewConstructor) {
@@ -100,28 +113,34 @@ AmpersandViewWidget.prototype.update = function update(prev, elem) {
       this.view.el = elem;
       this.view.parentView = this.parentView;
     } else {
-      // if they are different, destroy the old one to remove events
+      // if they are different
+      //   save the vtree off so we can diff against what's on the DOM
       vtree = prev.view.vtree;
+      //   and destroy the old one to remove events
       prev.destroy();
     }
-    template = prev.template;
   }
 
   // If the view for this instance isn't created, we need to make one
   if (!this.view) {
-    // initialize with previous model so previous vtree is created
+    // Pass in vtree from previous view, if available
+    // Constructing the view automatically calls render
     this.view = new this.ViewConstructor({
       el: elem,
-      model: prev.model,
+      model: this.model,
       parentView: this.parentView,
+      context: this.context,
       vtree: vtree,
-      template: template || this.template
+      template: this.template
     });
+  } else {
+    // If prev.view is the same type, set the context and template
+    this.view.context = this.context;
+    // @TODO figure out how to compare template objects to avoid this operation
+    this.view.compiledTemplate = this.template.attachView(this.view, AmpersandViewWidget);
+    // Call the update model to run and updates if the model has changed
+    this.view.update(this.model);
   }
-
-  // Call the update model to run and updates if the model has changed
-  this.view.context = this.context;
-  this.view.update(this.model, this.template);
 };
 
 module.exports = AmpersandViewWidget;

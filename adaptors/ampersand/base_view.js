@@ -1,5 +1,5 @@
 /**
- * Base backbone view for vdom- see class declaration for more information
+ * Base Ampersand view for vdom- see class declaration for more information
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
@@ -31,54 +31,80 @@ var BaseView = AmpersandView.extend({
     this.options = options || {};
 
     // VTree is passable as an option if we are transitioning in from a different view
-    if (options.vtree) {
-      this.vtree = options.vtree;
+    if (this.options.vtree) {
+      this.vtree = this.options.vtree;
     }
     // First-pass rendering context
-    if (options.context) {
-      this.context = options.context;
+    if (this.options.context) {
+      this.context = this.options.context;
     }
     // Handle to the parent view
-    if (options.parentView) {
-      this.parentView = options.parentView;
+    if (this.options.parentView) {
+      this.parentView = this.options.parentView;
     }
 
     var dataItem = this.serialize();
 
     // Sanity check that template exists and has a toVdom method
     if (this.template && this.template.toVdom) {
-      if (options.dynamicInitialize) {
+      // Run attachView with this instance to attach childView widget points
+      this.template = this.template.attachView(this, ViewWidget);
+
+      if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
         }
-        this.el.appendChild(this.template.toDom(dataItem));
-      }
-      // Run attachView with this instance to attach childView widget points
-      this.template = this.template.attachView(this, ViewWidget);
-
-      // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
-      if (!options.deferRender) {
-        // Render the initial view
+        var tagName = this.el.tagName;
+        this.vtree = tungsten.parseString('<' + tagName + '></' + tagName + '>');
         this.render();
       }
-    }
 
-    this.initializeRenderListener(dataItem);
-    this.postInitialize();
+      // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
+      if (!this.options.deferRender) {
+        var self = this;
+        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
+        self.initializeRenderListener(dataItem);
+        if (this.options.dynamicInitialize) {
+          // If dynamicInitialize was set, render was already invoked, so childViews are attached
+          self.postInitialize();
+        } else {
+          setTimeout(function() {
+            self.attachChildViews();
+            self.postInitialize();
+          }, 1);
+        }
+      } else {
+        this.postInitialize();
+      }
+    } else {
+      this.initializeRenderListener(dataItem);
+      this.postInitialize();
+    }
   },
 
   debouncer: null,
   initializeRenderListener: function(dataItem) {
     // If this has a model and is the top level view, set up the listener for rendering
-    if (dataItem && !this.parentView && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
-      var render = _.bind(this.render, this);
+    if (dataItem && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
+      var runOnChange;
       var self = this;
-      this.listenTo(dataItem, 'all', function() {
-        // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
-        clearTimeout(self.debouncer);
-        self.debouncer = setTimeout(render, 1);
-      });
+      if (!this.parentView) {
+        runOnChange = _.bind(this.render, this);
+      } else if (!dataItem.parentProp && this.parentView.model !== dataItem) {
+        // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
+        runOnChange = function() {
+          // trigger event on parent to start a render
+          self.parentView.model.trigger('render');
+        };
+      }
+      if (runOnChange) {
+        this.listenTo(dataItem, 'all', function() {
+          // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
+          clearTimeout(self.debouncer);
+          self.debouncer = setTimeout(runOnChange, 1);
+        });
+      }
     }
   },
 
@@ -168,8 +194,6 @@ var BaseView = AmpersandView.extend({
     var serializedModel = this.context || this.serialize();
     var initialTree = this.vtree || this.template.toVdom(this.serialize(), true);
     this.vtree = tungsten.updateTree(this.el, initialTree, this.template.toVdom(serializedModel));
-    // Repool VDom used in initial tree
-    initialTree.recycle();
 
     // Clear any passed context
     this.context = null;
@@ -190,27 +214,17 @@ var BaseView = AmpersandView.extend({
   /**
    * Updates the function with a new model and template
    * @param  {Object}  newModel     Model to update to
-   * @param  {Object?} newTemplate  Template object to change to
    */
-  update: function(newModel, newTemplate) {
+  update: function(newModel) {
     // Track if anything has changed in order to trigger a render
-    var flag = false;
     if (newModel !== this.model) {
       // If the model has changed, change listener to new model
       this.stopListening(this.model);
       this.model = newModel;
       this.initializeRenderListener(newModel);
-      flag = true;
-    }
-    if (newTemplate) {
-      // @Todo figure out how to check template equality
-      this.template = newTemplate.attachView(this, ViewWidget);
-      flag = true;
     }
 
-    if (flag) {
-      this.render();
-    }
+    this.render();
   },
 
   /**
@@ -238,9 +252,32 @@ var BaseView = AmpersandView.extend({
   },
 
   /**
+   * Parse this.vtree for childViews and attach them to the DOM node
+   * Used during initialization where a render is unnecessary
+   */
+  attachChildViews: function() {
+    var recurse = function(vnode, elem) {
+      if (!elem) {
+        return;
+      }
+      var child;
+      for (var i = 0; i < vnode.children.length; i++) {
+        child = vnode.children[i];
+        if (child.type === 'VirtualNode' && child.hasWidgets) {
+          recurse(child, elem.childNodes[i]);
+        } else if (child.type === 'Widget' && !child.view && typeof child.attach === 'function') {
+          child.attach(elem.childNodes[i]);
+        }
+      }
+    };
+    recurse(this.vtree, this.el);
+  },
+
+  /**
    * Removes model listeners and DOM events from this and all child views
    */
   destroy: function() {
+    clearTimeout(this.debouncer);
     this.stopListening();
     this.undelegateEvents();
     var childInstances = this.getChildViews();

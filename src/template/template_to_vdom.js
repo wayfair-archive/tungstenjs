@@ -10,10 +10,14 @@ var tungsten = require('./../tungsten');
 var Context = require('./template_context');
 var logger = require('./../utils/logger');
 var ractiveTypes = require('./ractive_types');
+var htmlToVdom = require('./html_to_vdom');
 var FocusHook = require('./hooks/focus_hook');
 var exports = {};
 
 var HTMLCommentWidget = require('./widgets/html_comment');
+
+// Indicator to only render attributes rather than properties
+var attributesOnly = false;
 
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either
@@ -25,12 +29,6 @@ var supportsWhitespaceTextNodes = (function() {
 })();
 
 /**
- * Element to be used for various off-Document operations
- * @type {Element}
- */
-var domFrag = document.createElement('div');
-
-/**
  * Used to parse loose interpolators inside a opening tag
  * @param  {Object}  templates Template object
  * @param  {Context} context   current Context to evaluate in
@@ -39,27 +37,16 @@ var domFrag = document.createElement('div');
 function parseStringAttrs(templates, context) {
   var stringAttrs = '';
   for (var i = 0; i < templates.length; i++) {
-    stringAttrs += ' ' + renderVdom(templates[i], context) + ' ';
-  }
-  domFrag.innerHTML = '<div ' + stringAttrs + '></div>';
-  var childNodes = domFrag.childNodes;
-  var elem;
-  // Pull the div from the domFrag
-  for (i = 0; i < childNodes.length; i++) {
-    elem = childNodes[i];
-    if (elem.nodeName.toUpperCase() === 'DIV') {
-      break;
+    var attr = renderVdom(templates[i], context);
+    if (attr != null) {
+      stringAttrs += ' ' + attr + ' ';
     }
   }
-
-  // Iterate over attributes object for resultant values
-  var result = {};
-  var attrs = elem.attributes;
-  for (i = 0; i < attrs.length; i++) {
-    result[attrs[i].name] = attrs[i].value;
+  if (stringAttrs === '') {
+    return null;
   }
-
-  return result;
+  var node = htmlToVdom('<div ' + stringAttrs + '></div>');
+  return node.properties.attributes;
 }
 
 /**
@@ -70,16 +57,7 @@ function parseStringAttrs(templates, context) {
 function parseUnescapedString(value) {
   // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
   if (value.indexOf('<') > -1 || value.indexOf('&') > -1) {
-    domFrag.innerHTML = value;
-    // @TODO investigate tokenizing
-    value = tungsten.parseDOM(domFrag, true);
-    // Top level text values need to be put back to Strings so we can combine text nodes
-    for (var i = value.children.length; i--; ) {
-      if (value.children[i] && value.children[i].type === 'VirtualText') {
-        value.children[i] = value.children[i].text;
-      }
-    }
-    return value.children;
+    return htmlToVdom(value);
   } else {
     return value;
   }
@@ -116,8 +94,27 @@ function renderAttributeString(values, context) {
  * @type {Object}
  */
 var propertiesToTransform = {
+  // transformed name
   'class': 'className',
-  'for': 'htmlFor'
+  'for': 'htmlFor',
+  'http-equiv': 'httpEquiv',
+  // case specificity
+  'accesskey': 'accessKey',
+  'autocomplete': 'autoComplete',
+  'autoplay': 'autoPlay',
+  'colspan': 'colSpan',
+  'contenteditable': 'contentEditable',
+  'contextmenu': 'contextMenu',
+  'enctype': 'encType',
+  'formnovalidate': 'formNoValidate',
+  'hreflang': 'hrefLang',
+  'novalidate': 'noValidate',
+  'readonly': 'readOnly',
+  'rowspan': 'rowSpan',
+  'spellcheck ': 'spellCheck',
+  'srcdoc': 'srcDoc',
+  'srcset': 'srcSet',
+  'tabindex': 'tabIndex'
 };
 /**
  * Returns property name to use or false if it should be treated as attribute
@@ -125,8 +122,9 @@ var propertiesToTransform = {
  * @return {String|Boolean}              False if it should be an attribute, otherwise property name
  */
 function transformPropertyName(attributeName) {
-  if (propertiesToTransform[attributeName]) {
-    return propertiesToTransform[attributeName];
+  var attributeNameLower = attributeName.toLowerCase();
+  if (propertiesToTransform[attributeNameLower]) {
+    return propertiesToTransform[attributeNameLower];
   }
   // Data attributes are a special case..
   // Persisting them as attributes as they are often accessed via jQuery (i.e. data-click-location)
@@ -237,10 +235,6 @@ function renderVdom(template, context, partials, parentView, firstRender) {
     case ractiveTypes.TRIPLE:
       value = context.lookup(Context.getInterpolatorKey(template));
       if (value != null) {
-        // @TODO is this duplicated functionality from template_context?
-        if (typeof value === 'function') {
-          value = value.call(context.view);
-        }
         value = value.toString();
         if (template.t === ractiveTypes.TRIPLE) {
           // TRIPLE is unescaped content, so parse that out into VDOM as needed
@@ -294,11 +288,15 @@ function renderVdom(template, context, partials, parentView, firstRender) {
 
     // DOM node
     case ractiveTypes.ELEMENT:
-      var properties = {};
+      var properties = {
+        // Defaulting contentEditable to 'inherit'
+        // If an element goes from an explicitly set value to null, it will use this value rather than error
+        contentEditable: 'inherit'
+      };
       var attributeHandler = function(values, attr) {
         var propName = transformPropertyName(attr);
         var attrString = renderAttributeString(values, context);
-        if (propName === false) {
+        if (attributesOnly || propName === false) {
           properties.attributes = properties.attributes || {};
           properties.attributes[attr] = attrString;
         } else if (propName === 'autofocus') {
@@ -312,7 +310,10 @@ function renderVdom(template, context, partials, parentView, firstRender) {
       _.each(template.a, attributeHandler);
       // Handle dynamic values if need be
       if (template.m) {
-        _.each(parseStringAttrs(template.m, context), attributeHandler);
+        var attrs = parseStringAttrs(template.m, context);
+        if (attrs != null) {
+          _.each(attrs, attributeHandler);
+        }
       }
 
       // Recuse into the elements' children
@@ -358,7 +359,17 @@ exports.renderToVdom = function renderToVdom(template, data, partials, parentVie
  */
 exports.renderToDom = function renderToDom(template, data, partials) {
   var vdom = exports.renderToVdom(template, data, partials);
-  return tungsten.toDOM(vdom);
+  var dom = tungsten.toDOM(vdom);
+  if (Context.isArray(vdom)) {
+    _.each(vdom, function(node) {
+      if (typeof node.recycle === 'function') {
+        node.recycle();
+      }
+    });
+  } else if (typeof vdom.recycle === 'function') {
+    vdom.recycle();
+  }
+  return dom;
 };
 
 /**
@@ -369,8 +380,21 @@ exports.renderToDom = function renderToDom(template, data, partials) {
  * @return {String}          The string result
  */
 exports.renderToString = function renderToString(template, data, partials) {
+  // Set attributesOnly flag for this render
+  attributesOnly = true;
   var vdom = exports.renderToVdom(template, data, partials);
-  return tungsten.toString(vdom);
+  attributesOnly = false;
+  var str = tungsten.toString(vdom);
+  if (Context.isArray(vdom)) {
+    _.each(vdom, function(node) {
+      if (typeof node.recycle === 'function') {
+        node.recycle();
+      }
+    });
+  } else if (typeof vdom.recycle === 'function') {
+    vdom.recycle();
+  }
+  return str;
 };
 
 module.exports = exports;

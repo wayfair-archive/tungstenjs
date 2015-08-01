@@ -31,6 +31,12 @@ var vdomImpl = require('./virtual_dom_implementation');
 var isArray = require('x-is-array');
 var ObjectPool = require('./../utils/object_pool');
 
+var vnodePool = new ObjectPool(2000, vdomImpl.VNode, 'vdom');
+vnodePool.preallocate(100);
+// vtext only has one property that's guaranteed to be overwritten by the constructor
+var vtextPool = new ObjectPool(1000, vdomImpl.VText);
+vnodePool.preallocate(20);
+
 function isChild(x) {
   return vdomImpl.isVNode(x) || vdomImpl.isVText(x) || vdomImpl.isWidget(x);
 }
@@ -39,14 +45,14 @@ function isChildren(x) {
   return typeof x === 'string' || isArray(x) || isChild(x);
 }
 
-function addChild(c, childNodes, tag, props) {
+function addChild(c, childNodes) {
   if (typeof c === 'string') {
     childNodes.push(vtextPool.allocate(c));
   } else if (isChild(c)) {
     childNodes.push(c);
   } else if (isArray(c)) {
     for (var i = 0; i < c.length; i++) {
-      addChild(c[i], childNodes, tag, props);
+      addChild(c[i], childNodes);
     }
   } else if (c === null || c === undefined) {
     return;
@@ -78,7 +84,7 @@ function h(tagName, properties, children) {
   }
 
   if (children !== undefined && children !== null) {
-    addChild(children, childNodes, tag, props);
+    addChild(children, childNodes);
   }
 
   // Call constructor with allocated node
@@ -86,16 +92,14 @@ function h(tagName, properties, children) {
 }
 
 vdomImpl.VNode.prototype.recycleObj = function() {
-  for (var i = this.children.length; i--;) {
-    if (typeof this.children[i].recycle === 'function') {
-      this.children[i].recycle();
+  if (this.children) {
+    for (var i = this.children.length; i--;) {
+      if (typeof this.children[i].recycle === 'function') {
+        this.children[i].recycle();
+      }
     }
+    this.children.length = 0;
   }
-}
-var vnodePool = new ObjectPool(2000, vdomImpl.VNode);
-vnodePool.preallocate(100);
-// vtext only has one property that's guaranteed to be overwritten by the constructor
-var vtextPool = new ObjectPool(1000, vdomImpl.VText);
-vnodePool.preallocate(20);
+};
 
 module.exports = h;
