@@ -1,3 +1,6 @@
+var webpack = require('webpack');
+var path = require('path');
+
 module.exports = {
   output: {
     libraryTarget: 'var',
@@ -15,5 +18,17 @@ module.exports = {
     alias: {
       'jquery': 'backbone.native'
     }
+  },
+  resolveLoader: {
+    modulesDirectories: ['node_modules', path.join(__dirname, 'precompile')]
+  },
+  module: {
+    loaders: [
+      // { test: /\.js$/, loader: 'webpack-strip-block' },
+      { test: /\.html$/, loader: 'debug_template' },
+      { test: /\.css$/, loader: 'static_file' },
+      { test: /\.mustache$/, loader: 'tungsten_template' },
+      { test: /\.json$/, loader: 'json-loader' }
+    ]
   }
 };

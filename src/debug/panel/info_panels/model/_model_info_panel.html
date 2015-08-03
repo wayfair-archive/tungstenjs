@@ -1,0 +1,63 @@
+<div class="js-model-panel-view">
+    <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0" >
+        Model
+    </div>
+    {{#selectedModel}}
+    <div class="sidebar-pane visible">
+        <div class="body">
+            <div class="section expanded">
+                <ol data-property-key="" class="properties properties-tree monospace">
+                    <li data-property-name="debugName">
+                        <span class="name">debugName</span><span class="separator">: </span>
+                        <span class="value console-formatted-undefined"> {{getDebugName}} </span>
+                    </li>
+                    {{#tungstenCollection}}
+                      {{#parentProp}}
+                      <li data-property-name="parentProp">
+                          <span class="name">parentProp</span><span class="separator">: </span>
+                          <span class="value console-formatted-undefined"> {{parentProp}} </span>
+                      </li>
+                      {{/parentProp}}
+                    {{/tungstenCollection}}
+                    {{#tungstenModel}}
+                      {{#parentProp}}
+                      <li data-property-name="parentProp">
+                          <span class="name">parentProp</span><span class="separator">: </span>
+                          <span class="value console-formatted-undefined"> {{parentProp}} </span>
+                      </li>
+                      {{/parentProp}}
+                    {{/tungstenModel}}
+                </ol>
+            </div>
+        </div>
+    </div>
+    {{/selectedModel}}
+</div>
+{{#selectedModel.tungstenModel}}
+<div class="js-model-panel-view">
+    <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0" >
+        Attributes
+    </div>
+    {{#selectedModel}}
+    <div class="sidebar-pane visible">
+        <div class="body">
+            <div class="section expanded">
+                <ol data-property-key="" class="properties properties-tree monospace">
+                  {{#modelProperties}}
+                  <li data-property-name="attributes">
+                      <span class="name">{{key}}</span><span class="separator">: </span>
+                      {{#value.isRelation}}
+                      <span class="value console-formatted-undefined clickable-property js-model-list-item" data-id="{{value.name}}"> {{value.name}} </span>
+                      {{/value.isRelation}}
+                      {{^value.isRelation}}
+                      <span class="value console-formatted-undefined"> {{{value}}} </span>
+                      {{/value.isRelation}}
+                  </li>
+                  {{/modelProperties}}
+                </ol>
+            </div>
+        </div>
+    </div>
+    {{/selectedModel}}
+</div>
+{{/selectedModel.tungstenModel}}

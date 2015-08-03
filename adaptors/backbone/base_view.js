@@ -73,6 +73,9 @@ var BaseView = Backbone.View.extend({
         var self = this;
         self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
         self.initializeRenderListener(dataItem);
+        if (!this.options.dynamicInitialize) {
+          self.validateVdom();
+        }
         if (this.options.dynamicInitialize) {
           // If dynamicInitialize was set, render was already invoked, so childViews are attached
           self.postInitialize();
@@ -127,9 +130,40 @@ var BaseView = Backbone.View.extend({
    */
   postInitialize: function() {},
 
+  validateVdom: function() {
+    var isText = function(node) {
+      return typeof node === 'string' || node.type === 'VirtualText';
+    };
+
+    // If there's a mismatch in childNode counts, it's usually extra whitespace from the server
+    // We can trim those off so that the VTree is unaffected during lookups
+    // Since this is in the form of whitespace around the template, it's a simple type check on the first and last node
+    if (this.vtree.children.length !== this.el.childNodes.length) {
+      // If the first part of the template is a string or the first node isn't a textNode, assume that's fine
+      if (!isText(this.vtree.children[0]) && this.el.childNodes[0] && this.el.childNodes[0].nodeType === 3) {
+        this.el.removeChild(this.el.childNodes[0]);
+      }
+      // If the last part of the template is a string or the last node isn't a textNode, assume that's fine
+      var lastNode = this.el.childNodes[this.el.childNodes.length - 1];
+      if (!isText(this.vtree.children[this.vtree.children.length - 1]) && lastNode && lastNode.nodeType === 3) {
+        this.el.removeChild(lastNode);
+      }
+    }
+    /* develblock:start */
+    // Compare full template against full DOM
+    var expected = this.getVdomTemplate(true);
+    var actual = this.getElTemplate(true, true);
+    if (tungsten.debug.diff(expected, actual, true)) {
+      console.warn('DOM does not match VDOM. Use debug panel to see differences');
+    }
+    /* develblock:end */
+  },
+
   /* develblock:start */
   initDebug: function() {
     tungsten.debug.registry.register(this);
+    // Map getChildViews for template transparency
+    this.getChildren = this.getChildViews;
     _.bindAll(this, 'getEvents');
   },
   getEventFunction: function(selector) {
@@ -149,15 +183,15 @@ var BaseView = Backbone.View.extend({
     }
     return result;
   },
-  getElTemplate: function() {
-    return tungsten.debug.toString.view(this, true);
+  getElTemplate: function(recursive, bypassDomCheck) {
+    return tungsten.debug.toString.view(this, true, recursive, bypassDomCheck);
   },
-  getVdomTemplate: function() {
+  getVdomTemplate: function(recursive) {
     var vtreeToRender = this.vtree;
     if (!this.parentView) {
       vtreeToRender = vtreeToRender.children;
     }
-    return tungsten.debug.toString.vtree(vtreeToRender, true);
+    return tungsten.debug.toString.vtree(vtreeToRender, true, recursive);
   },
 
   isParent: function() {

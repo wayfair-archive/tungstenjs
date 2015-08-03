@@ -12,6 +12,7 @@
 'use strict';
 
 var logger = require('../../src/utils/logger');
+var tungsten = require('../../src/tungsten');
 
 /**
  * Wrapper Widget for child views
@@ -144,9 +145,12 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
 };
 
 /* develblock:start */
-BackboneViewWidget.prototype.templateToString = function() {
+BackboneViewWidget.prototype.templateToString = function(escaped, recursive) {
   if (!this.view) {
     return;
+  }
+  if (recursive) {
+    return tungsten.debug.toString.view(this.view, escaped, recursive);
   }
   return this.view.getDebugTag();
 };

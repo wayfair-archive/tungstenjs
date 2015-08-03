@@ -2,18 +2,15 @@
   <div view="ui-layout" class="app-tool ui-tool clearfix">
     <div data-region="view-tree" class="tool-panel list-panel">
       <ul data-view="tree-view" data-cid="-1" class="tree-group is-expanded js-view-tree-list">
-        {{#activeViews}}
-          {{> _view_list_item }}
-        {{/activeViews}}
+        {{#activeModels}}
+          {{> _model_list_item }}
+        {{/activeModels}}
       </ul>
     </div>
     <div data-region="view-more-info" class="tool-panel info-panel">
       <div class="sidebar-panel">
         <div class="sidebar-pane-stack flex-auto visible">
-          {{> info_panels/view/_view_info_panel }}
-          {{> info_panels/view/_events_info_panel }}
-          {{> info_panels/view/_model_info_panel }}
-          {{> info_panels/view/_template_info_panel }}
+          {{> info_panels/model/_model_info_panel }}
         </div>
       </div>
     </div>

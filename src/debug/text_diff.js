@@ -83,7 +83,7 @@ function diff(o, n) {
   };
 }
 
-function diffString(o, n) {
+function diffString(o, n, onlyDiff) {
   o = o.replace(/\s+$/, '');
   n = n.replace(/\s+$/, '');
 
@@ -136,7 +136,7 @@ function diffString(o, n) {
   }
 
   // If the differences are whitespace only, disregard
-  return /^\s*$/.test(differences) ? 'No differences' : str;
+  return /^\s*$/.test(differences) ? (onlyDiff ? '' : 'No differences') : str;
 }
 
 module.exports = diffString;

@@ -53,7 +53,7 @@ var entities = {
 
 var noClosing = _.invert(['br', 'hr', 'img', 'input', 'meta', 'link']);
 var selfClosing = _.invert(['area', 'base', 'col', 'command', 'embed', 'hr', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
-function toString(vtree, escaped) {
+function toString(vtree, escaped, recursive) {
   var chars = entities[escaped ? 'escaped' : 'unescaped'];
   var output = '';
   var i;
@@ -87,13 +87,13 @@ function toString(vtree, escaped) {
     } else {
       output += chars.close;
       for (i = 0; i < vtree.children.length; i++) {
-        output += toString(vtree.children[i], escaped);
+        output += toString(vtree.children[i], escaped, recursive);
       }
       output += chars.open + '/' + tagName + chars.close;
     }
   } else if (virtualDomImplementation.isWidget(vtree)) {
     if (typeof vtree.templateToString === 'function') {
-      output += vtree.templateToString(true);
+      output += vtree.templateToString(escaped, recursive);
     } else {
       console.warn('Widget type: ' + vtree.constructor.name + ' has no templateToString function, falling back to DOM');
       var elem = vdom.create(virtualHyperscript('div', {}, vtree));
@@ -105,7 +105,7 @@ function toString(vtree, escaped) {
     output += escapeString(vtree);
   } else if (vtree.length) {
     for (i = 0; i < vtree.length; i++) {
-      output += toString(vtree[i], escaped);
+      output += toString(vtree[i], escaped, recursive);
     }
   }
   return output;

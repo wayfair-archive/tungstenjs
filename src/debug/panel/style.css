@@ -10813,3 +10813,26 @@ pre.template-string {
   background-color: transparent;
   border: none;
 }
+
+#loading_overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(203, 159, 210, 0.48);
+  left: 0;
+  top: 0;
+  z-index: 999999999;
+}
+
+#loading_overlay_message {
+  font-size: 42px;
+  font-weight: bold;
+  color: #995CA3;
+  position: absolute;
+  width: 50%;
+  height: 40%;
+  top: 30%;
+  left: 25%;
+  word-break: normal;
+  text-align: center;
+}

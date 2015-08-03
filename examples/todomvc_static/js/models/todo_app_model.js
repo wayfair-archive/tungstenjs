@@ -14,7 +14,7 @@ var AppModel = Model.extend({
   defaults: {
     todoItems: []
   },
-  initialize: function() {
+  postInitialize: function() {
     this.setCount();
     this.listenTo(this.get('todoItems'), 'add remove reset change', this.setCount);
     this.listenTo(this, 'addItem', function(title) {
@@ -31,5 +31,7 @@ var AppModel = Model.extend({
     this.set('todoCountPlural', completedItems.length !== 1);
     this.set('completedItems', this.get('todoItems').length - completedItems.length > 0);
   }
+}, {
+  debugName: 'TodoAppModel'
 });
 module.exports = AppModel;

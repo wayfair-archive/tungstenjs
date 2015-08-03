@@ -9,22 +9,30 @@
         <div class="navbar-header">
         </div>
         <ul class="nav navbar-nav js-tabs-bar">
-          {{#tabs}}
-          <li data-tool="ui" data-route="ui" class="js-tab {{#isActive}}active{{/isActive}}">
+          {{#tabs.tabs}}
+          <li data-route="{{activeTabName}}" class="js-tab {{#isActive}}active{{/isActive}}">
             <a href="#">{{name}}</a>
           </li>
-          {{/tabs}}
+          {{/tabs.tabs}}
         </ul>
       </nav>
       <ul>
         <li class="js-tab-content">
-          {{#tabs}}
+          {{#tabs.selected}}
             {{#showViewTab}}
-            {{> _view_info_pane }}
+              {{> _view_info_pane }}
             {{/showViewTab}}
-          {{/tabs}}
+            {{#showModelTab}}
+              {{> _model_info_pane }}
+            {{/showModelTab}}
+          {{/tabs.selected}}
         </li>
       </ul>
     </div>
   </div>
 </div>
+{{#loading}}
+<div id="loading_overlay">
+  <div id="loading_overlay_message">Parent window lost, attempting reconnection. <span id="loading_message_count">{{loading}}</span> attempts remaining</div>
+</div>
+{{/loading}}

@@ -1,0 +1,16 @@
+<li data-view="" class="js-view-list-item tree-group-item {{#selected}}is-highlighted{{/selected}}" data-id="{{getDebugName}}">
+  <div class="tree-list-item-hover">
+    <span class="toggle-caret glyphicon{{#isParent}} glyphicon-chevron-{{^collapsed}}down{{/collapsed}}{{#collapsed}}right{{/collapsed}} js-toggle-view-children{{/isParent}}"></span>
+    <a class="js-more-info" href="#">{{getDebugName}}</a>
+  </div>
+  {{^collapsed}}
+    {{#isParent}}
+    <ul class="tree-group">
+      {{#getChildren}}
+        {{! RECURSIVE BE CAREFUL }}
+        {{> _view_list_item }}
+      {{/getChildren}}
+    </ul>
+    {{/isParent}}
+  {{/collapsed}}
+</li>

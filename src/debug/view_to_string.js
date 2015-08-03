@@ -63,7 +63,7 @@ function isChildNode(elem, childNodes) {
 var noClosing = _.invert(['br', 'hr', 'img', 'input', 'meta', 'link']);
 var selfClosing = _.invert(['area', 'base', 'col', 'command', 'embed', 'hr', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
 
-function elemToString(tree, escaped, childNodes) {
+function elemToString(tree, escaped, recursive, childNodes) {
   var chars = entities[escaped ? 'escaped' : 'unescaped'];
   var output = '';
   if (!tree) {
@@ -87,7 +87,7 @@ function elemToString(tree, escaped, childNodes) {
     } else {
       output += chars.close;
       for (i = 0; i < tree.childNodes.length; i++) {
-        output += elemToString(tree.childNodes[i], escaped, childNodes);
+        output += elemToString(tree.childNodes[i], escaped, recursive, childNodes);
       }
       output += chars.open + '/' + tagName + chars.close;
     }
@@ -97,7 +97,7 @@ function elemToString(tree, escaped, childNodes) {
     output += escapeString(tree.textContent);
   } else if (tree.length) {
     for (i = 0; i < tree.length; i++) {
-      output += elemToString(tree[i], escaped, childNodes);
+      output += elemToString(tree[i], escaped, recursive, childNodes);
     }
   }
   return output;
@@ -116,15 +116,15 @@ function isInDOMTree(node) {
   return topAncestor === document;
 }
 
-function toString(view, escaped) {
+function toString(view, escaped, recursive, bypassDomCheck) {
   var elemToRender = view.el;
   if (!view.parentView) {
     elemToRender = elemToRender.childNodes;
   }
-  if (!isInDOMTree(view.el)) {
+  if (!bypassDomCheck && !isInDOMTree(view.el)) {
     return 'View is detached from the page DOM';
   } else {
-    return elemToString(elemToRender, escaped, view.getChildViews());
+    return elemToString(elemToRender, escaped, recursive, view.getChildViews());
   }
 }
 
