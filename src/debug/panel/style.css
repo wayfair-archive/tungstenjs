@@ -8057,8 +8057,7 @@ li.tree-group-item.is-highlighted:hover {
   color: #277dc5; }
 .info-panel .sidebar-panel {
   width: 100%;
-  height: 100%;
-  overflow-y: hidden; }
+  height: 100%; }
 .info-panel .sidebar-panel .sidebar-pane-title {
   overflow: visible; }
 
@@ -8267,6 +8266,10 @@ iframe.view {
 
 .monospace {
   font-size: 10px !important;
+  font-family: monospace; }
+
+.monospace-lg {
+  font-size: 12px !important;
   font-family: monospace; }
 
 .webkit-html-comment {
@@ -10798,4 +10801,15 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+pre.template-string {
+  background-color: transparent;
+  border: none;
 }

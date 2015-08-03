@@ -2,7 +2,7 @@
   <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0">
     Options
   </div>
-  {{#selectedView.attributes.options}}
+  {{#selectedView.options}}
   <div class="sidebar-pane visible">
     <div class="body">
       <div class="section expanded">
@@ -17,11 +17,11 @@
           </li>
           <li data-property-name="parentView" data-dom-element="">
             <span class="name">parentView</span><span class="separator">: </span>
-            <span class="js-view-el value console-formatted-undefined">{{parentView}}</span>
+            <span class="js-tree-list-item value clickable-property console-formatted-undefined" data-id="{{parentView.getDebugName}}">{{parentView.getDebugName}}</span>
           </li>
         </ol>
       </div>
     </div>
   </div>
-  {{/selectedView.attributes.options}}
+  {{/selectedView.options}}
 </div>

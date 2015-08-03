@@ -130,19 +130,44 @@ var BaseView = Backbone.View.extend({
   /* develblock:start */
   initDebug: function() {
     tungsten.debug.registry.register(this);
-    // this.on('rendered', this.validateTemplate);
+    _.bindAll(this, 'getEvents');
   },
-  validateTemplate: function() {
-    tungsten.debug.validateVdom(
-      this,
-      this.compiledTemplate.toString(this.serialize()),
-      this.parentView ? this.el.outerHTML : this.el.innerHTML
-    );
+  getEventFunction: function(selector) {
+    var events = _.result(this, 'events');
+    return this[events[selector]];
+  },
+  getEvents: function() {
+    var events = _.result(this, 'events');
+    var eventKeys = _.keys(events);
+
+    var result = new Array(eventKeys.length);
+    for (var i = 0; i < eventKeys.length; i++) {
+      result[i] = {
+        selector: eventKeys[i],
+        fn: events[eventKeys[i]]
+      };
+    }
+    return result;
+  },
+  getElTemplate: function() {
+    return tungsten.debug.toString.view(this, true);
+  },
+  getVdomTemplate: function() {
+    var vtreeToRender = this.vtree;
+    if (!this.parentView) {
+      vtreeToRender = vtreeToRender.children;
+    }
+    return tungsten.debug.toString.vtree(vtreeToRender, true);
   },
 
   isParent: function() {
     var children = this.getChildViews();
     return children.length;
+  },
+
+  getDebugTag: function() {
+    var name = this.getDebugName();
+    return '<span class="js-tree-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
   },
 
   getDebugName: function() {

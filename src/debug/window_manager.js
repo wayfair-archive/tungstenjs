@@ -1,6 +1,8 @@
 'use strict';
 
 var _ = require('underscore');
+var highlighter = require('./highlighter');
+var textDiff = require('./text_diff');
 
 var debugWindow;
 
@@ -39,13 +41,14 @@ var appData = {
       showViewTab: true
     }
   ],
-  activeViews: function() {
-    return _.values(appData.views);
-  },
+  activeViews: [],
+  selectedView: null,
   views: {}
 };
+window.appData = appData;
 
-function addEvent(elems, eventName, handler) {
+function addEvent(query, eventName, handler) {
+  var elems = (typeof query === 'string' ? debugWindow.document.querySelectorAll(query) : query);
   if (elems instanceof debugWindow.Element) {
     elems.addEventListener(eventName, handler);
   } else if (elems.length) {
@@ -76,26 +79,70 @@ function renderDebugPanel() {
   if (debugWindow) {
     var debugDoc = debugWindow.document;
     debugDoc.body.innerHTML = templates.panel.render(appData, templates);
-    addEvent(debugDoc.querySelectorAll('.js-toggle-children'), 'click', function(e) {
+    addEvent('.js-toggle-children', 'click', function(e) {
+      e.stopPropagation();
       var view = getClosestView(e.target);
       view.collapsed = !view.collapsed;
       renderDebugPanel();
     });
-    addEvent(debugDoc.querySelectorAll('.js-toggle-children'), 'click', function(e) {
+    addEvent('.js-tree-list-item', 'click', function(e) {
+      if (appData.selectedView) {
+        appData.selectedView.off('rendered', renderDebugPanel);
+      }
+      appData.selectedView = getClosestView(e.target);
+      appData.selectedView.on('rendered', updateSelectedView);
+      var cids = _.keys(appData.views);
+      for (var i = 0; i < cids.length; i++) {
+        appData.views[cids[i]].selected = appData.views[cids[i]] === appData.selectedView;
+      }
+      updateSelectedView();
+    });
+    addEvent('.js-tree-list-item', 'mouseover', function(e) {
       var view = getClosestView(e.target);
-      view.collapsed = !view.collapsed;
-      renderDebugPanel();
+      highlighter(view.el, view.getDebugName());
+    });
+    addEvent('.js-tree-list-item', 'mouseout', function() {
+      highlighter(null);
+    });
+    addEvent('.js-view-element', 'click', function() {
+      console.log(appData.selectedView.el);
+    });
+    addEvent('.js-view-event', 'click', function(e) {
+      var selector = e.currentTarget.getAttribute('data-event-selector');
+      console.log(selector, appData.selectedView.getEventFunction(selector));
     });
   }
 }
 
-var eventBus = require('./event_bus');
-eventBus.on(eventBus.CHANGED_REGISTERED, function(views) {
-  appData.views = views;
+window.renderDebugPanel = renderDebugPanel;
+
+var debugTagRegex = /<span class="js-tree-list-item .*?" data-id=".*?">(.*?)<\/span>/g;
+function removeDebugTags(templateStr) {
+  var cleanVdom = templateStr.replace(debugTagRegex, function(fullMatch, debugName) {
+    return debugName;
+  });
+  return cleanVdom;
+}
+
+function updateSelectedView() {
+  var vdomTemplate = appData.selectedView.getVdomTemplate();
+  var elTemplate = appData.selectedView.getElTemplate();
+  appData.selectedView.templateDiff = textDiff(removeDebugTags(vdomTemplate), removeDebugTags(elTemplate));
+  appData.selectedView.vdomTemplate = vdomTemplate;
+  appData.selectedView.elTemplate = elTemplate;
   renderDebugPanel();
+}
+
+var eventBus = require('./event_bus');
+eventBus.on(eventBus.ALL, _.debounce(renderDebugPanel, 50));
+eventBus.on(eventBus.CHANGED_REGISTERED, function(nestedViews, flatViews) {
+  appData.activeViews = _.values(nestedViews);
+  appData.views = flatViews;
+  _.each(appData.views, function(view) {
+    view.selected = view.selected || false;
+  });
 });
 
-var debugWrapper;
 window.launchDebugger = function() {
   // If the window isn't open attempt to open it
   // If launch is successful this function will be re-invoked
@@ -107,60 +154,10 @@ window.launchDebugger = function() {
   renderDebugPanel();
 };
 
-function getExpandable(name) {
-  var details = document.createElement('details');
-  var summary = document.createElement('summary');
-  summary.innerHTML = name;
-  details.appendChild(summary);
-  return details;
-}
-
-var debugPanel = {};
-function getDebugPanel(view) {
-  var debugName = view.getDebugName();
-  var wrapper = debugWrapper;
-  if (view.parentView) {
-    wrapper = getDebugPanel(view.parentView);
-    wrapper = wrapper.getElementsByClassName('child-container')[0];
-  }
-  if (debugPanel[debugName] == null) {
-    var details = getExpandable(debugName);
-
-    var templateWrapper = getExpandable('Template validation');
-    var templateDiff = document.createElement('pre');
-    templateDiff.className = 'template';
-    templateDiff.appendChild(document.createElement('code'));
-    templateWrapper.appendChild(templateDiff);
-
-    var childContainer = document.createElement('div');
-    childContainer.className = 'child-container';
-
-    details.appendChild(templateWrapper);
-    details.appendChild(childContainer);
-    wrapper.appendChild(details);
-
-    debugPanel[debugName] = details;
-  }
-
-  return debugPanel[debugName];
-}
-
 var diffText = require('./text_diff');
 exports.validateVdom = function(view, expected, actual) {
-  var output = getDebugPanel(view);
-  output.style.display = 'none';
   var diff = diffText(expected.toLowerCase(), actual.toLowerCase());
-  output.getElementsByTagName('code')[0].innerHTML = diff;
-  output.style.display = '';
-};
-
-exports.removeDebugPanel = function(view) {
-  var debugName = view.getDebugName();
-  var panel = debugPanel[debugName];
-  if (panel) {
-    panel.parentNode.removeChild(panel);
-    debugPanel[debugName] = null;
-  }
+  eventBus.trigger(eventBus.UPDATED_DOM_DIFF, view, diff);
 };
 
 getWindow();

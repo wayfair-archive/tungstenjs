@@ -2,30 +2,38 @@
     <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0" >
         Model
     </div>
-    {{#selectedView.attributes.model}}
+    {{#selectedView.model}}
     <div class="sidebar-pane visible">
         <div class="body">
             <div class="section expanded">
                 <ol data-property-key="" class="properties properties-tree monospace">
-                    <li data-property-name="cid">
-                        <span class="name">cid</span><span class="separator">: </span>
-                        <span class="value console-formatted-undefined"> {{cid}} </span>
-                    </li>
                     <li data-property-name="debugName">
                         <span class="name">debugName</span><span class="separator">: </span>
-                        <span class="value console-formatted-undefined"> {{debugName}} </span>
+                        <span class="value console-formatted-undefined"> {{getDebugName}} </span>
                     </li>
+                    {{#collection}}
                     <li data-property-name="collection">
                         <span class="name">collectionCid</span><span class="separator">: </span>
-                        <span class="value console-formatted-undefined"> {{collection.cid}} </span>
+                        <span class="value console-formatted-undefined"> {{collection.getDebugName}} </span>
                     </li>
+                    {{#parentProp}}
                     <li data-property-name="parentProp">
                         <span class="name">parentProp</span><span class="separator">: </span>
-                        <span class="value console-formatted-undefined"> {{collection.parentProp}} </span>
+                        <span class="value console-formatted-undefined"> {{parentProp}} </span>
                     </li>
+                    {{/parentProp}}
+                    {{/collection}}
+                    {{^collection}}
+                      {{#parentProp}}
+                      <li data-property-name="parentProp">
+                          <span class="name">parentProp</span><span class="separator">: </span>
+                          <span class="value console-formatted-undefined"> {{parentProp}} </span>
+                      </li>
+                      {{/parentProp}}
+                    {{/collection}}
                 </ol>
             </div>
         </div>
     </div>
-    {{/selectedView.attributes.model}}
+    {{/selectedView.model}}
 </div>

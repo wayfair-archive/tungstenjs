@@ -1,0 +1,42 @@
+<div class="js-template-panel-view">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0">
+    VDOM Template
+  </div>
+  {{#selectedView}}
+  <div class="sidebar-pane visible">
+    <div class="body">
+      <div class="section expanded text-left">
+        <pre class="template-string"><code class="monospace-lg">{{{vdomTemplate}}}</code></pre>
+      </div>
+    </div>
+  </div>
+  {{/selectedView}}
+</div>
+<div class="js-template-panel-view">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0">
+    Element Markup
+  </div>
+  {{#selectedView}}
+  <div class="sidebar-pane visible">
+    <div class="body">
+      <div class="section expanded text-left">
+        <pre class="template-string"><code class="monospace-lg">{{{elTemplate}}}</code></pre>
+      </div>
+    </div>
+  </div>
+  {{/selectedView}}
+</div>
+<div class="js-template-panel-view">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0">
+    Diffence
+  </div>
+  {{#selectedView}}
+  <div class="sidebar-pane visible">
+    <div class="body">
+      <div class="section expanded text-left">
+        <pre class="template-string"><code class="monospace-lg">{{{templateDiff}}}</code></pre>
+      </div>
+    </div>
+  </div>
+  {{/selectedView}}
+</div>

@@ -141,7 +141,15 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
     // Call the update model to run and updates if the model has changed
     this.view.update(this.model);
   }
-
 };
+
+/* develblock:start */
+BackboneViewWidget.prototype.templateToString = function() {
+  if (!this.view) {
+    return;
+  }
+  return this.view.getDebugTag();
+};
+/* develblock:end */
 
 module.exports = BackboneViewWidget;

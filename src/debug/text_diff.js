@@ -2,7 +2,7 @@
  * Javascript Diff Algorithm
  *  By John Resig (http://ejohn.org/)
  *  Modified by Chu Alan "sprite"
- *  Modified by MattDeeg for CommonJS spec and repo code standards
+ *  Modified by MattDeeg for CommonJS and project needs
  *
  * Released under the MIT license.
  *
@@ -10,16 +10,6 @@
  *  http://ejohn.org/projects/javascript-diff-algorithm/
  */
 'use strict';
-
-function escape(s) {
-  var n = s;
-  n = n.replace(/&/g, '&amp;');
-  n = n.replace(/</g, '&lt;');
-  n = n.replace(/>/g, '&gt;');
-  n = n.replace(/"/g, '&quot;');
-
-  return n;
-}
 
 function diff(o, n) {
   var ns = {};
@@ -97,7 +87,7 @@ function diffString(o, n) {
   o = o.replace(/\s+$/, '');
   n = n.replace(/\s+$/, '');
 
-  var differences = false;
+  var differences = '';
 
   var out = diff(o === '' ? [] : o.split(/\s+/), n === '' ? [] : n.split(/\s+/));
   var str = '';
@@ -118,34 +108,35 @@ function diffString(o, n) {
   var i;
   if (out.n.length === 0) {
     for (i = 0; i < out.o.length; i++) {
-      differences = true;
-      str += '<del>' + escape(out.o[i]) + oSpace[i] + '</del>';
+      differences += out.o[i] + oSpace[i];
+      str += '<del>' + out.o[i] + oSpace[i] + '</del>';
     }
   } else {
     if (out.n[0].text == null) {
       for (n = 0; n < out.o.length && out.o[n].text == null; n++) {
-        differences = true;
-        str += '<del>' + escape(out.o[n]) + oSpace[n] + '</del>';
+        differences = out.o[n] + oSpace[n];
+        str += '<del>' + out.o[n] + oSpace[n] + '</del>';
       }
     }
 
     for (i = 0; i < out.n.length; i++) {
       if (out.n[i].text == null) {
-        differences = true;
-        str += '<ins>' + escape(out.n[i]) + nSpace[i] + '</ins>';
+        differences = out.n[i] + nSpace[i];
+        str += '<ins>' + out.n[i] + nSpace[i] + '</ins>';
       } else {
         var pre = '';
 
         for (n = out.n[i].row + 1; n < out.o.length && out.o[n].text == null; n++) {
-          differences = true;
-          pre += '<del>' + escape(out.o[n]) + oSpace[n] + '</del>';
+          differences = out.o[n] + oSpace[n];
+          pre += '<del>' + out.o[n] + oSpace[n] + '</del>';
         }
-        str += ' ' + escape(out.n[i].text + nSpace[i]) + pre;
+        str += ' ' + out.n[i].text + nSpace[i] + pre;
       }
     }
   }
 
-  return differences ? str : 'No differences';
+  // If the differences are whitespace only, disregard
+  return /^\s*$/.test(differences) ? 'No differences' : str;
 }
 
 module.exports = diffString;
