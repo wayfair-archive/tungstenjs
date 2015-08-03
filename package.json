@@ -25,7 +25,7 @@
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
     "hogan.js": "^3.0.2",
-    "html-tokenizer": "git+http://github.com:MattDeeg/html-tokenizer.git#master",
+    "html-tokenizer": "^1.4.4",
     "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
     "underscore": "^1.7.0",
