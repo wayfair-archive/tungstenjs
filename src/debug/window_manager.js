@@ -20,45 +20,6 @@ function getWindow() {
   }
 }
 
-function gotoTab(tabName) {
-  appData.tabs.selected = {};
-  appData.tabs.selected[tabName] = true;
-  _.each(appData.tabs.tabs, function(data) {
-    data.isActive = data.activeTabName === tabName;
-  });
-  renderDebugPanel();
-}
-
-window.attachTungstenDebugPane = function(panel) {
-  debugWindow = panel;
-  if (debugWindow.activeTab) {
-    gotoTab(debugWindow.activeTab);
-  }
-  launchDebugger();
-};
-
-function launchDebugger() {
-  // If the window isn't open attempt to open it
-  // If launch is successful this function will be re-invoked
-  if (!debugWindow) {
-    getWindow();
-    return;
-  }
-
-  renderDebugPanel();
-}
-
-var ctx = require.context('./panel', true, /\.html$/);
-var files = ctx.keys();
-var templates = {};
-for (var i = 0; i < files.length; i++) {
-  var templateName = files[i];
-  templateName = templateName.replace('./', '');
-  templateName = templateName.replace('.html', '');
-
-  templates[templateName] = ctx(files[i]);
-}
-
 var appData = {
   styles: require('./panel/style.css'),
   tabs: {
@@ -84,6 +45,48 @@ var appData = {
   models: []
 };
 window.appData = appData;
+
+function gotoTab(tabName) {
+  appData.tabs.selected = {};
+  appData.tabs.selected[tabName] = true;
+  _.each(appData.tabs.tabs, function(data) {
+    data.isActive = data.activeTabName === tabName;
+  });
+  renderDebugPanel();
+}
+
+window.attachTungstenDebugPane = function(panel) {
+  debugWindow = panel;
+  if (debugWindow.activeTab) {
+    gotoTab(debugWindow.activeTab);
+  }
+  debugWindow.onunload = function() {
+    debugWindow = null;
+  };
+  launchDebugger();
+};
+
+function launchDebugger() {
+  // If the window isn't open attempt to open it
+  // If launch is successful this function will be re-invoked
+  if (!debugWindow) {
+    getWindow();
+    return;
+  }
+
+  renderDebugPanel();
+}
+
+var ctx = require.context('./panel', true, /\.html$/);
+var files = ctx.keys();
+var templates = {};
+for (var i = 0; i < files.length; i++) {
+  var templateName = files[i];
+  templateName = templateName.replace('./', '');
+  templateName = templateName.replace('.html', '');
+
+  templates[templateName] = ctx(files[i]);
+}
 
 function selectElements(className) {
   if (debugWindow.document.querySelectorAll) {
@@ -315,7 +318,7 @@ window.launchDebugger = function() {
   }
 };
 
-console.info('Tungsten Debugger is enabled. Run "launchDebugger()" to enable');
+console.info('Tungsten Debugger is enabled. Run "launchDebugger()" to enable.\nA button will need to be clicked to satisfy the user input requirement for window.open.');
 
 /**
  * When the parent window unloads, the debug window polls to reattach
