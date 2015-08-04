@@ -94,6 +94,10 @@ eventBus.on(eventBus.CHANGED_REGISTERED, function(nestedRegistry, flatRegistry) 
   appData.models = flatRegistry.models;
 });
 
+// Expose method that can be called from a user event handler
+window.launchDebuggerFromEvent = launchDebugger;
+
+// Generic method adds a styled button/overlay to load the debug window
 window.launchDebugger = function() {
   if (debugWindow) {
     debugWindow.focus();
