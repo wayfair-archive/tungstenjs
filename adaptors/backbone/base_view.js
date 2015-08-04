@@ -27,6 +27,7 @@ var BaseView = Backbone.View.extend({
     if (!this.el) {
       return false;
     }
+
     this.options = options || {};
 
     // Pass router through options, setting router.view if not already set
@@ -50,6 +51,10 @@ var BaseView = Backbone.View.extend({
     if (this.options.parentView) {
       this.parentView = this.options.parentView;
     }
+
+    /* develblock:start */
+    this.initDebug();
+    /* develblock:end */
 
     var dataItem = this.serialize();
 
@@ -93,10 +98,6 @@ var BaseView = Backbone.View.extend({
       this.initializeRenderListener(dataItem);
       this.postInitialize();
     }
-
-    /* develblock:start */
-    this.initDebug();
-    /* develblock:end */
   },
   tungstenViewInstance: true,
   debouncer: null,
@@ -162,13 +163,41 @@ var BaseView = Backbone.View.extend({
   /* develblock:start */
   initDebug: function() {
     tungsten.debug.registry.register(this);
-    // Map getChildViews for template transparency
-    this.getChildren = this.getChildViews;
-    _.bindAll(this, 'getEvents');
+    _.bindAll(this, 'getEvents', 'isParent', 'getDebugName', 'getChildViews');
   },
   getEventFunction: function(selector) {
     var events = _.result(this, 'events');
     return this[events[selector]];
+  },
+  getFunctions: function(trackedFunctions, getTrackableFunction) {
+    var result = [];
+    // Debug functions shouldn't be debuggable
+    var blacklist = {
+      constructor: true,
+      initialize: true,
+      postInitialize: true,
+      initDebug: true,
+      getEventFunction: true,
+      getFunctions: true,
+      getEvents: true,
+      getElTemplate: true,
+      getVdomTemplate: true,
+      isParent: true,
+      getChildren: true,
+      getDebugTag: true,
+      getDebugName: true
+    };
+    for (var key in this) {
+      if (typeof this[key] === 'function' && blacklist[key] !== true) {
+        result.push({
+          name: key,
+          fn: this[key],
+          inherited: (key in BaseView.prototype)
+        });
+        this[key] = getTrackableFunction(this, key, trackedFunctions);
+      }
+    }
+    return result;
   },
   getEvents: function() {
     var events = _.result(this, 'events');
@@ -178,6 +207,7 @@ var BaseView = Backbone.View.extend({
     for (var i = 0; i < eventKeys.length; i++) {
       result[i] = {
         selector: eventKeys[i],
+        tracked: false,
         fn: events[eventKeys[i]]
       };
     }
@@ -195,8 +225,12 @@ var BaseView = Backbone.View.extend({
   },
 
   isParent: function() {
-    var children = this.getChildViews();
-    return children.length;
+    var children = this.getChildren();
+    return children.length > 0;
+  },
+
+  getChildren: function() {
+    return this.constructor.prototype.getChildViews.call(this);
   },
 
   getDebugTag: function() {

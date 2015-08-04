@@ -10836,3 +10836,18 @@ pre.template-string {
   word-break: normal;
   text-align: center;
 }
+
+.group_label {
+  float: right;
+  height: 20px;
+  line-height: 20px;
+}
+.group_label input[type=checkbox] {
+  float: right;
+  margin-left: 5px;
+}
+
+li hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}

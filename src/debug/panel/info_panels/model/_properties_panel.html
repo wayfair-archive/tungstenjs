@@ -1,0 +1,39 @@
+{{#selectedModel.tungstenModel}}
+<div class="js-model-panel-view">
+    <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="modelProperties" >
+        Attributes
+    </div>
+    {{^hiddenPanels.modelProperties}}
+      {{#selectedModel}}
+      <div class="sidebar-pane visible">
+          <div class="body">
+              <div class="section expanded">
+                  <ol data-property-key="" class="properties properties-tree monospace">
+                    {{#modelProperties}}
+                    <li data-property-name="attributes" class="js-model-property" data-key="{{key}}">
+                        <span class="name">{{key}}</span><span class="separator">: </span>
+                        {{#data}}
+                          {{#isRelation}}
+                          <span class="value console-formatted-undefined clickable-property js-model-list-item" data-id="{{name}}"> {{name}} </span>
+                          {{/isRelation}}
+                          {{^isRelation}}
+                          <span class="value console-formatted-undefined clickable-property">
+                            {{#isEditing}}
+                              <input type="text" value="{{encodedValue}}" autofocus="true" class="js-model-property-value">
+                            {{/isEditing}}
+                            {{^isEditing}}
+                              <span>{{{value}}}</span>
+                            {{/isEditing}}
+                          </span>
+                          {{/isRelation}}
+                        {{/data}}
+                    </li>
+                    {{/modelProperties}}
+                  </ol>
+              </div>
+          </div>
+      </div>
+      {{/selectedModel}}
+    {{/hiddenPanels.modelProperties}}
+</div>
+{{/selectedModel.tungstenModel}}

@@ -40,6 +40,35 @@ var BaseModel = Backbone.Model.extend({
     return results;
   },
 
+  getFunctions: function(trackedFunctions, getTrackableFunction) {
+    var result = [];
+    // Debug functions shouldn't be debuggable
+    var blacklist = {
+      constructor: true,
+      initialize: true,
+      set: true,
+      postInitialize: true,
+      initDebug: true,
+      getFunctions: true,
+      getVdomTemplate: true,
+      isParent: true,
+      getChildren: true,
+      getDebugTag: true,
+      getDebugName: true
+    };
+    for (var key in this) {
+      if (typeof this[key] === 'function' && blacklist[key] !== true) {
+        result.push({
+          name: key,
+          fn: this[key],
+          inherited: (key in BaseModel.prototype)
+        });
+        this[key] = getTrackableFunction(this, key, trackedFunctions);
+      }
+    }
+    return result;
+  },
+
   isParent: function() {
     return _.size(this.relations) > 0;
   },
@@ -51,7 +80,7 @@ var BaseModel = Backbone.Model.extend({
       if (relations && relations[key]) {
         properties.push({
           key: key,
-          value: {
+          data: {
             isRelation: true,
             name: value.getDebugName()
           }
@@ -59,7 +88,11 @@ var BaseModel = Backbone.Model.extend({
       } else {
         properties.push({
           key: key,
-          value: value
+          data: {
+            isEditing: false,
+            encodedValue: JSON.stringify(value),
+            value: value
+          }
         });
       }
     });

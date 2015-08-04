@@ -1,28 +1,32 @@
 <div class="js-template-panel-view">
-  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="viewVDOM">
     VDOM Template
   </div>
-  {{#selectedView}}
-  <div class="sidebar-pane visible">
-    <div class="body">
-      <div class="section expanded text-left">
-        <pre class="template-string"><code class="monospace-lg">{{{vdomTemplate}}}</code></pre>
+  {{^hiddenPanels.viewVDOM}}
+    {{#selectedView}}
+    <div class="sidebar-pane visible">
+      <div class="body">
+        <div class="section expanded text-left">
+          <pre class="template-string"><code class="monospace-lg">{{{vdomTemplate}}}</code></pre>
+        </div>
       </div>
     </div>
-  </div>
-  {{/selectedView}}
+    {{/selectedView}}
+  {{/hiddenPanels.viewVDOM}}
 </div>
 <div class="js-template-panel-view">
-  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="viewDiff">
     Difference From Current DOM
   </div>
-  {{#selectedView}}
-  <div class="sidebar-pane visible">
-    <div class="body">
-      <div class="section expanded text-left">
-        <pre class="template-string"><code class="monospace-lg">{{{templateDiff}}}</code></pre>
+  {{^hiddenPanels.viewDiff}}
+    {{#selectedView}}
+    <div class="sidebar-pane visible">
+      <div class="body">
+        <div class="section expanded text-left">
+          <pre class="template-string"><code class="monospace-lg">{{{templateDiff}}}</code></pre>
+        </div>
       </div>
     </div>
-  </div>
-  {{/selectedView}}
+    {{/selectedView}}
+  {{/hiddenPanels.viewDiff}}
 </div>

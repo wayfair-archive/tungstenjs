@@ -1,8 +1,8 @@
 'use strict';
 
 var _ = require('underscore');
-var highlighter = require('./highlighter');
-var textDiff = require('./text_diff');
+var utils = require('./panel_js/utils');
+var appData = require('./panel_js/app_data');
 
 var debugWindow;
 
@@ -20,45 +20,10 @@ function getWindow() {
   }
 }
 
-var appData = {
-  styles: require('./panel/style.css'),
-  tabs: {
-    tabs: [
-      {
-        name: 'View',
-        isActive: true,
-        activeTabName: 'showViewTab'
-      },
-      {
-        name: 'Data',
-        isActive: false,
-        activeTabName: 'showModelTab'
-      }
-    ],
-    selected: {
-      showViewTab: true
-    }
-  },
-  activeViews: [],
-  selectedView: null,
-  views: {},
-  models: []
-};
-window.appData = appData;
-
-function gotoTab(tabName) {
-  appData.tabs.selected = {};
-  appData.tabs.selected[tabName] = true;
-  _.each(appData.tabs.tabs, function(data) {
-    data.isActive = data.activeTabName === tabName;
-  });
-  renderDebugPanel();
-}
-
 window.attachTungstenDebugPane = function(panel) {
   debugWindow = panel;
   if (debugWindow.activeTab) {
-    gotoTab(debugWindow.activeTab);
+    utils.gotoTab(debugWindow.activeTab);
   }
   debugWindow.onunload = function() {
     debugWindow = null;
@@ -88,173 +53,29 @@ for (var i = 0; i < files.length; i++) {
   templates[templateName] = ctx(files[i]);
 }
 
-function selectElements(className) {
-  if (debugWindow.document.querySelectorAll) {
-    return debugWindow.document.querySelectorAll('.' + className);
-  } else if (debugWindow.document.getElementsByClassName) {
-    return debugWindow.document.getElementsByClassName(className);
-  } else {
-    var elements = debugWindow.document.getElementsByTagName('*');
-    var pattern = new RegExp('(^|\\s)' + className + '(\\s|$)');
-    var results = [];
-    for (i = 0; i < elements.length; i++) {
-      if ( pattern.test(elements[i].className) ) {
-        results.push(elements[i]);
-      }
-    }
-    return results;
-  }
-}
-
-function addEventListener(elem, eventName, handler) {
-  if (elem.addEventListener) {
-    elem.addEventListener(eventName, handler);
-  } else {
-    elem.attachEvent('on' + eventName.toLowerCase(), handler);
-  }
-}
-
-function addEvent(className, eventName, handler) {
-  var elems = selectElements(className);
-  if (elems && elems.length) {
-    for (var i = 0; i < elems.length; i++) {
-      addEventListener(elems[i], eventName, handler);
-    }
-  }
-}
-
-function hasClass(elem, className) {
-  if (!elem) {
-    return false;
-  }
-  if (elem.classList) {
-    return elem.classList.contains(className);
-  }
-  var elemClass = (' ' + elem.className + ' ').replace(/\s*/g, '');
-  return elemClass.indexOf(className) > -1;
-}
-
-function closest(elem, className) {
-  var target = elem;
-  while (target && !hasClass(target, className)) {
-    target = target.parentNode;
-  }
-  return hasClass(target, className) ? target : null;
-}
-
-function getClosestView(elem) {
-  var view = null;
-  var wrapper = closest(elem, 'js-view-list-item');
-  if (wrapper) {
-    view = appData.views[wrapper.getAttribute('data-id')];
-  }
-  return view;
-}
-
-function getClosestModel(elem) {
-  var model = null;
-  var wrapper = closest(elem, 'js-model-list-item');
-  if (wrapper) {
-    model = appData.models[wrapper.getAttribute('data-id')];
-  }
-  return model;
-}
-
-var debugTagRegex = /<span class="js-view-list-item .*?" data-id=".*?">(.*?)<\/span>/g;
-function removeDebugTags(templateStr) {
-  var cleanVdom = templateStr.replace(debugTagRegex, function(fullMatch, debugName) {
-    return debugName;
-  });
-  return cleanVdom;
-}
-
-function updateSelectedView() {
-  var vdomTemplate = appData.selectedView.getVdomTemplate();
-  var elTemplate = appData.selectedView.getElTemplate();
-  if (elTemplate === 'View is detached from the page DOM') {
-    appData.selectedView.templateDiff = elTemplate;
-  } else {
-    appData.selectedView.templateDiff = textDiff(removeDebugTags(elTemplate), removeDebugTags(vdomTemplate));
-  }
-  appData.selectedView.vdomTemplate = vdomTemplate;
-  appData.selectedView.elTemplate = elTemplate;
-  renderDebugPanel();
-}
-
-function updateSelectedModel() {
-  if (typeof appData.selectedModel.getPropertiesArray === 'function') {
-    appData.selectedModel.modelProperties = appData.selectedModel.getPropertiesArray();
-  }
-  renderDebugPanel();
-}
-
 function renderDebugPanel() {
   if (debugWindow) {
     var debugDoc = debugWindow.document;
-    debugDoc.body.innerHTML = templates.panel.render(appData, templates);
-    addEvent('js-tab', 'click', function(e) {
-      var tabName = e.currentTarget.getAttribute('data-route');
-      gotoTab(tabName);
-    });
-    /**
-     * View panel events
-     */
-    addEvent('js-toggle-view-children', 'click', function(e) {
-      e.stopPropagation();
-      var view = getClosestView(e.target);
-      view.collapsed = !view.collapsed;
-      renderDebugPanel();
-    });
-    addEvent('js-view-list-item', 'click', function(e) {
-      if (appData.selectedView) {
-        appData.selectedView.off('rendered', renderDebugPanel);
+    debugWindow.render = renderDebugPanel;
+    utils.setDebugWindow(debugWindow);
+    try {
+      debugDoc.body.innerHTML = templates.panel.render(appData, templates);
+    } catch (ex) {
+      console.log(ex);
+    }
+
+    require('./panel_js/panel_events')();
+
+    for (var i = 0; i < appData.tabs.tabs.length; i++) {
+      var tab = appData.tabs.tabs[i];
+      if (tab.isActive) {
+        if (typeof tab.events === 'function') {
+          tab.events();
+        }
+        break;
       }
-      appData.selectedView = getClosestView(e.target);
-      appData.selectedView.on('rendered', updateSelectedView);
-      var cids = _.keys(appData.views);
-      for (var i = 0; i < cids.length; i++) {
-        appData.views[cids[i]].selected = appData.views[cids[i]] === appData.selectedView;
-      }
-      updateSelectedView();
-    });
-    addEvent('js-view-list-item', 'mouseover', function(e) {
-      var view = getClosestView(e.target);
-      highlighter(view.el, view.getDebugName());
-    });
-    addEvent('js-view-list-item', 'mouseout', function() {
-      highlighter(null);
-    });
-    addEvent('js-view-element', 'click', function() {
-      console.log(appData.selectedView.el);
-    });
-    addEvent('js-view-event', 'click', function(e) {
-      var selector = e.currentTarget.getAttribute('data-event-selector');
-      console.log(selector, appData.selectedView.getEventFunction(selector));
-    });
-    addEvent('js-model-tab', 'click', function() {
-      gotoTab('showModelTab');
-    });
-    /**
-     * Model panel events
-     */
-    addEvent('js-toggle-model-children', 'click', function(e) {
-      e.stopPropagation();
-      var view = getClosestModel(e.target);
-      view.collapsed = !view.collapsed;
-      renderDebugPanel();
-    });
-    addEvent('js-model-list-item', 'click', function(e) {
-      if (appData.selectedModel) {
-        appData.selectedModel.off('rendered', renderDebugPanel);
-      }
-      appData.selectedModel = getClosestModel(e.target);
-      appData.selectedModel.on('all', _.debounce(updateSelectedModel, 100));
-      var cids = _.keys(appData.models);
-      for (var i = 0; i < cids.length; i++) {
-        appData.models[cids[i]].selected = appData.models[cids[i]] === appData.selectedModel;
-      }
-      updateSelectedModel();
-    });
+    }
+
   }
 }
 
@@ -308,11 +129,11 @@ window.launchDebugger = function() {
     overlay.appendChild(button);
     document.body.appendChild(overlay);
 
-    addEventListener(button, 'click', function() {
+    utils.addEventListener(button, 'click', function() {
       launchDebugger();
     });
 
-    addEventListener(overlay, 'click', function() {
+    utils.addEventListener(overlay, 'click', function() {
       document.body.removeChild(overlay);
     });
   }

@@ -40,6 +40,35 @@ var BaseCollection = Backbone.Collection.extend({
     return this.models;
   },
 
+  getFunctions: function(trackedFunctions, getTrackableFunction) {
+    var result = [];
+    // Debug functions shouldn't be debuggable
+    var blacklist = {
+      constructor: true,
+      initialize: true,
+      postInitialize: true,
+      model: true,
+      initDebug: true,
+      getFunctions: true,
+      getVdomTemplate: true,
+      isParent: true,
+      getChildren: true,
+      getDebugTag: true,
+      getDebugName: true
+    };
+    for (var key in this) {
+      if (typeof this[key] === 'function' && blacklist[key] !== true) {
+        result.push({
+          name: key,
+          fn: this[key],
+          inherited: (key in BaseCollection.prototype)
+        });
+        this[key] = getTrackableFunction(this, key, trackedFunctions);
+      }
+    }
+    return result;
+  },
+
   isParent: function() {
     return this.models.length > 0;
   },

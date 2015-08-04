@@ -1,19 +1,21 @@
 <div class="js-events-panel-view">
-  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" tabindex="0">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="viewEvents">
     Events
   </div>
-  {{#selectedView.getEvents}}
-  <div class="sidebar-pane visible">
-    <div class="body">
-      <div class="section expanded">
-        <ol class="properties properties-tree monospace">
-          <li data-property-name="model" class="js-view-event" data-event-selector="{{selector}}">
-            <span class="name">{{selector}}</span><span class="separator">: </span>
-            <span class="value clickable-property console-formatted-undefined">{{fn}}</span>
-          </li>
-        </ol>
+  {{^hiddenPanels.viewEvents}}
+    {{#selectedView.objectEvents}}
+    <div class="sidebar-pane visible">
+      <div class="body">
+        <div class="section expanded">
+          <ol class="properties properties-tree monospace">
+            <li data-property-name="model" class="js-view-event" data-event-selector="{{selector}}">
+              <span class="name">{{selector}}</span><span class="separator">: </span>
+              <span class="value clickable-property console-formatted-undefined">{{fn}}</span>
+            </li>
+          </ol>
+        </div>
       </div>
     </div>
-  </div>
-  {{/selectedView.getEvents}}
+    {{/selectedView.objectEvents}}
+  {{/hiddenPanels.viewEvents}}
 </div>

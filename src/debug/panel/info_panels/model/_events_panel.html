@@ -1,0 +1,19 @@
+<div class="js-model-panel-view">
+    <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="modelEvents" >
+        Events
+    </div>
+    {{^hiddenPanels.modelEvents}}
+      {{#selectedModel}}
+      <div class="sidebar-pane visible">
+          <div class="body">
+              <div class="section expanded">
+                  <ol data-property-key="" class="properties properties-tree monospace">
+                      {{#customEvents}}
+                      {{/customEvents}}
+                  </ol>
+              </div>
+          </div>
+      </div>
+      {{/selectedModel}}
+    {{/hiddenPanels.modelEvents}}
+</div>
