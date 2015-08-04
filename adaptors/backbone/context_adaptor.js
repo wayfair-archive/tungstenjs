@@ -59,7 +59,7 @@ var lookupValue = function(view, name) {
   var value = null;
   if (this.isModel(view) && view.has(name)) {
     value = view.get(name);
-  } else if (view[name]) {
+  } else if (view[name] != null) {
     if (view.tungstenCollection && blockedCollectionProperties[name]) {
       return null;
     }

@@ -1,4 +1,6 @@
 var path = require('path');
+var webpack = require('webpack');
+
 module.exports = {
   entry: './js/app',
   output: {
@@ -18,11 +20,12 @@ module.exports = {
     }
   },
   resolveLoader: {
-    modulesDirectories: ['node_modules', path.join(__dirname, '../../precompile')]
+    modulesDirectories: ['node_modules', path.join(__dirname, '../../node_modules/'), path.join(__dirname, '../../precompile')]
   },
   module: {
     loaders: [
-      { test: /\.mustache$/, loader: 'tungsten_template' }
+      { test: /\.mustache$/, loader: 'tungsten_template' },
+      { test: /\.json$/, loader: 'json-loader' }
     ]
   }
 };

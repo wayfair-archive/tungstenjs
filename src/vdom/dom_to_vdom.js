@@ -44,6 +44,16 @@ var props = [
   'autoCapitalize', 'autoCorrect', 'property', 'attributes'
 ];
 
+function getElementAttributes(el) {
+  var attrs = el.attributes;
+  var result = {};
+  for (var i = 0; i < attrs.length; i++) {
+    result[attrs[i].name] = attrs[i].value;
+  }
+
+  return {attributes: result};
+}
+
 function getElementProperties(el) {
   var obj = {};
 
@@ -111,23 +121,23 @@ function createFromTextNode(tNode) {
   return new VText(tNode.nodeValue);
 }
 
-function createFromElement(el) {
-  var tagName = el.tagName,
-    namespace = el.namespaceURI === 'http://www.w3.org/1999/xhtml' ? null : el.namespaceURI,
-    properties = getElementProperties(el),
-    children = [];
+function createFromElement(el, attributesOnly) {
+  var tagName = el.tagName;
+  var namespace = el.namespaceURI === 'http://www.w3.org/1999/xhtml' ? null : el.namespaceURI;
+  var properties = attributesOnly ? getElementAttributes(el) : getElementProperties(el);
+  var children = [];
 
   for (var i = 0; i < el.childNodes.length; i++) {
-    children.push(createVNode(el.childNodes[i]));
+    children.push(createVNode(el.childNodes[i], attributesOnly));
   }
 
   var vnode = new VNode(tagName, properties, children, null, namespace);
   return vnode;
 }
 
-function createVNode(domNode) {
+function createVNode(domNode, attributesOnly) {
   if (domNode.nodeType === 1) {
-    return createFromElement(domNode);
+    return createFromElement(domNode, attributesOnly);
   }
   if (domNode.nodeType === 3) {
     return createFromTextNode(domNode);

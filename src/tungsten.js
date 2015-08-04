@@ -13,6 +13,7 @@ var _ = require('underscore');
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');
 var virtualHyperscript = require('./vdom/virtual_hyperscript');
+var htmlToVdom = require('./template/html_to_vdom');
 
 var vdom = virtualDomImplementation.vdom;
 var domToVdom = virtualDomImplementation.domToVdom;
@@ -54,6 +55,8 @@ function updateContainer(container, initialTree, updatedMarkup) {
   }
   return newTree;
 }
+
+exports.parseString = htmlToVdom;
 
 // Methods to parse DOM or String to vtree
 exports.parseDOM = domToVdom;

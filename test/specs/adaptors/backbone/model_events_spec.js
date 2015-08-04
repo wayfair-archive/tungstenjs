@@ -63,26 +63,8 @@ var logEvents = function(model) {
 };
 
 describe('tungsten.js public API', function() {
-  beforeEach(function() {
-    this.addMatchers({
-      toBeInstanceOf: function(expectedInstance) {
-        var actual = this.actual;
-        var notText = this.isNot ? ' not' : '';
-        this.message = function() {
-          return 'Expected ' + actual.constructor.name + notText + ' is instance of ' + expectedInstance.name;
-        };
-        return actual instanceof expectedInstance;
-      }
-    });
-  });
-
+  
   describe('Relation Autocreation', function() {
-    it('should create relation objects when not provided', function() {
-      var model = new GrandParentModel();
-
-      expect(model.get('child')).toBeInstanceOf(ParentModel);
-      expect(model.get('child:child')).toBeInstanceOf(ChildModel);
-    });
 
     it('should use passed relations of the correct type', function() {
       var childModel = new ChildModel({
