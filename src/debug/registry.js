@@ -27,6 +27,7 @@ function RegistryWrapper(obj, type) {
 
   this.selected = false;
   this.collapsed = false;
+  this.customEvents = [];
 
   this.debugName = obj.getDebugName();
 

@@ -1,9 +1,9 @@
 <div class="js-model-panel-view">
-    <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="modelEvents" >
-       Model Events
+    <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="viewEvents" >
+       View Events
     </div>
-    {{^hiddenPanels.modelEvents}}
-      {{#selectedModel}}
+    {{^hiddenPanels.viewEvents}}
+      {{#selectedView}}
       <div class="sidebar-pane visible">
           <div class="body">
               <div class="section expanded">
@@ -21,6 +21,6 @@
               </div>
           </div>
       </div>
-      {{/selectedModel}}
-    {{/hiddenPanels.modelEvents}}
+      {{/selectedView}}
+    {{/hiddenPanels.viewEvents}}
 </div>

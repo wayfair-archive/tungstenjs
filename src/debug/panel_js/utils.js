@@ -86,6 +86,21 @@ function closest(elem, className) {
   return hasClass(target, className) ? target : null;
 }
 
+function getListener(objName, eventName) {
+  return function() {
+    console.log(objName + ':' + eventName, arguments);
+  };
+}
+
+function addListener(obj, eventName) {
+  var listener = getListener(obj.getDebugName(), eventName);
+  obj.on(eventName, listener);
+  return listener;
+}
+function removeListener(obj, name, listener) {
+  obj.off(name, listener);
+}
+
 module.exports = {
   selectElements: selectElements,
   addEventListener: addEventListener,
@@ -95,5 +110,7 @@ module.exports = {
   setDebugWindow: setDebugWindow,
   alert: alert,
   gotoTab: gotoTab,
-  render: render
+  render: render,
+  addListener: addListener,
+  removeListener: removeListener
 };

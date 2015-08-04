@@ -85,4 +85,39 @@ module.exports = function() {
     appData.showInheritedMethods = e.currentTarget.checked;
     utils.render();
   });
+  utils.addEvent('js-add-new-event', 'blur', function(e) {
+    var eventName = e.currentTarget.value;
+    if (/^\s*$/.test(eventName)) {
+      return;
+    }
+    var existing = _.findWhere(appData.selectedModel.customEvents, {
+      name: eventName
+    });
+    if (!existing) {
+      var listener = utils.addListener(appData.selectedModel.obj, eventName);
+      appData.selectedModel.customEvents.push({
+        name: eventName,
+        listener: listener
+      });
+    }
+    utils.render();
+  });
+  utils.addEvent('js-add-new-event', 'keyup', function(e) {
+    var which = (e.which || e.keyCode);
+    if (which === 13) {
+      e.currentTarget.blur();
+    }
+  });
+  utils.addEvent('js-untrack-event', 'click', function(e) {
+    var eventName = utils.closest(e.currentTarget, 'js-tracked-event').getAttribute('data-key');
+    var events = appData.selectedModel.customEvents;
+    for (var i = 0; i < events.length; i++) {
+      if (events[i].name === eventName) {
+        utils.removeListener(appData.selectedModel.obj, events[i].name, events[i].listener);
+        events.splice(i, 1);
+        break;
+      }
+    }
+    utils.render();
+  });
 };

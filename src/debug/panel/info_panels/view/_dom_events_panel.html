@@ -1,8 +1,8 @@
 <div class="js-events-panel-view">
-  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="viewEvents">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="viewDomEvents">
     Events
   </div>
-  {{^hiddenPanels.viewEvents}}
+  {{^hiddenPanels.viewDomEvents}}
     {{#selectedView.objectEvents}}
     <div class="sidebar-pane visible">
       <div class="body">
@@ -17,5 +17,5 @@
       </div>
     </div>
     {{/selectedView.objectEvents}}
-  {{/hiddenPanels.viewEvents}}
+  {{/hiddenPanels.viewDomEvents}}
 </div>
