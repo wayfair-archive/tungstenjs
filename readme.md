@@ -195,7 +195,7 @@ Events are defined with the standard [`events` hash](http://backbonejs.org/#View
 * Window bindings - Adds an event binding to the window
     * Bindable by prepending `win-` to any event that the window fires (primarily scroll or resize, and height/width/scroll values are cached to prevent repeated reads)
 * Outside Events - Adds an event binding to events firing outside of the element
-    * Bindable by appending `-outside` to any
+    * Bindable by appending `-outside` to any element
 
 They can be used directly in Tungsten.js views by using the events hash as usual.  For example:
 
