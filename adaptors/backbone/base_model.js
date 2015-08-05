@@ -35,7 +35,9 @@ var BaseModel = Backbone.Model.extend({
     var results = [];
     var self = this;
     _.each(this.relations, function(constructor, key) {
-      results.push(self.get(key));
+      if (self.has(key)) {
+        results.push(self.get(key));
+      }
     });
     return results;
   },
