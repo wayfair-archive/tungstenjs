@@ -5,6 +5,9 @@ var ToString = require('./to_string');
 var Context = require('./template_context');
 var logger = require('./../utils/logger');
 var ractiveTypes = require('./ractive_types');
+var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
+var isWidget = virtualDomImplementation.isWidget;
+var isVNode = virtualDomImplementation.isVNode;
 
 var htmlToVdom = require('./html_to_vdom');
 
@@ -109,12 +112,17 @@ function render(toVdom, template, context, partials, parentView) {
     case ractiveTypes.TRIPLE:
       value = context.lookup(Context.getInterpolatorKey(template));
       if (value != null) {
-        value = value.toString();
-        if (template.t === ractiveTypes.TRIPLE) {
-          // TRIPLE is unescaped content, so parse that out into VDOM as needed
-          value = parseUnescapedString(value);
+        // If value is already a widget or vnode, add it wholesale
+        if (isWidget(value) || isVNode(value)) {
+          toVdom.createObject(value);
+        } else {
+          value = value.toString();
+          if (template.t === ractiveTypes.TRIPLE) {
+            // TRIPLE is unescaped content, so parse that out into VDOM as needed
+            value = parseUnescapedString(value);
+          }
+          toVdom.createObject(value);
         }
-        toVdom.createObject(value);
       }
       break;
 
