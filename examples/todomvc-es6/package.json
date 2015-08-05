@@ -6,10 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node ./node_modules/webpack/bin/webpack.js -d",
-    "start": "node ./server.js"
+    "start": "(node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js -d --port 9090 &) && sleep 3 && node ./server.js"
   },
   "devDependencies": {
-    "webpack-dev-middleware": "^1.2.0",
+    "node-libs-browser": "^0.5.2",
+    "webpack-dev-server": "^1.10.1",
     "webpack": "^1.8.4",
     "babel-core": "5.6.15",
     "babel-loader": "5.3.1"
