@@ -113,15 +113,16 @@ function render(toVdom, template, context, partials, parentView) {
       value = context.lookup(Context.getInterpolatorKey(template));
       if (value != null) {
         // If value is already a widget or vnode, add it wholesale
-        if (isWidget(value) || isVNode(value)) {
-          toVdom.createObject(value);
-        } else {
-          value = value.toString();
-          if (template.t === ractiveTypes.TRIPLE) {
+        if (template.t === ractiveTypes.TRIPLE) {
+          if (isWidget(value) || isVNode(value)) {
+            toVdom.createObject(value);
+          } else {
             // TRIPLE is unescaped content, so parse that out into VDOM as needed
-            value = parseUnescapedString(value);
+            value = parseUnescapedString(value.toString());
           }
           toVdom.createObject(value);
+        } else {
+          toVdom.createObject(value.toString());
         }
       }
       break;
