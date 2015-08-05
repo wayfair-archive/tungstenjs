@@ -11,7 +11,7 @@ var nativeFocusin = (function() {
   // Taken from https://github.com/jquery/jquery/blob/10399ddcf8a239acc27bdec9231b996b178224d3/test/data/jquery-1.9.1.js#L1443
   var d = document.createElement('div');
   d.setAttribute('onfocusin', 't');
-  return d.attributes.onfocusin.expando === false;
+  return d.attributes.onfocusin && d.attributes.onfocusin.expando === false;
 })();
 
 /**
