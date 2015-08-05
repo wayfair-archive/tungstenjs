@@ -24,15 +24,13 @@ function getClosestView(elem) {
 }
 
 function updateSelectedView() {
-  var vdomTemplate = appData.selectedView.obj.getVdomTemplate();
-  var elTemplate = appData.selectedView.obj.getElTemplate();
-  if (elTemplate === 'View is detached from the page DOM') {
-    appData.selectedView.templateDiff = elTemplate;
+  appData.selectedView.vdomTemplate = appData.selectedView.obj.getVdomTemplate();
+  var diff = appData.selectedView.obj.getTemplateDiff();
+  if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
+    appData.selectedView.templateDiff = diff;
   } else {
-    appData.selectedView.templateDiff = textDiff(removeDebugTags(elTemplate), removeDebugTags(vdomTemplate));
+    appData.selectedView.templateDiff = 'No difference';
   }
-  appData.selectedView.vdomTemplate = vdomTemplate;
-  appData.selectedView.elTemplate = elTemplate;
   utils.render();
 }
 
@@ -63,7 +61,7 @@ module.exports = function() {
     highlighter(null);
   });
   utils.addEvent('js-view-element', 'click', function() {
-    console.log(appData.selectedView.el);
+    console.log(appData.selectedView.obj.el);
   });
   utils.addEvent('js-more-view-info', 'click', function(e) {
     var view = getClosestView(e.target).obj;
@@ -71,7 +69,7 @@ module.exports = function() {
   });
   utils.addEvent('js-view-event', 'click', function(e) {
     var selector = e.currentTarget.getAttribute('data-event-selector');
-    console.log(selector, appData.selectedView.getEventFunction(selector));
+    console.log(selector, appData.selectedView.obj.getEventFunction(selector));
   });
   utils.addEvent('js-track-function', 'click', function(e) {
     var fnName = e.currentTarget.getAttribute('data-fn');

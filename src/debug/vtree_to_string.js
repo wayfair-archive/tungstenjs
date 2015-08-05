@@ -10,51 +10,10 @@ var _ = require('underscore');
 var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
 var virtualHyperscript = require('../vdom/virtual_hyperscript');
 var vdom = virtualDomImplementation.vdom;
-var entityMap = {};
-_.each(require('html-tokenizer/entity-map'), function(charCode, name) {
-  // Ignore whitespace only characters
-  if (!/\s/.test(charCode)) {
-    entityMap[charCode.charCodeAt(0)] = '&amp;' + name.toLowerCase() + ';';
-  }
-});
+var utils = require('./to_string_utils');
 
-function escapeString(str) {
-  var output = '';
-  for (var i = 0; i < str.length; i++) {
-    output += entityMap[str.charCodeAt(i)] || str.charAt(i);
-  }
-  return output;
-}
-
-/**
- * Transformed property names that should reverted
- * @type {Object}
- */
-var propertiesToTransform = {
-  'className': 'class',
-  'htmlFor': 'for',
-  'httpEquiv': 'http-equiv'
-};
-
-var entities = {
-  unescaped: {
-    amp: '&',
-    open: '<',
-    close: '>',
-    quote: '"'
-  },
-  escaped: {
-    amp: '&amp;',
-    open: '&lt;',
-    close: '&gt;',
-    quote: '&quot;'
-  }
-};
-
-var noClosing = _.invert(['br', 'hr', 'img', 'input', 'meta', 'link']);
-var selfClosing = _.invert(['area', 'base', 'col', 'command', 'embed', 'hr', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
 function toString(vtree, escaped, recursive) {
-  var chars = entities[escaped ? 'escaped' : 'unescaped'];
+  var chars = utils.entities[escaped ? 'escaped' : 'unescaped'];
   var output = '';
   var i;
   if (virtualDomImplementation.isVNode(vtree)) {
@@ -72,17 +31,17 @@ function toString(vtree, escaped, recursive) {
       if (key.toLowerCase() === 'contenteditable' && val.toLowerCase() === 'inherit') {
         return;
       }
-      if (propertiesToTransform[key]) {
-        output += ' ' + propertiesToTransform[key] + '=' + chars.quote + val + chars.quote;
+      if (utils.propertiesToTransform[key]) {
+        output += ' ' + utils.propertiesToTransform[key] + '=' + chars.quote + val + chars.quote;
       } else {
         output += ' ' + key + '=' + chars.quote + val + chars.quote;
       }
     };
     _.each(vtree.properties, addAttributes);
     _.each(vtree.properties.attributes, addAttributes);
-    if (noClosing[tagName] != null) {
+    if (utils.noClosing[tagName] != null) {
       output += chars.close;
-    } else if (selfClosing[tagName] != null) {
+    } else if (utils.selfClosing[tagName] != null) {
       output += '' + chars.close;
     } else {
       output += chars.close;
@@ -100,9 +59,9 @@ function toString(vtree, escaped, recursive) {
       output += elem.innerHTML;
     }
   } else if (virtualDomImplementation.isVText(vtree)) {
-    output += escapeString(vtree.text);
+    output += utils.escapeString(vtree.text);
   } else if (typeof vtree === 'string') {
-    output += escapeString(vtree);
+    output += utils.escapeString(vtree);
   } else if (vtree.length) {
     for (i = 0; i < vtree.length; i++) {
       output += toString(vtree[i], escaped, recursive);

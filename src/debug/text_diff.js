@@ -84,21 +84,24 @@ function diff(o, n) {
 }
 
 function diffString(o, n, onlyDiff) {
-  o = o.replace(/\s+$/, '');
-  n = n.replace(/\s+$/, '');
+  o = o.join ? o.join('') : o;
+  n = n.join ? n.join('') : n;
+
+  var left = o.replace(/\s+$/, '');
+  var right = n.replace(/\s+$/, '');
 
   var differences = '';
 
-  var out = diff(o === '' ? [] : o.split(/\s+/), n === '' ? [] : n.split(/\s+/));
+  var out = diff(left === '' ? [] : left.split(/\s+/), right === '' ? [] : right.split(/\s+/));
   var str = '';
 
-  var oSpace = o.match(/\s+/g);
+  var oSpace = left.match(/\s+/g);
   if (oSpace == null) {
     oSpace = ['\n'];
   } else {
     oSpace.push('\n');
   }
-  var nSpace = n.match(/\s+/g);
+  var nSpace = right.match(/\s+/g);
   if (nSpace == null) {
     nSpace = ['\n'];
   } else {
@@ -113,9 +116,9 @@ function diffString(o, n, onlyDiff) {
     }
   } else {
     if (out.n[0].text == null) {
-      for (n = 0; n < out.o.length && out.o[n].text == null; n++) {
-        differences = out.o[n] + oSpace[n];
-        str += '<del>' + out.o[n] + oSpace[n] + '</del>';
+      for (right = 0; right < out.o.length && out.o[right].text == null; right++) {
+        differences = out.o[right] + oSpace[right];
+        str += '<del>' + out.o[right] + oSpace[right] + '</del>';
       }
     }
 
@@ -126,9 +129,9 @@ function diffString(o, n, onlyDiff) {
       } else {
         var pre = '';
 
-        for (n = out.n[i].row + 1; n < out.o.length && out.o[n].text == null; n++) {
-          differences = out.o[n] + oSpace[n];
-          pre += '<del>' + out.o[n] + oSpace[n] + '</del>';
+        for (right = out.n[i].row + 1; right < out.o.length && out.o[right].text == null; right++) {
+          differences = out.o[right] + oSpace[right];
+          pre += '<del>' + out.o[right] + oSpace[right] + '</del>';
         }
         str += ' ' + out.n[i].text + nSpace[i] + pre;
       }
@@ -136,7 +139,7 @@ function diffString(o, n, onlyDiff) {
   }
 
   // If the differences are whitespace only, disregard
-  return /^\s*$/.test(differences) ? (onlyDiff ? '' : 'No differences') : str;
+  return /^\s*$/.test(differences) ? o : str;
 }
 
 module.exports = diffString;

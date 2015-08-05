@@ -3,7 +3,7 @@
         Model
     </div>
     {{^hiddenPanels.viewModel}}
-      {{#selectedView.model}}
+      {{#selectedView.obj.model}}
       <div class="sidebar-pane visible">
           <div class="body">
               <div class="section expanded">
@@ -36,6 +36,6 @@
               </div>
           </div>
       </div>
-      {{/selectedView.model}}
+      {{/selectedView.obj.model}}
   {{/hiddenPanels.viewModel}}
 </div>

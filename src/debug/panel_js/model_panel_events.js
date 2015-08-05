@@ -59,7 +59,7 @@ module.exports = function() {
       var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {key: key});
       selectedProperty.data.isEditing = false;
       selectedProperty.data.value = value;
-      appData.selectedModel.set(key, value);
+      appData.selectedModel.obj.set(key, value);
       utils.render();
     } catch (ex) {
       var message = 'Unable to parse "' + e.currentTarget.value + '" to a valid value. Input must match JSON format';

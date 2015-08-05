@@ -3,9 +3,7 @@
 module.exports = {
   registry: require('./registry'),
   panel: require('./window_manager'),
-  toString: {
-    vtree: require('./vtree_to_string'),
-    view: require('./view_to_string')
-  },
+  vtreeToString: require('./vtree_to_string'),
+  diffVtreeAndElem: require('./diff_dom_and_vdom'),
   diff: require('./text_diff')
 };

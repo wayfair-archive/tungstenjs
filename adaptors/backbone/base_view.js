@@ -152,9 +152,8 @@ var BaseView = Backbone.View.extend({
     }
     /* develblock:start */
     // Compare full template against full DOM
-    var expected = this.getVdomTemplate(true);
-    var actual = this.getElTemplate(true, true);
-    if (tungsten.debug.diff(expected, actual, true)) {
+    var diff = this.getTemplateDiff();
+    if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
       console.warn('DOM does not match VDOM. Use debug panel to see differences');
     }
     /* develblock:end */
@@ -213,15 +212,24 @@ var BaseView = Backbone.View.extend({
     }
     return result;
   },
-  getElTemplate: function(recursive, bypassDomCheck) {
-    return tungsten.debug.toString.view(this, true, recursive, bypassDomCheck);
+  getTemplateDiff: function() {
+    if (!this.parentView) {
+      var numChildren = Math.max(this.vtree.children.length, this.el.childNodes.length);
+      var output = '';
+      for (var i = 0; i < numChildren; i++) {
+        output += tungsten.debug.diffVtreeAndElem(this.vtree.children[i], this.el.childNodes[i]);
+      }
+      return output;
+    } else {
+      return tungsten.debug.diffVtreeAndElem(this.vtree, this.el);
+    }
   },
   getVdomTemplate: function(recursive) {
     var vtreeToRender = this.vtree;
     if (!this.parentView) {
       vtreeToRender = vtreeToRender.children;
     }
-    return tungsten.debug.toString.vtree(vtreeToRender, true, recursive);
+    return tungsten.debug.vtreeToString(vtreeToRender, true, recursive);
   },
 
   isParent: function() {
@@ -235,7 +243,7 @@ var BaseView = Backbone.View.extend({
 
   getDebugTag: function() {
     var name = this.getDebugName();
-    return '<span class="js-tree-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
+    return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
   },
 
   getDebugName: function() {
