@@ -6,7 +6,9 @@
 'use strict';
 
 var _ = require('underscore');
-var templateToVdom = require('./template_to_vdom');
+var tungsten = require('../tungsten');
+var ToVdom = require('./to_vdom');
+var ractiveAdaptor = require('./ractive_adaptor');
 var ractiveTypes = require('./ractive_types');
 var Context = require('./template_context');
 var logger = require('./../utils/logger');
@@ -40,7 +42,26 @@ Template.prototype.register = function(partialName) {
  * @return {String}      HTML string of the rendered template
  */
 Template.prototype.toString = function(data) {
-  return templateToVdom.renderToString(this.templateObj, data, this.partials || registeredPartials);
+  var templateToRender = this.templateObj;
+  var tempView = this.view;
+  if (this.view && !this.view.parentView) {
+    templateToRender = templateToRender.f;
+  }
+  this.view = null;
+  var vdom = this.toVdom(data);
+  this.view = tempView;
+  // Set attributesOnly flag for this render
+  var str = tungsten.toString(vdom);
+  if (Context.isArray(vdom)) {
+    _.each(vdom, function(node) {
+      if (typeof node.recycle === 'function') {
+        node.recycle();
+      }
+    });
+  } else if (typeof vdom.recycle === 'function') {
+    vdom.recycle();
+  }
+  return str;
 };
 /**
  * Outputs the template to a DocumentFragment
@@ -48,7 +69,17 @@ Template.prototype.toString = function(data) {
  * @return {Object}      DocumentFragment containing the template's DOM nodes
  */
 Template.prototype.toDom = function(data) {
-  var domFrag = templateToVdom.renderToDom(this.templateObj, data, this.partials || registeredPartials);
+  var vdom = this.toVdom(data);
+  var domFrag = tungsten.toDOM(vdom);
+  if (Context.isArray(vdom)) {
+    _.each(vdom, function(node) {
+      if (typeof node.recycle === 'function') {
+        node.recycle();
+      }
+    });
+  } else if (typeof vdom.recycle === 'function') {
+    vdom.recycle();
+  }
   // If we've attached a top level view, there will be a wrapper div that needs to be removed
   if (this.view && !this.view.parentView) {
     var viewWrapper = domFrag.childNodes[0];
@@ -61,12 +92,20 @@ Template.prototype.toDom = function(data) {
 };
 /**
  * Outputs the template to a VirtualTree
- * @param  {Object}  data        Model to render the template with
- * @param  {Boolean} firstRender Indicator that this is the first render
- * @return {Object}              VirtualTree representing the template
+ * @param  {Object} data Model to render the template with
+ * @param  {Object} view Optional view to override the attached
+ * @return {Object}      VirtualTree representing the template
  */
-Template.prototype.toVdom = function(data, firstRender) {
-  return templateToVdom.renderToVdom(this.templateObj, data, this.partials || registeredPartials, this.view, firstRender);
+Template.prototype.toVdom = function(data, view) {
+  var viewToRender = this.view;
+  if (view && view.constructor && view.constructor.tungstenView) {
+    viewToRender = view;
+  }
+
+  var context = (data && data.constructor && data instanceof Context) ? data : new Context(data);
+  var toVdom = new ToVdom();
+  ractiveAdaptor(toVdom, this.templateObj, context, this.partials || registeredPartials, viewToRender);
+  return toVdom.getOutput();
 };
 
 /**

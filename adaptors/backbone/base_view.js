@@ -71,7 +71,7 @@ var BaseView = Backbone.View.extend({
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
         var self = this;
-        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem, true);
+        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
         self.initializeRenderListener(dataItem);
         if (this.options.dynamicInitialize) {
           // If dynamicInitialize was set, render was already invoked, so childViews are attached
@@ -204,7 +204,7 @@ var BaseView = Backbone.View.extend({
     // let the view have a say in what context to pass to the template
     // defaults to an empty object for context so that our view render won't fail
     var serializedModel = this.context || this.serialize();
-    var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize(), true);
+    var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize());
     this.vtree = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
 
     // Clear any passed context
