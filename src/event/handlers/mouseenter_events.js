@@ -52,6 +52,11 @@ var mouseleaveCheck = function(evt) {
   return false;
 };
 
+/**
+ * Get the mouse enter handler
+ * @param  {[type]} method [description]
+ * @return {[type]}        [description]
+ */
 var getMouseEnterHandler = function(method) {
   return function (evt) {
     if (mouseenterCheck(evt)) {
@@ -60,6 +65,11 @@ var getMouseEnterHandler = function(method) {
   };
 };
 
+/**
+ * Get the mouse leave handler
+ * @param  {[type]} method [description]
+ * @return {[type]}        [description]
+ */
 var getMouseLeaveHandler = function(method) {
   return function (evt) {
     if (mouseleaveCheck(evt)) {

@@ -157,7 +157,7 @@ BaseView.extend({
 The `js-` class name for the child view must be a descendant element of the current view.  If the element doesn't exist, the view won't be rendered (until the element does exist...so mustache conditionals can be used to hide and show views).  If there are multiple descendant elements for the child view then Tungsten.js will render the view for each element.  If this is because mustache is iterating through a collection, then each of these views will have the model of the collection as its scope (see next section).
 
 Unlike the app view, child views should not set their own template.
-    
+
 #### Scope (`this.model`)
 
 Tungsten.js will automatically infer the scope of the model for this child view as it traverses the template to build out the initial state.  If the child view element is wrapped in `{{#myModel}}{{/myModel}}` where `myModel` refers to a property on the current view's `this.model` that references another model (see `relations` hash), then that child view's `this.model` will be `myModel`.   If the child view element is wrapped in `{{#myCollection}}{{/myCollection}}` where `myCollection` refers to a property on the current view's `this.model` that references another collection (see `relations` hash), then Tungsten.js will create a child view for each rendered element, and each of those child views' `this.model` will be the relevant model from `myCollection`.
@@ -193,7 +193,9 @@ Events are defined with the standard [`events` hash](http://backbonejs.org/#View
 * Document bindings - Adds an event binding to the document with delegation still working as expected
     * Bindable by prepending `doc-` to any event type
 * Window bindings - Adds an event binding to the window
-    * Bindable by prepending `win-` to any event that the window fires (primarily scroll or resize, and height/width/scroll values are cached to prevent repeated reads) 
+    * Bindable by prepending `win-` to any event that the window fires (primarily scroll or resize, and height/width/scroll values are cached to prevent repeated reads)
+* Outside Events - Adds an event binding to events firing outside of the element
+    * Bindable by appending `-outside` to any event type
 
 They can be used directly in Tungsten.js views by using the events hash as usual.  For example:
 
@@ -206,7 +208,9 @@ View.extend({
     // mouseenter-intent event (see corresponding eventOptions object)
     'mouseenter-intent .js-foo' : 'doSomethingOnHoverIntent',
     // window scroll event
-    'win-scroll' : 'doSomethingOnScroll'
+    'win-scroll' : 'doSomethingOnScroll',
+    // outside event
+    'click-outside .js-foo' :'doSomethingOnOutsideClick'
   },
   // eventOptions hash to override default custom event options
   eventOptions: {
