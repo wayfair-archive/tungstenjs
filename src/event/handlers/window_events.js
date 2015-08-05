@@ -1,3 +1,6 @@
+/**
+ * Module to bind to common window events
+ */
 'use strict';
 
 var eventsCore = require('../events_core');
@@ -16,9 +19,9 @@ var getScrollData = function(elem) {
 };
 
 /**
- * [getSizeData description]
- * @param  {[type]} elem [description]
- * @return {[type]}      [description]
+ * Get size data of element
+ * @param  {object} elem element to get size data from
+ * @return {object}      object containing size data
  */
 var getSizeData = function(elem) {
   if (elem === window) {
