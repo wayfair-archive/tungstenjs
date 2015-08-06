@@ -28,3 +28,21 @@ require.extensions['.mustache'] = function (module, filename) {
     template.setPartials(partialMap);
   }
 };
+
+function compile(contents, partials) {
+  var parsedTemplate = utils.compileTemplate(contents, module.src);
+  utils.handleDynamicComments(parsedTemplate);
+  var template = new Template(parsedTemplate);
+
+  if (_.size(partials) > 0) {
+    var partialMap = {};
+    _.each(partials, function(content, name) {
+      partialMap[name] = compile(content);
+    });
+    template.setPartials(partialMap);
+  }
+
+  return template;
+}
+
+module.exports = compile;

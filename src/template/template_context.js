@@ -83,6 +83,14 @@ Context.prototype.push = function(view) {
 };
 
 /**
+ * Creates a new context using the given view with this context
+ * as the parent.
+ */
+Context.prototype.partial = function() {
+  return new Context(this.view);
+};
+
+/**
  * Returns the value of the given name in this context, traversing
  * up the context hierarchy if the value is absent in this context's view.
  */
