@@ -1,7 +1,10 @@
 'use strict';
 
-/* global describe, it, expect, require, beforeEach */
+/* global describe, it, require */
 var Adaptor = require('../../../../adaptors/backbone');
+
+// Include Chai assertion library
+var expect = require('chai').expect;
 
 var BaseModel = Adaptor.Model;
 var BaseCollection = Adaptor.Collection;
@@ -63,8 +66,14 @@ var logEvents = function(model) {
 };
 
 describe('tungsten.js public API', function() {
-  
+
   describe('Relation Autocreation', function() {
+    it('should create relation objects when not provided', function() {
+      var model = new GrandParentModel();
+
+      expect(model.get('child')).to.be.instanceOf(ParentModel);
+      expect(model.get('child:child')).to.be.instanceOf(ChildModel);
+    });
 
     it('should use passed relations of the correct type', function() {
       var childModel = new ChildModel({
@@ -76,16 +85,16 @@ describe('tungsten.js public API', function() {
         }
       });
 
-      expect(model.get('child:child')).toBe(childModel);
+      expect(model.get('child:child')).to.equal(childModel);
 
       var parentModel = model.get('child');
       model = new GrandParentModel({
         child: parentModel
       });
 
-      expect(model.get('child')).toBe(parentModel);
+      expect(model.get('child')).to.equal(parentModel);
       // childModel should still be on parentModel from initial creation
-      expect(model.get('child:child')).toBe(childModel);
+      expect(model.get('child:child')).to.equal(childModel);
     });
 
     it('should bubble events through relations', function() {
@@ -96,31 +105,31 @@ describe('tungsten.js public API', function() {
       var grandChildEvents = logEvents(model.get('child:child'));
 
       model.get('child:child').trigger('testEvent', 'prop');
-      expect(events.getNumEvents()).toBe(3);
-      expect(events.getEvent('testEvent')).toBe('prop');
-      expect(events.getEvent('testEvent:child:child')).toBe('prop');
-      expect(events.getEvent('testEvent:child')).toBe('prop');
+      expect(events.getNumEvents()).to.equal(3);
+      expect(events.getEvent('testEvent')).to.equal('prop');
+      expect(events.getEvent('testEvent:child:child')).to.equal('prop');
+      expect(events.getEvent('testEvent:child')).to.equal('prop');
 
-      expect(childEvents.getNumEvents()).toBe(2);
-      expect(childEvents.getEvent('testEvent:child')).toBe('prop');
-      expect(childEvents.getEvent('testEvent')).toBe('prop');
+      expect(childEvents.getNumEvents()).to.equal(2);
+      expect(childEvents.getEvent('testEvent:child')).to.equal('prop');
+      expect(childEvents.getEvent('testEvent')).to.equal('prop');
 
-      expect(grandChildEvents.getNumEvents()).toBe(1);
-      expect(grandChildEvents.getEvent('testEvent')).toBe('prop');
+      expect(grandChildEvents.getNumEvents()).to.equal(1);
+      expect(grandChildEvents.getEvent('testEvent')).to.equal('prop');
 
       events.reset();
       childEvents.reset();
       grandChildEvents.reset();
 
       model.get('child').trigger('testEvent', 'prop');
-      expect(events.getNumEvents()).toBe(2);
-      expect(events.getEvent('testEvent')).toBe('prop');
-      expect(events.getEvent('testEvent:child')).toBe('prop');
+      expect(events.getNumEvents()).to.equal(2);
+      expect(events.getEvent('testEvent')).to.equal('prop');
+      expect(events.getEvent('testEvent:child')).to.equal('prop');
 
-      expect(childEvents.getNumEvents()).toBe(1);
-      expect(childEvents.getEvent('testEvent')).toBe('prop');
+      expect(childEvents.getNumEvents()).to.equal(1);
+      expect(childEvents.getEvent('testEvent')).to.equal('prop');
 
-      expect(grandChildEvents.getNumEvents()).toBe(0);
+      expect(grandChildEvents.getNumEvents()).to.equal(0);
     });
 
     it('should pass correct arguments for "change" events', function() {
@@ -140,20 +149,20 @@ describe('tungsten.js public API', function() {
       var grandChildEvents = logEvents(childModel);
 
       model.set('child:child:testProp', 1);
-      expect(events.getNumEvents()).toBe(4);
-      expect(events.getEvent('change')).toBe(model);
-      expect(events.getEvent('change:child')).toBe(parentModel);
-      expect(events.getEvent('change:child:child')).toBe(childModel);
-      expect(events.getEvent('change:child:child:testProp')).toBe(childModel);
+      expect(events.getNumEvents()).to.equal(4);
+      expect(events.getEvent('change')).to.equal(model);
+      expect(events.getEvent('change:child')).to.equal(parentModel);
+      expect(events.getEvent('change:child:child')).to.equal(childModel);
+      expect(events.getEvent('change:child:child:testProp')).to.equal(childModel);
 
-      expect(childEvents.getNumEvents()).toBe(3);
-      expect(childEvents.getEvent('change')).toBe(parentModel);
-      expect(childEvents.getEvent('change:child')).toBe(childModel);
-      expect(childEvents.getEvent('change:child:testProp')).toBe(childModel);
+      expect(childEvents.getNumEvents()).to.equal(3);
+      expect(childEvents.getEvent('change')).to.equal(parentModel);
+      expect(childEvents.getEvent('change:child')).to.equal(childModel);
+      expect(childEvents.getEvent('change:child:testProp')).to.equal(childModel);
 
-      expect(grandChildEvents.getNumEvents()).toBe(2);
-      expect(grandChildEvents.getEvent('change')).toBe(childModel);
-      expect(grandChildEvents.getEvent('change:testProp')).toBe(childModel);
+      expect(grandChildEvents.getNumEvents()).to.equal(2);
+      expect(grandChildEvents.getEvent('change')).to.equal(childModel);
+      expect(grandChildEvents.getEvent('change:testProp')).to.equal(childModel);
     });
 
     it('should declare a naive parent for backwards-compatibility', function() {
@@ -162,15 +171,15 @@ describe('tungsten.js public API', function() {
       var parentModel = model.get('child');
       var childModel = model.get('child:child');
 
-      expect(childModel.parent).toBe(parentModel);
-      expect(parentModel.parent).toBe(model);
+      expect(childModel.parent).to.equal(parentModel);
+      expect(parentModel.parent).to.equal(model);
 
       var newParent = new ParentModel({
         child: childModel
       });
 
-      expect(childModel.parent).toBe(newParent);
-      expect(childModel.parent).not.toBe(parentModel);
+      expect(childModel.parent).to.equal(newParent);
+      expect(childModel.parent).not.to.equal(parentModel);
     });
 
     it('should bubble events to all parents', function() {
@@ -188,21 +197,21 @@ describe('tungsten.js public API', function() {
       var newParentEvents = logEvents(newParentModel);
 
       model.set('child:child:testProp', 1);
-      expect(events.getNumEvents()).toBe(4);
-      expect(events.getEvent('change')).toBe(model);
-      expect(events.getEvent('change:child')).toBe(parentModel);
-      expect(events.getEvent('change:child:child')).toBe(childModel);
-      expect(events.getEvent('change:child:child:testProp')).toBe(childModel);
+      expect(events.getNumEvents()).to.equal(4);
+      expect(events.getEvent('change')).to.equal(model);
+      expect(events.getEvent('change:child')).to.equal(parentModel);
+      expect(events.getEvent('change:child:child')).to.equal(childModel);
+      expect(events.getEvent('change:child:child:testProp')).to.equal(childModel);
 
-      expect(parentEvents.getNumEvents()).toBe(3);
-      expect(parentEvents.getEvent('change')).toBe(parentModel);
-      expect(parentEvents.getEvent('change:child')).toBe(childModel);
-      expect(parentEvents.getEvent('change:child:testProp')).toBe(childModel);
+      expect(parentEvents.getNumEvents()).to.equal(3);
+      expect(parentEvents.getEvent('change')).to.equal(parentModel);
+      expect(parentEvents.getEvent('change:child')).to.equal(childModel);
+      expect(parentEvents.getEvent('change:child:testProp')).to.equal(childModel);
 
-      expect(newParentEvents.getNumEvents()).toBe(3);
-      expect(newParentEvents.getEvent('change')).toBe(newParentModel);
-      expect(newParentEvents.getEvent('change:child')).toBe(childModel);
-      expect(newParentEvents.getEvent('change:child:testProp')).toBe(childModel);
+      expect(newParentEvents.getNumEvents()).to.equal(3);
+      expect(newParentEvents.getEvent('change')).to.equal(newParentModel);
+      expect(newParentEvents.getEvent('change:child')).to.equal(childModel);
+      expect(newParentEvents.getEvent('change:child:testProp')).to.equal(childModel);
     });
 
     it('should use the existing model for updates', function() {
@@ -217,24 +226,24 @@ describe('tungsten.js public API', function() {
       model.set('child:child', {
        testProp: 0
       });
-      expect(parentModel.get('child')).toBe(childModel);
-      expect(parentModel.get('child:testProp')).toBe(0);
+      expect(parentModel.get('child')).to.equal(childModel);
+      expect(parentModel.get('child:testProp')).to.equal(0);
       // Since no properties changed, no events should have fired
-      expect(events.getNumEvents()).toBe(0);
+      expect(events.getNumEvents()).to.equal(0);
 
       events.reset();
 
       model.set('child:child', {
        testProp: 1
       });
-      expect(parentModel.get('child')).toBe(childModel);
-      expect(parentModel.get('child:testProp')).toBe(1);
+      expect(parentModel.get('child')).to.equal(childModel);
+      expect(parentModel.get('child:testProp')).to.equal(1);
       // same events as tested above
-      expect(events.getNumEvents()).toBe(4);
-      expect(events.getEvent('change')).toBe(model);
-      expect(events.getEvent('change:child')).toBe(parentModel);
-      expect(events.getEvent('change:child:child')).toBe(childModel);
-      expect(events.getEvent('change:child:child:testProp')).toBe(childModel);
+      expect(events.getNumEvents()).to.equal(4);
+      expect(events.getEvent('change')).to.equal(model);
+      expect(events.getEvent('change:child')).to.equal(parentModel);
+      expect(events.getEvent('change:child:child')).to.equal(childModel);
+      expect(events.getEvent('change:child:child:testProp')).to.equal(childModel);
 
     });
 
@@ -251,12 +260,12 @@ describe('tungsten.js public API', function() {
       });
 
       model.set('child:child', newChild);
-      expect(parentModel.get('child')).toBe(newChild);
-      expect(parentModel.get('child:testProp')).toBe(0);
+      expect(parentModel.get('child')).to.equal(newChild);
+      expect(parentModel.get('child:testProp')).to.equal(0);
 
       // No properties changed, so we only get the replace event
-      expect(events.getNumEvents()).toBe(1);
-      expect(events.getEvent('replace:child:child')).toBe(newChild);
+      expect(events.getNumEvents()).to.equal(1);
+      expect(events.getEvent('replace:child:child')).to.equal(newChild);
 
       events.reset();
 
@@ -266,16 +275,16 @@ describe('tungsten.js public API', function() {
       });
 
       model.set('child:child', newChildTwo);
-      expect(parentModel.get('child')).toBe(newChildTwo);
-      expect(parentModel.get('child:testProp')).toBe(1);
+      expect(parentModel.get('child')).to.equal(newChildTwo);
+      expect(parentModel.get('child:testProp')).to.equal(1);
 
       // A properties changed, so we get the replace event as well as change events
-      expect(events.getNumEvents()).toBe(5);
-      expect(events.getEvent('change')).toBe(model);
-      expect(events.getEvent('change:child')).toBe(parentModel);
-      expect(events.getEvent('change:child:child')).toBe(newChildTwo);
-      expect(events.getEvent('change:child:child:testProp')).toBe(newChildTwo);
-      expect(events.getEvent('replace:child:child')).toBe(newChildTwo);
+      expect(events.getNumEvents()).to.equal(5);
+      expect(events.getEvent('change')).to.equal(model);
+      expect(events.getEvent('change:child')).to.equal(parentModel);
+      expect(events.getEvent('change:child:child')).to.equal(newChildTwo);
+      expect(events.getEvent('change:child:child:testProp')).to.equal(newChildTwo);
+      expect(events.getEvent('replace:child:child')).to.equal(newChildTwo);
     });
 
     it('bubbles events based on current state of attachment', function() {
@@ -286,20 +295,20 @@ describe('tungsten.js public API', function() {
       var childModel = model.get('child');
 
       childModel.trigger('test:child');
-      expect(events.getNumEvents()).toBe(1);
+      expect(events.getNumEvents()).to.equal(1);
 
       // silently detach childModel so that no stray events fire
       model.set('child', null, {silent: true});
 
       events.reset();
       childModel.trigger('test:child');
-      expect(events.getNumEvents()).toBe(0);
+      expect(events.getNumEvents()).to.equal(0);
       // silently detach childModel so that no stray events fire
       model.set('child', childModel, {silent: true});
 
       events.reset();
       childModel.trigger('test:child');
-      expect(events.getNumEvents()).toBe(1);
+      expect(events.getNumEvents()).to.equal(1);
     });
   });
 
@@ -316,36 +325,36 @@ describe('tungsten.js public API', function() {
     // resetting the collection directly
     collection.reset([modelOne]);
 
-    expect(events.getNumEvents()).toBe(1);
-    expect(events.getEvent('reset:arr')).toBe(collection);
+    expect(events.getNumEvents()).to.equal(1);
+    expect(events.getEvent('reset:arr')).to.equal(collection);
 
     events.reset();
 
     // resetting the collection indirectly using reset option
     model.set('arr', [modelTwo], {reset: true});
 
-    expect(events.getNumEvents()).toBe(1);
-    expect(events.getEvent('reset:arr')).toBe(collection);
+    expect(events.getNumEvents()).to.equal(1);
+    expect(events.getEvent('reset:arr')).to.equal(collection);
 
     events.reset();
 
     // Setting the collection directly
     collection.set(modelOne);
 
-    expect(events.getNumEvents()).toBe(4);
-    expect(events.getEvent('remove:arr')).toBe(modelTwo);
-    expect(events.getEvent('add:arr')).toBe(modelOne);
-    expect(events.getEvent('sort:arr')).toBe(collection);
-    expect(events.getEvent('update:arr')).toBe(collection);
+    expect(events.getNumEvents()).to.equal(4);
+    expect(events.getEvent('remove:arr')).to.equal(modelTwo);
+    expect(events.getEvent('add:arr')).to.equal(modelOne);
+    expect(events.getEvent('sort:arr')).to.equal(collection);
+    expect(events.getEvent('update:arr')).to.equal(collection);
 
     events.reset();
     // Setting the collection indirectly
     model.set('arr', [modelTwo]);
 
-    expect(events.getNumEvents()).toBe(4);
-    expect(events.getEvent('remove:arr')).toBe(modelOne);
-    expect(events.getEvent('add:arr')).toBe(modelTwo);
-    expect(events.getEvent('sort:arr')).toBe(collection);
-    expect(events.getEvent('update:arr')).toBe(collection);
+    expect(events.getNumEvents()).to.equal(4);
+    expect(events.getEvent('remove:arr')).to.equal(modelOne);
+    expect(events.getEvent('add:arr')).to.equal(modelTwo);
+    expect(events.getEvent('sort:arr')).to.equal(collection);
+    expect(events.getEvent('update:arr')).to.equal(collection);
   });
 });
