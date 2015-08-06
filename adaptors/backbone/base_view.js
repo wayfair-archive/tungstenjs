@@ -72,7 +72,7 @@ var BaseView = Backbone.View.extend({
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
         var self = this;
-        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
+        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem, true);
         self.initializeRenderListener(dataItem);
         if (this.options.dynamicInitialize) {
           // If dynamicInitialize was set, render was already invoked, so childViews are attached

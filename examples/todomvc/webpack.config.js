@@ -3,7 +3,8 @@ var path = require('path');
 module.exports = {
   entry: './js/app',
   output: {
-    filename: './js/app.min.js'
+    filename: './js/app.min.js',
+    path: path.resolve('./js')
   },
   resolve: {
     alias: {

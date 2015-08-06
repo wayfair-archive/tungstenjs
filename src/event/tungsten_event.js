@@ -1,4 +1,6 @@
 'use strict';
+
+var _ = require('underscore');
 /**
  * Wrapper function for the event object
  * @param {Object} evt  Native event to wrap
@@ -17,6 +19,7 @@ function WEvent(evt) {
     this.ctrlKey = evt.ctrlKey;
     this.metaKey = evt.metaKey;
   }
+  this.eventId = _.uniqueId('e');
   this.propagationStopped = false;
   this.immediatePropagationStopped = false;
 }
