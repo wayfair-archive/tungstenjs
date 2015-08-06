@@ -1,9 +1,9 @@
 'use strict';
 
 var tungsten = require('../tungsten');
-// var virtualHyperscript = require('../vdom/virtual_hyperscript');
 var processProperties = require('./process_properties');
 var HTMLCommentWidget = require('./widgets/html_comment');
+var htmlToVdom = require('./html_to_vdom');
 
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either
@@ -13,6 +13,20 @@ var supportsWhitespaceTextNodes = (function() {
   d.innerHTML = ' ';
   return d.childNodes.length === 1;
 })();
+
+/**
+ * Unescaped values often have HTML in them that needs to be parsed out
+ * @param  {String}        value Value to check
+ * @return {String|Object}       String if it contains no HTML or VTree otherwise
+ */
+function parseUnescapedString(value) {
+  // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
+  if (value.indexOf('<') > -1 || value.indexOf('&') > -1) {
+    return htmlToVdom(value);
+  } else {
+    return value;
+  }
+}
 
 function ToVdom(attributesOnly, debugMode) {
   this.attributesOnly = attributesOnly;
@@ -72,8 +86,12 @@ ToVdom.prototype.closeElem = function(obj) {
   }
 };
 
-ToVdom.prototype.createObject = function(obj) {
-  this.closeElem(obj);
+ToVdom.prototype.createObject = function(obj, options) {
+  if (typeof obj === 'string' && options && options.parse) {
+    this.closeElem(parseUnescapedString(obj));
+  } else {
+    this.closeElem(obj);
+  }
 };
 
 ToVdom.prototype.createComment = function(text) {

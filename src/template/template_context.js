@@ -9,7 +9,6 @@
 'use strict';
 
 var isArray = require('../utils/is_array');
-var _ = require('underscore');
 var IS_DEV = require('../tungsten.js').IS_DEV;
 
 /**
@@ -17,10 +16,11 @@ var IS_DEV = require('../tungsten.js').IS_DEV;
  * maintaining a reference to the parent context.
  */
 function Context(view, parentContext) {
-  this.view = view;
+  this.view = view || {};
   this.cache = {
     '.': this.view
   };
+  this.parent = parentContext;
 
   // If parent context isn't passed, but the model has parents, build the chain
   this.initialize(view, parentContext);
@@ -110,9 +110,8 @@ Context.prototype.lookup = function(name) {
   }
 
   // Sometimes comment blocks get registered as interpolators
-  // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
-    return '';
+    return null;
   }
 
   // Safety precaution

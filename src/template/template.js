@@ -8,6 +8,7 @@
 var _ = require('underscore');
 var tungsten = require('../tungsten');
 var ToVdom = require('./to_vdom');
+var ToHtmlString = require('./to_html_string');
 var ractiveAdaptor = require('./ractive_adaptor');
 var ractiveTypes = require('./ractive_types');
 var Context = require('./template_context');
@@ -36,6 +37,13 @@ Template.prototype.setPartials = function(partials) {
 Template.prototype.register = function(partialName) {
   registeredPartials[partialName] = this.templateObj;
 };
+
+Template.prototype._render = function(template, data, view, partials, stack) {
+  var context = (data && data.constructor && data instanceof Context) ? data : new Context(data);
+  ractiveAdaptor(stack, template || this.templateObj, context, partials || registeredPartials, view);
+  return stack.getOutput();
+};
+
 /**
  * Outputs the template to a HTML string
  * @param  {Object} data Model to render the template with
@@ -43,25 +51,10 @@ Template.prototype.register = function(partialName) {
  */
 Template.prototype.toString = function(data) {
   var templateToRender = this.templateObj;
-  var tempView = this.view;
   if (this.view && !this.view.parentView) {
-    templateToRender = templateToRender.f;
+    templateToRender = this.templateObj.f;
   }
-  this.view = null;
-  var vdom = this.toVdom(data);
-  this.view = tempView;
-  // Set attributesOnly flag for this render
-  var str = tungsten.toString(vdom);
-  if (Context.isArray(vdom)) {
-    _.each(vdom, function(node) {
-      if (typeof node.recycle === 'function') {
-        node.recycle();
-      }
-    });
-  } else if (typeof vdom.recycle === 'function') {
-    vdom.recycle();
-  }
-  return str;
+  return this._render(templateToRender, data, null, this.partials, new ToHtmlString());
 };
 /**
  * Outputs the template to a DocumentFragment
@@ -92,20 +85,11 @@ Template.prototype.toDom = function(data) {
 };
 /**
  * Outputs the template to a VirtualTree
- * @param  {Object} data Model to render the template with
- * @param  {Object} view Optional view to override the attached
- * @return {Object}      VirtualTree representing the template
+ * @param  {Object} data  Model to render the template with
+ * @return {Object}       VirtualTree representing the template
  */
-Template.prototype.toVdom = function(data, view) {
-  var viewToRender = this.view;
-  if (view && view.constructor && view.constructor.tungstenView) {
-    viewToRender = view;
-  }
-
-  var context = (data && data.constructor && data instanceof Context) ? data : new Context(data);
-  var toVdom = new ToVdom();
-  ractiveAdaptor(toVdom, this.templateObj, context, this.partials || registeredPartials, viewToRender);
-  return toVdom.getOutput();
+Template.prototype.toVdom = function(data) {
+  return this._render(this.templateObj, data, this.view, this.partials, new ToVdom());
 };
 
 /**
