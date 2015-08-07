@@ -52,14 +52,36 @@ function equal(actual, expected, description) {
   });
 }
 
-function toHTML(templateStr, data, partials) {
-  templateStr = templateStr || '';
-  data = data || {};
-  partials = partials || {};
-
-  var result = compiler(templateStr, partials);
-  return result.toString(data);
+function getTemplate(templateStr, partials) {
+  return compiler(templateStr || '', partials || {});
 }
+
+function toHTML(templateStr, data, partials) {
+  var template = getTemplate(templateStr, partials);
+  return template.toString(data);
+}
+
+describe('HTML composition', function() {
+  equal(toHTML('<tr><div>{{hi}}</div></tr>', {
+    hi: 'Hi.'
+  }), '<tr><div>Hi.</div></tr>');
+
+  equal(toHTML('<tr><p><div>{{hi}}</div></p></tr>', {
+    hi: 'Hi.'
+  }), '<tr><p></p><div>Hi.</div></tr>');
+
+  equal(toHTML('<tr data-static="test" {{{attrs}}}></tr>', {
+    attrs: 'data-test="true"'
+  }), '<tr data-static="test" data-test="true"></tr>');
+
+  equal(toHTML('<tr data-static="test" {{{attrs}}}></tr>', {
+    attrs: 'data_test="true"'
+  }), '<tr data-static="test" data_test="true"></tr>');
+
+  equal(toHTML('<table>{{{row}}}</table>', {
+    row: '<tr><td>Row</td></tr>'
+  }), '<table><tr><td>Row</td></tr></table>');
+});
 
 /*
  * QUnit tests from https://github.com/thegrandpoobah/mustache.js
