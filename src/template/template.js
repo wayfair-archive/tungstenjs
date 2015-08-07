@@ -62,7 +62,7 @@ Template.prototype.toString = function(data) {
  * @return {Object}      DocumentFragment containing the template's DOM nodes
  */
 Template.prototype.toDom = function(data) {
-  var vdom = this.toVdom(data);
+  var vdom = this._render(this.templateObj, data, null, this.partials, new ToVdom());
   var domFrag = tungsten.toDOM(vdom);
   if (Context.isArray(vdom)) {
     _.each(vdom, function(node) {
@@ -190,11 +190,14 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
  * @return {Object}         Wrapped template
  */
 Template.prototype.wrap = function(tagName) {
-  return new Template({
+  var template = new Template({
     't': ractiveTypes.ELEMENT,
     'e': tagName || 'div',
     'f': this.templateObj
   }, this.partials);
+
+  template.wrapped = true;
+  return template;
 };
 
 /**
@@ -207,7 +210,7 @@ Template.prototype.attachView = function(view, widgetWrapper) {
   var templateObj = _.clone(this.templateObj);
   templateObj.root = true;
   // If this view is the top level wrapper, create a fake element to wrap it in
-  if (!view.parentView) {
+  if (!view.parentView && !this.wrapped) {
     // Create wrapper element based on view's element
     templateObj = {
       't': ractiveTypes.ELEMENT,
@@ -236,7 +239,9 @@ Template.prototype.attachView = function(view, widgetWrapper) {
     }
   }
   templateObj = attachViews(view, templateObj, widgetWrapper, this.partials || registeredPartials);
-  return new Template(templateObj, this.partials, view);
+  var template = new Template(templateObj, this.partials, view);
+  template.wrapped = this.wrapped;
+  return template;
 };
 
 module.exports = Template;

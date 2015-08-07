@@ -295,6 +295,57 @@ var BaseView = Backbone.View.extend({
     for (var i = 0; i < childInstances.length; i++) {
       childInstances[i].destroy();
     }
+  },
+  setNestedData: function(prop, data) {
+    var model = this.model.getDeep(prop);
+    model.set(data);
+  },
+  setSubview: function(prop, data, Template, View, Model) {
+    var model = this.model;
+    var propParts = prop.split(':');
+    prop = propParts.splice(-1);
+    prop = prop[0];
+    if (propParts.length) {
+      model = model.getDeep(propParts.join(':'));
+    }
+    var subview;
+    if (View && View.tungstenView && (data.tungstenModel || Model)) {
+      Template = Template.wrap('span');
+      Template.wrapped = true;
+
+      var subModel;
+      if (data.tungstenModel) {
+        subModel = data;
+      } else if (Model) {
+        subModel = new Model(data);
+      }
+
+      subview = {
+        is_tungsten_component: true,
+        template: Template,
+        model: subModel,
+        view: View,
+        instance: _.uniqueId('w_subview')
+      };
+    } else {
+      subview = {
+        is_subview: true,
+        template: Template,
+        data: data
+      };
+    }
+
+    model.set(prop, subview);
+  },
+  clearSubview: function(prop) {
+    var model = this.model;
+    var propParts = prop.split(':');
+    prop = propParts.splice(-1);
+    prop = prop[0];
+    if (propParts.length) {
+      model = model.getDeep(propParts.join(':'));
+    }
+    model.unset(prop);
   }
 }, {
   tungstenView: true

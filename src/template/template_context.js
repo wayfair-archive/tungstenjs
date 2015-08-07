@@ -8,6 +8,7 @@
  */
 'use strict';
 
+var _ = require('underscore');
 var isArray = require('../utils/is_array');
 var IS_DEV = require('../tungsten.js').IS_DEV;
 
@@ -41,6 +42,34 @@ Context.prototype.initialize = function() {};
  */
 Context.prototype.lookupValue = function() {
   throw 'Lookup function not set.';
+};
+
+Context.SUBVIEW_KEY = 'nested_content';
+
+Context.ComponentWidget = function() {
+  throw 'ComponentWidget not set';
+};
+
+/**
+ * Internal lookup function to intercept interesting lookups
+ */
+Context.prototype._lookupValue = function(view, name, stack) {
+  if (stack && name === Context.SUBVIEW_KEY) {
+    if (view.is_subview) {
+      if (view.template && typeof view.template._render === 'function') {
+        return view.template._render(null, view.data, null, null, stack);
+      }
+    }
+    if (view.is_tungsten_component) {
+      if (!view.instance) {
+        view.template = view.template.wrap(view.tag_name || 'span');
+        view.model = new view.model(view.data || {});
+        view.instance = new Context.ComponentWidget(view.view, view.model, view.template);
+      }
+      return stack.createObject(view.instance);
+    }
+  }
+  return this.lookupValue(view, name);
 };
 
 /**
@@ -94,7 +123,7 @@ Context.prototype.partial = function() {
  * Returns the value of the given name in this context, traversing
  * up the context hierarchy if the value is absent in this context's view.
  */
-Context.prototype.lookup = function(name) {
+Context.prototype.lookup = function(name, stack) {
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
@@ -136,12 +165,12 @@ Context.prototype.lookup = function(name) {
         index = 0;
 
         while (value != null && index < names.length) {
-          value = this.lookupValue(value, names[index]);
+          value = this._lookupValue(value, names[index], stack);
           index += 1;
         }
       } else {
         // if it isn't a nested lookup, just grab it
-        value = this.lookupValue(context.view, name);
+        value = this._lookupValue(context.view, name, stack);
       }
 
       // If a value was found, break out
@@ -215,6 +244,9 @@ Context.setAdapterFunctions = function(adaptor) {
   }
   if (typeof adaptor.lookupValue === 'function') {
     Context.prototype.lookupValue = adaptor.lookupValue;
+  }
+  if (typeof adaptor.ComponentWidget === 'function') {
+    Context.ComponentWidget = adaptor.ComponentWidget;
   }
 };
 

@@ -2,6 +2,8 @@
 
 var _ = require('underscore');
 var ToVdom = require('./to_vdom');
+var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
+var isWidget = virtualDomImplementation.isWidget;
 
 function ToHtmlString() {
   ToVdom.apply(this, arguments);
@@ -89,7 +91,9 @@ ToHtmlString.prototype.closeElem = function(obj) {
 };
 
 ToHtmlString.prototype.createObject = function(obj, options) {
-  if (typeof obj === 'string' && options && options.escape) {
+  if (isWidget(obj)) {
+    obj.template._render(null, obj.model, null, null, this);
+  } else if (typeof obj === 'string' && options && options.escape) {
     this.closeElem(escapeString(obj));
   } else {
     this.closeElem(obj);

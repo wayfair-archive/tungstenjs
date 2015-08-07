@@ -64,7 +64,7 @@ function renderAttributeString(values, context) {
  * @param  {Object}  parentView  ParentView to attach widgets to
  */
 function render(stack, template, context, partials, parentView) {
-  var result, i, j, value, valueLength;
+  var i, j, value, valueLength;
   if (typeof template === 'undefined') {
     return;
   } else if (typeof template === 'string') {
@@ -81,9 +81,9 @@ function render(stack, template, context, partials, parentView) {
       stack.createObject(new template.constructor(template.template, template.childView, context, parentView));
     } else {
       // If we aren't in the context of a view, just render out the widget without attaching the child view
-      stack.createObject(template.template.toVdom(context));
+      template.template._render(null, context, null, null, stack);
     }
-    return result;
+    return;
   }
 
   switch (template.t) {
@@ -96,7 +96,7 @@ function render(stack, template, context, partials, parentView) {
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
     case ractiveTypes.TRIPLE:
-      value = context.lookup(Context.getInterpolatorKey(template));
+      value = context.lookup(Context.getInterpolatorKey(template), stack);
       if (value != null) {
         // If value is already a widget or vnode, add it wholesale
         if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
@@ -115,7 +115,6 @@ function render(stack, template, context, partials, parentView) {
     // {{> partial}}
     case ractiveTypes.PARTIAL:
       var partialName = Context.getInterpolatorKey(template);
-      result = null;
       if (partials[partialName]) {
         var partialTemplate = partials[partialName];
         if (partialTemplate._render) {
@@ -132,7 +131,7 @@ function render(stack, template, context, partials, parentView) {
 
     // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
-      value = Context.parseValue(context.lookup(Context.getInterpolatorKey(template)));
+      value = Context.parseValue(context.lookup(Context.getInterpolatorKey(template), stack));
       if (template.n === ractiveTypes.SECTION_UNLESS) {
         if (!value.isTruthy) {
           render(stack, template.f, context, partials, parentView);
