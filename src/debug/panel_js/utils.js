@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+var logger = require('../../utils/logger');
 
 var debugWindow;
 function setDebugWindow(panel) {
@@ -27,7 +28,7 @@ function alert(message) {
   if (debugWindow) {
     debugWindow.alert(message);
   }
-  console.warn(message);
+  logger.warn(message);
 }
 
 function selectElements(className) {
@@ -88,7 +89,7 @@ function closest(elem, className) {
 
 function getListener(objName, eventName) {
   return function() {
-    console.log(objName + ':' + eventName, arguments);
+    logger.log(objName + ':' + eventName, arguments);
   };
 }
 

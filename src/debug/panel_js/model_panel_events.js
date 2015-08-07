@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+var logger = require('../../utils/logger');
 var utils = require('./utils');
 var appData = require('./app_data');
 
@@ -41,7 +42,7 @@ module.exports = function() {
   });
   utils.addEvent('js-more-model-info', 'click', function(e) {
     var model = getClosestModel(e.target).obj;
-    console.log(model);
+    logger.log(model);
   });
   utils.addEvent('js-model-property', 'click', function(e) {
     var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
@@ -64,7 +65,7 @@ module.exports = function() {
     } catch (ex) {
       var message = 'Unable to parse "' + e.currentTarget.value + '" to a valid value. Input must match JSON format';
       utils.alert(message);
-      console.warn(message);
+      logger.warn(message);
       utils.selectElements('js-model-property-value')[0].focus();
     }
   });
@@ -118,6 +119,16 @@ module.exports = function() {
         break;
       }
     }
+    utils.render();
+  });
+  utils.addEvent('js-get-model-data', 'click', function() {
+    appData.selectedModel.outputData = JSON.stringify(appData.selectedModel.obj.doSerialize());
+    utils.render();
+  });
+  utils.addEvent('js-set-model-data', 'click', function() {
+    var textbox = utils.selectElements('js-model-data')[0];
+    appData.selectedModel.outputData = '';
+    appData.selectedModel.obj.set(JSON.parse(textbox.value), {reset: true});
     utils.render();
   });
 };

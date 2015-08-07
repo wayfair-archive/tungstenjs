@@ -7,6 +7,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
+var logger = require('../../src/utils/logger');
 var ViewWidget = require('./backbone_view_widget');
 
 // Cached regex to split keys for `delegate`.
@@ -425,7 +426,17 @@ var BaseView = Backbone.View.extend({
     }
   }
 }, {
-  tungstenView: true
+  tungstenView: true,
+  extend: function(protoProps, staticProps) {
+    var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
+    for (var i = 0; i < methods.length; i++) {
+      if (typeof protoProps[methods[i]] === 'function') {
+        logger.warn('View.' + methods[i] + ' may not be overridden');
+      }
+    }
+
+    return Backbone.View.extend.call(this, protoProps, staticProps);
+  }
 });
 
 module.exports = BaseView;

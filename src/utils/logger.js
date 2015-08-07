@@ -22,5 +22,6 @@ module.exports = {
   debug: getConsoleMethod('debug'),
   log: getConsoleMethod('log'),
   warn: getConsoleMethod('warn'),
-  error: getConsoleMethod('error')
+  error: getConsoleMethod('error'),
+  trace: getConsoleMethod('trace')
 };

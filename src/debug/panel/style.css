@@ -10851,3 +10851,11 @@ li hr {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+
+.model_data textarea {
+  width: 100%;
+  resize: none;
+  height: 100px;
+  border: 1px dotted #DCDCDC;
+  width: 100%;
+}

@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var utils = require('./panel_js/utils');
 var appData = require('./panel_js/app_data');
+var logger = require('../utils/logger');
 
 var debugWindow;
 
@@ -10,7 +11,7 @@ function getWindow() {
   // Launch panel
   debugWindow = window.open('', 'TungstenDebugger', 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,width=800,height=640');
   if (!debugWindow) {
-    console.error('Unable to launch debug panel. You may need to allow the popup or run "window.launchDebugger()" from your console');
+    logger.error('Unable to launch debug panel. You may need to allow the popup or run "window.launchDebugger()" from your console');
   } else {
     debugWindow.title = 'Tungsten Debugger';
     debugWindow.onunload = function() {
@@ -61,7 +62,7 @@ function renderDebugPanel() {
     try {
       debugDoc.body.innerHTML = templates.panel.render(appData, templates);
     } catch (ex) {
-      console.log(ex);
+      logger.log(ex);
     }
 
     require('./panel_js/panel_events')();
@@ -143,7 +144,7 @@ window.launchDebugger = function() {
   }
 };
 
-console.info('Tungsten Debugger is enabled. Run "launchDebugger()" to enable.\nA button will need to be clicked to satisfy the user input requirement for window.open.');
+logger.info('Tungsten Debugger is enabled. Run "launchDebugger()" to enable.\nA button will need to be clicked to satisfy the user input requirement for window.open.');
 
 /**
  * When the parent window unloads, the debug window polls to reattach

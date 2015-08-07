@@ -1,0 +1,20 @@
+<div class="js-model-panel-view">
+    <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="modelInfo" >
+        Import / Export
+    </div>
+    {{^hiddenPanels.modelInfo}}
+      {{#selectedModel}}
+      <div class="sidebar-pane visible">
+          <div class="body model_data">
+              <div class="section expanded">
+                  <textarea class="js-model-data">{{outputData}}</textarea>
+              </div>
+              <div class="section expanded">
+                  <button class="js-get-model-data">Get Current</button>
+                  <button class="js-set-model-data">Set</button>
+              </div>
+          </div>
+      </div>
+      {{/selectedModel}}
+    {{/hiddenPanels.modelInfo}}
+</div>

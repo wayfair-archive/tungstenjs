@@ -2,17 +2,9 @@
 
 var _ = require('underscore');
 var utils = require('./utils');
-var textDiff = require('../text_diff');
 var appData = require('./app_data');
 var highlighter = require('../highlighter');
-
-var debugTagRegex = /<span class="js-view-list-item .*?" data-id=".*?">(.*?)<\/span>/g;
-function removeDebugTags(templateStr) {
-  var cleanVdom = templateStr.replace(debugTagRegex, function(fullMatch, debugName) {
-    return debugName;
-  });
-  return cleanVdom;
-}
+var logger = require('../../utils/logger');
 
 function getClosestView(elem) {
   var view = null;
@@ -61,15 +53,15 @@ module.exports = function() {
     highlighter(null);
   });
   utils.addEvent('js-view-element', 'click', function() {
-    console.log(appData.selectedView.obj.el);
+    logger.log(appData.selectedView.obj.el);
   });
   utils.addEvent('js-more-view-info', 'click', function(e) {
     var view = getClosestView(e.target).obj;
-    console.log(view);
+    logger.log(view);
   });
   utils.addEvent('js-view-event', 'click', function(e) {
     var selector = e.currentTarget.getAttribute('data-event-selector');
-    console.log(selector, appData.selectedView.obj.getEventFunction(selector));
+    logger.log(selector, appData.selectedView.obj.getEventFunction(selector));
   });
   utils.addEvent('js-track-function', 'click', function(e) {
     var fnName = e.currentTarget.getAttribute('data-fn');

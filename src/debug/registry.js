@@ -2,6 +2,7 @@
 
 var _ = require('underscore');
 var eventBus = require('./event_bus');
+var logger = require('../utils/logger');
 
 var nestedRegistry = _.create(null);
 var flatRegistry = _.create(null);
@@ -15,7 +16,7 @@ function getTrackableFunction(obj, name, trackedFunctions) {
   var debugName = obj.getDebugName();
   return function tungstenTrackingPassthrough() {
     if (trackedFunctions[name]) {
-      console.trace('Tracked function "' + debugName + '.' + name + '"', arguments);
+      logger.trace('Tracked function "' + debugName + '.' + name + '"', arguments);
     }
     return originalFn.apply(this, arguments);
   };

@@ -6,6 +6,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var backboneNested = require('./backbone_nested');
 var tungsten = require('../../src/tungsten');
+var logger = require('../../src/utils/logger');
 /**
  * BaseModel
  *
@@ -104,6 +105,17 @@ var BaseModel = Backbone.Model.extend({
   /* develblock:end */
 
   postInitialize: function() {}
+}, {
+  extend: function(protoProps, staticProps) {
+    var methods = ['initialize'];
+    for (var i = 0; i < methods.length; i++) {
+      if (typeof protoProps[methods[i]] === 'function') {
+        logger.warn('Model.' + methods[i] + ' may not be overridden');
+      }
+    }
+
+    return Backbone.Model.extend.call(this, protoProps, staticProps);
+  }
 });
 
 // Add nested collection/model support with backbone_nested.
