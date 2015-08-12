@@ -13,11 +13,23 @@ var vNodeToString = require('./vtree_to_string');
 
 var chars = utils.entities.escaped;
 
+/**
+ * Called when a VirtualNode and DOM node align
+ *
+ * @param  {Object}  vNode VirtualNode
+ * @param  {Element} elem  DOM node
+ *
+ * @return {string}        Diff string
+ */
 function diffElements(vNode, elem) {
   var output = '';
+  // Diff tagnames and save for closing
   var tagDiff = textDiff(vNode.tagName.toLowerCase(), elem.tagName.toLowerCase());
   output += chars.open;
   output += tagDiff;
+
+  // Check declared property values vs DOM values
+  // This bypasses properties that are not managed by VirtualNode
   _.each(vNode.properties, function(value, key) {
     if (key.toLowerCase() === 'contenteditable' && value.toLowerCase() === 'inherit') {
       return;
@@ -27,6 +39,7 @@ function diffElements(vNode, elem) {
       if (propValue.value) {
         propValue = propValue.value;
       } else {
+        // If this is a hook with no value, ignore as it's functional
         return;
       }
     }
@@ -36,6 +49,9 @@ function diffElements(vNode, elem) {
     // If the property is a boolean, any non-"false" value of the template is fine
     output += elem[key] === true && propValue.toString() !== 'false' ? vAttr : textDiff(vAttr, eAttr);
   });
+
+  // Check declared attribute values vs DOM values
+  // This bypasses attributes that are not managed by VirtualNode
   _.each(vNode.properties.attributes, function(value, key) {
     if (key.toLowerCase() === 'contenteditable' && value.toLowerCase() === 'inherit') {
       return;
@@ -48,35 +64,46 @@ function diffElements(vNode, elem) {
     var eAttr = ' ' + key + '=' + chars.quote + elem.getAttribute(key) + chars.quote;
     output += textDiff(vAttr, eAttr);
   });
-  if (vNode.children.length > 0 || elem.childNodes.length > 0) {
-    output += chars.close;
-    var numChildren = Math.max(vNode.children.length, elem.childNodes.length);
+  output += chars.close;
 
-    for (var i = 0; i < numChildren; i++) {
-      output += recursiveDiff(vNode.children[i], elem.childNodes[i]);
-    }
-    output += chars.open + '/' + tagDiff + chars.close;
-  } else {
-    output += chars.close + chars.open + '/' + tagDiff + chars.close;
+  // Iterate over the larger number of children
+  var numChildren = Math.max(vNode.children.length, elem.childNodes.length);
+
+  for (var i = 0; i < numChildren; i++) {
+    output += recursiveDiff(vNode.children[i], elem.childNodes[i]);
   }
+  // For diffing purposes all tags are <tag></tag>, even self-closing tags
+  output += chars.open + '/' + tagDiff + chars.close;
   return output;
 }
 
+/**
+ * Iterates over a VirtualDOM and DOM structure to create a diff string
+ *
+ * @param  {Object}  vtree VirtualDOM object
+ * @param  {Element} elem  DOM object
+ *
+ * @return {string}        Diff string
+ */
 function recursiveDiff(vtree, elem) {
   var output = '';
   if (vtree == null && elem != null) {
+    // If the VTree ran out but DOM still exists
     output += '<ins>' + utils.elementToString(elem, chars) + '</ins>';
   } else if (isVNode(vtree)) {
     if (!elem || elem.nodeType !== utils.NODE_TYPES.ELEMENT) {
+      // If vtree is a VNode, but elem isn't an Element
       output += '<del>' + vNodeToString(vtree, true, false) + '</del>';
       if (elem) {
         output += '<ins>' + utils.elementToString(elem, chars) + '</ins>';
       }
     } else {
+      // Diff elements and recurse
       output += diffElements(vtree, elem);
     }
   } else if (isVText(vtree)) {
     if (!elem || elem.nodeType !== utils.NODE_TYPES.TEXT) {
+      // If vtree is a VText, but elem isn't a textNode
       output += '<del>' + utils.escapeString(vtree.text) + '</del>';
       if (elem) {
         output += '<ins>' + utils.elementToString(elem, chars) + '</ins>';
@@ -85,7 +112,9 @@ function recursiveDiff(vtree, elem) {
       output += textDiff(vtree.text, elem.textContent);
     }
   } else if (isWidget(vtree)) {
+    // Widgets are the construct that hold childViews
     if (vtree.constructor === HTMLCommentWidget) {
+      // HTMLCommentWidget is a special case
       if (!elem || elem.nodeType !== utils.NODE_TYPES.COMMENT) {
         output += '<del>' + utils.getCommentString(utils.escapeString(vtree.text), chars) + '</del>';
         if (elem) {
@@ -95,14 +124,15 @@ function recursiveDiff(vtree, elem) {
         output += utils.getCommentString(textDiff(vtree.text, elem.textContent), chars);
       }
     } else {
+      var widgetName = vtree.view.getDebugName();
+      if (typeof vtree.templateToString === 'function') {
+        widgetName = vtree.templateToString(true);
+      }
       if (vtree.view && vtree.view.el !== elem) {
-        if (typeof vtree.templateToString === 'function') {
-          output += '<del><ins>' + vtree.view.getDebugName() + '</ins></del>';
-        }
+        // If the view at this position isn't bound to elem, something has gone terribly wrong
+        output += '<del><ins>' + widgetName + '</ins></del>';
       } else {
-        if (typeof vtree.templateToString === 'function') {
-          output += vtree.templateToString(true, false);
-        }
+        output += widgetName;
       }
     }
   }

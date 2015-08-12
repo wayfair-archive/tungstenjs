@@ -225,12 +225,12 @@ var BaseView = Backbone.View.extend({
       return tungsten.debug.diffVtreeAndElem(this.vtree, this.el);
     }
   },
-  getVdomTemplate: function(recursive) {
+  getVdomTemplate: function() {
     var vtreeToRender = this.vtree;
     if (!this.parentView) {
       vtreeToRender = vtreeToRender.children;
     }
-    return tungsten.debug.vtreeToString(vtreeToRender, true, recursive);
+    return tungsten.debug.vtreeToString(vtreeToRender, true);
   },
 
   isParent: function() {

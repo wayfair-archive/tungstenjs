@@ -145,12 +145,9 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
 };
 
 /* develblock:start */
-BackboneViewWidget.prototype.templateToString = function(escaped, recursive) {
+BackboneViewWidget.prototype.templateToString = function(escaped) {
   if (!this.view) {
     return;
-  }
-  if (recursive) {
-    return tungsten.debug.toString.view(this.view, escaped, recursive);
   }
   return this.view.getDebugTag();
 };

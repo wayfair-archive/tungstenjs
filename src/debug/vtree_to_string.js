@@ -13,7 +13,7 @@ var virtualHyperscript = require('../vdom/virtual_hyperscript');
 var vdom = virtualDomImplementation.vdom;
 var utils = require('./to_string_utils');
 
-function toString(vtree, escaped, recursive) {
+function toString(vtree, escaped) {
   var chars = utils.entities[escaped ? 'escaped' : 'unescaped'];
   var output = '';
   var i;
@@ -47,13 +47,13 @@ function toString(vtree, escaped, recursive) {
     } else {
       output += chars.close;
       for (i = 0; i < vtree.children.length; i++) {
-        output += toString(vtree.children[i], escaped, recursive);
+        output += toString(vtree.children[i], escaped);
       }
       output += chars.open + '/' + tagName + chars.close;
     }
   } else if (virtualDomImplementation.isWidget(vtree)) {
     if (typeof vtree.templateToString === 'function') {
-      output += vtree.templateToString(escaped, recursive);
+      output += vtree.templateToString(escaped);
     } else {
       logger.warn('Widget type: ' + vtree.constructor.name + ' has no templateToString function, falling back to DOM');
       var elem = vdom.create(virtualHyperscript('div', {}, vtree));
@@ -65,7 +65,7 @@ function toString(vtree, escaped, recursive) {
     output += utils.escapeString(vtree);
   } else if (vtree.length) {
     for (i = 0; i < vtree.length; i++) {
-      output += toString(vtree[i], escaped, recursive);
+      output += toString(vtree[i], escaped);
     }
   }
   return output;

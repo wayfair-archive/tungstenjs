@@ -36,7 +36,7 @@ module.exports = function() {
     appData.selectedModel.obj.on('all', _.debounce(updateSelectedModel, 100));
     var cids = _.keys(appData.models);
     for (var i = 0; i < cids.length; i++) {
-      appData.models[cids[i]].selected = appData.models[cids[i]].obj === appData.selectedModel;
+      appData.models[cids[i]].selected = appData.models[cids[i]] === appData.selectedModel;
     }
     updateSelectedModel();
   });

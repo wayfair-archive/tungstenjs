@@ -2,7 +2,6 @@
 
 var _ = require('underscore');
 var eventBus = require('./event_bus');
-var logger = require('../utils/logger');
 
 var nestedRegistry = _.create(null);
 var flatRegistry = _.create(null);
@@ -11,61 +10,19 @@ nestedRegistry.models = {};
 flatRegistry.views = {};
 flatRegistry.models = {};
 
-function getTrackableFunction(obj, name, trackedFunctions) {
-  var originalFn = obj[name];
-  var debugName = obj.getDebugName();
-  return function tungstenTrackingPassthrough() {
-    if (trackedFunctions[name]) {
-      logger.trace('Tracked function "' + debugName + '.' + name + '"', arguments);
-    }
-    return originalFn.apply(this, arguments);
-  };
-}
+var RegistryWrapper = require('./registry_wrapper');
+RegistryWrapper.flatRegistry = flatRegistry;
 
-function RegistryWrapper(obj, type) {
-  this.obj = obj;
-  this.type = type;
-
-  this.selected = false;
-  this.collapsed = false;
-  this.customEvents = [];
-
-  this.debugName = obj.getDebugName();
-
-  if (typeof obj.getFunctions === 'function') {
-    this.trackedFunctions = {};
-    this.objectFunctions = obj.getFunctions(this.trackedFunctions, getTrackableFunction);
-  }
-
-  if (typeof obj.getEvents === 'function') {
-    this.objectEvents = obj.getEvents();
-  }
-
-  _.bindAll(this, 'isParent', 'getChildren');
-}
-
-RegistryWrapper.prototype.isParent = function() {
-  return this.obj.isParent();
-};
-
-RegistryWrapper.prototype.toggleFunctionTracking = function(name) {
-  this.trackedFunctions[name] = !this.trackedFunctions[name];
-};
-
-RegistryWrapper.prototype.getChildren = function() {
-  var children = this.obj.getChildren();
-  var registry = flatRegistry[this.type];
-  var result = new Array(children.length);
-  for (var i = 0; i < children.length; i++) {
-    result[i] = registry[children[i].getDebugName()];
-  }
-  return result;
-};
-
+/**
+ * Shortcut to trigger a popout panel re-render
+ */
 function triggerChange() {
   eventBus.trigger(eventBus.CHANGED_REGISTERED, nestedRegistry, flatRegistry);
 }
 
+/**
+ * Updates nestedRegistry.models using the top level view's models to get nesting
+ */
 function updateNestedModels() {
   nestedRegistry.models = [];
   _.each(nestedRegistry.views, function(view) {
@@ -76,6 +33,11 @@ function updateNestedModels() {
   });
 }
 
+/**
+ * Adds a View to the registry
+ *
+ * @param  {Object} view View to register
+ */
 function registerView(view) {
   var name = view.getDebugName();
   var wrapped = new RegistryWrapper(view, 'views');
@@ -98,6 +60,11 @@ function registerView(view) {
   triggerChange();
 }
 
+/**
+ * Adds a Model to the registry
+ *
+ * @param  {Object} model Model to register
+ */
 function registerModel(model) {
   var name = model.getDebugName();
   var wrapped = flatRegistry.models[name] = new RegistryWrapper(model, 'models');
@@ -105,8 +72,7 @@ function registerModel(model) {
     wrapped.destroy = _.bind(model.destroy, model);
     model.destroy = _.bind(function() {
       var name = this.obj.getDebugName();
-      delete nestedRegistry.views[name];
-      delete flatRegistry.views[name];
+      delete flatRegistry.models[name];
       updateNestedModels();
       triggerChange();
       this.destroy();
@@ -115,6 +81,11 @@ function registerModel(model) {
   triggerChange();
 }
 
+/**
+ * Public register function that sorts objects by detected type
+ *
+ * @param  {Object} obj Object to attempt to register
+ */
 module.exports.register = function(obj) {
   if (obj) {
     if (obj.constructor && obj.constructor.tungstenView) {
@@ -125,6 +96,13 @@ module.exports.register = function(obj) {
   }
 };
 
+/**
+ * Returns registered objects
+ *
+ * @param  {Boolean} flat Whether to return flat or nested registry
+ *
+ * @return {Object}       Selected registry
+ */
 module.exports.get = window.getRegistry = function(flat) {
   return flat ? flatRegistry : nestedRegistry;
 };

@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * Simple EventBus to handle communication around debugging functions
+ */
+
 var registeredEvents = {};
 
 var eventBus = {};

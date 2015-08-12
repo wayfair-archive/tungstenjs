@@ -1,9 +1,11 @@
 'use strict';
 
+/**
+ * Chrome DevTools-esque plugin to highlight DOM elements from debugger panel
+ */
+
 var highlightCSS = document.createElement('style');
-highlightCSS.innerHTML = '#tungstenDebugOverlay{position:fixed;background-color:rgba(255,255,255,0.005);top:0;left:0;height:100%;width:100%;z-index:5000;pointer-events:none}' +
-  '#tungstenDebugHighlight{position:relative;left:-10000px;background-color:rgba(200,0,0,0.5);pointer-events:none}' +
-  '#tungstenDebugHighlight:after{content:attr(data-label);background-color:#FFFF80;border:1px solid #000;padding:5px;display:block;position:absolute;bottom:-2em;white-space: nowrap;z-index:5001}';
+highlightCSS.innerHTML = require('!!tungsten_debug?static!./highlighter.css');
 document.head.appendChild(highlightCSS);
 
 var overlayEl = document.createElement('div');
@@ -14,7 +16,6 @@ highlightEl.id = 'tungstenDebugHighlight';
 
 overlayEl.appendChild(highlightEl);
 document.body.appendChild(overlayEl);
-
 
 function highlightBox(box, label) {
   highlightEl.style.display = 'block';
@@ -40,6 +41,5 @@ function highlight(el, label) {
 }
 
 overlayEl.tabindex = -1;
-overlayEl.focus();
 
 module.exports = highlight;

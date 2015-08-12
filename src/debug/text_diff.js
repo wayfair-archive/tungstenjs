@@ -83,7 +83,7 @@ function diff(o, n) {
   };
 }
 
-function diffString(o, n, onlyDiff) {
+function diffString(o, n) {
   o = o.join ? o.join('') : o;
   n = n.join ? n.join('') : n;
 
@@ -95,45 +95,32 @@ function diffString(o, n, onlyDiff) {
   var out = diff(left === '' ? [] : left.split(/\s+/), right === '' ? [] : right.split(/\s+/));
   var str = '';
 
-  var oSpace = left.match(/\s+/g);
-  if (oSpace == null) {
-    oSpace = ['\n'];
-  } else {
-    oSpace.push('\n');
-  }
-  var nSpace = right.match(/\s+/g);
-  if (nSpace == null) {
-    nSpace = ['\n'];
-  } else {
-    nSpace.push('\n');
-  }
-
   var i;
   if (out.n.length === 0) {
     for (i = 0; i < out.o.length; i++) {
-      differences += out.o[i] + oSpace[i];
-      str += '<del>' + out.o[i] + oSpace[i] + '</del>';
+      differences += out.o[i];
+      str += '<del>' + out.o[i] + '</del>';
     }
   } else {
     if (out.n[0].text == null) {
       for (right = 0; right < out.o.length && out.o[right].text == null; right++) {
-        differences = out.o[right] + oSpace[right];
-        str += '<del>' + out.o[right] + oSpace[right] + '</del>';
+        differences = out.o[right];
+        str += '<del>' + out.o[right] + '</del>';
       }
     }
 
     for (i = 0; i < out.n.length; i++) {
       if (out.n[i].text == null) {
-        differences = out.n[i] + nSpace[i];
-        str += '<ins>' + out.n[i] + nSpace[i] + '</ins>';
+        differences = out.n[i];
+        str += '<ins>' + out.n[i] + '</ins>';
       } else {
         var pre = '';
 
         for (right = out.n[i].row + 1; right < out.o.length && out.o[right].text == null; right++) {
-          differences = out.o[right] + oSpace[right];
-          pre += '<del>' + out.o[right] + oSpace[right] + '</del>';
+          differences = out.o[right];
+          pre += '<del>' + out.o[right] + '</del>';
         }
-        str += ' ' + out.n[i].text + nSpace[i] + pre;
+        str += ' ' + out.n[i].text + pre;
       }
     }
   }

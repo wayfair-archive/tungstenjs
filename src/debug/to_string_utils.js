@@ -12,6 +12,7 @@ module.exports.propertiesToTransform = {
   'httpEquiv': 'http-equiv'
 };
 
+/** @type {Object} Relevant map of NodeTypes */
 module.exports.NODE_TYPES = {
   ELEMENT: 1,
   TEXT: 3,
@@ -27,6 +28,13 @@ _.each(require('html-tokenizer/entity-map'), function(charCode, name) {
   }
 });
 
+/**
+ * Escapes HTML entities in the given string
+ *
+ * @param  {string} str String to escape
+ *
+ * @return {string}     Escaped string
+ */
 module.exports.escapeString = function(str) {
   var output = '';
   for (var i = 0; i < str.length; i++) {
@@ -35,6 +43,7 @@ module.exports.escapeString = function(str) {
   return output;
 };
 
+/** @type {Object} Escaped or unescaped entities */
 module.exports.entities = {
   unescaped: {
     amp: '&',
@@ -50,6 +59,7 @@ module.exports.entities = {
   }
 };
 
+/** @type {Object} List of elements that don't close */
 module.exports.noClosing = {
   'br': true,
   'hr': true,
@@ -58,6 +68,8 @@ module.exports.noClosing = {
   'meta': true,
   'link': true
 };
+
+/** @type {Object} List of elements that self close */
 module.exports.selfClosing = {
   'area': true,
   'base': true,
@@ -74,10 +86,26 @@ module.exports.selfClosing = {
   'wbr': true
 };
 
+/**
+ * Get string representing HTML comment
+ *
+ * @param  {string} text  Text of comment
+ * @param  {Object} chars Character set to use
+ *
+ * @return {string}       Resultant string
+ */
 module.exports.getCommentString = function(text, chars) {
   return chars.open + '-- ' + text + ' --' + chars.close;
 };
 
+/**
+ * Outputs an DOM Element to a string
+ *
+ * @param  {Element} elem  Element to stringify
+ * @param  {Object}  chars Character set to use
+ *
+ * @return {string}        String for given element
+ */
 module.exports.elementToString = function(elem, chars) {
   if (elem.nodeType === module.exports.NODE_TYPES.COMMENT) {
     return module.exports.getCommentString(elem.textContent, chars);

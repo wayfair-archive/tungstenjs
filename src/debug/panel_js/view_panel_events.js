@@ -41,7 +41,7 @@ module.exports = function() {
     appData.selectedView.obj.on('rendered', updateSelectedView);
     var cids = _.keys(appData.views);
     for (var i = 0; i < cids.length; i++) {
-      appData.views[cids[i]].selected = appData.views[cids[i]].obj === appData.selectedView;
+      appData.views[cids[i]].selected = appData.views[cids[i]] === appData.selectedView;
     }
     updateSelectedView();
   });
