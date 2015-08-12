@@ -14,6 +14,9 @@ var Context = require('../../src/template/template_context');
  * @param  {Context?} parentContext  parentContext to use for lookups
  */
 var initialize = function(view, parentContext) {
+  if (view == null) {
+    view = {};
+  }
   if (!parentContext && (view.collection || view.parent)) {
     this.parent = new Context(view.collection || view.parent);
   } else {

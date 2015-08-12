@@ -34,6 +34,14 @@ var BaseView = AmpersandView.extend({
     if (this.options.vtree) {
       this.vtree = this.options.vtree;
     }
+    // Template object
+    if (this.options.template) {
+      this.compiledTemplate = this.options.template;
+    }
+    // VTree is passable as an option if we are transitioning in from a different view
+    if (this.options.vtree) {
+      this.vtree = this.options.vtree;
+    }
     // First-pass rendering context
     if (this.options.context) {
       this.context = this.options.context;
@@ -46,9 +54,9 @@ var BaseView = AmpersandView.extend({
     var dataItem = this.serialize();
 
     // Sanity check that template exists and has a toVdom method
-    if (this.template && this.template.toVdom) {
+    if (this.compiledTemplate && this.compiledTemplate.toVdom) {
       // Run attachView with this instance to attach childView widget points
-      this.template = this.template.attachView(this, ViewWidget);
+      this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
 
       if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
@@ -185,15 +193,15 @@ var BaseView = AmpersandView.extend({
    * @return {Object} the view itself for chainability
    */
   render: function() {
-    if (!this.template) {
+    if (!this.compiledTemplate) {
       return;
     }
 
     // let the view have a say in what context to pass to the template
     // defaults to an empty object for context so that our view render won't fail
     var serializedModel = this.context || this.serialize();
-    var initialTree = this.vtree || this.template.toVdom(this.serialize(), true);
-    this.vtree = tungsten.updateTree(this.el, initialTree, this.template.toVdom(serializedModel));
+    var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize(), true);
+    this.vtree = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
 
     // Clear any passed context
     this.context = null;
