@@ -64,6 +64,10 @@ var BaseView = Backbone.View.extend({
       // Run attachView with this instance to attach childView widget points
       this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
 
+      // If vtree was passed in, we're switching from another view and need to render
+      if (this.options.vtree) {
+        this.render();
+      }
       if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
         while (this.el.firstChild) {
@@ -82,8 +86,8 @@ var BaseView = Backbone.View.extend({
         if (!this.options.dynamicInitialize) {
           self.validateVdom();
         }
-        if (this.options.dynamicInitialize) {
-          // If dynamicInitialize was set, render was already invoked, so childViews are attached
+        if (this.options.dynamicInitialize || this.options.vtree) {
+          // If certain options were set, render was already invoked, so childViews are attached
           self.postInitialize();
         } else {
           setTimeout(function() {
