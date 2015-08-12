@@ -56,7 +56,6 @@ var BaseModel = Backbone.Model.extend({
       getVdomTemplate: true,
       isParent: true,
       getChildren: true,
-      getDebugTag: true,
       getDebugName: true
     };
     for (var key in this) {

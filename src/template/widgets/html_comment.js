@@ -44,6 +44,7 @@ HTMLCommentWidget.prototype.update = function update(prev, elem) {
   }
 };
 
+/* develblock:start */
 HTMLCommentWidget.prototype.templateToString = function(escaped) {
   if (escaped) {
     return '&lt;!-- ' + this.text + ' --&gt;';
@@ -51,5 +52,6 @@ HTMLCommentWidget.prototype.templateToString = function(escaped) {
     return '<!-- ' + this.text + ' -->';
   }
 };
+/* develblock:end */
 
 module.exports = HTMLCommentWidget;

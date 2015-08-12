@@ -134,7 +134,7 @@ var BaseView = Backbone.View.extend({
 
   validateVdom: function() {
     var isText = function(node) {
-      return typeof node === 'string' || node.type === 'VirtualText';
+      return node && (typeof node === 'string' || node.type === 'VirtualText');
     };
 
     // If there's a mismatch in childNode counts, it's usually extra whitespace from the server
@@ -155,7 +155,7 @@ var BaseView = Backbone.View.extend({
     // Compare full template against full DOM
     var diff = this.getTemplateDiff();
     if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
-      console.warn('DOM does not match VDOM. Use debug panel to see differences');
+      console.warn('DOM does not match VDOM for view "' + this.getDebugName() + '". Use debug panel to see differences');
     }
     /* develblock:end */
   },
