@@ -1,5 +1,22 @@
 var path = require('path');
 
+var loaders = [
+  { test: /\.mustache$/, loader: 'tungsten_template' },
+  { test: /\.json$/, loader: 'json-loader' }
+];
+
+var isDev = false;
+for (var i = 0; i < process.argv.length; i++) {
+  if (process.argv[i] === '--dev') {
+    isDev = true;
+    break;
+  }
+}
+
+if (!isDev) {
+  loaders.push({ test: /\.js$/, loader: 'webpack-strip-block' });
+}
+
 module.exports = {
   entry: './js/app',
   output: {
@@ -22,12 +39,6 @@ module.exports = {
     modulesDirectories: ['node_modules', path.join(__dirname, '../../node_modules/'), path.join(__dirname, '../../precompile')]
   },
   module: {
-    loaders: [
-      { test: /\.html$/, loader: 'debug_template' },
-      { test: /\.css$/, loader: 'static_file' },
-      { test: /\.mustache$/, loader: 'tungsten_template' },
-      { test: /\.json$/, loader: 'json-loader' }
-      // ,{ test: /\.js$/, loader: 'webpack-strip-block' }
-    ]
+    loaders: loaders
   }
 };

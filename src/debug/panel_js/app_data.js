@@ -1,7 +1,7 @@
 'use strict';
 
 window.appData = module.exports = {
-  styles: require('../panel/style.css'),
+  styles: require('!!static_file!../panel/style.css'),
   tabs: {
     tabs: [
       {

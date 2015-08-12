@@ -24,7 +24,6 @@
     "backbone": "^1.1.2",
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
-    "hogan.js": "^3.0.2",
     "html-tokenizer": "^1.4.4",
     "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
@@ -35,6 +34,7 @@
   "devDependencies": {
     "chai": "^2.2.0",
     "glob": "^4.3.5",
+    "hogan.js": "^3.0.2",
     "jasmine": "^2.3.1",
     "jsdom-nogyp": "^0.8.3",
     "mkdirp": "~0.5.0",
