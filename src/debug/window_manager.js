@@ -16,6 +16,7 @@ function getWindow() {
     debugWindow.title = 'Tungsten Debugger';
     debugWindow.onunload = function() {
       debugWindow = null;
+      utils.setDebugWindow(null);
     };
     launchDebugger();
   }

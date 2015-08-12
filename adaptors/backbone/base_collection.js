@@ -111,7 +111,7 @@ var BaseCollection = Backbone.Collection.extend({
     for (var i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Collection.' + methods[i] + ' may not be overridden';
-        if (staticProps.debugName) {
+        if (staticProps && staticProps.debugName) {
           msg += ' for collection "' + staticProps.debugName + '"';
         }
         logger.warn(msg);

@@ -148,7 +148,7 @@ var BaseModel = Backbone.Model.extend({
     for (var i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Model.' + methods[i] + ' may not be overridden';
-        if (staticProps.debugName) {
+        if (staticProps && staticProps.debugName) {
           msg += ' for model "' + staticProps.debugName + '"';
         }
         logger.warn(msg);
