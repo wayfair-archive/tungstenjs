@@ -15,7 +15,7 @@ var logger = require('../utils/logger');
 function getTrackableFunction(obj, name, trackedFunctions) {
   var originalFn = obj[name];
   var debugName = obj.getDebugName();
-  return function tungstenTrackingPassthrough() {
+  var fn = function tungstenTrackingPassthrough() {
     // Since objects are passed by reference, it can be updated without loosing reference
     if (trackedFunctions[name]) {
       logger.trace('Tracked function "' + debugName + '.' + name + '"', arguments);
@@ -23,6 +23,8 @@ function getTrackableFunction(obj, name, trackedFunctions) {
     // Apply using whatever context this function was called with
     return originalFn.apply(this, arguments);
   };
+  fn.original = originalFn;
+  return fn;
 }
 
 /**

@@ -23,15 +23,42 @@ var BaseModel = Backbone.Model.extend({
   },
 
   /* develblock:start */
+
+  /** @type {string} Override cidPrefix to avoid confusion with Collections */
+  cidPrefix: 'model',
+
+  /**
+   * Bootstraps all debug functionality
+   */
   initDebug: function() {
     tungsten.debug.registry.register(this);
     _.bindAll(this, 'getDebugName', 'getChildren', 'isParent');
   },
 
+  /**
+   * Debug name of this object, using declared debugName, falling back to cid
+   *
+   * @return {string} Debug name
+   */
   getDebugName: function() {
-    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('c', '') : this.cid;
+    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('model', '') : this.cid;
   },
 
+  /**
+   * Determines if this object is a parent for debug panel display purposes
+   *
+   * @return {Boolean} Whether this object has children
+   */
+  isParent: function() {
+    var children = this.getChildren();
+    return children.length > 0;
+  },
+
+  /**
+   * Gets children of this object
+   *
+   * @return {Array} Whether this object has children
+   */
   getChildren: function() {
     var results = [];
     var self = this;
@@ -43,6 +70,15 @@ var BaseModel = Backbone.Model.extend({
     return results;
   },
 
+  /**
+   * Get a list of all trackable functions for this view instance
+   * Ignores certain base and debugging functions
+   *
+   * @param  {Object}        trackedFunctions     Object to track state
+   * @param  {Function}      getTrackableFunction Callback to get wrapper function
+   *
+   * @return {Array<Object>}                      List of trackable functions
+   */
   getFunctions: function(trackedFunctions, getTrackableFunction) {
     var result = [];
     // Debug functions shouldn't be debuggable
@@ -71,10 +107,11 @@ var BaseModel = Backbone.Model.extend({
     return result;
   },
 
-  isParent: function() {
-    return _.size(this.relations) > 0;
-  },
-
+  /**
+   * Get array of attributes, so it can be iterated on
+   *
+   * @return {Array<Object>} List of attribute key/values
+   */
   getPropertiesArray: function() {
     var properties = [];
     var relations = this.relations;
@@ -92,8 +129,8 @@ var BaseModel = Backbone.Model.extend({
           key: key,
           data: {
             isEditing: false,
-            encodedValue: JSON.stringify(value),
-            value: value
+            // Stringify values so that they can be displayed properly
+            value: JSON.stringify(value)
           }
         });
       }
@@ -106,10 +143,17 @@ var BaseModel = Backbone.Model.extend({
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps) {
+    // Certain methods of BaseModel should be unable to be overridden
     var methods = ['initialize'];
     for (var i = 0; i < methods.length; i++) {
-      if (typeof protoProps[methods[i]] === 'function') {
-        logger.warn('Model.' + methods[i] + ' may not be overridden');
+      if (protoProps[methods[i]]) {
+        var msg = 'Model.' + methods[i] + ' may not be overridden';
+        if (staticProps.debugName) {
+          msg += ' for model "' + staticProps.debugName + '"';
+        }
+        logger.warn(msg);
+        // Replace attempted override with base version
+        protoProps[methods[i]] = BaseModel.prototype[methods[i]];
       }
     }
 

@@ -145,11 +145,18 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
 };
 
 /* develblock:start */
-BackboneViewWidget.prototype.templateToString = function(escaped) {
+/**
+ * Function to allow the Widget to control how it is viewed on the debug panel
+ * ChildViews are displayed as a clickable link
+ *
+ * @return {string} Debug panel version of this widget
+ */
+BackboneViewWidget.prototype.templateToString = function() {
   if (!this.view) {
     return;
   }
-  return this.view.getDebugTag();
+  var name = this.view.getDebugName();
+  return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
 };
 /* develblock:end */
 

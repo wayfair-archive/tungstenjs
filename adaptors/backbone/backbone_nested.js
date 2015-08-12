@@ -137,6 +137,7 @@ exports.setNestedModel = function(Model) {
           modelsToAdd = _.clone(val);
 
           if (options.reset) {
+            // Adding option to reset nested collections via Model.set
             relation.reset(modelsToAdd);
           } else {
 

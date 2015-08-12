@@ -25,11 +25,20 @@ var BaseCollection = Backbone.Collection.extend({
   },
 
   /* develblock:start */
+  
+  /**
+   * Bootstraps all debug functionality
+   */
   initDebug: function() {
     tungsten.debug.registry.register(this);
     _.bindAll(this, 'getDebugName', 'getChildren', 'isParent');
   },
 
+  /**
+   * Debug name of this object, using declared debugName, falling back to cid
+   *
+   * @return {string} Debug name
+   */
   getDebugName: function() {
     if (!this.cid) {
       this.cid = _.uniqueId('collection');
@@ -37,10 +46,34 @@ var BaseCollection = Backbone.Collection.extend({
     return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('collection', '') : this.cid;
   },
 
+  /**
+   * Determines if this object is a parent for debug panel display purposes
+   *
+   * @return {Boolean} Whether this object has children
+   */
+  isParent: function() {
+    var children = this.getChildren();
+    return children.length > 0;
+  },
+
+  /**
+   * Gets children of this object
+   *
+   * @return {Array} Whether this object has children
+   */
   getChildren: function() {
     return this.models;
   },
 
+  /**
+   * Get a list of all trackable functions for this view instance
+   * Ignores certain base and debugging functions
+   *
+   * @param  {Object}        trackedFunctions     Object to track state
+   * @param  {Function}      getTrackableFunction Callback to get wrapper function
+   *
+   * @return {Array<Object>}                      List of trackable functions
+   */
   getFunctions: function(trackedFunctions, getTrackableFunction) {
     var result = [];
     // Debug functions shouldn't be debuggable
@@ -68,19 +101,22 @@ var BaseCollection = Backbone.Collection.extend({
     }
     return result;
   },
-
-  isParent: function() {
-    return this.models.length > 0;
-  },
   /* develblock:end */
 
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps) {
+    // Certain methods of BaseCollection should be unable to be overridden
     var methods = ['initialize'];
     for (var i = 0; i < methods.length; i++) {
-      if (typeof protoProps[methods[i]] === 'function') {
-        logger.warn('Collection.' + methods[i] + ' may not be overridden');
+      if (protoProps[methods[i]]) {
+        var msg = 'Collection.' + methods[i] + ' may not be overridden';
+        if (staticProps.debugName) {
+          msg += ' for collection "' + staticProps.debugName + '"';
+        }
+        logger.warn(msg);
+        // Replace attempted override with base version
+        protoProps[methods[i]] = BaseCollection.prototype[methods[i]];
       }
     }
 

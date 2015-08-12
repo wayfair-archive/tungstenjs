@@ -61,7 +61,9 @@ module.exports = function() {
   });
   utils.addEvent('js-view-event', 'click', function(e) {
     var selector = e.currentTarget.getAttribute('data-event-selector');
-    logger.log(selector, appData.selectedView.obj.getEventFunction(selector));
+    var selected = _.findWhere(appData.selectedView.objectEvents, {selector: selector});
+    var fn = selected.fn && selected.fn.original ? selected.fn.original : selected.fn;
+    logger.log(selector, fn);
   });
   utils.addEvent('js-track-function', 'click', function(e) {
     var fnName = e.currentTarget.getAttribute('data-fn');

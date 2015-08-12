@@ -161,14 +161,24 @@ var BaseView = Backbone.View.extend({
   },
 
   /* develblock:start */
+  /**
+   * Bootstraps all debug functionality
+   */
   initDebug: function() {
     tungsten.debug.registry.register(this);
+    // These methods are often invoked oddly, so ensure their context
     _.bindAll(this, 'getEvents', 'isParent', 'getDebugName', 'getChildViews');
   },
-  getEventFunction: function(selector) {
-    var events = _.result(this, 'events');
-    return this[events[selector]];
-  },
+
+  /**
+   * Get a list of all trackable functions for this view instance
+   * Ignores certain base and debugging functions
+   *
+   * @param  {Object}        trackedFunctions     Object to track state
+   * @param  {Function}      getTrackableFunction Callback to get wrapper function
+   *
+   * @return {Array<Object>}                      List of trackable functions
+   */
   getFunctions: function(trackedFunctions, getTrackableFunction) {
     var result = [];
     // Debug functions shouldn't be debuggable
@@ -177,14 +187,12 @@ var BaseView = Backbone.View.extend({
       initialize: true,
       postInitialize: true,
       initDebug: true,
-      getEventFunction: true,
       getFunctions: true,
       getEvents: true,
       getElTemplate: true,
       getVdomTemplate: true,
       isParent: true,
       getChildren: true,
-      getDebugTag: true,
       getDebugName: true
     };
     for (var key in this) {
@@ -199,6 +207,12 @@ var BaseView = Backbone.View.extend({
     }
     return result;
   },
+
+  /**
+   * Return a list of DOM events
+   *
+   * @return {Array<Object>} List of bound DOM events
+   */
   getEvents: function() {
     var events = _.result(this, 'events');
     var eventKeys = _.keys(events);
@@ -207,12 +221,31 @@ var BaseView = Backbone.View.extend({
     for (var i = 0; i < eventKeys.length; i++) {
       result[i] = {
         selector: eventKeys[i],
-        tracked: false,
-        fn: events[eventKeys[i]]
+        name: events[eventKeys[i]],
+        fn: this[events[eventKeys[i]]]
       };
     }
     return result;
   },
+
+  /**
+   * Converts the current vtree to an HTML structure
+   *
+   * @return {string} HTML representation of VTree
+   */
+  getVdomTemplate: function() {
+    var vtreeToRender = this.vtree;
+    if (!this.parentView) {
+      vtreeToRender = vtreeToRender.children;
+    }
+    return tungsten.debug.vtreeToString(vtreeToRender, true);
+  },
+
+  /**
+   * Compares the current VTree and DOM structure and returns a diff
+   *
+   * @return {string} Diff of VTree vs DOM
+   */
   getTemplateDiff: function() {
     if (!this.parentView) {
       var numChildren = Math.max(this.vtree.children.length, this.el.childNodes.length);
@@ -225,28 +258,35 @@ var BaseView = Backbone.View.extend({
       return tungsten.debug.diffVtreeAndElem(this.vtree, this.el);
     }
   },
-  getVdomTemplate: function() {
-    var vtreeToRender = this.vtree;
-    if (!this.parentView) {
-      vtreeToRender = vtreeToRender.children;
-    }
-    return tungsten.debug.vtreeToString(vtreeToRender, true);
-  },
 
+  /**
+   * Determines if this object is a parent for debug panel display purposes
+   *
+   * @return {Boolean} Whether this object has children
+   */
   isParent: function() {
     var children = this.getChildren();
     return children.length > 0;
   },
 
+  /**
+   * Gets children of this object
+   *
+   * @return {Array} Whether this object has children
+   */
   getChildren: function() {
-    return this.constructor.prototype.getChildViews.call(this);
+    if (this.getChildViews.original) {
+      return this.getChildViews.original.call(this);
+    } else {
+      return this.getChildViews();
+    }
   },
 
-  getDebugTag: function() {
-    var name = this.getDebugName();
-    return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
-  },
-
+  /**
+   * Debug name of this object, using declared debugName, falling back to cid
+   *
+   * @return {string} Debug name
+   */
   getDebugName: function() {
     return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('view', '') : this.cid;
   },
@@ -428,10 +468,17 @@ var BaseView = Backbone.View.extend({
 }, {
   tungstenView: true,
   extend: function(protoProps, staticProps) {
+    // Certain methods of BaseView should be unable to be overridden
     var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
     for (var i = 0; i < methods.length; i++) {
-      if (typeof protoProps[methods[i]] === 'function') {
-        logger.warn('View.' + methods[i] + ' may not be overridden');
+      if (protoProps[methods[i]]) {
+        var msg = 'View.' + methods[i] + ' may not be overridden';
+        if (staticProps.debugName) {
+          msg += ' for view "' + staticProps.debugName + '"';
+        }
+        logger.warn(msg);
+        // Replace attempted override with base version
+        protoProps[methods[i]] = BaseView.prototype[methods[i]];
       }
     }
 
