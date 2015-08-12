@@ -43,13 +43,13 @@ function launchDebugger() {
   renderDebugPanel();
 }
 
-var ctx = require.context('!!debug_template!./panel', true, /\.html$/);
+var ctx = require.context('!!debug_template!./panel', true, /\.mustache$/);
 var files = ctx.keys();
 var templates = {};
 for (var i = 0; i < files.length; i++) {
   var templateName = files[i];
   templateName = templateName.replace('./', '');
-  templateName = templateName.replace('.html', '');
+  templateName = templateName.replace('.mustache', '');
 
   templates[templateName] = ctx(files[i]);
 }
