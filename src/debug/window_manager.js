@@ -43,7 +43,7 @@ function launchDebugger() {
   renderDebugPanel();
 }
 
-var ctx = require.context('!!debug_template!./panel', true, /\.mustache$/);
+var ctx = require.context('!!tungsten_debug?template!./panel', true, /\.mustache$/);
 var files = ctx.keys();
 var templates = {};
 for (var i = 0; i < files.length; i++) {

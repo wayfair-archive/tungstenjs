@@ -1,7 +1,7 @@
 'use strict';
 
 window.appData = module.exports = {
-  styles: require('!!static_file!../panel/style.css'),
+  styles: require('!!tungsten_debug?static!../panel/style.css'),
   tabs: {
     tabs: [
       {
