@@ -83,13 +83,12 @@ function renderDebugPanel() {
 window.renderDebugPanel = renderDebugPanel;
 
 var eventBus = require('./event_bus');
+// Any events coming through the event bus should re-render the panel
 eventBus.on(eventBus.ALL, _.debounce(renderDebugPanel, 50));
+// Update the list of registered objects when prompted
 eventBus.on(eventBus.CHANGED_REGISTERED, function(nestedRegistry, flatRegistry) {
   appData.activeViews = _.values(nestedRegistry.views);
   appData.views = flatRegistry.views;
-  _.each(appData.views, function(view) {
-    view.selected = view.selected || false;
-  });
 
   appData.activeModels = nestedRegistry.models;
   appData.models = flatRegistry.models;
@@ -166,7 +165,7 @@ function pollForParentOpen() {
 }
 
 // Close debug window on the window closing
-window.onbeforeunload = function() {
+utils.addEventListener(window, 'beforeunload', function() {
   if (debugWindow) {
     debugWindow.activeTab = _.keys(appData.tabs.selected)[0];
     debugWindow.pollNum = appData.loading = 30;
@@ -174,4 +173,4 @@ window.onbeforeunload = function() {
     debugWindow.loadingCounter = debugWindow.document.getElementById('loading_message_count');
     debugWindow.setTimeout(pollForParentOpen, 1000);
   }
-};
+});

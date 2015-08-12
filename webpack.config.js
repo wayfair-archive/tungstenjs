@@ -24,9 +24,7 @@ module.exports = {
   },
   module: {
     loaders: [
-      // { test: /\.js$/, loader: 'webpack-strip-block' },
-      { test: /\.html$/, loader: 'debug_template' },
-      { test: /\.css$/, loader: 'static_file' },
+      { test: /\.js$/, loader: 'webpack-strip-block' },
       { test: /\.mustache$/, loader: 'tungsten_template' },
       { test: /\.json$/, loader: 'json-loader' }
     ]
