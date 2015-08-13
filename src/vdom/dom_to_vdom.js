@@ -28,7 +28,7 @@ var VText = require('virtual-dom/vnode/vtext');
 
 /**
  * DOMNode property white list
- * Taken from https://github.com/Raynos/react/blob/dom-property-config/src/browser/ui/dom/DefaultDOMPropertyConfig.js
+ * Forked from https://github.com/Raynos/react/blob/dom-property-config/src/browser/ui/dom/DefaultDOMPropertyConfig.js
  */
 var props = [
   'accept', 'accessKey', 'action', 'alt', 'async', 'autoComplete', 'autoPlay', 'cellPadding',
