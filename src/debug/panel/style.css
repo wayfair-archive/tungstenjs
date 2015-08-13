@@ -7902,7 +7902,8 @@ body {
 
 .tool-panel {
   float: left;
-  overflow: auto; }
+  overflow-x: auto;
+  overflow-y: scroll; }
 
 .list-panel {
   width: 40%; }
@@ -10858,4 +10859,64 @@ li hr {
   height: 100px;
   border: 1px dotted #DCDCDC;
   width: 100%;
+}
+
+.time_travel_track {
+  width: 90%;
+  position: relative;
+  float: left;
+  height: 1.5em;
+  margin-bottom: 10px;
+}
+.time_travel_track:before {
+  position: absolute;
+  display: block;
+  content: '';
+  background-color: #CF90C0;
+  width: 100%;
+  height: 1px;
+  top: 50%;
+  left: 0;
+}
+
+.time_travel_item {
+  position: absolute;
+  cursor: pointer;
+  width: 2px;
+  height: 100%;
+  top: 0;
+  margin-left: -1px;
+}
+.time_travel_item:before {
+  display: block;
+  content: '';
+  position: absolute;
+  background-color: rgba(183, 11, 142, 0.5);
+  width: 100%;
+  height: 95%;
+  left: 0;
+  top: 2.5%;
+}
+.time_travel_item.selected:before {
+  background-color: rgb(183, 11, 142);
+}
+
+.time_travel_button {
+  float: left;
+  width: 5%;
+  border: none;
+  background-color: #F9F9F9;
+  font-weight: bold;
+}
+.time_travel_button:hover {
+  color: #881391;
+  background-color: #F3D7F5;
+}
+.time_travel_button[disabled], .time_travel_button[disabled]:hover {
+  color: #ccc;
+  background-color: initial;
+}
+
+.c {
+  clear: both;
 }

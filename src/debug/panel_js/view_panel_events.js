@@ -114,4 +114,23 @@ module.exports = function() {
     }
     utils.render();
   });
+  utils.addEvent('js-time-travel-button-prev', 'click', function() {
+    appData.selectedView.getState().goBack();
+    utils.render();
+  });
+  utils.addEvent('js-time-travel-button-next', 'click', function() {
+    appData.selectedView.getState().goNext();
+    utils.render();
+  });
+  utils.addEvent('js-time-travel-item', 'click', function(e) {
+    var index = parseInt(e.currentTarget.getAttribute('data-index'));
+    appData.selectedView.getState().goToIndex(index);
+    utils.render();
+  });
+  utils.addEvent('js-time-travel-button-clear', 'click', function() {
+    if (window.confirm('Are you sure you want to clear history?')) {
+      appData.selectedView.getState().clear();
+      utils.render();
+    }
+  });
 };

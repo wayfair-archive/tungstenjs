@@ -1,0 +1,28 @@
+<div class="time_travel_panel">
+  <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="viewTimeTravel" >
+    Time Travel
+  </div>
+  {{^hiddenPanels.viewTimeTravel}}
+    {{#selectedView}}
+    <div class="sidebar-pane visible">
+      <div class="body">
+        <div class="section expanded">
+          {{#getState}}
+            {{#slider}}
+            <button class="time_travel_button time_travel_button_prev js-time-travel-button-prev" {{^prevEnabled}}disabled{{/prevEnabled}}>&lt;</button>
+            <div class="time_travel_track">
+              {{#items}}
+                <span style="left:{{left}}%" title="{{label}}" data-index="{{index}}" class="time_travel_item js-time-travel-item{{#active}} selected{{/active}}"></span>
+              {{/items}}
+            </div>
+            <button class="time_travel_button time_travel_button_next js-time-travel-button-next" {{^nextEnabled}}disabled{{/nextEnabled}}>&gt;</button>
+            <div class="c"></div>
+            <button class="time_travel_button_clear js-time-travel-button-clear">Clear History</button>
+            {{/slider}}
+          {{/getState}}
+        </div>
+      </div>
+    </div>
+    {{/selectedView}}
+  {{/hiddenPanels.viewTimeTravel}}
+</div>
