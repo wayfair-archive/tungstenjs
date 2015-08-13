@@ -19,6 +19,33 @@ var BaseModel = Backbone.Model.extend({
     /* develblock:start */
     this.initDebug();
     /* develblock:end */
+    var derived = _.result(this, 'derived');
+    var relations = _.result(this, 'relations') || {};
+    if (derived) {
+      var self = this;
+      _.each(derived, function (props, name) {
+        // Check if a collection relation is declared
+        var isCollection = false;
+        if (relations[name] && relations[name].tungstenCollection) {
+          isCollection = true;
+        }
+        if (props.fn && props.deps) {
+          var fn = _.bind(props.fn, self);
+          var update = isCollection ? function() {
+            self.getDeep(name).reset(fn());
+          } : function() {
+            self.set(name, fn());
+          };
+          _.each(props.deps, function(dep) {
+            self.listenTo(self, 'change:' + dep, update);
+            self.listenTo(self, 'update:' + dep, update);
+            self.listenTo(self, 'reset:' + dep, update);
+          });
+          // Sets default value
+          update();
+        }
+      });
+    }
     this.postInitialize();
   },
 
@@ -140,9 +167,11 @@ var BaseModel = Backbone.Model.extend({
   },
   /* develblock:end */
 
+  // Empty default function
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps) {
+    /* develblock:start */
     // Certain methods of BaseModel should be unable to be overridden
     var methods = ['initialize'];
     for (var i = 0; i < methods.length; i++) {
@@ -156,6 +185,7 @@ var BaseModel = Backbone.Model.extend({
         protoProps[methods[i]] = BaseModel.prototype[methods[i]];
       }
     }
+    /* develblock:end */
 
     return Backbone.Model.extend.call(this, protoProps, staticProps);
   }

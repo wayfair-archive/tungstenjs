@@ -25,7 +25,7 @@ var BaseCollection = Backbone.Collection.extend({
   },
 
   /* develblock:start */
-  
+
   /**
    * Bootstraps all debug functionality
    */
@@ -103,6 +103,7 @@ var BaseCollection = Backbone.Collection.extend({
   },
   /* develblock:end */
 
+  // Empty default function
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps) {

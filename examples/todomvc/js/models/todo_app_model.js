@@ -14,22 +14,39 @@ var AppModel = Model.extend({
   defaults: {
     todoItems: []
   },
-  initialize: function() {
-    this.setCount();
-    this.listenTo(this.get('todoItems'), 'add remove reset change', this.setCount);
+  postInitialize: function() {
     this.listenTo(this, 'addItem', function(title) {
       // @todo add code to clear toggle-all button
       this.get('todoItems').add({title: title});
     });
   },
-  setCount: function() {
-    var completedItems = this.get('todoItems').filter(function(item) {
-      return !item.get('completed');
-    });
-    // Computed properties
-    this.set('todoCount', completedItems.length);
-    this.set('todoCountPlural', completedItems.length !== 1);
-    this.set('completedItems', this.get('todoItems').length - completedItems.length > 0);
+  derived: {
+    incompletedItems: {
+      deps: ['todoItems'],
+      fn: function() {
+        return this.get('todoItems').filter(function(item) {
+          return !item.get('completed');
+        });
+      }
+    },
+    todoCount: {
+      deps: ['incompletedItems'],
+      fn: function() {
+        return this.get('incompletedItems').length;
+      }
+    },
+    todoCountPlural: {
+      deps: ['todoCount'],
+      fn: function() {
+        return this.get('todoCount') !== 1;
+      }
+    },
+    hasCompleted: {
+      deps: ['todoItems'],
+      fn: function() {
+        return this.get('todoItems').length - this.get('incompletedItems').length > 0;
+      }
+    }
   }
 });
 module.exports = AppModel;
