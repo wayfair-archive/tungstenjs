@@ -215,12 +215,26 @@ var BaseView = Backbone.View.extend({
   /**
    * Gets a JSON format version of the current state
    *
-   * @return {Object|Array} JSON format of bound model or collection
+   * @return {Object|Array} Data of bound model or collection
    */
   getState: function() {
     var data = this.serialize();
     if (data && typeof data.doSerialize === 'function') {
       data = data.doSerialize();
+    }
+    return data;
+  },
+
+  /**
+   * Sets the state to the given data
+   * @param {Object|Array} data Object to set state to
+   */
+  setState: function(data) {
+    var dataObj = this.serialize();
+    if (dataObj.reset) {
+      dataObj.reset(data);
+    } else {
+      dataObj.set(data, {reset: true});
     }
     return data;
   },
