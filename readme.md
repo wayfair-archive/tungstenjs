@@ -140,6 +140,26 @@ BaseModel.extend({
 });
 ```
 
+#### Derived Properties
+
+Derived, or computed, properties can be added with the `derived` hash in Backbone models, with the key being the property name and the value being an options object.  The object should include an array at key `deps` of properties that the derived property relies on, as well as a function at key `fn` which should return the derived value.
+
+```javascript
+BaseModel.extend({
+  // [...]
+  derived: {
+      incompletedItems: {
+        deps: ['todoItems'],
+        fn: function() {
+          return this.get('todoItems').filter(function(item) {
+            return !item.get('completed');
+          });
+        }
+      },
+  }
+});
+```
+
 
 ### Child Views
 
@@ -276,6 +296,7 @@ var TodoAppView = View.extend({
 
 ## Changelog
 
+* 0.4.0 Add derived properties support for Backbone adaptor
 * 0.3.0 Performance updates, especially when using `{{{ }}}` in templates
 * 0.2.0 Add event plugin system and Ampersand.js adaptor
 * 0.1.0 Open source initial code at [tungstenjs](https://github.com/wayfair/tungstenjs)
