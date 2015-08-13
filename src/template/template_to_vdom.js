@@ -102,19 +102,24 @@ var propertiesToTransform = {
   'accesskey': 'accessKey',
   'autocomplete': 'autoComplete',
   'autoplay': 'autoPlay',
+  'cellspacing': 'cellSpacing',
+  'cellpadding': 'cellPadding',
   'colspan': 'colSpan',
   'contenteditable': 'contentEditable',
   'contextmenu': 'contextMenu',
   'enctype': 'encType',
   'formnovalidate': 'formNoValidate',
+  'frameborder': 'frameBorder',
   'hreflang': 'hrefLang',
+  'maxlength': 'maxLength',
   'novalidate': 'noValidate',
   'readonly': 'readOnly',
   'rowspan': 'rowSpan',
   'spellcheck ': 'spellCheck',
   'srcdoc': 'srcDoc',
   'srcset': 'srcSet',
-  'tabindex': 'tabIndex'
+  'tabindex': 'tabIndex',
+  'usemap': 'useMap'
 };
 /**
  * Returns property name to use or false if it should be treated as attribute

@@ -34,7 +34,7 @@ var props = [
   'accept', 'accessKey', 'action', 'alt', 'async', 'autoComplete', 'autoPlay', 'cellPadding',
   'cellSpacing', 'checked', 'className', 'colSpan', 'content', 'contentEditable', 'controls',
   'crossOrigin', 'data', 'dataset', 'defer', 'dir', 'download', 'draggable', 'encType', 'formNoValidate',
-  'href', 'hrefLang', 'htmlFor', 'httpEquiv', 'icon', 'id', 'label', 'lang', 'list', 'loop', 'max', 'maxlength',
+  'href', 'hrefLang', 'htmlFor', 'httpEquiv', 'icon', 'id', 'label', 'lang', 'list', 'loop', 'max',
   'mediaGroup', 'method', 'min', 'multiple', 'muted', 'name', 'noValidate', 'pattern', 'placeholder',
   'poster', 'preload', 'radioGroup', 'readOnly', 'rel', 'required', 'rowSpan', 'sandbox', 'scope',
   'scrollLeft', 'scrolling', 'scrollTop', 'selected', 'span', 'spellCheck', 'src', 'srcDoc', 'srcSet',
