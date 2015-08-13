@@ -499,6 +499,7 @@ var BaseView = Backbone.View.extend({
 }, {
   tungstenView: true,
   extend: function(protoProps, staticProps) {
+    /* develblock:start */
     // Certain methods of BaseView should be unable to be overridden
     var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
     for (var i = 0; i < methods.length; i++) {
@@ -512,6 +513,7 @@ var BaseView = Backbone.View.extend({
         protoProps[methods[i]] = BaseView.prototype[methods[i]];
       }
     }
+    /* develblock:end */
 
     return Backbone.View.extend.call(this, protoProps, staticProps);
   }

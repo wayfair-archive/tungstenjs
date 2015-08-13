@@ -107,6 +107,7 @@ var BaseCollection = Backbone.Collection.extend({
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps) {
+    /* develblock:start */
     // Certain methods of BaseCollection should be unable to be overridden
     var methods = ['initialize'];
     for (var i = 0; i < methods.length; i++) {
@@ -120,6 +121,7 @@ var BaseCollection = Backbone.Collection.extend({
         protoProps[methods[i]] = BaseCollection.prototype[methods[i]];
       }
     }
+    /* develblock:end */
 
     return Backbone.Collection.extend.call(this, protoProps, staticProps);
   }
