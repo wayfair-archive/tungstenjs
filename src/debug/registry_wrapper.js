@@ -2,19 +2,7 @@
 
 var _ = require('underscore');
 var logger = require('../utils/logger');
-var objectDiff = require('./object_diff');
-
-function getStateObject(state) {
-  return {
-    ts: Date.now(),
-    state: state
-  };
-}
-
-function getStateAtIndex(stateArr, index) {
-  var patches = stateArr.slice(1, 1 + index);
-  return objectDiff.patch(stateArr[0].state, _.pluck(patches, 'state'));
-}
+var StateHistory = require('./state_history');
 
 /**
  * Returns a passthrough function wrapping the passed in one
@@ -64,19 +52,7 @@ function RegistryWrapper(obj, type) {
 
   // Add history tracking to top level views
   if (type === 'views' && typeof obj.getState === 'function' && !obj.parentView) {
-    this.lastState = obj.getState();
-    this.state = [getStateObject(this.lastState)];
-    var self = this;
-    obj.on('rendered', function() {
-      var currentState = obj.getState();
-      var diff = objectDiff.diff(self.lastState, currentState);
-      if (_.size(diff) > 0) {
-        self.state.push(getStateObject(diff));
-        self.lastState = currentState;
-      }
-    });
-
-    this.getStateAtIndex = _.partial(getStateAtIndex, self.state);
+    this.state = new StateHistory(obj);
   }
 
   if (typeof obj.getEvents === 'function') {
@@ -85,6 +61,20 @@ function RegistryWrapper(obj, type) {
 
   _.bindAll(this, 'isParent', 'getChildren');
 }
+
+RegistryWrapper.prototype.getState = function() {
+  if (this.state) {
+    return this.state;
+  } else if (this.obj.parentView) {
+    var topView = this.obj;
+    while (topView.parentView) {
+      topView = topView.parentView;
+    }
+    var registry = RegistryWrapper.flatRegistry[this.type];
+    var topObj = registry[topView.getDebugName()];
+    return topObj.state;
+  }
+};
 
 /**
  * Null-safe passthrough function to base object's isParent function
