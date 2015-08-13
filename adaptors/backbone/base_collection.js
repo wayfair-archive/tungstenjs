@@ -13,13 +13,7 @@ var backboneNested = require('./backbone_nested');
  * @class BaseCollection
  */
 var BaseCollection = Backbone.Collection.extend({
-  tungstenCollection: true,
-  // Calling postInitialize to be consistent with other members
-  initialize: function() {
-    this.postInitialize();
-  },
-  // Empty default function
-  postInitialize: function() {}
+  tungstenCollection: true
 });
 
 // Add nested collection support to models that implement backbone_nested.

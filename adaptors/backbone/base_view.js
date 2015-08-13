@@ -8,7 +8,6 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
 var ViewWidget = require('./backbone_view_widget');
-var hashCollision = require('./hash_collision');
 
 // Cached regex to split keys for `delegate`.
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -288,14 +287,7 @@ var BaseView = Backbone.View.extend({
     };
     recurse(this.vtree, this.el);
   },
-  /**
-   * Override of extend to provide basic mixin functionality for colliding hashes
-   * Useful for events, and childViews
-   *
-   * @param  {Object}   options  Properties to extend for new View
-   * @return {Function}          Constructor function for child view
-   */
-  extend: hashCollision(Backbone.View.extend),
+
   /**
    * Removes model listeners and DOM events from this and all child views
    */
