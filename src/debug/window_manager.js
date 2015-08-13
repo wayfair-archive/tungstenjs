@@ -24,11 +24,13 @@ function getWindow() {
 
 window.attachTungstenDebugPane = function(panel) {
   debugWindow = panel;
+  utils.setDebugWindow(debugWindow);
   if (debugWindow.activeTab) {
     utils.gotoTab(debugWindow.activeTab);
   }
   debugWindow.onunload = function() {
     debugWindow = null;
+      utils.setDebugWindow(null);
   };
   launchDebugger();
 };
