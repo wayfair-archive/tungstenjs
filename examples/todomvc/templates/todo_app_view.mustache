@@ -17,9 +17,9 @@
     {{#todoCount}}
     <footer id="footer">
       <span class="js-todo-count" id="todo-count"><strong>{{todoCount}}</strong> item{{#todoCountPlural}}s{{/todoCountPlural}} left</span>
-      {{#completedItems}}
+      {{#hasCompletedItems}}
       <button id="clear-completed" class="js-clear-completed">Clear completed</button>
-      {{/completedItems}}
+      {{/hasCompletedItems}}
     </footer>
     {{/todoCount}}
   </div>

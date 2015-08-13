@@ -10,7 +10,7 @@
 var expect = require('chai').expect;
 
 // Module to test is tungsten.js
-var tungsten = require('../src/tungsten.js');
+var tungsten = require('../../../src/tungsten.js');
 
 // VNode required for instanceof checks
 var VNode = require('virtual-dom/vnode/vnode');
