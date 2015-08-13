@@ -4,6 +4,7 @@
 'use strict';
 var Backbone = require('backbone');
 var backboneNested = require('./backbone_nested');
+var hashCollision = require('./hash_collision');
 /**
  * BaseModel
  *
@@ -20,7 +21,7 @@ var BaseModel = Backbone.Model.extend({
     var relations = _.result(this, 'relations') || {};
     if (derived) {
       var self = this;
-      _.each(derived, function (props, name) {
+      _.each(derived, function(props, name) {
         // Check if a collection relation is declared
         var isCollection = false;
         if (relations[name] && relations[name].tungstenCollection) {
@@ -47,7 +48,31 @@ var BaseModel = Backbone.Model.extend({
     this.postInitialize();
   },
   // Empty default function
-  postInitialize: function() {}
+  postInitialize: function() {},
+  /**
+   * Derived and session variables should be stripped from data
+   */
+  toJSON: function() {
+    var attrs = this.attributes;
+    var relations = _.result(this, 'relations') || {};
+    var derived = _.result(this, 'derived') || {};
+    var session = _.invert(_.result(this, 'session') || []);
+
+    var data = {};
+    _.each(attrs, function(val, key) {
+      // Skip any derived or session properties
+      if (!derived[key] && !session[key]) {
+        // Recursively serialize any set relations
+        if (relations[key] && typeof relations[key].doSerialize === 'function') {
+          data[key] = val.doSerialize();
+        } else {
+          data[key] = val;
+        }
+      }
+    });
+    return data;
+  },
+  extend: hashCollision(Backbone.Model.extend)
 });
 
 // Add nested collection/model support with backbone_nested.
