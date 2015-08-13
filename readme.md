@@ -140,9 +140,11 @@ BaseModel.extend({
 });
 ```
 
-#### Derived Properties
+#### Special Properties
 
-Derived, or computed, properties can be added with the `derived` hash in Backbone models, with the key being the property name and the value being an options object.  The object should include an array at key `deps` of properties that the derived property relies on, as well as a function at key `fn` which should return the derived value.
+Included with the Backbone adaptor are several special model property types which were inspired by [ampersand-state](http://ampersandjs.com/docs#ampersand-state).
+
+**Derived Properties**: Derived properties are properties which are computed based on the value of another property.  They can be added with the `derived` hash in Backbone models, with the key being the property name and the value being an options object.  The object should include an array at key `deps` of properties that the derived property relies on, as well as a function at key `fn` which should return the derived value.  Derived properties will not be serialized with `toJSON`.
 
 ```javascript
 BaseModel.extend({
@@ -155,8 +157,19 @@ BaseModel.extend({
             return !item.get('completed');
           });
         }
-      },
+      }
   }
+});
+```
+
+**Computed Properties**: Properties which are computed, but not reliant on any other properties, can be added simply by adding a method with the desired property name on the model.  These will be read by templates during rendering, though they will not be accessible via `model.get()` or serialized with `toJSON`.
+
+**Session Properties**: Transient properties that shouldn't be serialized when saving the model can be excluded from `toJSON` by adding a `session` property to the model:
+
+```javascript
+BaseModel.extend({
+  // [...]
+  session: ['user', 'is_logged_in']
 });
 ```
 
