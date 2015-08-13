@@ -2,6 +2,19 @@
 
 var _ = require('underscore');
 var logger = require('../utils/logger');
+var objectDiff = require('./object_diff');
+
+function getStateObject(state) {
+  return {
+    ts: Date.now(),
+    state: state
+  };
+}
+
+function getStateAtIndex(stateArr, index) {
+  var patches = stateArr.slice(1, 1 + index);
+  return objectDiff.patch(stateArr[0].state, _.pluck(patches, 'state'));
+}
 
 /**
  * Returns a passthrough function wrapping the passed in one
@@ -47,6 +60,23 @@ function RegistryWrapper(obj, type) {
   if (typeof obj.getFunctions === 'function') {
     this.trackedFunctions = {};
     this.objectFunctions = obj.getFunctions(this.trackedFunctions, getTrackableFunction);
+  }
+
+  // Add history tracking to top level views
+  if (type === 'views' && typeof obj.getState === 'function' && !obj.parentView) {
+    this.lastState = obj.getState();
+    this.state = [getStateObject(this.lastState)];
+    var self = this;
+    obj.on('rendered', function() {
+      var currentState = obj.getState();
+      var diff = objectDiff.diff(self.lastState, currentState);
+      if (_.size(diff) > 0) {
+        self.state.push(getStateObject(diff));
+        self.lastState = currentState;
+      }
+    });
+
+    this.getStateAtIndex = _.partial(getStateAtIndex, self.state);
   }
 
   if (typeof obj.getEvents === 'function') {

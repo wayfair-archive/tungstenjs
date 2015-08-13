@@ -213,6 +213,19 @@ var BaseView = Backbone.View.extend({
   },
 
   /**
+   * Gets a JSON format version of the current state
+   *
+   * @return {Object|Array} JSON format of bound model or collection
+   */
+  getState: function() {
+    var data = this.serialize();
+    if (data && typeof data.doSerialize === 'function') {
+      data = data.doSerialize();
+    }
+    return data;
+  },
+
+  /**
    * Return a list of DOM events
    *
    * @return {Array<Object>} List of bound DOM events
