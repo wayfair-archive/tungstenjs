@@ -70,6 +70,14 @@ StateHistory.prototype.getStateAtIndex = function(index) {
   return getStateAtIndex(this.track, index);
 };
 
+StateHistory.prototype.goFirst = function() {
+  this.goToIndex(0);
+};
+
+StateHistory.prototype.goLast = function() {
+  this.goToIndex(this.track.length - 1);
+};
+
 StateHistory.prototype.goBack = function() {
   this.goToIndex(this.currentIndex - 1);
 };

@@ -114,6 +114,14 @@ module.exports = function() {
     }
     utils.render();
   });
+  utils.addEvent('js-time-travel-button-first', 'click', function() {
+    appData.selectedView.getState().goFirst();
+    utils.render();
+  });
+  utils.addEvent('js-time-travel-button-last', 'click', function() {
+    appData.selectedView.getState().goLast();
+    utils.render();
+  });
   utils.addEvent('js-time-travel-button-prev', 'click', function() {
     appData.selectedView.getState().goBack();
     utils.render();

@@ -9,13 +9,15 @@
         <div class="section expanded">
           {{#getState}}
             {{#slider}}
-            <button class="time_travel_button time_travel_button_prev js-time-travel-button-prev" {{^prevEnabled}}disabled{{/prevEnabled}}>&lt;</button>
+            <button class="time_travel_button time_travel_button_first js-time-travel-button-first" {{^prevEnabled}}disabled{{/prevEnabled}}>&laquo;</button>
+            <button class="time_travel_button time_travel_button_prev js-time-travel-button-prev" {{^prevEnabled}}disabled{{/prevEnabled}}>&lsaquo;</button>
             <div class="time_travel_track">
               {{#items}}
                 <span style="left:{{left}}%" title="{{label}}" data-index="{{index}}" class="time_travel_item js-time-travel-item{{#active}} selected{{/active}}"></span>
               {{/items}}
             </div>
-            <button class="time_travel_button time_travel_button_next js-time-travel-button-next" {{^nextEnabled}}disabled{{/nextEnabled}}>&gt;</button>
+            <button class="time_travel_button time_travel_button_next js-time-travel-button-next" {{^nextEnabled}}disabled{{/nextEnabled}}>&rsaquo;</button>
+            <button class="time_travel_button time_travel_button_last js-time-travel-button-last" {{^nextEnabled}}disabled{{/nextEnabled}}>&raquo;</button>
             <div class="c"></div>
             <div>{{currentLabel}} - {{currentIndex}} / {{maxIndex}}</div>
             <button class="time_travel_button_clear js-time-travel-button-clear">Clear History</button>
