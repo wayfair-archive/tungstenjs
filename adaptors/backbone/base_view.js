@@ -171,7 +171,7 @@ var BaseView = Backbone.View.extend({
   initDebug: function() {
     tungsten.debug.registry.register(this);
     // These methods are often invoked oddly, so ensure their context
-    _.bindAll(this, 'getEvents', 'isParent', 'getDebugName', 'getChildViews');
+    _.bindAll(this, 'getEvents', 'getDebugName', 'getChildViews');
   },
 
   /**
@@ -195,7 +195,6 @@ var BaseView = Backbone.View.extend({
       getEvents: true,
       getElTemplate: true,
       getVdomTemplate: true,
-      isParent: true,
       getChildren: true,
       getDebugName: true
     };
@@ -288,16 +287,6 @@ var BaseView = Backbone.View.extend({
     } else {
       return tungsten.debug.diffVtreeAndElem(this.vtree, this.el);
     }
-  },
-
-  /**
-   * Determines if this object is a parent for debug panel display purposes
-   *
-   * @return {Boolean} Whether this object has children
-   */
-  isParent: function() {
-    var children = this.getChildren();
-    return children.length > 0;
   },
 
   /**

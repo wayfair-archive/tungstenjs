@@ -31,7 +31,7 @@ var BaseCollection = Backbone.Collection.extend({
    */
   initDebug: function() {
     tungsten.debug.registry.register(this);
-    _.bindAll(this, 'getDebugName', 'getChildren', 'isParent');
+    _.bindAll(this, 'getDebugName', 'getChildren');
   },
 
   /**
@@ -44,16 +44,6 @@ var BaseCollection = Backbone.Collection.extend({
       this.cid = _.uniqueId('collection');
     }
     return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('collection', '') : this.cid;
-  },
-
-  /**
-   * Determines if this object is a parent for debug panel display purposes
-   *
-   * @return {Boolean} Whether this object has children
-   */
-  isParent: function() {
-    var children = this.getChildren();
-    return children.length > 0;
   },
 
   /**

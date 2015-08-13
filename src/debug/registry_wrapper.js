@@ -77,12 +77,16 @@ RegistryWrapper.prototype.getState = function() {
 };
 
 /**
- * Null-safe passthrough function to base object's isParent function
+ * Checks if the base object contains any child objects
  *
  * @return {Boolean} [description]
  */
 RegistryWrapper.prototype.isParent = function() {
-  return typeof this.obj.isParent === 'function' && this.obj.isParent();
+  if (typeof this.obj.getChildren === 'function') {
+    var children = this.getChildren();
+    return children && children.length > 0;
+  }
+  return false;
 };
 
 /**
