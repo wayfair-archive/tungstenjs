@@ -90,13 +90,13 @@ StateHistory.prototype.goToIndex = function(index) {
 };
 
 StateHistory.prototype.getSlider = function() {
-  var lastStateIndex = this.track.length - 1;
+  var lastIndex = this.track.length - 1;
   var startTime = this.track[0].timestamp;
-  var endTime = this.track[lastStateIndex].timestamp;
+  var endTime = this.track[lastIndex].timestamp;
   var range = Math.max(endTime - startTime, 1);
 
   var items = new Array(this.track.length);
-  for (var i = 0; i <= lastStateIndex; i++) {
+  for (var i = 0; i <= lastIndex; i++) {
     var state = this.track[i];
     items[i] = {
       index: i,
@@ -108,9 +108,12 @@ StateHistory.prototype.getSlider = function() {
   }
 
   return {
-    nextEnabled: this.currentIndex < lastStateIndex,
+    nextEnabled: this.currentIndex < lastIndex,
     prevEnabled: this.currentIndex > 0,
-    items: items
+    items: items,
+    currentLabel: this.currentIndex === lastIndex ? 'Current' : this.track[this.currentIndex].label,
+    currentIndex: this.currentIndex,
+    maxIndex: lastIndex
   };
 };
 

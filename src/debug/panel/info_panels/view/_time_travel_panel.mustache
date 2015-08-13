@@ -17,6 +17,7 @@
             </div>
             <button class="time_travel_button time_travel_button_next js-time-travel-button-next" {{^nextEnabled}}disabled{{/nextEnabled}}>&gt;</button>
             <div class="c"></div>
+            <div>{{currentLabel}} - {{currentIndex}} / {{maxIndex}}</div>
             <button class="time_travel_button_clear js-time-travel-button-clear">Clear History</button>
             {{/slider}}
           {{/getState}}
