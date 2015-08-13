@@ -41,7 +41,7 @@ function objectDiff(start, end) {
   for (var i = 0, l = keys.length; i < l; i++) {
     key = keys[i];
     handledKeys[key] = true;
-    diffValues(diff, key, start[key], end[key]);
+    diffValues(diff, key, start && start[key], end && end[key]);
   }
 
   keys = _.keys(start);
@@ -57,7 +57,9 @@ function objectDiff(start, end) {
 }
 
 function applyPatch(obj, patch) {
-  if (patch != null) {
+  if (obj == null) {
+    return patch;
+  } else if (patch != null) {
     var keys = _.keys(patch);
     for (var i = 0, l = keys.length; i < l; i++) {
       var key = keys[i];
