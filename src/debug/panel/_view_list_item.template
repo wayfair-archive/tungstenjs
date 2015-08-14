@@ -1,0 +1,31 @@
+<%
+  var liClass = '';
+  if (w.view.selected) {
+    liClass = 'is-highlighted';
+  }
+
+  var spanClass = '';
+  if (w.view.isParent) {
+    spanClass = 'js-toggle-view-children glyphicon-chevron-';
+    spanClass += w.collapsed ? 'right' : 'down';
+  }
+%>
+<li data-view="" class="js-view-list-item tree-group-item <%= liClass %>" data-id="<%= w.view.debugName %>">
+  <div class="tree-list-item-hover">
+    <span class="toggle-caret glyphicon <%= spanClass %>"></span>
+    <a class="js-more-view-info" href="#"><%= w.view.debugName %></a>
+  </div>
+  <% if (!w.view.collapsed) { %>
+    <% if (w.view.isParent) { %>
+      <ul class="tree-group">
+        <% _.each(w.view.getChildren(), function(child) {
+          // RECURSIVE BE CAREFUL
+          print(w.partials['_view_list_item']({
+            view: child,
+            partials: w.partials
+          }));
+        }); %>
+      </ul>
+    <% } %>
+  <% } %>
+</li>

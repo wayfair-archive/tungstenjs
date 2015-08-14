@@ -1,13 +1,14 @@
 'use strict';
 
-var hogan = require('hogan.js');
+var _ = require('underscore');
 
 module.exports = function(contents) {
   this.cacheable();
   if (this.query === '?static') {
     return 'module.exports=' + JSON.stringify(contents) + ';';
-  } else if (this.query === '?template') {
-    return 'var hogan=require("hogan.js");' +
-      'module.exports=new hogan.Template(' + hogan.compile(contents, {asString: true}) + ');';
+  } else if (this.query.substr(0, 9) === '?template') {
+    var isPanel = this.resourcePath.indexOf('/debug/panel/info_panels') > -1;
+    var templateVar = isPanel ? 'panel' : 'w';
+    return 'module.exports=' + _.template(contents, {variable: templateVar}).source + ';';
   }
 };

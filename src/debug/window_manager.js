@@ -46,16 +46,17 @@ function launchDebugger() {
   renderDebugPanel();
 }
 
-var ctx = require.context('!!tungsten_debug?template!./panel', true, /\.mustache$/);
+var ctx = require.context('!!tungsten_debug?template!./panel', true, /\.template$/);
 var files = ctx.keys();
 var templates = {};
 for (var i = 0; i < files.length; i++) {
   var templateName = files[i];
   templateName = templateName.replace('./', '');
-  templateName = templateName.replace('.mustache', '');
+  templateName = templateName.replace('.template', '');
 
   templates[templateName] = ctx(files[i]);
 }
+appData.partials = templates;
 
 function renderDebugPanel() {
   if (debugWindow) {
@@ -63,7 +64,7 @@ function renderDebugPanel() {
     debugWindow.render = renderDebugPanel;
     utils.setDebugWindow(debugWindow);
     try {
-      debugDoc.body.innerHTML = templates.panel.render(appData, templates);
+      debugDoc.body.innerHTML = templates.panel(appData);
     } catch (ex) {
       logger.log(ex);
     }

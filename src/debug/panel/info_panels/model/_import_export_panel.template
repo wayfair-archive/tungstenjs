@@ -1,13 +1,12 @@
 <div class="model_import_export">
-    <div class="js-sidebar-pane-title sidebar-pane-title {{#collapsed}}expanded{{/collapsed}}" data-id="modelInfo" >
+    <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
         Import / Export
     </div>
-    {{^hiddenPanels.modelInfo}}
-      {{#selectedModel}}
+  <% if (!panel.collapsed && panel.model) { %>
       <div class="sidebar-pane visible">
           <div class="body model_data">
               <div class="section expanded">
-                  <textarea class="js-model-data">{{outputData}}</textarea>
+                  <textarea class="js-model-data"><%= panel.model.outputData %></textarea>
               </div>
               <div class="section expanded">
                   <button class="js-get-model-data">Get Current</button>
@@ -15,6 +14,5 @@
               </div>
           </div>
       </div>
-      {{/selectedModel}}
-    {{/hiddenPanels.modelInfo}}
+    <% } %>
 </div>

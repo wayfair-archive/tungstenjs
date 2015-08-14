@@ -24,7 +24,6 @@
     "backbone": "^1.1.2",
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
-    "hogan.js": "^3.0.2",
     "html-tokenizer": "^1.4.4",
     "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
