@@ -31,6 +31,9 @@ function diffElements(vNode, elem) {
   // Check declared property values vs DOM values
   // This bypasses properties that are not managed by VirtualNode
   _.each(vNode.properties, function(value, key) {
+    if(key === 'attributes') {
+      return;
+    }
     if (key.toLowerCase() === 'contenteditable' && value.toLowerCase() === 'inherit') {
       return;
     }

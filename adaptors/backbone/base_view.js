@@ -83,25 +83,28 @@ var BaseView = Backbone.View.extend({
         var self = this;
         self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem, true);
         self.initializeRenderListener(dataItem);
-        if (!this.options.dynamicInitialize) {
-          self.validateVdom();
-        }
         if (this.options.dynamicInitialize || this.options.vtree) {
           // If certain options were set, render was already invoked, so childViews are attached
           self.postInitialize();
+          if (!this.options.dynamicInitialize) {
+            self.validateVdom();
+          }
         } else {
           setTimeout(function() {
             self.attachChildViews();
             self.postInitialize();
+            self.validateVdom();
           }, 1);
         }
       } else {
         this.initializeRenderListener(dataItem);
         this.postInitialize();
+        this.validateVdom();
       }
     } else {
       this.initializeRenderListener(dataItem);
       this.postInitialize();
+      this.validateVdom();
     }
   },
   tungstenViewInstance: true,
@@ -190,6 +193,7 @@ var BaseView = Backbone.View.extend({
       constructor: true,
       initialize: true,
       postInitialize: true,
+      compiledTemplate: true,
       initDebug: true,
       getFunctions: true,
       getEvents: true,
