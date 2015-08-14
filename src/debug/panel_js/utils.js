@@ -24,6 +24,13 @@ function gotoTab(tabName) {
   render();
 }
 
+function confirm(message) {
+  if (debugWindow) {
+    return debugWindow.confirm(message);
+  }
+  return false;
+}
+
 function alert(message) {
   if (debugWindow) {
     debugWindow.alert(message);
@@ -109,6 +116,7 @@ module.exports = {
   hasClass: hasClass,
   closest: closest,
   setDebugWindow: setDebugWindow,
+  confirm: confirm,
   alert: alert,
   gotoTab: gotoTab,
   render: render,

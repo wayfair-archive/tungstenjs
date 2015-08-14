@@ -136,7 +136,7 @@ module.exports = function() {
     utils.render();
   });
   utils.addEvent('js-time-travel-button-clear', 'click', function() {
-    if (window.confirm('Are you sure you want to clear history?')) {
+    if (utils.confirm('Are you sure you want to clear history?')) {
       appData.selectedView.getState().clear();
       utils.render();
     }
