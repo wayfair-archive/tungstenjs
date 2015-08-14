@@ -310,7 +310,7 @@ exports.setNestedModel = function(Model) {
       // Skip any derived or session properties
       if (!derived[key] && !session[key]) {
         // Recursively serialize any set relations
-        if (relations[key] && typeof relations[key].doSerialize === 'function') {
+        if (relations[key] && typeof val.doSerialize === 'function') {
           data[key] = val.doSerialize();
         } else {
           data[key] = val;
