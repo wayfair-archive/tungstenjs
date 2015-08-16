@@ -18,8 +18,12 @@ var utils = require('./shared_utils');
  * Compiles given templates
  * @param  {String} contents Root directory of templates to get stripped off partials
  */
-module.exports = function(contents) {
-  this.cacheable();
+module.exports = function(contents, templateFileExt, useWebpack) {
+  templateFileExt = typeof templateFileExt !== 'undefined' ? templateFileExt : 'mustache';
+  useWebpack = typeof useWebpack !== 'undefined' ? useWebpack : false;
+  if (useWebpack) {
+    this.cacheable();
+  }
   var parsedTemplate = utils.compileTemplate(contents, module.src);
   var partials = utils.findPartials(parsedTemplate);
   utils.handleDynamicComments(parsedTemplate);
@@ -34,7 +38,7 @@ module.exports = function(contents) {
   if (_.size(partials) > 0) {
     output += 'template.setPartials({';
     output += _.map(partials, function(v, partial) {
-      return '"' + partial + '":require("./' + partial + '.mustache")';
+      return '"' + partial + '":require("./' + partial + '.' + templateFileExt + '")';
     }).join(',');
     output += '});';
   }
