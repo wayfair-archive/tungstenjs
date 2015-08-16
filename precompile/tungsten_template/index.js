@@ -20,7 +20,7 @@ var utils = require('./shared_utils');
  */
 module.exports = function(contents, templateFileExt, useWebpack) {
   templateFileExt = typeof templateFileExt !== 'undefined' ? templateFileExt : 'mustache';
-  useWebpack = typeof useWebpack !== 'undefined' ? useWebpack : false;
+  useWebpack = typeof useWebpack !== 'undefined' ? useWebpack : true;
   if (useWebpack) {
     this.cacheable();
   }
