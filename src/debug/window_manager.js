@@ -4,8 +4,15 @@ var _ = require('underscore');
 var utils = require('./panel_js/utils');
 var appData = require('./panel_js/app_data');
 var logger = require('../utils/logger');
+var highlighter = require('../highlighter');
 
 var debugWindow;
+
+function closePanel() {
+  debugWindow = null;
+  highlighter(null);
+  utils.setDebugWindow(null);
+}
 
 function getWindow() {
   // Launch panel
@@ -14,10 +21,7 @@ function getWindow() {
     logger.error('Unable to launch debug panel. You may need to allow the popup or run "window.launchDebugger()" from your console');
   } else {
     debugWindow.title = 'Tungsten Debugger';
-    debugWindow.onunload = function() {
-      debugWindow = null;
-      utils.setDebugWindow(null);
-    };
+    debugWindow.onunload = closePanel;
     launchDebugger();
   }
 }
@@ -28,10 +32,7 @@ window.attachTungstenDebugPane = function(panel) {
   if (debugWindow.activeTab) {
     utils.gotoTab(debugWindow.activeTab);
   }
-  debugWindow.onunload = function() {
-    debugWindow = null;
-      utils.setDebugWindow(null);
-  };
+  debugWindow.onunload = closePanel;
   launchDebugger();
 };
 
