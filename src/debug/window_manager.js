@@ -61,6 +61,10 @@ appData.partials = templates;
 function renderDebugPanel() {
   if (debugWindow) {
     var debugDoc = debugWindow.document;
+    // Save scroll positions for post-render
+    var toolPanelScrolls = _.map(utils.selectElements('tool-panel'), function(el) {
+      return el.scrollTop;
+    });
     debugWindow.render = renderDebugPanel;
     utils.setDebugWindow(debugWindow);
     try {
@@ -68,10 +72,15 @@ function renderDebugPanel() {
     } catch (ex) {
       logger.log(ex);
     }
+    // Reset scroll positions
+    var toolPanels = utils.selectElements('tool-panel');
+    for (var i = 0; i < toolPanelScrolls.length; i++) {
+      toolPanels[i].scrollTop = toolPanelScrolls[i];
+    }
 
     require('./panel_js/panel_events')();
 
-    for (var i = 0; i < appData.tabs.tabs.length; i++) {
+    for (i = 0; i < appData.tabs.tabs.length; i++) {
       var tab = appData.tabs.tabs[i];
       if (tab.isActive) {
         if (typeof tab.events === 'function') {
