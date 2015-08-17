@@ -11,6 +11,7 @@ html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  overflow: hidden;
 }
 body {
   margin: 0;
@@ -7901,6 +7902,7 @@ body {
   background: white; }
 
 .tool-panel {
+  height: 100%;
   float: left;
   overflow-x: auto;
   overflow-y: scroll; }
@@ -10919,4 +10921,8 @@ li hr {
 
 .c {
   clear: both;
+}
+
+.template-string ins,.template-string del{
+  background-color:#F1CEFF
 }
