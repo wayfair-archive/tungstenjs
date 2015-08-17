@@ -211,6 +211,17 @@ exports.setNestedModel = function(Model) {
 
   Model.prototype.trigger = newTrigger;
 
+  Model.prototype.reset = function(attrs, options) {
+    var currentKeys = _.keys(this.attributes);
+    var derived = _.result(this, 'derived') || {};
+    for (var i = 0; i < currentKeys.length; i++) {
+      if (!_.has(attrs, currentKeys[i]) && !_.has(derived, currentKeys[i])) {
+        this.unset(currentKeys[i]);
+      }
+    }
+    this.set(attrs, _.extend({reset:true}, options));
+  };
+
   Model.prototype.set = function(key, val, options) {
     var attr, attrs, unset, changes, silent, changing, prev, current;
     if (key == null) {
@@ -226,6 +237,14 @@ exports.setNestedModel = function(Model) {
     }
 
     options = options || {};
+
+    /* develblock:start */
+    // In order to compare server vs. client data, save off the initial data
+    if (!this.initialData) {
+      // Using JSON to get a deep clone to avoid any overlapping object references
+      this.initialData = JSON.parse(JSON.stringify(attrs));
+    }
+    /* develblock:end */
 
     // Run validation.
     if (!this._validate(attrs, options)) {

@@ -128,7 +128,11 @@ module.exports = function() {
   utils.addEvent('js-set-model-data', 'click', function() {
     var textbox = utils.selectElements('js-model-data')[0];
     appData.selectedModel.outputData = '';
-    appData.selectedModel.obj.set(JSON.parse(textbox.value), {reset: true});
+    appData.selectedModel.obj.reset(JSON.parse(textbox.value));
+    utils.render();
+  });
+  utils.addEvent('js-reset-data', 'click', function() {
+    appData.selectedModel.obj.reset(appData.selectedModel.obj.initialData);
     utils.render();
   });
 };
