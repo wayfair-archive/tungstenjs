@@ -212,14 +212,21 @@ exports.setNestedModel = function(Model) {
   Model.prototype.trigger = newTrigger;
 
   Model.prototype.reset = function(attrs, options) {
+    var opts = _.extend({reset:true}, options);
     var currentKeys = _.keys(this.attributes);
+    var relations = _.result(this, 'relations') || {};
     var derived = _.result(this, 'derived') || {};
+    var key;
     for (var i = 0; i < currentKeys.length; i++) {
-      if (!_.has(attrs, currentKeys[i]) && !_.has(derived, currentKeys[i])) {
-        this.unset(currentKeys[i]);
+      key = currentKeys[i];
+      if (_.has(relations, key)) {
+        this.attributes[key].reset(attrs[key], opts);
+        delete attrs[key];
+      } else if (!_.has(attrs, key) && !_.has(derived, key)) {
+        this.unset(key);
       }
     }
-    this.set(attrs, _.extend({reset:true}, options));
+    this.set(attrs, opts);
   };
 
   Model.prototype.set = function(key, val, options) {
