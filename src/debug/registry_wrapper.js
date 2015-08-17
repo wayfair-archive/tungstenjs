@@ -45,6 +45,10 @@ function RegistryWrapper(obj, type) {
 
   this.debugName = obj.getDebugName();
 
+  if (obj.el) {
+    this.elString = Object.prototype.toString.call(obj.el);
+  }
+
   if (typeof obj.getFunctions === 'function') {
     this.trackedFunctions = {};
     this.objectFunctions = obj.getFunctions(this.trackedFunctions, getTrackableFunction);

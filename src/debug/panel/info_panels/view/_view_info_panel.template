@@ -28,7 +28,7 @@
             </li>
             <li data-property-name="el" data-dom-element="" class="js-view-element">
               <span class="name">el</span><span class="separator">: </span>
-              <span class="js-view-el value console-formatted-undefined clickable-property" patchedmarionette=""> <span class="source-code" style="-webkit-user-select: none;"><%= obj.el %></span> </span>
+              <span class="js-view-el value console-formatted-undefined clickable-property" patchedmarionette=""> <span class="source-code" style="-webkit-user-select: none;"><%= panel.view.elString %></span> </span>
             </li>
           </ol>
         </div>
