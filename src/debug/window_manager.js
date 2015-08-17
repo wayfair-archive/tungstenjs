@@ -4,7 +4,7 @@ var _ = require('underscore');
 var utils = require('./panel_js/utils');
 var appData = require('./panel_js/app_data');
 var logger = require('../utils/logger');
-var highlighter = require('../highlighter');
+var highlighter = require('./highlighter');
 
 var debugWindow;
 
