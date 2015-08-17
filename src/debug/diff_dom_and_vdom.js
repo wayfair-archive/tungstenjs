@@ -31,7 +31,7 @@ function diffElements(vNode, elem) {
   // Check declared property values vs DOM values
   // This bypasses properties that are not managed by VirtualNode
   _.each(vNode.properties, function(value, key) {
-    if(key === 'attributes') {
+    if (key === 'attributes') {
       return;
     }
     if (key.toLowerCase() === 'contenteditable' && value.toLowerCase() === 'inherit') {
@@ -47,6 +47,13 @@ function diffElements(vNode, elem) {
       }
     }
     var propName = utils.propertiesToTransform[key] ? utils.propertiesToTransform[key] : key;
+
+    var domValue = elem[key];
+    if (propName === 'href') {
+      // the href property displays the fully resolved URL when read, so fall back to attribute value
+      domValue = elem.getAttribute('href');
+    }
+
     var vAttr = ' ' + propName + '=' + chars.quote + propValue + chars.quote;
     var eAttr = ' ' + propName + '=' + chars.quote + elem[key] + chars.quote;
     // If the property is a boolean, any non-"false" value of the template is fine
