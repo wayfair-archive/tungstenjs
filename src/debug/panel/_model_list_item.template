@@ -5,9 +5,10 @@
   }
 
   var spanClass = '';
-  if (w.model.isParent) {
+  var modelIsParent = w.model.isParent();
+  if (modelIsParent) {
     spanClass = 'js-toggle-model-children glyphicon-chevron-';
-    spanClass += w.collapsed ? 'right' : 'down';
+    spanClass += w.model.collapsed ? 'right' : 'down';
   }
 %>
 <li class="js-model-list-item tree-group-item <%= liClass %>" data-id="<%= w.model.debugName %>">
@@ -16,7 +17,7 @@
     <a class="js-more-model-info" href="#"><%= w.model.debugName %></a>
   </div>
   <% if (!w.model.collapsed) { %>
-    <% if (w.model.isParent) { %>
+    <% if (modelIsParent) { %>
       <ul class="tree-group">
         <% _.each(w.model.getChildren(), function(child) {
           print(w.partials['_model_list_item']({

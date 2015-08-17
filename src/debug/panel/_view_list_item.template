@@ -4,10 +4,11 @@
     liClass = 'is-highlighted';
   }
 
+  var viewIsParent = w.view.isParent();
   var spanClass = '';
-  if (w.view.isParent) {
+  if (viewIsParent) {
     spanClass = 'js-toggle-view-children glyphicon-chevron-';
-    spanClass += w.collapsed ? 'right' : 'down';
+    spanClass += w.view.collapsed ? 'right' : 'down';
   }
 %>
 <li data-view="" class="js-view-list-item tree-group-item <%= liClass %>" data-id="<%= w.view.debugName %>">
@@ -16,7 +17,7 @@
     <a class="js-more-view-info" href="#"><%= w.view.debugName %></a>
   </div>
   <% if (!w.view.collapsed) { %>
-    <% if (w.view.isParent) { %>
+    <% if (viewIsParent) { %>
       <ul class="tree-group">
         <% _.each(w.view.getChildren(), function(child) {
           // RECURSIVE BE CAREFUL
