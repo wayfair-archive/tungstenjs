@@ -162,7 +162,7 @@ var BaseView = Backbone.View.extend({
     // Compare full template against full DOM
     var diff = this.getTemplateDiff();
     if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
-      console.warn('DOM does not match VDOM for view "' + this.getDebugName() + '". Use debug panel to see differences');
+      logger.warn('DOM does not match VDOM for view "' + this.getDebugName() + '". Use debug panel to see differences');
     }
     /* develblock:end */
   },
@@ -495,6 +495,13 @@ var BaseView = Backbone.View.extend({
     /* develblock:start */
     // Certain methods of BaseView should be unable to be overridden
     var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
+
+    function wrapOverride(first, second) {
+      return function() {
+        first.apply(this, arguments);
+        second.apply(this, arguments);
+      };
+    }
     for (var i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'View.' + methods[i] + ' may not be overridden';
@@ -503,7 +510,7 @@ var BaseView = Backbone.View.extend({
         }
         logger.warn(msg);
         // Replace attempted override with base version
-        protoProps[methods[i]] = BaseView.prototype[methods[i]];
+        protoProps[methods[i]] = wrapOverride(BaseView.prototype[methods[i]], protoProps[methods[i]]);
       }
     }
     /* develblock:end */

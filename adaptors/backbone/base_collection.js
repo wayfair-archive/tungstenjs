@@ -100,6 +100,13 @@ var BaseCollection = Backbone.Collection.extend({
     /* develblock:start */
     // Certain methods of BaseCollection should be unable to be overridden
     var methods = ['initialize'];
+
+    function wrapOverride(first, second) {
+      return function() {
+        first.apply(this, arguments);
+        second.apply(this, arguments);
+      };
+    }
     for (var i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Collection.' + methods[i] + ' may not be overridden';
@@ -108,7 +115,7 @@ var BaseCollection = Backbone.Collection.extend({
         }
         logger.warn(msg);
         // Replace attempted override with base version
-        protoProps[methods[i]] = BaseCollection.prototype[methods[i]];
+        protoProps[methods[i]] = wrapOverride(BaseCollection.prototype[methods[i]], protoProps[methods[i]]);
       }
     }
     /* develblock:end */

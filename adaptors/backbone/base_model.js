@@ -164,6 +164,13 @@ var BaseModel = Backbone.Model.extend({
     /* develblock:start */
     // Certain methods of BaseModel should be unable to be overridden
     var methods = ['initialize'];
+
+    function wrapOverride(first, second) {
+      return function() {
+        first.apply(this, arguments);
+        second.apply(this, arguments);
+      };
+    }
     for (var i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Model.' + methods[i] + ' may not be overridden';
@@ -172,7 +179,7 @@ var BaseModel = Backbone.Model.extend({
         }
         logger.warn(msg);
         // Replace attempted override with base version
-        protoProps[methods[i]] = BaseModel.prototype[methods[i]];
+        protoProps[methods[i]] = wrapOverride(BaseModel.prototype[methods[i]], protoProps[methods[i]]);
       }
     }
     /* develblock:end */
