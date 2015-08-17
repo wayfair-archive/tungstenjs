@@ -27,6 +27,7 @@
 'use strict';
 var Backbone = require('backbone');
 var _ = require('underscore');
+var logger = require('../../src/utils/logger');
 
 var exports = {};
 var BackboneModel = Backbone.Model,
@@ -249,7 +250,12 @@ exports.setNestedModel = function(Model) {
     // In order to compare server vs. client data, save off the initial data
     if (!this.initialData) {
       // Using JSON to get a deep clone to avoid any overlapping object references
-      this.initialData = JSON.parse(JSON.stringify(attrs));
+      var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
+      delete options.initialData;
+      this.initialData = JSON.parse(initialStr);
+      if (!_.isObject(this.initialData)) {
+        logger.warn('Model expected object of attributes but got: ' + initialStr);
+      }
     }
     /* develblock:end */
 
@@ -283,7 +289,11 @@ exports.setNestedModel = function(Model) {
         val = attrs[attr];
 
         // Inject in the relational lookup
-        val = this.setRelation(attr, val, options);
+        var opts = options;
+        /* devblock:start */
+        opts = _.extend({initialData: val}, options);
+        /* devblock:end */
+        val = this.setRelation(attr, val, opts);
 
         if (!_.isEqual(current[attr], val)) {
           changes.push(attr);
