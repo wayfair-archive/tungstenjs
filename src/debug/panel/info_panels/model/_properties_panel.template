@@ -16,9 +16,9 @@
                         <% } else { %>
                           <span class="value console-formatted-undefined clickable-property">
                             <% if (prop.data.isEditing) { %>
-                              <input type="text" value="<%- prop.data.value %>" autofocus="true" class="js-model-property-value">
+                              <input type="text" value="<%- JSON.stringify(prop.data.value) %>" autofocus="true" class="js-model-property-value">
                             <% } else { %>
-                              <span><%= prop.data.value %></span>
+                              <span><%- JSON.stringify(prop.data.value) %></span>
                             <% } %>
                           </span>
                         <% } %>

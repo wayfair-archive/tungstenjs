@@ -146,8 +146,7 @@ var BaseModel = Backbone.Model.extend({
           key: key,
           data: {
             isEditing: false,
-            // Stringify values so that they can be displayed properly
-            value: JSON.stringify(value)
+            value: value
           }
         });
       }
