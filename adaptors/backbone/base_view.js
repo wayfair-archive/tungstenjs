@@ -215,6 +215,18 @@ var BaseView = Backbone.View.extend({
     return result;
   },
 
+  _setElement: function(el) {
+    var dataset = require('data-set');
+    var data;
+    if (this.el && this.el !== el) {
+      data = dataset(this.el);
+      data.view = null;
+    }
+    data = dataset(el);
+    data.view = this;
+    Backbone.View.prototype._setElement.call(this, el);
+  },
+
   /**
    * Gets a JSON format version of the current state
    *
