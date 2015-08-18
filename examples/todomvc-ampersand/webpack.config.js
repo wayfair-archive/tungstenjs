@@ -1,6 +1,7 @@
 var path = require('path');
+var webpackSettings = require('../../webpack-helper');
 
-module.exports = {
+module.exports = webpackSettings({
   entry: './js/app',
   output: {
     filename: './js/app.min.js',
@@ -20,12 +21,6 @@ module.exports = {
     }
   },
   resolveLoader: {
-    modulesDirectories: ['node_modules', path.join(__dirname, '../../node_modules/'), path.join(__dirname, '../../precompile')]
-  },
-  module: {
-    loaders: [
-      { test: /\.mustache$/, loader: 'tungsten_template' },
-      { test: /\.json$/, loader: 'json-loader' }
-    ]
+    modulesDirectories: ['node_modules']
   }
-};
+});
