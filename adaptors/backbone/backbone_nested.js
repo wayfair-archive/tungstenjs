@@ -294,18 +294,25 @@ exports.setNestedModel = function(Model) {
   };
 
   Model.prototype.toJSON = function() {
-    var attrs = _.clone(this.attributes);
+    var attrs = this.attributes;
+    var relations = _.result(this, 'relations') || {};
+    var derived = _.result(this, 'derived') || {};
+    var session = _.invert(_.result(this, 'session') || []);
 
-    _.each(this.relations, function(Rel, key) {
-      if (_.has(attrs, key)) {
-        attrs[key] = attrs[key].doSerialize();
-      } else {
-        attrs[key] = (new Rel()).doSerialize();
+    var data = {};
+    _.each(attrs, function(val, key) {
+      // Skip any derived or session properties
+      if (!derived[key] && !session[key]) {
+        // Recursively serialize any set relations
+        if (relations[key] && typeof relations[key].doSerialize === 'function') {
+          data[key] = val.doSerialize();
+        } else {
+          data[key] = val;
+        }
       }
     });
-
-    return attrs;
-  };
+    return data;
+  },
 
   Model.prototype.doSerialize = function() {
     return this.serialize(this.toJSON());

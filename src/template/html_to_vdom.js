@@ -1,11 +1,29 @@
 'use strict';
 
-var htmlparser = require('htmlparser2');
 var virtualHyperscript = require('../vdom/virtual_hyperscript');
 var HTMLCommentWidget = require('./widgets/html_comment');
+var entityMap = require('html-tokenizer/entity-map');
 
 var result = [];
 var stack = [];
+
+// @TODO examine other tokenizers or parsers
+var Parser = require('html-tokenizer/parser');
+var parser = new Parser({ entities: entityMap });
+parser.on('open', function(name, attributes) {
+  var properties = {
+    attributes: attributes
+  };
+  if (!attributes.contenteditable) {
+    properties.contentEditable = 'inherit';
+  }
+
+  stack.push({
+    tagName: name,
+    properties: properties,
+    children: []
+  });
+});
 
 /**
  * When an element is resolved, push it to the result or the parent item on the stack
@@ -18,51 +36,28 @@ function closeElem(obj) {
     obj = virtualHyperscript(obj.tagName, obj.properties, obj.children);
   }
 
-  var pushingTo;
   if (stack.length > 0) {
-    pushingTo = stack[stack.length - 1].children;
+    stack[stack.length - 1].children.push(obj);
   } else {
-    pushingTo = result;
-  }
-
-  // Combine adjacent strings
-  if (typeof obj === 'string' && typeof pushingTo[pushingTo.length - 1] === 'string') {
-    pushingTo[pushingTo.length - 1] += obj;
-  } else {
-    pushingTo.push(obj);
+    result.push(obj);
   }
 }
 
-var parser = new htmlparser.Parser({
-    onopentag: function(name, attributes) {
-      var properties = {
-        attributes: attributes
-      };
-      if (!attributes.contenteditable) {
-        properties.contentEditable = 'inherit';
-      }
+parser.on('close', function() {
+  closeElem(stack.pop());
+});
 
-      stack.push({
-        tagName: name,
-        properties: properties,
-        children: []
-      });
-    },
-    oncomment: function(text) {
-      closeElem(new HTMLCommentWidget(text));
-    },
-    ontext: function(text) {
-      closeElem(text);
-    },
-    onclosetag: function() {
-      closeElem(stack.pop());
-    }
-}, {decodeEntities: true});
+parser.on('text', function(text) {
+  closeElem(text);
+});
+
+parser.on('comment', function(text) {
+  closeElem(new HTMLCommentWidget(text));
+});
 
 module.exports = function(html)  {
   result = [];
   stack = [];
-  parser.write(html);
-  parser.end();
+  parser.parse(html);
   return result.length === 1 ? result[0] : result;
 };

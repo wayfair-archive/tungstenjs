@@ -8,13 +8,23 @@ var express = require('express'),
   _ = require('underscore'),
   fs = require('fs'),
   data = require('./js/data.js'),
+  webpackDevMiddleware = require('webpack-dev-middleware'),
+  webpack = require('webpack'),
+  webpackConfig = require('./webpack.config.js'),
   opener = require('opener');
+
+var compiler = webpack(webpackConfig);
 
 var app = express();
 
 app.set('view engine', 'mustache');
 
 app.set('layout', 'index');
+
+app.use(webpackDevMiddleware(compiler, {
+  watch: true,
+  publicPath: '/'
+}));
 
 var partials = {}, name = '';
 _.forEach(fs.readdirSync('templates'), function(fileName) {
