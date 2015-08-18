@@ -385,13 +385,14 @@ exports.setNestedCollection = function(Collection) {
   Collection.prototype.reset = function(models, options) {
     options = options || {};
     /* develblock:start */
+    var i, l;
     if (!this.initialData) {
       // Using JSON to get a deep clone to avoid any overlapping object references
-      var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
+      var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : models);
       delete options.initialData;
       this.initialData = JSON.parse(initialStr);
       var allObjects = true;
-      for (var i = 0; i < models.length; i++) {
+      for (i = 0; i < models.length; i++) {
         if (!_.isObject(models[i]) || _.isArray(models[i])) {
           allObjects = false;
           break;
@@ -402,7 +403,7 @@ exports.setNestedCollection = function(Collection) {
       }
     }
     /* develblock:end */
-    for (var i = 0, l = this.models.length; i < l; i++) {
+    for (i = 0, l = this.models.length; i < l; i++) {
       this._removeReference(this.models[i]);
     }
     options.previousModels = this.models;
