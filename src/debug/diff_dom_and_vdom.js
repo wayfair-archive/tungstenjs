@@ -122,6 +122,7 @@ function recursiveDiff(vtree, elem) {
       output += textDiff(vtree.text, elem.textContent);
     }
   } else if (isWidget(vtree)) {
+    var widgetName;
     // Widgets are the construct that hold childViews
     if (vtree.constructor === HTMLCommentWidget) {
       // HTMLCommentWidget is a special case
@@ -133,17 +134,20 @@ function recursiveDiff(vtree, elem) {
       } else {
         output += utils.getCommentString(textDiff(vtree.text, elem.textContent), chars);
       }
-    } else {
-      var widgetName = vtree.view.getDebugName();
+    } else if (vtree && vtree.view) {
+      widgetName = vtree.view.getDebugName();
       if (typeof vtree.templateToString === 'function') {
         widgetName = vtree.templateToString(true);
       }
-      if (vtree.view && vtree.view.el !== elem) {
+      if (vtree.view.el !== elem) {
         // If the view at this position isn't bound to elem, something has gone terribly wrong
         output += '<del><ins>' + widgetName + '</ins></del>';
       } else {
         output += widgetName;
       }
+    } else {
+      output += '<del>[Uninitialized child view]</del>';
+      output += '<ins>' + utils.elementToString(elem, chars) + '</ins>';
     }
   }
   return output;
