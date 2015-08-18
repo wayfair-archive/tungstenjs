@@ -29,7 +29,6 @@
 'use strict';
 
 // Ractive's parser has minor whitespace issues for Mustache Spec.
-//   Additionally, current compiler will only output valid HTML so {{{}}} don't leave character literals
 // Tests whose expected value have been changed are marked with "@adjusted"
 
 // Include Chai assertion library
@@ -303,7 +302,7 @@ describe('"{" or "&" (Unescaped Variable)', function() {
         }
       }, {}
     ),
-    '<h1>Bear &gt; Shark</h1>',
+    '<h1>Bear > Shark</h1>',
     '{ character'
   );
 
@@ -315,8 +314,7 @@ describe('"{" or "&" (Unescaped Variable)', function() {
         }
       }, {}
     ),
-    // '<h1>Bear > Shark</h1>',
-    '<h1>Bear &gt; Shark</h1>', // @adjusted
+    '<h1>Bear > Shark</h1>',
     '& character'
   );
 
@@ -902,8 +900,7 @@ describe('Spec - Interpolation', function() {
       'data': {
         'forbidden': '& \" < >'
       },
-      // 'expected': 'These characters should be HTML escaped: &amp; &quot; &lt; &gt;\n',
-      'expected': 'These characters should be HTML escaped: &amp; \" &lt; &gt;\n', // @adjusted
+      'expected': 'These characters should be HTML escaped: &amp; &quot; &lt; &gt;\n',
       'template': 'These characters should be HTML escaped: {{forbidden}}\n',
       'desc': 'Basic interpolation should be HTML escaped.'
     }, {
@@ -911,8 +908,7 @@ describe('Spec - Interpolation', function() {
       'data': {
         'forbidden': '& \" < >'
       },
-      // 'expected': 'These characters should not be HTML escaped: & \" < >\n',
-      'expected': 'These characters should not be HTML escaped: &amp; \" &lt; &gt;\n', // @adjusted
+      'expected': 'These characters should not be HTML escaped: & \" < >\n',
       'template': 'These characters should not be HTML escaped: {{{forbidden}}}\n',
       'desc': 'Triple mustaches should interpolate without HTML escaping.'
     }, {
@@ -920,8 +916,7 @@ describe('Spec - Interpolation', function() {
       'data': {
         'forbidden': '& \" < >'
       },
-      // 'expected': 'These characters should not be HTML escaped: & \" < >\n',
-      'expected': 'These characters should not be HTML escaped: &amp; \" &lt; &gt;\n', // @adjusted
+      'expected': 'These characters should not be HTML escaped: & \" < >\n',
       'template': 'These characters should not be HTML escaped: {{&forbidden}}\n',
       'desc': 'Ampersand should interpolate without HTML escaping.'
     }, {
@@ -1224,8 +1219,7 @@ describe('Spec - Partials', function() {
       'data': {
         'data': '|'
       },
-      // 'expected': '  |  >\n>\n',
-      'expected': '  |  &gt;\n&gt;\n', // @adjusted
+      'expected': '  |  >\n>\n',
       'template': '  {{data}}  {{> partial}}\n',
       'desc': 'Whitespace should be left untouched.',
       'partials': {
@@ -1235,7 +1229,7 @@ describe('Spec - Partials', function() {
       'name': 'Standalone Line Endings',
       'data': {},
       // 'expected': '|\r\n>|',
-      'expected': '|\r\n&gt;\r\n|', // @adjusted
+      'expected': '|\r\n>\r\n|', // @adjusted
       'template': '|\r\n{{>partial}}\r\n|',
       'desc': '\'\\r\\n\' should be considered a newline for standalone tags.',
       'partials': {
@@ -1245,7 +1239,7 @@ describe('Spec - Partials', function() {
       'name': 'Standalone Without Previous Line',
       'data': {},
       // 'expected': '  >\n  >>',
-      'expected': '  &gt;\n&gt;\n&gt;', // @adjusted
+      'expected': '  >\n>\n>', // @adjusted
       'template': '  {{>partial}}\n>',
       'desc': 'Standalone tags should not require a newline to precede them.',
       'partials': {
@@ -1255,7 +1249,7 @@ describe('Spec - Partials', function() {
       'name': 'Standalone Without Newline',
       'data': {},
       // 'expected': '>\n  >\n  >',
-      'expected': '&gt;\n  &gt;\n&gt;', // @adjusted
+      'expected': '>\n  >\n>', // @adjusted
       'template': '>\n  {{>partial}}',
       'desc': 'Standalone tags should not require a newline to follow them.',
       'partials': {
@@ -1267,7 +1261,7 @@ describe('Spec - Partials', function() {
         'content': '<\n->'
       },
       // 'expected': '\\\n |\n <\n->\n |\n/\n',
-      'expected': '\\\n |\n&lt;\n-&gt;\n|\n\n/\n', // @adjusted
+      'expected': '\\\n |\n<\n->\n|\n\n/\n', // @adjusted
       'template': '\\\n {{>partial}}\n/\n',
       'desc': 'Each line of the partial should be indented before rendering.',
       'partials': {
