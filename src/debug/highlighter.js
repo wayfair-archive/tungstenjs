@@ -4,8 +4,10 @@
  * Chrome DevTools-esque plugin to highlight DOM elements from debugger panel
  */
 
+
+var isNode = require('./is_node');
 var highlightCSS = document.createElement('style');
-highlightCSS.innerHTML = require('!!tungsten_debug?static!./highlighter.css');
+highlightCSS.innerHTML = isNode ? '' : require('!!tungsten_debug?static!./highlighter.css');
 document.head.appendChild(highlightCSS);
 
 var overlayEl = document.createElement('div');

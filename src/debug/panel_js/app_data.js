@@ -1,7 +1,10 @@
 'use strict';
 
+var isNode = require('../is_node');
+var styles = isNode ? '' : require('!!tungsten_debug?static!../panel/style.css');
+
 window.appData = module.exports = {
-  styles: require('!!tungsten_debug?static!../panel/style.css'),
+  styles: styles,
   tabs: {
     tabs: [
       {

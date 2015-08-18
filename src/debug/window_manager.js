@@ -6,6 +6,8 @@ var appData = require('./panel_js/app_data');
 var logger = require('../utils/logger');
 var highlighter = require('./highlighter');
 
+var isNode = require('./is_node');
+
 var debugWindow;
 
 function closePanel() {
@@ -46,16 +48,17 @@ function launchDebugger() {
 
   renderDebugPanel();
 }
-
-var ctx = require.context('!!tungsten_debug?template!./panel', true, /\.template$/);
-var files = ctx.keys();
 var templates = {};
-for (var i = 0; i < files.length; i++) {
-  var templateName = files[i];
-  templateName = templateName.replace('./', '');
-  templateName = templateName.replace('.template', '');
+if (!isNode) {
+  var ctx = require.context('!!tungsten_debug?template!./panel', true, /\.template$/);
+  var files = ctx.keys();
+  for (var i = 0; i < files.length; i++) {
+    var templateName = files[i];
+    templateName = templateName.replace('./', '');
+    templateName = templateName.replace('.template', '');
 
-  templates[templateName] = ctx(files[i]);
+    templates[templateName] = ctx(files[i]);
+  }
 }
 appData.partials = templates;
 
