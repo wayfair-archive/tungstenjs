@@ -22,7 +22,7 @@ function getWindow() {
   if (!debugWindow) {
     logger.error('Unable to launch debug panel. You may need to allow the popup or run "window.launchDebugger()" from your console');
   } else {
-    debugWindow.title = 'Tungsten Debugger';
+    debugWindow.document.title = 'DEBUG: ' + window.document.title;
     debugWindow.onunload = closePanel;
     launchDebugger();
   }
@@ -30,6 +30,7 @@ function getWindow() {
 
 window.attachTungstenDebugPane = function(panel) {
   debugWindow = panel;
+  debugWindow.document.title = 'DEBUG: ' + window.document.title;
   utils.setDebugWindow(debugWindow);
   if (debugWindow.activeTab) {
     utils.gotoTab(debugWindow.activeTab);
@@ -146,7 +147,7 @@ window.launchDebugger = function() {
     button.style.width = '50%';
     button.style.height = '40%';
 
-    var buttonText = document.createTextNode('Open Tungsten Debugger');
+    var buttonText = document.createTextNode('Open Tungsten.js Debugger');
     button.appendChild(buttonText);
     overlay.appendChild(button);
     document.body.appendChild(overlay);
