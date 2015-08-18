@@ -1,6 +1,7 @@
 var path = require('path');
+var webpackSettings = require('../../webpack-helper');
 
-module.exports = {
+module.exports = webpackSettings({
   entry: './js/app',
   output: {
     filename: './js/app.min.js',
@@ -14,18 +15,12 @@ module.exports = {
       //  Aliases for the current version of tungstenjs above the ./examples directory.  If
       //  examples dir is run outside of main tungstenjs repo, remove these aliases
       //  and use via normal modules directories (e.g., via NPM)
-      'tungstenjs/adaptors/backbone' : path.join(__dirname, '../../adaptors/backbone'),
+      'tungstenjs/adaptors/backbone': path.join(__dirname, '../../adaptors/backbone'),
       'tungstenjs/src/template/template': path.join(__dirname, '../../src/template/template'),
-      'tungstenjs' : '../../src'
+      'tungstenjs': '../../src'
     }
   },
   resolveLoader: {
-    modulesDirectories: ['node_modules', path.join(__dirname, '../../node_modules/'), path.join(__dirname, '../../precompile')]
-  },
-  module: {
-    loaders: [
-      { test: /\.mustache$/, loader: 'tungsten_template' },
-      { test: /\.json$/, loader: 'json-loader' }
-    ]
+    modulesDirectories: ['node_modules']
   }
-};
+});
