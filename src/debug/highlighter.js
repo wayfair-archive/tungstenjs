@@ -11,29 +11,41 @@ document.head.appendChild(highlightCSS);
 var overlayEl = document.createElement('div');
 overlayEl.id = 'tungstenDebugOverlay';
 
+var targetClass = 'tungstenDebugTarget';
 var highlightClass = 'tungstenDebugHighlight';
 var wrapperClass = 'tungstenDebugHighlight tungstenDebugHighlightWrapper';
 
-var highlightElements = (function(num) {
-  var elems = new Array(num);
-  for (var i = 0; i < num; i++) {
+var highlightElements = [];
+function ensureHighlightElements(num) {
+  for (var i = highlightElements.length; i < num; i++) {
     var highlightEl = document.createElement('div');
     highlightEl.className = highlightClass;
-    elems[i] = highlightEl;
+    highlightElements[i] = highlightEl;
     overlayEl.appendChild(highlightEl);
   }
-  return elems;
-})(20);
+}
+
+var targetElements = [];
+function ensureTargetElements(num) {
+  for (var i = targetElements.length; i < num; i++) {
+    var targetEl = document.createElement('div');
+    targetEl.className = targetClass;
+    targetElements[i] = targetEl;
+    overlayEl.appendChild(targetEl);
+  }
+}
 
 document.body.appendChild(overlayEl);
 
-function highlightBox(highlightEl, box, label) {
-  highlightEl.style.display = 'block';
-  highlightEl.style.height = box.height + 'px';
-  highlightEl.style.width = box.width + 'px';
-  highlightEl.style.left = box.left + 'px';
-  highlightEl.style.top = box.top + 'px';
-  highlightEl.setAttribute('data-label', label);
+function setElementBox(elem, targetEl, label) {
+  var box = targetEl.getBoundingClientRect();
+  elem.style.display = 'block';
+  // height and width are IE9+, so just math them
+  elem.style.height = (box.bottom - box.top) + 'px';
+  elem.style.width = (box.right - box.left) + 'px';
+  elem.style.left = box.left + 'px';
+  elem.style.top = box.top + 'px';
+  elem.setAttribute('data-label', label);
 }
 
 function unhighlightInner() {
@@ -47,6 +59,7 @@ function unhighlight() {
   if (!overlayShown) {
     overlayEl.style.display = 'none';
   }
+  overlayEl.className = '';
   unhighlightInner();
 }
 
@@ -54,16 +67,32 @@ function highlight(el, label) {
   unhighlightInner();
   if (el) {
     overlayEl.style.display = '';
+    overlayEl.className = 'tungstenDebugOverlayHover';
     if (el.length && !label) {
       // highlight multiple
       var numElems = el.length - 1;
+      ensureHighlightElements(numElems + 1);
       for (var i = 0; i <= numElems; i++) {
         highlightElements[i].className = i === numElems ? highlightClass : wrapperClass;
-        highlightBox(highlightElements[i], el[i][0].getBoundingClientRect(), el[i][1]);
+        setElementBox(highlightElements[i], el[i][0], el[i][1]);
       }
     } else {
-      highlightBox(highlightElements[0], el.getBoundingClientRect(), label);
+      ensureHighlightElements(1);
+      setElementBox(highlightElements[0], el, label);
     }
+  }
+}
+
+function indicateTargets(elems) {
+  ensureTargetElements(elems.length);
+  for (var i = 0; i < elems.length; i++) {
+    setElementBox(targetElements[i], elems[i]);
+  }
+}
+
+function hideTargets() {
+  for (var i = targetElements.length; i--;) {
+    targetElements[i].style.display = 'none';
   }
 }
 
@@ -84,5 +113,7 @@ module.exports = {
   highlight: highlight,
   unhighlight: unhighlight,
   showOverlay: showOverlay,
-  hideOverlay: hideOverlay
+  hideOverlay: hideOverlay,
+  indicateTargets: indicateTargets,
+  hideTargets: hideTargets
 };

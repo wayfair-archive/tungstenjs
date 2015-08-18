@@ -79,6 +79,10 @@ utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'click',
 });
 
 window.findView = function() {
+  var targets = _.map(appData.views, function(view) {
+    return view.obj.el;
+  });
+  highlighter.indicateTargets(targets);
   highlighter.showOverlay();
 };
 

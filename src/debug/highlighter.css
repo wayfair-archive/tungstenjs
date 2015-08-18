@@ -7,14 +7,30 @@
   width:100%;
   z-index:5000;
 }
+.tungstenDebugOverlayHover {
+  /* Since highlight elements are pointer-events:none, set cursor here to indicate clickability */
+  cursor: pointer;
+}
+.tungstenDebugTarget {
+  position:absolute;
+  left:-10000px;
+  z-index: 5001;
+
+  background-color:rgba(235,88,248,0.1);
+  /* Fallback for old IE */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#EB58F819, endColorstr=#EB58F819)";
+  border: 1px dashed rgb(235,88,248);
+  pointer-events:none
+}
 .tungstenDebugHighlight {
   position:absolute;
   left:-10000px;
+  z-index: 5002;
 
   background-color:rgba(200,0,0,0.5);
   /* Fallback for old IE */
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#C8000080, endColorstr=#C8000080)";
-  pointer-events:none
+  pointer-events:none;
 }
 .tungstenDebugHighlightWrapper {
   border: 1px solid rgb(200,0,0);
