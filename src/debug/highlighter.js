@@ -4,6 +4,7 @@
  * Chrome DevTools-esque plugin to highlight DOM elements from debugger panel
  */
 
+var utils = require('./panel_js/utils');
 
 var isNode = require('./is_node');
 var highlightCSS = document.createElement('style');
@@ -39,14 +40,31 @@ function ensureTargetElements(num) {
 
 document.body.appendChild(overlayEl);
 
+function setOverlaySize() {
+  var body = document.body,
+    html = document.documentElement;
+
+  var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+  var width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
+  overlayEl.style.height = height + 'px';
+  overlayEl.style.width = width + 'px';
+}
+// @TODO find more efficient way of keeping this sized right
+utils.addEventListener(window, 'scroll', setOverlaySize);
+utils.addEventListener(window, 'resize', setOverlaySize);
+utils.addEventListener(window, 'load', setOverlaySize);
+setOverlaySize();
+
 function setElementBox(elem, targetEl, label) {
   var box = targetEl.getBoundingClientRect();
+  var winScrollX = window.scrollX;
+  var winScrollY = window.scrollY;
   elem.style.display = 'block';
   // height and width are IE9+, so just math them
   elem.style.height = (box.bottom - box.top) + 'px';
   elem.style.width = (box.right - box.left) + 'px';
-  elem.style.left = box.left + 'px';
-  elem.style.top = box.top + 'px';
+  elem.style.left = (winScrollX + box.left) + 'px';
+  elem.style.top = (winScrollY + box.top) + 'px';
   elem.setAttribute('data-label', label);
 }
 
