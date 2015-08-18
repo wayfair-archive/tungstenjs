@@ -253,7 +253,7 @@ exports.setNestedModel = function(Model) {
       var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
       delete options.initialData;
       this.initialData = JSON.parse(initialStr);
-      if (!_.isObject(this.initialData)) {
+      if (!_.isObject(this.initialData) || _.isArray(this.initialData)) {
         logger.warn('Model expected object of attributes but got: ' + initialStr);
       }
     }
@@ -290,9 +290,9 @@ exports.setNestedModel = function(Model) {
 
         // Inject in the relational lookup
         var opts = options;
-        /* devblock:start */
+        /* develblock:start */
         opts = _.extend({initialData: val}, options);
-        /* devblock:end */
+        /* develblock:end */
         val = this.setRelation(attr, val, opts);
 
         if (!_.isEqual(current[attr], val)) {
@@ -384,6 +384,24 @@ exports.setNestedCollection = function(Collection) {
 
   Collection.prototype.reset = function(models, options) {
     options = options || {};
+    /* develblock:start */
+    if (!this.initialData) {
+      // Using JSON to get a deep clone to avoid any overlapping object references
+      var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
+      delete options.initialData;
+      this.initialData = JSON.parse(initialStr);
+      var allObjects = true;
+      for (var i = 0; i < models.length; i++) {
+        if (!_.isObject(models[i]) || _.isArray(models[i])) {
+          allObjects = false;
+          break;
+        }
+      }
+      if (!allObjects || !_.isArray(this.initialData)) {
+        logger.warn('Collection expected array of objects but got: ' + initialStr);
+      }
+    }
+    /* develblock:end */
     for (var i = 0, l = this.models.length; i < l; i++) {
       this._removeReference(this.models[i]);
     }
