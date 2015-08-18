@@ -4,6 +4,8 @@
 'use strict';
 var Backbone = require('backbone');
 var backboneNested = require('./backbone_nested');
+var _ = require('underscore');
+
 /**
  * BaseModel
  *
