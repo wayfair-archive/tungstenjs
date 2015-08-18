@@ -55,7 +55,7 @@ function diffElements(vNode, elem) {
     }
 
     var vAttr = ' ' + propName + '=' + chars.quote + propValue + chars.quote;
-    var eAttr = ' ' + propName + '=' + chars.quote + elem[key] + chars.quote;
+    var eAttr = ' ' + propName + '=' + chars.quote + domValue + chars.quote;
     // If the property is a boolean, any non-"false" value of the template is fine
     output += elem[key] === true && propValue.toString() !== 'false' ? vAttr : textDiff(vAttr, eAttr);
   });
