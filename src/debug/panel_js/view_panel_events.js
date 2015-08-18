@@ -65,6 +65,7 @@ utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'mousemo
 utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'click', function(e) {
   var closestView = null;
   highlighter.hideOverlay();
+  highlighter.hideTargets();
   var el = document.elementFromPoint(e.clientX, e.clientY);
   var data;
   while (el && !closestView) {
