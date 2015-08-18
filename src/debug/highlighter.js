@@ -11,11 +11,14 @@ document.head.appendChild(highlightCSS);
 var overlayEl = document.createElement('div');
 overlayEl.id = 'tungstenDebugOverlay';
 
+var highlightClass = 'tungstenDebugHighlight';
+var wrapperClass = 'tungstenDebugHighlight tungstenDebugHighlightWrapper';
+
 var highlightElements = (function(num) {
   var elems = new Array(num);
   for (var i = 0; i < num; i++) {
     var highlightEl = document.createElement('div');
-    highlightEl.className = 'tungstenDebugHighlight';
+    highlightEl.className = highlightClass;
     elems[i] = highlightEl;
     overlayEl.appendChild(highlightEl);
   }
@@ -52,8 +55,10 @@ function highlight(el, label) {
   if (el) {
     overlayEl.style.display = '';
     if (el.length && !label) {
-      // highlight multiple!
-      for (var i = 0; i < el.length; i++) {
+      // highlight multiple
+      var numElems = el.length - 1;
+      for (var i = 0; i <= numElems; i++) {
+        highlightElements[i].className = i === numElems ? highlightClass : wrapperClass;
         highlightBox(highlightElements[i], el[i][0].getBoundingClientRect(), el[i][1]);
       }
     } else {
@@ -72,7 +77,7 @@ function hideOverlay() {
   overlayShown = false;
   unhighlight();
 }
-highlight(null);
+unhighlight();
 overlayEl.tabindex = -1;
 
 module.exports = {

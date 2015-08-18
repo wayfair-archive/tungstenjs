@@ -27,12 +27,26 @@ function updateSelectedView() {
   utils.render();
 }
 
+function selectView(viewWrapper) {
+  if (appData.selectedView) {
+    appData.selectedView.obj.off('rendered', utils.render);
+  }
+  appData.selectedView = viewWrapper;
+  appData.selectedView.obj.on('rendered', updateSelectedView);
+  var cids = _.keys(appData.views);
+  for (var i = 0; i < cids.length; i++) {
+    appData.views[cids[i]].selected = appData.views[cids[i]] === appData.selectedView;
+  }
+  updateSelectedView();
+}
+
 // Parent window functionality
 utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'mousemove', function(e) {
   var matchedElems = [];
-  e.target.style.display = 'none';
+  // Hide the overlay to grab the underlying element
+  highlighter.hideOverlay();
   var el = document.elementFromPoint(e.clientX, e.clientY);
-  e.target.style.display = '';
+  highlighter.showOverlay();
   var data;
   while (el) {
     data = dataset(el);
@@ -45,17 +59,33 @@ utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'mousemo
     highlighter.highlight(matchedElems);
   } else {
     highlighter.unhighlight();
-    e.target.style.display = '';
   }
 });
 
-window.test = function() {
+utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'click', function(e) {
+  var closestView = null;
+  highlighter.hideOverlay();
+  var el = document.elementFromPoint(e.clientX, e.clientY);
+  var data;
+  while (el && !closestView) {
+    data = dataset(el);
+    closestView = data.view;
+    el = el.parentNode;
+  }
+  if (closestView) {
+    var viewWrapper = appData.views[closestView.getDebugName()];
+    selectView(viewWrapper);
+  }
+});
+
+window.findView = function() {
   highlighter.showOverlay();
 };
 
 module.exports = function() {
-  utils.addEvent('js-find-view', 'click', function() {
-    highlighter.showOverlay();
+  utils.addEvent('js-find-view', 'click', function(e) {
+    e.stopPropagation();
+    window.findView();
   });
   utils.addEvent('js-toggle-view-children', 'click', function(e) {
     e.stopPropagation();
@@ -64,16 +94,7 @@ module.exports = function() {
     utils.render();
   });
   utils.addEvent('js-view-list-item', 'click', function(e) {
-    if (appData.selectedView) {
-      appData.selectedView.obj.off('rendered', utils.render);
-    }
-    appData.selectedView = getClosestView(e.target);
-    appData.selectedView.obj.on('rendered', updateSelectedView);
-    var cids = _.keys(appData.views);
-    for (var i = 0; i < cids.length; i++) {
-      appData.views[cids[i]].selected = appData.views[cids[i]] === appData.selectedView;
-    }
-    updateSelectedView();
+    selectView(getClosestView(e.target));
   });
   utils.addEvent('js-view-list-item', 'mouseover', function(e) {
     var view = getClosestView(e.target).obj;
@@ -85,7 +106,7 @@ module.exports = function() {
     highlighter.highlight(toHighlight);
   });
   utils.addEvent('js-view-list-item', 'mouseout', function() {
-    highlighter.unhightlight();
+    highlighter.unhighlight();
   });
   utils.addEvent('js-view-element', 'click', function() {
     logger.log(appData.selectedView.obj.el);
