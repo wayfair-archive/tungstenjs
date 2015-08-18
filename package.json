@@ -25,6 +25,7 @@
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
     "html-tokenizer": "^1.4.4",
+    "htmlparser2": "^3.8.3",
     "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
     "underscore": "^1.7.0",
