@@ -5,7 +5,7 @@ window.appData = module.exports = {
   tabs: {
     tabs: [
       {
-        name: 'View',
+        name: 'View <span class="glyphicon glyphicon-search js-find-view tab-action"></span>',
         isActive: true,
         activeTabName: 'showViewTab'
       },

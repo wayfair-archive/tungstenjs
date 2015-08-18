@@ -10926,3 +10926,7 @@ li hr {
 .template-string ins,.template-string del{
   background-color:#F1CEFF
 }
+
+.tab-action:hover {
+  color: #CB36D6;
+}
