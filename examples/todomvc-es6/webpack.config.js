@@ -25,7 +25,9 @@ module.exports = webpackSettings({
     modulesDirectories: ['node_modules', path.join(__dirname, '../../node_modules/')]
   },
   devtool: '#source-map',
-  loaders: [{test: /\.js$/, loader: 'babel?stage=0', exclude: /node_modules/}]
+  module: {
+    loaders: [{test: /\.js$/, loader: 'babel?stage=0', exclude: /node_modules/}]
+  }
 });
 
 
