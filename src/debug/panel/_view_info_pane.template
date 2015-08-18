@@ -19,7 +19,7 @@
               print(w.partials[partial]({
                 tabName: tabName,
                 collapsed: w.hiddenPanels[tabName],
-                settings: {},
+                settings: w.settings,
                 view: w.selectedView
               }));
             }

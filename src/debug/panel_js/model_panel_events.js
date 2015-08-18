@@ -74,7 +74,8 @@ module.exports = function() {
     utils.render();
   });
   utils.addEvent('js-show-inherited', 'change', function(e) {
-    appData.showInheritedMethods = e.currentTarget.checked;
+    e.stopPropagation();
+    appData.settings.showInheritedMethods = e.currentTarget.checked;
     utils.render();
   });
   utils.addEvent('js-add-new-event', 'blur', function(e) {
