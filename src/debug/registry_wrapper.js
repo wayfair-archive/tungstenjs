@@ -66,6 +66,20 @@ function RegistryWrapper(obj, type) {
   _.bindAll(this, 'isParent', 'getChildren');
 }
 
+RegistryWrapper.prototype.collectionKey = function() {
+  if (this.type === 'views') {
+    if (this.obj.model && this.obj.model.collection) {
+      return this.obj.model.collection.getDebugName();
+    }
+  } else if (this.type === 'models') {
+    if (this.obj.tungstenModel) {
+      if (this.obj.collection) {
+        return this.obj.collection.getDebugName();
+      }
+    }
+  }
+};
+
 RegistryWrapper.prototype.getState = function() {
   if (this.state) {
     return this.state;

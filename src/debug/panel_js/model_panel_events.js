@@ -5,21 +5,21 @@ var logger = require('../../utils/logger');
 var utils = require('./utils');
 var appData = require('./app_data');
 
-function getClosestModel(elem) {
+var getClosestModel = appData.getClosestModel = function(elem) {
   var model = null;
   var wrapper = utils.closest(elem, 'js-model-list-item');
   if (wrapper) {
     model = appData.models[wrapper.getAttribute('data-id')];
   }
   return model;
-}
+};
 
-function updateSelectedModel() {
+appData.updateSelectedModel = function() {
   if (typeof appData.selectedModel.obj.getPropertiesArray === 'function') {
     appData.selectedModel.modelProperties = appData.selectedModel.obj.getPropertiesArray();
   }
   utils.render();
-}
+};
 
 module.exports = function() {
   utils.addEvent('js-toggle-model-children', 'click', function(e) {
@@ -29,16 +29,7 @@ module.exports = function() {
     utils.render();
   });
   utils.addEvent('js-model-list-item', 'click', function(e) {
-    if (appData.selectedModel) {
-      appData.selectedModel.obj.off('rendered', utils.render);
-    }
-    appData.selectedModel = getClosestModel(e.target);
-    appData.selectedModel.obj.on('all', _.debounce(updateSelectedModel, 100));
-    var cids = _.keys(appData.models);
-    for (var i = 0; i < cids.length; i++) {
-      appData.models[cids[i]].selected = appData.models[cids[i]] === appData.selectedModel;
-    }
-    updateSelectedModel();
+    appData.selectModel(getClosestModel(e.target));
   });
   utils.addEvent('js-more-model-info', 'click', function(e) {
     var model = getClosestModel(e.target).obj;

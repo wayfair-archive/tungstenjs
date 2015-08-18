@@ -5,6 +5,7 @@
         <% for (var i = 0; i < w.activeViews.length; i++) {
           print(w.partials['_view_list_item']({
             view: w.activeViews[i],
+            getCollectionColor: w.getCollectionColor,
             partials: w.partials
           }));
         } %>

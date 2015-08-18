@@ -7,16 +7,16 @@ var highlighter = require('../highlighter');
 var logger = require('../../utils/logger');
 var dataset = require('data-set');
 
-function getClosestView(elem) {
+var getClosestView = appData.getClosestView = function(elem) {
   var view = null;
   var wrapper = utils.closest(elem, 'js-view-list-item');
   if (wrapper) {
     view = appData.views[wrapper.getAttribute('data-id')];
   }
   return view;
-}
+};
 
-function updateSelectedView() {
+appData.updateSelectedView = function () {
   appData.selectedView.vdomTemplate = appData.selectedView.obj.getVdomTemplate();
   var diff = appData.selectedView.obj.getTemplateDiff();
   if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
@@ -25,20 +25,7 @@ function updateSelectedView() {
     appData.selectedView.templateDiff = 'No difference';
   }
   utils.render();
-}
-
-function selectView(viewWrapper) {
-  if (appData.selectedView) {
-    appData.selectedView.obj.off('rendered', utils.render);
-  }
-  appData.selectedView = viewWrapper;
-  appData.selectedView.obj.on('rendered', updateSelectedView);
-  var cids = _.keys(appData.views);
-  for (var i = 0; i < cids.length; i++) {
-    appData.views[cids[i]].selected = appData.views[cids[i]] === appData.selectedView;
-  }
-  updateSelectedView();
-}
+};
 
 // Parent window functionality
 utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'mousemove', function(e) {
@@ -75,7 +62,7 @@ utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'click',
   }
   if (closestView) {
     var viewWrapper = appData.views[closestView.getDebugName()];
-    selectView(viewWrapper);
+    appData.selectView(viewWrapper);
   }
 });
 
@@ -87,10 +74,17 @@ window.findView = function() {
   highlighter.showOverlay();
 };
 
+var finding = false;
 module.exports = function() {
   utils.addEvent('js-find-view', 'click', function(e) {
     e.stopPropagation();
-    window.findView();
+    finding = !finding;
+    if (finding) {
+      window.findView();
+    } else {
+      highlighter.hideOverlay();
+      highlighter.hideTargets();
+    }
   });
   utils.addEvent('js-toggle-view-children', 'click', function(e) {
     e.stopPropagation();
@@ -99,7 +93,7 @@ module.exports = function() {
     utils.render();
   });
   utils.addEvent('js-view-list-item', 'click', function(e) {
-    selectView(getClosestView(e.target));
+    appData.selectView(getClosestView(e.target));
   });
   utils.addEvent('js-view-list-item', 'mouseover', function(e) {
     var view = getClosestView(e.target).obj;
@@ -137,7 +131,8 @@ module.exports = function() {
     appData.showInheritedMethods = e.currentTarget.checked;
     utils.render();
   });
-  utils.addEvent('js-model-tab', 'click', function() {
+  utils.addEvent('js-model-tab', 'click', function(e) {
+    appData.selectModel(appData.getClosestModel(e.target));
     utils.gotoTab('showModelTab');
   });
   utils.addEvent('js-add-new-event', 'blur', function(e) {

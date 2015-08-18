@@ -72,6 +72,7 @@ function renderDebugPanel() {
     debugWindow.render = renderDebugPanel;
     utils.setDebugWindow(debugWindow);
     try {
+      appData.resetCounters();
       debugDoc.body.innerHTML = templates.panel(appData);
     } catch (ex) {
       logger.log(ex);
