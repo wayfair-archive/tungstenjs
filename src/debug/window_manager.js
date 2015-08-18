@@ -162,6 +162,8 @@ window.launchDebugger = function() {
 
 logger.info('Tungsten Debugger is enabled. Run "launchDebugger()" to enable.\nA button will need to be clicked to satisfy the user input requirement for window.open.');
 
+var MAX_POLLS = 60;
+var POLL_INTERVAL = 1000;
 /**
  * When the parent window unloads, the debug window polls to reattach
  * Will auto-close if the parent window hasn't reappeared after 30s
@@ -169,12 +171,12 @@ logger.info('Tungsten Debugger is enabled. Run "launchDebugger()" to enable.\nA 
 function pollForParentOpen() {
   /* jshint validthis:true */
   if (this.pollNum > 0) {
-    if (this.opener && typeof this.opener.attachTungstenDebugPane === 'function') {
+    if (this.opener && !this.opener.OLD_TUNGSTEN_MASTER && typeof this.opener.attachTungstenDebugPane === 'function') {
       this.opener.attachTungstenDebugPane(this);
     } else {
       this.pollNum -= 1;
       this.loadingCounter.textContent = '' + this.pollNum;
-      this.setTimeout(pollForParentOpen, 1000);
+      this.setTimeout(pollForParentOpen, POLL_INTERVAL);
     }
   } else {
     this.window.close();
@@ -185,9 +187,11 @@ function pollForParentOpen() {
 utils.addEventListener(window, 'beforeunload', function() {
   if (debugWindow) {
     debugWindow.activeTab = _.keys(appData.tabs.selected)[0];
-    debugWindow.pollNum = appData.loading = 30;
+    debugWindow.pollNum = appData.loading = MAX_POLLS;
     renderDebugPanel();
     debugWindow.loadingCounter = debugWindow.document.getElementById('loading_message_count');
-    debugWindow.setTimeout(pollForParentOpen, 1000);
+    // Set variable to avoid reattaching to not-yet reloading window
+    window.OLD_TUNGSTEN_MASTER = true;
+    debugWindow.setTimeout(pollForParentOpen, POLL_INTERVAL);
   }
 });
