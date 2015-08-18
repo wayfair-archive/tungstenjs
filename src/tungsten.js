@@ -17,6 +17,9 @@ var htmlToVdom = require('./template/html_to_vdom');
 var vdom = virtualDomImplementation.vdom;
 var exports = {};
 
+var packageJson = require('../package.json');
+exports.VERSION = packageJson.version;
+
 exports.IS_DEV = false;
 
 exports.addEventPlugin = globalEvents.registerEventHandler;

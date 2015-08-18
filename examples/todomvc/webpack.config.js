@@ -4,7 +4,8 @@ var webpackSettings = require('../../webpack-helper');
 module.exports = webpackSettings({
   entry: './js/app',
   output: {
-    filename: './js/app.min.js'
+    filename: './js/app.min.js',
+    path: path.resolve('./js')
   },
   resolve: {
     alias: {
