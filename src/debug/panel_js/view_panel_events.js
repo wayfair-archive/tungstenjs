@@ -5,6 +5,7 @@ var utils = require('./utils');
 var appData = require('./app_data');
 var highlighter = require('../highlighter');
 var logger = require('../../utils/logger');
+var dataset = require('data-set');
 
 function getClosestView(elem) {
   var view = null;
@@ -26,7 +27,36 @@ function updateSelectedView() {
   utils.render();
 }
 
+// Parent window functionality
+utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'mousemove', function(e) {
+  var matchedElems = [];
+  e.target.style.display = 'none';
+  var el = document.elementFromPoint(e.clientX, e.clientY);
+  e.target.style.display = '';
+  var data;
+  while (el) {
+    data = dataset(el);
+    if (data.view) {
+      matchedElems.unshift([el, data.view.getDebugName()]);
+    }
+    el = el.parentNode;
+  }
+  if (matchedElems.length) {
+    highlighter.highlight(matchedElems);
+  } else {
+    highlighter.unhighlight();
+    e.target.style.display = '';
+  }
+});
+
+window.test = function() {
+  highlighter.showOverlay();
+};
+
 module.exports = function() {
+  utils.addEvent('js-find-view', 'click', function() {
+    highlighter.showOverlay();
+  });
   utils.addEvent('js-toggle-view-children', 'click', function(e) {
     e.stopPropagation();
     var view = getClosestView(e.target);
@@ -47,10 +77,15 @@ module.exports = function() {
   });
   utils.addEvent('js-view-list-item', 'mouseover', function(e) {
     var view = getClosestView(e.target).obj;
-    highlighter(view.el, view.getDebugName());
+    var toHighlight = [[view.el, view.getDebugName()]];
+    while (view.parentView) {
+      view = view.parentView;
+      toHighlight.unshift([view.el, view.getDebugName()]);
+    }
+    highlighter.highlight(toHighlight);
   });
   utils.addEvent('js-view-list-item', 'mouseout', function() {
-    highlighter(null);
+    highlighter.unhightlight();
   });
   utils.addEvent('js-view-element', 'click', function() {
     logger.log(appData.selectedView.obj.el);

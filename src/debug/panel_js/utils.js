@@ -38,23 +38,28 @@ function alert(message) {
   logger.warn(message);
 }
 
-function selectElements(className) {
-  if (debugWindow) {
-    if (debugWindow.document.querySelectorAll) {
-      return debugWindow.document.querySelectorAll('.' + className);
-    } else if (debugWindow.document.getElementsByClassName) {
-      return debugWindow.document.getElementsByClassName(className);
-    } else {
-      var elements = debugWindow.document.getElementsByTagName('*');
-      var pattern = new RegExp('(^|\\s)' + className + '(\\s|$)');
-      var results = [];
-      for (var i = 0; i < elements.length; i++) {
-        if ( pattern.test(elements[i].className) ) {
-          results.push(elements[i]);
-        }
+function selectElements(className, docToSearch) {
+  if (typeof docToSearch === 'undefined' && debugWindow) {
+    docToSearch = debugWindow.document;
+  }
+  if (typeof docToSearch === 'undefined') {
+    return [];
+  }
+
+  if (docToSearch.querySelectorAll) {
+    return docToSearch.querySelectorAll('.' + className);
+  } else if (docToSearch.getElementsByClassName) {
+    return docToSearch.getElementsByClassName(className);
+  } else {
+    var elements = docToSearch.getElementsByTagName('*');
+    var pattern = new RegExp('(^|\\s)' + className + '(\\s|$)');
+    var results = [];
+    for (var i = 0; i < elements.length; i++) {
+      if ( pattern.test(elements[i].className) ) {
+        results.push(elements[i]);
       }
-      return results;
     }
+    return results;
   }
 }
 
@@ -66,8 +71,8 @@ function addEventListener(elem, eventName, handler) {
   }
 }
 
-function addEvent(className, eventName, handler) {
-  var elems = selectElements(className);
+function addEvent(className, eventName, handler, docToSearch) {
+  var elems = selectElements(className, docToSearch);
   if (elems && elems.length) {
     for (var i = 0; i < elems.length; i++) {
       addEventListener(elems[i], eventName, handler);

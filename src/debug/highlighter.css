@@ -6,15 +6,22 @@
   height:100%;
   width:100%;
   z-index:5000;
-  pointer-events:none
 }
-#tungstenDebugHighlight {
-  position:relative;
+.tungstenDebugHighlight {
+  position:absolute;
   left:-10000px;
-  background-color:rgba(200,0,0,0.5);
+
+  background-color:rgba(200,0,0,0.3);
+  /* Fallback for old IE */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#C8000080, endColorstr=#C8000080)";
   pointer-events:none
 }
-#tungstenDebugHighlight:after {
+.tungstenDebugHighlight + .tungstenDebugHighlight {
+  background-color:rgba(200,0,0,0.15);
+  /* Fallback for old IE */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#C8000016, endColorstr=#C8000016)";
+}
+.tungstenDebugHighlight:after {
   content:attr(data-label);
   background-color:#FFFF80;
   border:1px solid #000;

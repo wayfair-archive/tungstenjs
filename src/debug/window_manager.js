@@ -10,7 +10,7 @@ var debugWindow;
 
 function closePanel() {
   debugWindow = null;
-  highlighter(null);
+  highlighter.unhighlight();
   utils.setDebugWindow(null);
 }
 

@@ -11,13 +11,20 @@ document.head.appendChild(highlightCSS);
 var overlayEl = document.createElement('div');
 overlayEl.id = 'tungstenDebugOverlay';
 
-var highlightEl = document.createElement('div');
-highlightEl.id = 'tungstenDebugHighlight';
+var highlightElements = (function(num) {
+  var elems = new Array(num);
+  for (var i = 0; i < num; i++) {
+    var highlightEl = document.createElement('div');
+    highlightEl.className = 'tungstenDebugHighlight';
+    elems[i] = highlightEl;
+    overlayEl.appendChild(highlightEl);
+  }
+  return elems;
+})(20);
 
-overlayEl.appendChild(highlightEl);
 document.body.appendChild(overlayEl);
 
-function highlightBox(box, label) {
+function highlightBox(highlightEl, box, label) {
   highlightEl.style.display = 'block';
   highlightEl.style.height = box.height + 'px';
   highlightEl.style.width = box.width + 'px';
@@ -26,20 +33,51 @@ function highlightBox(box, label) {
   highlightEl.setAttribute('data-label', label);
 }
 
-var highlightedElement;
-
-function highlight(el, label) {
-  if (el) {
-    highlightedElement = el;
-    overlayEl.style.display = '';
-    highlightBox(el.getBoundingClientRect(), label);
-  } else {
-    highlightedElement = null;
-    highlightEl.style.display = 'none';
-    overlayEl.style.display = 'none';
+function unhighlightInner() {
+  for (var i = highlightElements.length; i--;) {
+    highlightElements[i].style.display = 'none';
   }
 }
 
+var overlayShown = false;
+function unhighlight() {
+  if (!overlayShown) {
+    overlayEl.style.display = 'none';
+  }
+  unhighlightInner();
+}
+
+function highlight(el, label) {
+  unhighlightInner();
+  if (el) {
+    overlayEl.style.display = '';
+    if (el.length && !label) {
+      // highlight multiple!
+      for (var i = 0; i < el.length; i++) {
+        highlightBox(highlightElements[i], el[i][0].getBoundingClientRect(), el[i][1]);
+      }
+    } else {
+      highlightBox(highlightElements[0], el.getBoundingClientRect(), label);
+    }
+  }
+}
+
+function showOverlay() {
+  overlayShown = true;
+  unhighlightInner();
+  overlayEl.style.display = '';
+}
+
+function hideOverlay() {
+  overlayShown = false;
+  unhighlight();
+}
+highlight(null);
 overlayEl.tabindex = -1;
 
-module.exports = highlight;
+module.exports = {
+  highlight: highlight,
+  unhighlight: unhighlight,
+  showOverlay: showOverlay,
+  hideOverlay: hideOverlay
+};
