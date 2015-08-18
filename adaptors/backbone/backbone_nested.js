@@ -384,8 +384,8 @@ exports.setNestedCollection = function(Collection) {
 
   Collection.prototype.reset = function(models, options) {
     options = options || {};
-    /* develblock:start */
     var i, l;
+    /* develblock:start */
     if (!this.initialData) {
       // Using JSON to get a deep clone to avoid any overlapping object references
       var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : models);
