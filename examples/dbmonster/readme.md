@@ -4,5 +4,6 @@ Example implementation of Ryan Florance's [DBMonster](https://github.com/ryanflo
 
 ## Run
 
+    # Run `npm install` on the main tungstenjs directory
     npm install
     npm start

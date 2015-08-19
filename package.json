@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -33,12 +33,16 @@
   },
   "devDependencies": {
     "chai": "^2.2.0",
+    "express": "^4.13.3",
     "glob": "^4.3.5",
+    "hogan-express": "^0.5.2",
     "jasmine": "^2.3.1",
     "jsdom-nogyp": "^0.8.3",
     "mkdirp": "~0.5.0",
+    "opener": "^1.4.1",
     "webpack": "^1.5.1",
-    "webpack-strip-block": "0.0.1"
+    "webpack-strip-block": "0.0.1",
+    "webpack-dev-middleware": "^1.2.0"
   },
   "directories": {
     "example": "./examples",
