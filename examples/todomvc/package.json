@@ -6,17 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node ./node_modules/webpack/bin/webpack.js -d",
-    "start": "node ./server.js"
-  },
-  "devDependencies": {
-    "webpack": "^1.10.5",
-    "webpack-dev-middleware": "^1.2.0"
+    "start": "node ../examples_server.js --example=todomvc"
   },
   "dependencies": {
-    "express": "4.13.0",
-    "hogan-express": "^0.5.2",
-    "opener": "^1.4.1",
-    "todomvc-app-css": "^1.0.1",
-    "underscore": "^1.8.3"
+    "todomvc-app-css": "^1.0.1"
   }
 }

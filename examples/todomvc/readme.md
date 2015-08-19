@@ -4,6 +4,7 @@ Example application showing how [TodoMVC](http://todomvc.com/) can be implemente
 
 ## Run
 
+    # Run `npm install` on the main tungstenjs directory
     npm install
     npm start
     
