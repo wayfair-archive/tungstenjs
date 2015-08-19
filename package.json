@@ -33,11 +33,14 @@
   },
   "devDependencies": {
     "chai": "^2.2.0",
+    "express": "^4.13.3",
     "glob": "^4.3.5",
+    "hogan-express": "^0.5.2",
     "jasmine": "^2.3.1",
     "jsdom-nogyp": "^0.8.3",
     "mkdirp": "~0.5.0",
-    "webpack": "^1.5.1"
+    "webpack": "^1.5.1",
+    "webpack-dev-middleware": "^1.2.0"
   },
   "directories": {
     "example": "./examples",

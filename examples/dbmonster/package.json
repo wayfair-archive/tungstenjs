@@ -6,15 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "start": "node ./server.js"
-  },
-  "devDependencies": {
-    "webpack-dev-middleware": "^1.2.0",
-    "webpack": "^1.8.4"
+    "start": "node ../examples_server.js --example=dbmonster"
   },
   "dependencies": {
-    "bootstrap": "^3.3.4",
-    "express": "^4.13.1",
-    "opener": "^1.4.1"
+    "bootstrap": "^3.3.4"
   }
 }
