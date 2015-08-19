@@ -321,7 +321,7 @@ The debugger is composed of two main panels: view and data.
 
 **View Events**: Inputting an event name in the text field in this section will add an ad hoc event listener for that event on the selected view which, when triggered, will print a stack trace of the event in the main console.
 
-**Time Travel**: This section has controls for rewinding and replaying the state the selected view's model over time.
+**Time Travel**: This section has controls for rewinding and replaying the state of the selected view's model over time.
 
 **Model**: This section lists the `debugName` of the selected view's model which links to the model in the data panel.  If present, it will also list the `collectionCid` and `parentProp` of the view's model.
 
