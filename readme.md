@@ -349,6 +349,7 @@ The data debugger panel displays information about all models and collections in
 
 ## Changelog
 
+* 0.5.0 Add debugger
 * 0.4.0 Add derived properties support for Backbone adaptor
 * 0.3.0 Performance updates, especially when using `{{{ }}}` in templates
 * 0.2.0 Add event plugin system and Ampersand.js adaptor
