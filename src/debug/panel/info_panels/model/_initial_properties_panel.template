@@ -1,0 +1,26 @@
+<% if (panel.model && panel.model.obj && panel.model.obj.tungstenModel) { %>
+<div class="properties_panel">
+    <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+        Initial Attributes
+    </div>
+    <% if (!panel.collapsed && panel.model) { %>
+      <div class="sidebar-pane visible">
+          <div class="body">
+              <div class="section expanded">
+                  <ol data-property-key="" class="properties properties-tree monospace">
+                    <% _.each(panel.model.obj.initialData, function(value, name) { %>
+                    <li data-property-name="attributes">
+                        <span class="name"><%= name %></span><span class="separator">: </span>
+                        <span class="value console-formatted-undefined clickable-property">
+                          <span><%= JSON.stringify(value) %></span>
+                        </span>
+                    </li>
+                    <% }) %>
+                  </ol>
+                  <button class="js-reset-data">Reset Data</button>
+              </div>
+          </div>
+      </div>
+    <% } %>
+</div>
+<% } %>

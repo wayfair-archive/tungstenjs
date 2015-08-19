@@ -12,6 +12,7 @@
 'use strict';
 
 var logger = require('../../src/utils/logger');
+var tungsten = require('../../src/tungsten');
 
 /**
  * Wrapper Widget for child views
@@ -141,7 +142,22 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
     // Call the update model to run and updates if the model has changed
     this.view.update(this.model);
   }
-
 };
+
+/* develblock:start */
+/**
+ * Function to allow the Widget to control how it is viewed on the debug panel
+ * ChildViews are displayed as a clickable link
+ *
+ * @return {string} Debug panel version of this widget
+ */
+BackboneViewWidget.prototype.templateToString = function() {
+  if (!this.view) {
+    return;
+  }
+  var name = this.view.getDebugName();
+  return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
+};
+/* develblock:end */
 
 module.exports = BackboneViewWidget;

@@ -9,14 +9,12 @@
  * @license Apache-2.0
  */
 'use strict';
-var _ = require('underscore');
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');
 var virtualHyperscript = require('./vdom/virtual_hyperscript');
 var htmlToVdom = require('./template/html_to_vdom');
 
 var vdom = virtualDomImplementation.vdom;
-var domToVdom = virtualDomImplementation.domToVdom;
 var exports = {};
 
 var packageJson = require('../package.json');
@@ -48,21 +46,14 @@ function updateTree(container, initialTree, newTree) {
   return newTree;
 }
 
-function updateContainer(container, initialTree, updatedMarkup) {
-  var clonedContainer = container.cloneNode();
-  clonedContainer.innerHTML = updatedMarkup;
-  var newTree = domToVdom(clonedContainer);
-  var patch = vdom.diff(initialTree, newTree);
-  if (_.size(patch) > 0) {
-    vdom.patch(container, patch);
-  }
-  return newTree;
-}
+/* develblock:start */
+exports.debug = require('./debug');
+/* develblock:end */
 
 exports.parseString = htmlToVdom;
-
-// Methods to parse DOM or String to vtree
-exports.parseDOM = domToVdom;
+exports.parseDOM = function(elem) {
+  return htmlToVdom(elem.outerHTML);
+};
 // Methods to output the vtree as a browser-usable format
 // returns document fragment
 exports.toDOM = function(vtree) {
@@ -83,6 +74,5 @@ exports.toString = function(vtree) {
 exports.createVNode = virtualHyperscript;
 // Update the container with vtree
 exports.updateTree = updateTree;
-exports.updateContainer = updateContainer;
 
 module.exports = exports;

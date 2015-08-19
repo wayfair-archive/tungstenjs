@@ -1,0 +1,49 @@
+#tungstenDebugOverlay {
+  position:absolute;
+  background-color:rgba(255,255,255,0.005);
+  top:0;
+  left:0;
+  z-index:5000;
+}
+.tungstenDebugOverlayHover {
+  /* Since highlight elements are pointer-events:none, set cursor here to indicate clickability */
+  cursor: pointer;
+}
+.tungstenDebugTarget {
+  position:absolute;
+  left:-10000px;
+  z-index: 5001;
+
+  background-color:rgba(235,88,248,0.1);
+  /* Fallback for old IE */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#EB58F819, endColorstr=#EB58F819)";
+  border: 1px dashed rgb(235,88,248);
+  pointer-events:none
+}
+.tungstenDebugHighlight {
+  position:absolute;
+  left:-10000px;
+  z-index: 5002;
+
+  background-color:rgba(200,0,0,0.5);
+  /* Fallback for old IE */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#C8000080, endColorstr=#C8000080)";
+  pointer-events:none;
+}
+.tungstenDebugHighlightWrapper {
+  border: 1px solid rgb(200,0,0);
+  background-color:rgba(200,0,0,0.1);
+  /* Fallback for old IE */
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#C8000019, endColorstr=#C8000019)";
+}
+.tungstenDebugHighlight:after {
+  content:attr(data-label);
+  background-color:#FFFF80;
+  border:1px solid #000;
+  padding:5px;
+  display:block;
+  position:absolute;
+  bottom:-2em;
+  white-space: nowrap;
+  z-index:5001
+}

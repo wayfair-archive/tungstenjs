@@ -7,6 +7,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
+var logger = require('../../src/utils/logger');
 var ViewWidget = require('./backbone_view_widget');
 
 // Cached regex to split keys for `delegate`.
@@ -27,6 +28,7 @@ var BaseView = Backbone.View.extend({
     if (!this.el) {
       return false;
     }
+
     this.options = options || {};
 
     // Pass router through options, setting router.view if not already set
@@ -50,6 +52,10 @@ var BaseView = Backbone.View.extend({
     if (this.options.parentView) {
       this.parentView = this.options.parentView;
     }
+
+    /* develblock:start */
+    this.initDebug();
+    /* develblock:end */
 
     var dataItem = this.serialize();
 
@@ -80,19 +86,25 @@ var BaseView = Backbone.View.extend({
         if (this.options.dynamicInitialize || this.options.vtree) {
           // If certain options were set, render was already invoked, so childViews are attached
           self.postInitialize();
+          if (!this.options.dynamicInitialize) {
+            self.validateVdom();
+          }
         } else {
           setTimeout(function() {
             self.attachChildViews();
             self.postInitialize();
+            self.validateVdom();
           }, 1);
         }
       } else {
         this.initializeRenderListener(dataItem);
         this.postInitialize();
+        this.validateVdom();
       }
     } else {
       this.initializeRenderListener(dataItem);
       this.postInitialize();
+      this.validateVdom();
     }
   },
   tungstenViewInstance: true,
@@ -126,6 +138,209 @@ var BaseView = Backbone.View.extend({
    * Currently unimplemented. Child views should override this if they would like to use it.
    */
   postInitialize: function() {},
+
+  validateVdom: function() {
+    var isText = function(node) {
+      return node && (typeof node === 'string' || node.type === 'VirtualText');
+    };
+
+    // If there's a mismatch in childNode counts, it's usually extra whitespace from the server
+    // We can trim those off so that the VTree is unaffected during lookups
+    // Since this is in the form of whitespace around the template, it's a simple type check on the first and last node
+    if (this.vtree.children.length !== this.el.childNodes.length) {
+      // If the first part of the template is a string or the first node isn't a textNode, assume that's fine
+      if (!isText(this.vtree.children[0]) && this.el.childNodes[0] && this.el.childNodes[0].nodeType === 3) {
+        this.el.removeChild(this.el.childNodes[0]);
+      }
+      // If the last part of the template is a string or the last node isn't a textNode, assume that's fine
+      var lastNode = this.el.childNodes[this.el.childNodes.length - 1];
+      if (!isText(this.vtree.children[this.vtree.children.length - 1]) && lastNode && lastNode.nodeType === 3) {
+        this.el.removeChild(lastNode);
+      }
+    }
+    /* develblock:start */
+    // Compare full template against full DOM
+    var diff = this.getTemplateDiff();
+    if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
+      logger.warn('DOM does not match VDOM for view "' + this.getDebugName() + '". Use debug panel to see differences');
+    }
+    /* develblock:end */
+  },
+
+  /* develblock:start */
+  /**
+   * Bootstraps all debug functionality
+   */
+  initDebug: function() {
+    tungsten.debug.registry.register(this);
+    // These methods are often invoked oddly, so ensure their context
+    _.bindAll(this, 'getEvents', 'getDebugName', 'getChildViews');
+  },
+
+  /**
+   * Get a list of all trackable functions for this view instance
+   * Ignores certain base and debugging functions
+   *
+   * @param  {Object}        trackedFunctions     Object to track state
+   * @param  {Function}      getTrackableFunction Callback to get wrapper function
+   *
+   * @return {Array<Object>}                      List of trackable functions
+   */
+  getFunctions: function(trackedFunctions, getTrackableFunction) {
+    var result = [];
+    // Debug functions shouldn't be debuggable
+    var blacklist = {
+      constructor: true,
+      initialize: true,
+      postInitialize: true,
+      compiledTemplate: true,
+      initDebug: true,
+      getFunctions: true,
+      getEvents: true,
+      getElTemplate: true,
+      getVdomTemplate: true,
+      getChildren: true,
+      getDebugName: true
+    };
+    for (var key in this) {
+      if (typeof this[key] === 'function' && blacklist[key] !== true) {
+        result.push({
+          name: key,
+          fn: this[key],
+          inherited: (key in BaseView.prototype)
+        });
+        this[key] = getTrackableFunction(this, key, trackedFunctions);
+      }
+    }
+    // Support for non-enumerable methods...such as methods in es6 transpiled classes
+    if(typeof Object.getOwnPropertyNames === 'function' && this.constructor && this.constructor.prototype) {
+      var allProps = Object.getOwnPropertyNames(this.constructor.prototype);
+      for (var i = 0; i < allProps.length; i++) {
+        if (!(this.propertyIsEnumerable(allProps[i])) && typeof this[allProps[i]] === 'function' && blacklist[allProps[i]] !== true) {
+          result.push({
+            name: allProps[i],
+            fn: this[allProps[i]],
+            inherited: (allProps[i] in BaseView.prototype)
+          });
+          this[allProps[i]] = getTrackableFunction(this, allProps[i], trackedFunctions);
+        }
+      }
+    }
+    return result;
+  },
+
+  _setElement: function(el) {
+    var dataset = require('data-set');
+    var data;
+    if (this.el && this.el.tagName && this.el !== el) {
+      data = dataset(this.el);
+      data.view = null;
+    }
+    Backbone.View.prototype._setElement.call(this, el);
+    data = dataset(this.el);
+    data.view = this;
+  },
+
+  /**
+   * Gets a JSON format version of the current state
+   *
+   * @return {Object|Array} Data of bound model or collection
+   */
+  getState: function() {
+    var data = this.serialize();
+    if (data && typeof data.doSerialize === 'function') {
+      data = data.doSerialize();
+    }
+    return data;
+  },
+
+  /**
+   * Sets the state to the given data
+   * @param {Object|Array} data Object to set state to
+   */
+  setState: function(data) {
+    var dataObj = this.serialize();
+    if (dataObj.reset) {
+      dataObj.reset(data);
+    } else {
+      dataObj.set(data, {reset: true});
+    }
+    return data;
+  },
+
+  /**
+   * Return a list of DOM events
+   *
+   * @return {Array<Object>} List of bound DOM events
+   */
+  getEvents: function() {
+    var events = _.result(this, 'events');
+    var eventKeys = _.keys(events);
+
+    var result = new Array(eventKeys.length);
+    for (var i = 0; i < eventKeys.length; i++) {
+      result[i] = {
+        selector: eventKeys[i],
+        name: events[eventKeys[i]],
+        fn: this[events[eventKeys[i]]]
+      };
+    }
+    return result;
+  },
+
+  /**
+   * Converts the current vtree to an HTML structure
+   *
+   * @return {string} HTML representation of VTree
+   */
+  getVdomTemplate: function() {
+    var vtreeToRender = this.vtree;
+    if (!this.parentView) {
+      vtreeToRender = vtreeToRender.children;
+    }
+    return tungsten.debug.vtreeToString(vtreeToRender, true);
+  },
+
+  /**
+   * Compares the current VTree and DOM structure and returns a diff
+   *
+   * @return {string} Diff of VTree vs DOM
+   */
+  getTemplateDiff: function() {
+    if (!this.parentView) {
+      var numChildren = Math.max(this.vtree.children.length, this.el.childNodes.length);
+      var output = '';
+      for (var i = 0; i < numChildren; i++) {
+        output += tungsten.debug.diffVtreeAndElem(this.vtree.children[i], this.el.childNodes[i]);
+      }
+      return output;
+    } else {
+      return tungsten.debug.diffVtreeAndElem(this.vtree, this.el);
+    }
+  },
+
+  /**
+   * Gets children of this object
+   *
+   * @return {Array} Whether this object has children
+   */
+  getChildren: function() {
+    if (this.getChildViews.original) {
+      return this.getChildViews.original.call(this);
+    } else {
+      return this.getChildViews();
+    }
+  },
+
+  /**
+   * Debug name of this object, using declared debugName, falling back to cid
+   *
+   * @return {string} Debug name
+   */
+  getDebugName: function() {
+    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('view', '') : this.cid;
+  },
+  /* develblock:end */
 
   /**
    * Lets the child view dictate what to pass into the template as context. If not overriden, then it will simply use the default
@@ -301,7 +516,33 @@ var BaseView = Backbone.View.extend({
     }
   }
 }, {
-  tungstenView: true
+  tungstenView: true,
+  extend: function(protoProps, staticProps) {
+    /* develblock:start */
+    // Certain methods of BaseView should be unable to be overridden
+    var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
+
+    function wrapOverride(first, second) {
+      return function() {
+        first.apply(this, arguments);
+        second.apply(this, arguments);
+      };
+    }
+    for (var i = 0; i < methods.length; i++) {
+      if (protoProps[methods[i]]) {
+        var msg = 'View.' + methods[i] + ' may not be overridden';
+        if (staticProps && staticProps.debugName) {
+          msg += ' for view "' + staticProps.debugName + '"';
+        }
+        logger.warn(msg);
+        // Replace attempted override with base version
+        protoProps[methods[i]] = wrapOverride(BaseView.prototype[methods[i]], protoProps[methods[i]]);
+      }
+    }
+    /* develblock:end */
+
+    return Backbone.View.extend.call(this, protoProps, staticProps);
+  }
 });
 
 module.exports = BaseView;
