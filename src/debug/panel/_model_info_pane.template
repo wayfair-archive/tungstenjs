@@ -1,0 +1,37 @@
+<div data-region="tool" class="app-tool-region js-view-pane">
+  <div view="ui-layout" class="app-tool ui-tool clearfix">
+    <div data-region="view-tree" class="tool-panel list-panel">
+      <ul data-view="tree-view" data-cid="-1" class="tree-group is-expanded js-view-tree-list">
+        <% for (var i = 0; i < w.activeModels.length; i++) {
+          print(w.partials['_model_list_item']({
+            model: w.activeModels[i],
+            partials: w.partials
+          }));
+        } %>
+      </ul>
+    </div>
+    <div data-region="view-more-info" class="tool-panel info-panel">
+      <div class="sidebar-panel">
+        <div class="sidebar-pane-stack flex-auto visible">
+          <%
+            function renderPanel(partial, tabName) {
+              print(w.partials[partial]({
+                tabName: tabName,
+                collapsed: w.hiddenPanels[tabName],
+                model: w.selectedModel,
+                settings: {},
+                partials: w.partials
+              }))
+            }
+            renderPanel('info_panels/model/_model_info_panel', 'modelInfo');
+            renderPanel('info_panels/model/_events_panel', 'modelEvents');
+            renderPanel('info_panels/model/_properties_panel', 'modelProperties');
+            renderPanel('info_panels/model/_initial_properties_panel', 'modelInitialProperties');
+            renderPanel('info_panels/model/_function_info_panel', 'modelMethods');
+            renderPanel('info_panels/model/_import_export_panel', 'modelImportExport');
+          %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

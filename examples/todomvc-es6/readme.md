@@ -6,8 +6,10 @@ Note: there's currently [no good solution](https://github.com/jashkenas/backbone
 
 ## Run
 
+    # Run `npm install` on the main tungstenjs directory
     npm install
     npm start
+    # To run in debug mode: `npm start -- --dev`
     
 ## License
 

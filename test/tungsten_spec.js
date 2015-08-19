@@ -17,28 +17,6 @@ var VNode = require('virtual-dom/vnode/vnode');
 
 // Start test suite
 describe('tungsten.js public API', function() {
-  describe('parseDOM', function() {
-
-    it('should work', function() {
-      var foo = 'bar';
-      expect(foo).to.have.length(3);
-      });
-
-    it('should be a function', function() {
-      expect(typeof tungsten.parseDOM).to.equal('function');
-    });
-    it('should return vnode', function() {
-      var el = window.document.createElement('div');
-      el.className = el.className.concat(' js-root');
-      el.innerHTML = '<div class="js-bar"></div>';
-      var rootVEl = tungsten.parseDOM(el, true);
-      expect(rootVEl.tagName).to.equal('DIV');
-      expect(rootVEl.properties).to.deep.equal({attributes: {class: ' js-root'}});
-      expect(rootVEl.count).to.equal(1);
-      expect(rootVEl instanceof VNode).to.equal(true);
-      el = null;
-    });
-  });
   describe('bindEvent', function() {
     it('should be a function', function() {
       expect(typeof tungsten.bindEvent).to.equal('function');

@@ -36,8 +36,9 @@ var supportsWhitespaceTextNodes = (function() {
  */
 function parseStringAttrs(templates, context) {
   var stringAttrs = '';
+  var attr;
   for (var i = 0; i < templates.length; i++) {
-    var attr = renderVdom(templates[i], context);
+    attr = renderVdom(templates[i], context);
     if (attr != null) {
       stringAttrs += ' ' + attr + ' ';
     }
@@ -100,24 +101,17 @@ var propertiesToTransform = {
   'http-equiv': 'httpEquiv',
   // case specificity
   'accesskey': 'accessKey',
-  'autocomplete': 'autoComplete',
-  'autoplay': 'autoPlay',
   'cellspacing': 'cellSpacing',
   'cellpadding': 'cellPadding',
   'colspan': 'colSpan',
   'contenteditable': 'contentEditable',
   'contextmenu': 'contextMenu',
-  'enctype': 'encType',
   'formnovalidate': 'formNoValidate',
   'frameborder': 'frameBorder',
-  'hreflang': 'hrefLang',
   'maxlength': 'maxLength',
   'novalidate': 'noValidate',
   'readonly': 'readOnly',
   'rowspan': 'rowSpan',
-  'spellcheck ': 'spellCheck',
-  'srcdoc': 'srcDoc',
-  'srcset': 'srcSet',
   'tabindex': 'tabIndex',
   'usemap': 'useMap'
 };
