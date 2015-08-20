@@ -7976,7 +7976,12 @@ li.tree-group-item .glyphicon:hover {
   color: #428BCA;
   cursor: pointer; }
 li.tree-group-item.is-highlighted {
-  background: #D9EDF7; }
+  background: #D9EDF7;
+  font-weight: bold;
+}
+li.tree-group-item.is-not-highlighted {
+  font-weight: normal;
+}
 li.tree-group-item.is-highlighted:hover {
   background: #D9EDF7; }
 
