@@ -23,14 +23,16 @@
                 view: w.selectedView
               }));
             }
-            renderPanel('info_panels/view/_view_info_panel', 'viewInfo');
-            renderPanel('info_panels/view/_function_info_panel', 'viewMethods');
-            renderPanel('info_panels/view/_dom_events_panel', 'viewDomEvents');
-            renderPanel('info_panels/view/_events_panel', 'viewEvents');
-            renderPanel('info_panels/view/_time_travel_panel', 'viewTimeTravel');
-            renderPanel('info_panels/view/_model_info_panel', 'viewModel');
-            renderPanel('info_panels/view/_template_info_panel', 'viewVDOM');
-            renderPanel('info_panels/view/_template_info_diff_panel', 'viewDiff');
+            if (w.selectedView) {
+              renderPanel('info_panels/view/_view_info_panel', 'viewInfo');
+              renderPanel('info_panels/view/_function_info_panel', 'viewMethods');
+              renderPanel('info_panels/view/_dom_events_panel', 'viewDomEvents');
+              renderPanel('info_panels/view/_events_panel', 'viewEvents');
+              renderPanel('info_panels/view/_time_travel_panel', 'viewTimeTravel');
+              renderPanel('info_panels/view/_model_info_panel', 'viewModel');
+              renderPanel('info_panels/view/_template_info_panel', 'viewVDOM');
+              renderPanel('info_panels/view/_template_info_diff_panel', 'viewDiff');
+            }
           %>
         </div>
       </div>
