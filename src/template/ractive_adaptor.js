@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
-var ToString = require('./to_string');
+var ToString = require('./stacks/string');
 var Context = require('./template_context');
 var logger = require('./../utils/logger');
 var ractiveTypes = require('./ractive_types');
@@ -9,7 +9,7 @@ var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var isVNode = virtualDomImplementation.isVNode;
 
-var htmlToVdom = require('./html_to_vdom');
+var htmlParser = require('./html_parser');
 
 var whitespaceOnlyRegex = /^\s*$/;
 /**
@@ -29,7 +29,7 @@ function parseStringAttrs(templates, context) {
   if (whitespaceOnlyRegex.test(stringAttrs)) {
     return null;
   }
-  var node = htmlToVdom('<div ' + stringAttrs + '></div>');
+  var node = htmlParser('<div ' + stringAttrs + '></div>');
   return node.properties.attributes;
 }
 
@@ -182,4 +182,132 @@ function render(stack, template, context, partials, parentView) {
   }
 }
 
-module.exports = render;
+/**
+ * Iterate over the template to attach a view's childViews
+ * @todo attach events?
+ * @param  {Object}   view          View to attach
+ * @param  {Object}   template      Template object to attach to
+ * @param  {Object}   partials      Dictionary to lookup partials from
+ * @param  {Function} createWidget Constructor function to wrap childViews with
+ * @param  {Object}   childClasses  Classes to look for for this View wrapper
+ * @return {Object}                 Template object with attached view
+ */
+var attachView = function(view, template, partials, createWidget, childClasses) {
+  var i;
+
+  // If cached version hasn't been passed down, parse childViews into an array of class names
+  if (!childClasses) {
+    childClasses = {};
+    childClasses.flat = _.keys(view.childViews);
+    childClasses.padded = _.map(childClasses.flat, function(key) {
+      return ' ' + key + ' ';
+    });
+    childClasses.length = childClasses.flat.length;
+  }
+
+  // String is a dead-end
+  if (typeof template === 'string') {
+    return template;
+  }
+
+  // Arrays need iterating over
+  if (Context.isArray(template)) {
+    for (i = 0; i < template.length; i++) {
+      template[i] = attachView(view, template[i], createWidget, partials, childClasses);
+    }
+    // short circuit
+    return template;
+  }
+
+  // If the view has childViews and this isn't the root, attempt to attach Widget
+  if (!template.root && view.childViews) {
+    // If this is an element with a class property, see if we should attach Widget
+    if (template.a && template.a['class']) {
+      var className = template.a['class'];
+      // If className has dynamic values, filter them out to just the static ones
+      if (typeof className !== 'string') {
+        className = _.filter(className, function(obj) {
+          return typeof obj === 'string';
+        });
+        className = className.join(' ');
+      }
+      // Pad with spaces for better hasClass-ing
+      className = ' ' + className + ' ';
+      for (i = childClasses.length; i--; ) {
+        if (className.indexOf(childClasses.padded[i]) > -1) {
+          // If we match a childView class, replace the template with a Widget
+          template = createWidget(view.childViews[childClasses.flat[i]], template, partials);
+          break;
+        }
+      }
+    }
+  }
+
+  // Recurse on any child elements
+  if (template.f) {
+    for (i = 0; i < template.f.length; i++) {
+      template.f[i] = attachView(view, template.f[i], createWidget, partials, childClasses);
+    }
+    // in the event of a partial, we may get a nested array, this flattens it out
+    template.f = _.flatten(template.f, true);
+  }
+
+  // If this is a partial, lookup and recurse
+  if (template.t === ractiveTypes.PARTIAL) {
+    var partialName = Context.getInterpolatorKey(template);
+    if (!partials[partialName]) {
+      logger.warn('Warning: no partial registered with the name ' + partialName);
+      return null;
+    } else {
+      var partialTemplate = partials[partialName];
+      if (partialTemplate.templateObj) {
+        partialTemplate = partialTemplate.templateObj;
+      }
+      template = attachView(
+        view,
+        _.clone(partialTemplate),
+        createWidget,
+        partials[partialName].partials || partials,
+        childClasses
+      );
+    }
+  }
+
+  return template;
+};
+
+function wrap(templateObj, tagName) {
+  var objectToWrap = null;
+
+  if (templateObj.t === ractiveTypes.ELEMENT) {
+    // There is a top level element from previous wrapping
+    //  Grab the contents
+    if (templateObj.wrapped) {
+      objectToWrap = templateObj.f;
+    }
+  } else {
+    objectToWrap = templateObj;
+  }
+
+  if (!objectToWrap) {
+    return templateObj;
+  } else {
+    return {
+      't': ractiveTypes.ELEMENT,
+      'e': tagName || 'div',
+      'f': objectToWrap,
+      wrapped: true
+    };
+  }
+}
+
+function attach(templateObj, view, createWidget, partials) {
+  templateObj = wrap(templateObj, view.el.nodeName);
+  return attachView(view, templateObj, createWidget, partials);
+}
+
+module.exports = {
+  render: render,
+  attach: attach,
+  wrap: wrap
+};

@@ -15,21 +15,19 @@ var propertiesToTransform = {
   'http-equiv': 'httpEquiv',
   // case specificity
   'accesskey': 'accessKey',
-  'autocomplete': 'autoComplete',
-  'autoplay': 'autoPlay',
+  'cellspacing': 'cellSpacing',
+  'cellpadding': 'cellPadding',
   'colspan': 'colSpan',
   'contenteditable': 'contentEditable',
   'contextmenu': 'contextMenu',
-  'enctype': 'encType',
   'formnovalidate': 'formNoValidate',
-  'hreflang': 'hrefLang',
+  'frameborder': 'frameBorder',
+  'maxlength': 'maxLength',
   'novalidate': 'noValidate',
   'readonly': 'readOnly',
   'rowspan': 'rowSpan',
-  'spellcheck ': 'spellCheck',
-  'srcdoc': 'srcDoc',
-  'srcset': 'srcSet',
-  'tabindex': 'tabIndex'
+  'tabindex': 'tabIndex',
+  'usemap': 'useMap'
 };
 /**
  * Returns property name to use or false if it should be treated as attribute
@@ -49,9 +47,10 @@ function transformPropertyName(attributeName) {
   return attributeName;
 }
 
-module.exports = function processProperties(properties, attributesOnly) {
+module.exports = function processProperties(properties, options) {
+  var opts = options || {};
   // Attribute only mode is only used for the toString method, so no processing is needed
-  if (attributesOnly) {
+  if (opts.attributesOnly) {
     return {
       attributes: properties
     };
@@ -83,7 +82,7 @@ module.exports = function processProperties(properties, attributesOnly) {
         result.attributes = {};
       }
       result.attributes[propName] = properties[propName];
-    } else if (lowerPropName === 'autofocus') {
+    } else if (opts.useHooks && lowerPropName === 'autofocus') {
       result.autofocus = new FocusHook();
     } else if (lowerPropName === 'style') {
       var rules = {};

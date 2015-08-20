@@ -1,9 +1,6 @@
 'use strict';
 
-var tungsten = require('../tungsten');
-var processProperties = require('./process_properties');
-var HTMLCommentWidget = require('./widgets/html_comment');
-var htmlToVdom = require('./html_to_vdom');
+var processProperties = require('../process_properties');
 
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either
@@ -14,34 +11,31 @@ var supportsWhitespaceTextNodes = (function() {
   return d.childNodes.length === 1;
 })();
 
-/**
- * Unescaped values often have HTML in them that needs to be parsed out
- * @param  {String}        value Value to check
- * @return {String|Object}       String if it contains no HTML or VTree otherwise
- */
-function parseUnescapedString(value) {
-  // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
-  if (value.indexOf('<') > -1 || value.indexOf('&') > -1) {
-    return htmlToVdom(value);
-  } else {
-    return value;
-  }
-}
-
-function ToVdom(attributesOnly, debugMode) {
-  this.attributesOnly = attributesOnly;
+function DefaultStack(attributesOnly, debugMode) {
+  this.propertyOpts = {
+    attributesOnly: attributesOnly,
+    skipHooks: true
+  };
   this.debugMode = debugMode;
   this.result = [];
   this.stack = [];
 }
 
-ToVdom.prototype.openElement = function(tagName, properties) {
+DefaultStack.prototype.openElement = function(tagName, properties) {
   this.stack.push({
     tagName: tagName,
-    properties: processProperties(properties, this.attributesOnly),
+    properties: processProperties(properties, this.propertyOpts),
     children: [],
-    type: 'tempNode'
+    type: 'node'
   });
+};
+
+DefaultStack.prototype.processObject = function(obj) {
+  return obj;
+};
+
+DefaultStack.prototype.validStackAddition = function(node) {
+  return true;
 };
 
 /**
@@ -49,12 +43,13 @@ ToVdom.prototype.openElement = function(tagName, properties) {
  * @param  {Object} obj Text / Widget / or Tungsten node
  * @return {[type]}     [description]
  */
-ToVdom.prototype.closeElem = function(obj) {
+DefaultStack.prototype._closeElem = function(obj) {
+  var i;
   // if this is an element, create a VNode now so that count is set properly
-  if (obj.type === 'tempNode') {
+  if (obj.type === 'node') {
     if (!supportsWhitespaceTextNodes) {
       var children = [];
-      for (var i = 0; i < obj.children.length; i++) {
+      for (i = 0; i < obj.children.length; i++) {
         if (typeof obj.children[i] !== 'string') {
           children.push(obj.children[i]);
         } else if (!whitespaceOnlyRegex.test(obj.children[i])) {
@@ -63,14 +58,19 @@ ToVdom.prototype.closeElem = function(obj) {
       }
       obj.children = children;
     }
-
     // If the only child is an empty string, set no children
     if (obj.children.length === 1 && obj.children[0] === '') {
       obj.children.length = 0;
     }
-    obj = tungsten.createVNode(obj.tagName, obj.properties, obj.children);
+    // Process child nodes
+    for (i = obj.children.length; i--;) {
+      obj.children[i] = this.processObject(obj.children[i]);
+    }
   }
 
+  while (this.stack.length > 0 && !this.validStackAddition(this.stack, obj)) {
+    this.closeElement();
+  }
   var pushingTo;
   if (this.stack.length > 0) {
     pushingTo = this.stack[this.stack.length - 1].children;
@@ -86,33 +86,35 @@ ToVdom.prototype.closeElem = function(obj) {
   }
 };
 
-ToVdom.prototype.createObject = function(obj, options) {
-  if (typeof obj === 'string' && options && options.parse) {
-    this.closeElem(parseUnescapedString(obj));
-  } else {
-    this.closeElem(obj);
+DefaultStack.prototype.createObject = function(obj, options) {
+  this._closeElem(obj, options);
+};
+
+DefaultStack.prototype.createComment = function(text) {
+  this._closeElem({
+    type: 'comment',
+    text: text
+  });
+};
+
+DefaultStack.prototype.closeElement = function() {
+  this._closeElem(this.stack.pop());
+};
+
+DefaultStack.prototype.getOutput = function() {
+  for (var i = this.result.length; i--;) {
+    this.result[i] = this.processObject(this.result[i]);
   }
-};
-
-ToVdom.prototype.createComment = function(text) {
-  this.closeElem(new HTMLCommentWidget(text));
-};
-
-ToVdom.prototype.closeElement = function() {
-  this.closeElem(this.stack.pop());
-};
-
-ToVdom.prototype.getOutput = function()  {
   return this.result.length === 1 ? this.result[0] : this.result;
 };
 
-ToVdom.prototype.clear = function()  {
+DefaultStack.prototype.clear = function() {
   this.result = [];
   this.stack = [];
 };
 
 /* develblock:start */
-ToVdom.prototype.startContextChange = function(label, isLoop) {
+DefaultStack.prototype.startContextChange = function(label, isLoop) {
   if (this.debugMode) {
     var className = 'debug_context';
     if (isLoop) {
@@ -128,11 +130,11 @@ ToVdom.prototype.startContextChange = function(label, isLoop) {
   }
 };
 
-ToVdom.prototype.endContextChange = function() {
+DefaultStack.prototype.endContextChange = function() {
   if (this.debugMode) {
     this.closeElem(this.stack.pop());
   }
 };
 /* develblock:end */
 
-module.exports = ToVdom;
+module.exports = DefaultStack;

@@ -12,7 +12,7 @@
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');
 var virtualHyperscript = require('./vdom/virtual_hyperscript');
-var htmlToVdom = require('./template/html_to_vdom');
+var htmlParser = require('./template/html_parser');
 
 var vdom = virtualDomImplementation.vdom;
 var exports = {};
@@ -50,9 +50,14 @@ function updateTree(container, initialTree, newTree) {
 exports.debug = require('./debug');
 /* develblock:end */
 
-exports.parseString = htmlToVdom;
+exports.parseString = function (htmlString) {
+  var VdomStack = require('./template/stacks/vdom');
+  var stack = new VdomStack();
+  htmlParser(htmlString, stack);
+  return stack.getOutput();
+};
 exports.parseDOM = function(elem) {
-  return htmlToVdom(elem.outerHTML);
+  return exports.parseString(elem.outerHTML);
 };
 // Methods to output the vtree as a browser-usable format
 // returns document fragment
