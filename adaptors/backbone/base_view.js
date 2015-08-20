@@ -99,12 +99,10 @@ var BaseView = Backbone.View.extend({
       } else {
         this.initializeRenderListener(dataItem);
         this.postInitialize();
-        this.validateVdom();
       }
     } else {
       this.initializeRenderListener(dataItem);
       this.postInitialize();
-      this.validateVdom();
     }
   },
   tungstenViewInstance: true,
@@ -140,6 +138,10 @@ var BaseView = Backbone.View.extend({
   postInitialize: function() {},
 
   validateVdom: function() {
+    // If the vtree or element hasn't been set for any reason, bail out of validation
+    if (!this.vtree || !this.vtree.children || !this.el || !this.el.childNodes) {
+      return;
+    }
     var isText = function(node) {
       return node && (typeof node === 'string' || node.type === 'VirtualText');
     };
