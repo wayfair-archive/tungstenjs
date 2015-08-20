@@ -23,12 +23,14 @@
                 partials: w.partials
               }))
             }
-            renderPanel('info_panels/model/_model_info_panel', 'modelInfo');
-            renderPanel('info_panels/model/_events_panel', 'modelEvents');
-            renderPanel('info_panels/model/_properties_panel', 'modelProperties');
-            renderPanel('info_panels/model/_initial_properties_panel', 'modelInitialProperties');
-            renderPanel('info_panels/model/_function_info_panel', 'modelMethods');
-            renderPanel('info_panels/model/_import_export_panel', 'modelImportExport');
+            if (w.selectedModel) {
+              renderPanel('info_panels/model/_model_info_panel', 'modelInfo');
+              renderPanel('info_panels/model/_events_panel', 'modelEvents');
+              renderPanel('info_panels/model/_properties_panel', 'modelProperties');
+              renderPanel('info_panels/model/_initial_properties_panel', 'modelInitialProperties');
+              renderPanel('info_panels/model/_function_info_panel', 'modelMethods');
+              renderPanel('info_panels/model/_import_export_panel', 'modelImportExport');
+            }
           %>
         </div>
       </div>

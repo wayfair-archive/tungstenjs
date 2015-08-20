@@ -2,6 +2,8 @@
   var liClass = '';
   if (w.model.selected) {
     liClass = 'is-highlighted';
+  } else {
+    liClass = 'is-not-highlighted';
   }
 
   var spanClass = '';
