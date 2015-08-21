@@ -26,7 +26,7 @@ An adaptor layer is used to connect with Tungsten.js with a preferred modular cl
 
 Tungsten.js has no hard dependency on [jQuery](https://github.com/jquery/jquery), and uses the jQuery-less [backbone.native](https://github.com/inkling/backbone.native) in its Backbone adaptor.
 
-Tungsten.js is ~15kb packed and gzipped. Bundled with Backbone and the adaptor, it's ~25kb packed and gzipped.
+Tungsten.js with the Backbone adaptor is ~45kb packed and gzipped.
 
 ## Backbone.js Adaptor
 
