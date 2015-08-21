@@ -30,7 +30,7 @@ function parseStringAttrs(templates, context) {
     return null;
   }
   var node = htmlParser('<div ' + stringAttrs + '></div>');
-  return node.properties.attributes;
+  return node.properties;
 }
 
 /**
@@ -178,7 +178,7 @@ function render(stack, template, context, partials, parentView) {
         children = render(stack, template.f, context, partials, parentView);
       }
 
-      stack.closeElement();
+      stack.closeElement(template.e);
   }
 }
 

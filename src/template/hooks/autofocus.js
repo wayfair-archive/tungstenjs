@@ -34,4 +34,6 @@ FocusHook.prototype.hook = function (node, prop, prev) {
   }
 };
 
+FocusHook.prototype.type = 'FocusHook';
+
 module.exports = FocusHook;

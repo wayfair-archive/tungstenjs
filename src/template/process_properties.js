@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
-var FocusHook = require('./hooks/focus_hook');
+var Autofocus = require('./hooks/autofocus');
 
 /**
  * Map of attribute to property transforms
@@ -62,43 +62,47 @@ module.exports = function processProperties(properties, options) {
   // Defaulting contentEditable to 'inherit'
   // If an element goes from an explicitly set value to null, it will use this value rather than error
   var hasContentEditable = false;
+
   for (var i = 0; i < propertyNames.length; i++) {
-    if (propertyNames[i].toLowerCase() === 'contenteditable') {
+    var propName = propertyNames[i];
+    var propValue = properties[propName];
+    var lowerPropName = propName.toLowerCase();
+    var transformedName = transformPropertyName(lowerPropName);
+
+    if (lowerPropName === 'contenteditable') {
       hasContentEditable = true;
-      break;
+    }
+
+    if (opts.useHooks) {
+      if (lowerPropName === 'autofocus') {
+        propValue = new Autofocus();
+      }
+    }
+
+    if (transformedName === false) {
+      if (!result.attributes) {
+        result.attributes = {};
+      }
+      result.attributes[propName] = propValue;
+    } else if (lowerPropName === 'style') {
+      var rules = {};
+      if (typeof propValue === 'string') {
+        // Handle parsing style tags into CSS rules
+        // @TODO: expand parsing to avoid "changing" all rules whenever any rule changes
+        rules = {
+          cssText: propValue
+        };
+      } else {
+        rules = propValue;
+      }
+      result.style = rules;
+    } else {
+      result[transformedName] = propValue;
     }
   }
 
   if (!hasContentEditable) {
     result.contentEditable = 'inherit';
-  }
-
-  for (i = 0; i < propertyNames.length; i++) {
-    var propName = propertyNames[i];
-    var lowerPropName = propName.toLowerCase();
-    var transformedName = transformPropertyName(lowerPropName);
-    if (transformedName === false) {
-      if (!result.attributes) {
-        result.attributes = {};
-      }
-      result.attributes[propName] = properties[propName];
-    } else if (opts.useHooks && lowerPropName === 'autofocus') {
-      result.autofocus = new FocusHook();
-    } else if (lowerPropName === 'style') {
-      var rules = {};
-      if (typeof properties[propName] === 'string') {
-        // Handle parsing style tags into CSS rules
-        // @TODO: expand parsing to avoid "changing" all rules whenever any rule changes
-        rules = {
-          cssText: properties[propName]
-        };
-      } else {
-        rules = properties[propName];
-      }
-      result.style = rules;
-    } else {
-      result[transformedName] = properties[propName];
-    }
   }
 
   return result;

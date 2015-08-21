@@ -14,7 +14,7 @@ var supportsWhitespaceTextNodes = (function() {
 function DefaultStack(attributesOnly, debugMode) {
   this.propertyOpts = {
     attributesOnly: attributesOnly,
-    skipHooks: true
+    useHooks: false
   };
   this.debugMode = debugMode;
   this.result = [];
