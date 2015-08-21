@@ -32,7 +32,7 @@ Tungsten.js with the Backbone adaptor is ~45kb packed and gzipped.
 
 Tungsten.js is pre-packaged with an adaptor for using Backbone.js.  This adaptor is can be included via CommonJS or ES6 Modules at `tungstenjs/adaptors/backbone/index.js` and exposes base modules for Backbone (as well as a direct reference to Backbone itself).
 
-`View`, `Model`, and `Collection` are drop-in replacements for `Backbone.View`, `Backbone.Model`, and `Backbone.Collection` constructor functions.  They can be extended as usual to create custom constructors.
+`View`, `Model`, and `Collection` are drop-in replacements for `Backbone.View`, `Backbone.Model`, and `Backbone.Collection` constructor functions.  They can be extended as usual to create custom constructors.  Any initialization logic in views, models, or collections should be put in a `postInitialize` method on the constructor (which automatically gets called after `initialize()`), rather than in `initialize`.
 
 The Backbone.js adaptor includes a forked version of [backbone-nested-models](https://github.com/blittle/backbone-nested-models).
 
