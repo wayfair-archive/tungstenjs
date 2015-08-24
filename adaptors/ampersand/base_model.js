@@ -36,6 +36,25 @@ var BaseModel = AmpersandModel.extend({
     this.postInitialize();
   },
   postInitialize: function() {},
+
+  reset: function(attrs, options) {
+    var opts = _.extend({reset:true}, options);
+    var currentKeys = _.pluck(this.getPropertiesArray(), 'key');
+    var children = _.result(this, '_children') || {};
+    var collections = _.result(this, '_collections') || {};
+    var derived = _.result(this, 'derived') || {};
+    var key;
+    for (var i = 0; i < currentKeys.length; i++) {
+      key = currentKeys[i];
+      if (_.has(collections, key) || _.has(children, key)) {
+        this[key].reset(attrs[key], opts);
+        delete attrs[key];
+      } else if (!_.has(attrs, key) && !_.has(derived, key)) {
+        this.unset(key);
+      }
+    }
+    this.set(attrs, opts);
+  },
   /* develblock:start */
 
   /** @type {string} Override cidPrefix to avoid confusion with Collections */
@@ -66,8 +85,14 @@ var BaseModel = AmpersandModel.extend({
   getChildren: function() {
     var results = [];
     var self = this;
-    _.each(this.relations, function(constructor, key) {
-      if (self.has(key)) {
+    // @TODO better way of accessing?
+    _.each(this._children, function(constructor, key) {
+      if (self.hasOwnProperty(key)) {
+        results.push(self.get(key));
+      }
+    });
+    _.each(this._collections, function(constructor, key) {
+      if (self.hasOwnProperty(key)) {
         results.push(self.get(key));
       }
     });
@@ -103,7 +128,7 @@ var BaseModel = AmpersandModel.extend({
         result.push({
           name: key,
           fn: this[key],
-          inherited: (key in BaseModel.prototype)
+          inherited: (this[key] === BaseModel.prototype[key])
         });
         this[key] = getTrackableFunction(this, key, trackedFunctions);
       }
@@ -158,5 +183,32 @@ var BaseModel = AmpersandModel.extend({
 
   trigger: eventBubbler(AmpersandModel)
 });
+
+BaseModel.extend = function(protoProps) {
+  /* develblock:start */
+  // Certain methods of BaseModel should be unable to be overridden
+  var methods = ['initialize'];
+
+  function wrapOverride(first, second) {
+    return function() {
+      first.apply(this, arguments);
+      second.apply(this, arguments);
+    };
+  }
+  for (var i = 0; i < methods.length; i++) {
+    if (protoProps[methods[i]]) {
+      var msg = 'Model.' + methods[i] + ' may not be overridden';
+      if (protoProps && protoProps.debugName) {
+        msg += ' for model "' + protoProps.debugName + '"';
+      }
+      logger.warn(msg);
+      // Replace attempted override with base version
+      protoProps[methods[i]] = wrapOverride(BaseModel.prototype[methods[i]], protoProps[methods[i]]);
+    }
+  }
+  /* develblock:end */
+
+  return AmpersandModel.extend.call(this, protoProps);
+};
 
 module.exports = BaseModel;

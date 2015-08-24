@@ -133,6 +133,9 @@ var BaseView = AmpersandView.extend({
    * Bootstraps all debug functionality
    */
   initDebug: function() {
+    var dataset = require('data-set');
+    var data = dataset(this.el);
+    data.view = this;
     tungsten.debug.registry.register(this);
     // These methods are often invoked oddly, so ensure their context
     _.bindAll(this, 'getEvents', 'getDebugName', 'getChildViews');
@@ -174,7 +177,7 @@ var BaseView = AmpersandView.extend({
       }
     }
     // Support for non-enumerable methods...such as methods in es6 transpiled classes
-    if(typeof Object.getOwnPropertyNames === 'function' && this.constructor && this.constructor.prototype) {
+    if (typeof Object.getOwnPropertyNames === 'function' && this.constructor && this.constructor.prototype) {
       var allProps = Object.getOwnPropertyNames(this.constructor.prototype);
       for (var i = 0; i < allProps.length; i++) {
         if (!(this.propertyIsEnumerable(allProps[i])) && typeof this[allProps[i]] === 'function' && blacklist[allProps[i]] !== true) {
@@ -188,18 +191,6 @@ var BaseView = AmpersandView.extend({
       }
     }
     return result;
-  },
-
-  _setElement: function(el) {
-    var dataset = require('data-set');
-    var data;
-    if (this.el && this.el.tagName && this.el !== el) {
-      data = dataset(this.el);
-      data.view = null;
-    }
-    Backbone.View.prototype._setElement.call(this, el);
-    data = dataset(this.el);
-    data.view = this;
   },
 
   /**
@@ -299,7 +290,7 @@ var BaseView = AmpersandView.extend({
    * @return {string} Debug name
    */
   getDebugName: function() {
-    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('view', '') : this.cid;
+    return this.debugName ? this.debugName + this.cid.replace('view', '') : this.cid;
   },
   /* develblock:end */
 
@@ -476,6 +467,33 @@ var BaseView = AmpersandView.extend({
     }
   }
 });
+
+BaseView.extend = function(protoProps) {
+  /* develblock:start */
+  // Certain methods of BaseView should be unable to be overridden
+  var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
+
+  function wrapOverride(first, second) {
+    return function() {
+      first.apply(this, arguments);
+      second.apply(this, arguments);
+    };
+  }
+  for (var i = 0; i < methods.length; i++) {
+    if (protoProps[methods[i]]) {
+      var msg = 'Model.' + methods[i] + ' may not be overridden';
+      if (protoProps && protoProps.debugName) {
+        msg += ' for model "' + protoProps.debugName + '"';
+      }
+      logger.warn(msg);
+      // Replace attempted override with base version
+      protoProps[methods[i]] = wrapOverride(BaseView.prototype[methods[i]], protoProps[methods[i]]);
+    }
+  }
+  /* develblock:end */
+
+  return AmpersandView.extend.call(this, protoProps);
+};
 
 BaseView.tungstenView = true;
 

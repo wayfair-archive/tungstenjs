@@ -95,4 +95,31 @@ var BaseCollection = AmpersandCollection.extend({
   trigger: eventBubbler(AmpersandCollection)
 });
 
+BaseCollection.extend = function(protoProps) {
+  /* develblock:start */
+  // Certain methods of BaseCollection should be unable to be overridden
+  var methods = ['initialize'];
+
+  function wrapOverride(first, second) {
+    return function() {
+      first.apply(this, arguments);
+      second.apply(this, arguments);
+    };
+  }
+  for (var i = 0; i < methods.length; i++) {
+    if (protoProps[methods[i]]) {
+      var msg = 'Model.' + methods[i] + ' may not be overridden';
+      if (protoProps && protoProps.debugName) {
+        msg += ' for model "' + protoProps.debugName + '"';
+      }
+      logger.warn(msg);
+      // Replace attempted override with base version
+      protoProps[methods[i]] = wrapOverride(BaseCollection.prototype[methods[i]], protoProps[methods[i]]);
+    }
+  }
+  /* develblock:end */
+
+  return AmpersandCollection.extend.call(this, protoProps);
+};
+
 module.exports = BaseCollection;
