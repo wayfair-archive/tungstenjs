@@ -40,16 +40,10 @@ var BaseModel = AmpersandModel.extend({
   reset: function(attrs, options) {
     var opts = _.extend({reset:true}, options);
     var currentKeys = _.pluck(this.getPropertiesArray(), 'key');
-    var children = _.result(this, '_children') || {};
-    var collections = _.result(this, '_collections') || {};
-    var derived = _.result(this, 'derived') || {};
     var key;
     for (var i = 0; i < currentKeys.length; i++) {
       key = currentKeys[i];
-      if (_.has(collections, key) || _.has(children, key)) {
-        this[key].reset(attrs[key], opts);
-        delete attrs[key];
-      } else if (!_.has(attrs, key) && !_.has(derived, key)) {
+      if (!_.has(attrs, key)) {
         this.unset(key);
       }
     }
@@ -143,9 +137,8 @@ var BaseModel = AmpersandModel.extend({
    */
   getPropertiesArray: function() {
     var properties = [];
-    var relations = this.relations;
     _.each(this.attributes, function(value, key) {
-      if (relations && relations[key]) {
+      if (value && (value.tungstenModel || value.tungstenCollection)) {
         properties.push({
           key: key,
           data: {

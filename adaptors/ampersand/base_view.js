@@ -200,8 +200,8 @@ var BaseView = AmpersandView.extend({
    */
   getState: function() {
     var data = this.serialize();
-    if (data && typeof data.doSerialize === 'function') {
-      data = data.doSerialize();
+    if (data && typeof data.toJSON === 'function') {
+      data = data.toJSON();
     }
     return data;
   },
