@@ -39,7 +39,9 @@ var BaseModel = AmpersandModel.extend({
 
   reset: function(attrs, options) {
     var opts = _.extend({reset:true}, options);
-    var currentKeys = _.pluck(this.getPropertiesArray(), 'key');
+    var currentKeys = this.getAttributes({props: true}, true);
+    currentKeys = currentKeys.concat(_.keys(this._children));
+    currentKeys = currentKeys.concat(_.keys(this._collections));
     var key;
     for (var i = 0; i < currentKeys.length; i++) {
       key = currentKeys[i];
@@ -79,7 +81,6 @@ var BaseModel = AmpersandModel.extend({
   getChildren: function() {
     var results = [];
     var self = this;
-    // @TODO better way of accessing?
     _.each(this._children, function(constructor, key) {
       if (self.hasOwnProperty(key)) {
         results.push(self.get(key));
@@ -138,23 +139,35 @@ var BaseModel = AmpersandModel.extend({
   getPropertiesArray: function() {
     var properties = [];
     _.each(this.attributes, function(value, key) {
-      if (value && (value.tungstenModel || value.tungstenCollection)) {
-        properties.push({
-          key: key,
-          data: {
-            isRelation: true,
-            name: value.getDebugName()
-          }
-        });
-      } else {
-        properties.push({
-          key: key,
-          data: {
-            isEditing: false,
-            value: value
-          }
-        });
-      }
+      properties.push({
+        key: key,
+        data: {
+          isEditing: false,
+          value: value
+        }
+      });
+    });
+
+    var self = this;
+    _.each(this._children, function(constructor, key) {
+      var value = self.get(key);
+      properties.push({
+        key: key,
+        data: {
+          isRelation: true,
+          name: value.getDebugName()
+        }
+      });
+    });
+    _.each(this._collections, function(constructor, key) {
+      var value = self.get(key);
+      properties.push({
+        key: key,
+        data: {
+          isRelation: true,
+          name: value.getDebugName()
+        }
+      });
     });
 
     return properties;
