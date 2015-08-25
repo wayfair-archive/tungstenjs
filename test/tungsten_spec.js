@@ -9,8 +9,9 @@
 // Include Chai assertion library
 var expect = require('chai').expect;
 
+
 // Module to test is tungsten.js
-var tungsten = require('../src/tungsten.js');
+var tungsten = require('../dist/tungsten.test.js');
 
 // VNode required for instanceof checks
 var VNode = require('virtual-dom/vnode/vnode');
@@ -74,7 +75,6 @@ describe('tungsten.js public API', function() {
       var vNode = tungsten.createVNode('div', props, children);
       expect(vNode.tagName).to.equal('DIV');
       expect(vNode.properties).to.deep.equal({className: ' js-root', style: {}});
-      expect(vNode instanceof VNode).to.equal(true);
     });
   });
   describe('updateTree', function() {
