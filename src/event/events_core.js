@@ -53,7 +53,7 @@ module.exports.setEvents = function(elem, events) {
   data.events = events;
 };
 
-var removeSelectorMethods = function (methods, method) {
+var removeSelectorMethods = function(methods, method) {
   if (!method) {
     // If we aren't filtering on method, just blow away all bound methods
     return [];
@@ -70,7 +70,7 @@ var removeSelectorMethods = function (methods, method) {
   }
 };
 
-var removeEventTypes = function (selectorMap, selector, method) {
+var removeEventTypes = function(selectorMap, selector, method) {
   if (selector) {
     // If we're unbinding a specific selector, iterate into that
     if (selectorMap[selector]) {
@@ -127,11 +127,11 @@ module.exports.addEvent = function(el, eventName, selector, method) {
   return [el, eventName, selector, method];
 };
 
-module.exports.removeEvent = function (evt) {
+module.exports.removeEvent = function(evt) {
   if (isArray(evt)) {
     if (isArray(evt[0])) {
       // Some plugins may bind multiple handlers, in which case we have an array of arrays
-      for (var i = evt.length; i--; ) {
+      for (var i = evt.length; i--;) {
         module.exports.removeEvent(evt[i]);
       }
     } else if (evt.length === 4) {

@@ -22,11 +22,11 @@ function FocusHook() {
   }
 }
 
-FocusHook.prototype.hook = function (node, prop, prev) {
+FocusHook.prototype.hook = function(node, prop, prev) {
   // Only run this hook if this wasn't on the previous tree
   // and not on iOS because it really breaks things
   if (!isiOS && !prev) {
-    setTimeout(function () {
+    setTimeout(function() {
       if (document.activeElement !== node) {
         node.focus();
       }

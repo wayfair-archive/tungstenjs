@@ -9,7 +9,9 @@ var stack = [];
 
 // @TODO examine other tokenizers or parsers
 var Parser = require('html-tokenizer/parser');
-var parser = new Parser({ entities: entityMap });
+var parser = new Parser({
+  entities: entityMap
+});
 parser.on('open', function(name, attributes) {
   var properties = {
     attributes: attributes
@@ -55,7 +57,7 @@ parser.on('comment', function(text) {
   closeElem(new HTMLCommentWidget(text));
 });
 
-module.exports = function(html)  {
+module.exports = function(html) {
   result = [];
   stack = [];
   parser.parse(html);

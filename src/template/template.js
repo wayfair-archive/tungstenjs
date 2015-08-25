@@ -127,7 +127,7 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
       }
       // Pad with spaces for better hasClass-ing
       className = ' ' + className + ' ';
-      for (i = childClasses.length; i--; ) {
+      for (i = childClasses.length; i--;) {
         if (className.indexOf(childClasses.padded[i]) > -1) {
           // If we match a childView class, replace the template with a Widget
           template = {

@@ -1,7 +1,7 @@
 var _process;
 
 try {
-  _process = eval('process');  // avoid browserify shim
+  _process = eval('process'); // avoid browserify shim
 } catch (e) {
   // do nothing
 }

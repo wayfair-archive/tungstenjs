@@ -10,7 +10,7 @@ var utils = require('./shared_utils');
 var fs = require('fs');
 var Template = require('../../src/template/template');
 
-require.extensions['.mustache'] = function (module, filename) {
+require.extensions['.mustache'] = function(module, filename) {
   var contents = fs.readFileSync(filename, 'utf8');
   var parsedTemplate = utils.compileTemplate(contents, module.src);
   var partials = utils.findPartials(parsedTemplate);

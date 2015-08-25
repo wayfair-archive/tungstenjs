@@ -213,7 +213,9 @@ exports.setNestedModel = function(Model) {
   Model.prototype.trigger = newTrigger;
 
   Model.prototype.reset = function(attrs, options) {
-    var opts = _.extend({reset:true}, options);
+    var opts = _.extend({
+      reset: true
+    }, options);
     var currentKeys = _.keys(this.attributes);
     var relations = _.result(this, 'relations') || {};
     var derived = _.result(this, 'derived') || {};
@@ -291,7 +293,9 @@ exports.setNestedModel = function(Model) {
         // Inject in the relational lookup
         var opts = options;
         /* develblock:start */
-        opts = _.extend({initialData: val}, options);
+        opts = _.extend({
+          initialData: val
+        }, options);
         /* develblock:end */
         val = this.setRelation(attr, val, opts);
 
@@ -336,29 +340,29 @@ exports.setNestedModel = function(Model) {
   };
 
   Model.prototype.toJSON = function() {
-    var attrs = this.attributes;
-    var relations = _.result(this, 'relations') || {};
-    var derived = _.result(this, 'derived') || {};
-    var session = _.invert(_.result(this, 'session') || []);
+      var attrs = this.attributes;
+      var relations = _.result(this, 'relations') || {};
+      var derived = _.result(this, 'derived') || {};
+      var session = _.invert(_.result(this, 'session') || []);
 
-    var data = {};
-    _.each(attrs, function(val, key) {
-      // Skip any derived or session properties
-      if (!derived[key] && !session[key]) {
-        // Recursively serialize any set relations
-        if (relations[key] && typeof val.doSerialize === 'function') {
-          data[key] = val.doSerialize();
-        } else {
-          data[key] = val;
+      var data = {};
+      _.each(attrs, function(val, key) {
+        // Skip any derived or session properties
+        if (!derived[key] && !session[key]) {
+          // Recursively serialize any set relations
+          if (relations[key] && typeof val.doSerialize === 'function') {
+            data[key] = val.doSerialize();
+          } else {
+            data[key] = val;
+          }
         }
-      }
-    });
-    return data;
-  },
+      });
+      return data;
+    },
 
-  Model.prototype.doSerialize = function() {
-    return this.serialize(this.toJSON());
-  };
+    Model.prototype.doSerialize = function() {
+      return this.serialize(this.toJSON());
+    };
 
   Model.prototype.serialize = _.identity;
 

@@ -16,7 +16,7 @@ var getClosestView = appData.getClosestView = function(elem) {
   return view;
 };
 
-appData.updateSelectedView = function () {
+appData.updateSelectedView = function() {
   appData.selectedView.vdomTemplate = appData.selectedView.obj.getVdomTemplate();
   var diff = appData.selectedView.obj.getTemplateDiff();
   if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
@@ -97,7 +97,9 @@ module.exports = function() {
   });
   utils.addEvent('js-view-list-item', 'mouseover', function(e) {
     var view = getClosestView(e.target).obj;
-    var toHighlight = [[view.el, view.getDebugName()]];
+    var toHighlight = [
+      [view.el, view.getDebugName()]
+    ];
     while (view.parentView) {
       view = view.parentView;
       toHighlight.unshift([view.el, view.getDebugName()]);
@@ -116,13 +118,17 @@ module.exports = function() {
   });
   utils.addEvent('js-view-event', 'click', function(e) {
     var selector = e.currentTarget.getAttribute('data-event-selector');
-    var selected = _.findWhere(appData.selectedView.objectEvents, {selector: selector});
+    var selected = _.findWhere(appData.selectedView.objectEvents, {
+      selector: selector
+    });
     var fn = selected.fn && selected.fn.original ? selected.fn.original : selected.fn;
     logger.log(selector, fn);
   });
   utils.addEvent('js-track-function', 'click', function(e) {
     var fnName = e.currentTarget.getAttribute('data-fn');
-    var selectedFunction = _.findWhere(appData.selectedView.objectFunctions, {name: fnName});
+    var selectedFunction = _.findWhere(appData.selectedView.objectFunctions, {
+      name: fnName
+    });
     selectedFunction.tracked = !selectedFunction.tracked;
     appData.selectedView.toggleFunctionTracking(fnName, selectedFunction.tracked);
     utils.render();

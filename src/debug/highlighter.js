@@ -19,6 +19,7 @@ var highlightClass = 'tungstenDebugHighlight';
 var wrapperClass = 'tungstenDebugHighlight tungstenDebugHighlightWrapper';
 
 var highlightElements = [];
+
 function ensureHighlightElements(num) {
   for (var i = highlightElements.length; i < num; i++) {
     var highlightEl = document.createElement('div');
@@ -29,6 +30,7 @@ function ensureHighlightElements(num) {
 }
 
 var targetElements = [];
+
 function ensureTargetElements(num) {
   for (var i = targetElements.length; i < num; i++) {
     var targetEl = document.createElement('div');
@@ -75,6 +77,7 @@ function unhighlightInner() {
 }
 
 var overlayShown = false;
+
 function unhighlight() {
   if (!overlayShown) {
     overlayEl.style.display = 'none';

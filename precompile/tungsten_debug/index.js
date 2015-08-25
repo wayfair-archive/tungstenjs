@@ -10,6 +10,8 @@ module.exports = function(contents) {
     var isPanel = this.resourcePath.indexOf('/debug/panel/info_panels') > -1;
     isPanel = isPanel || this.resourcePath.indexOf('\\debug\\panel\\info_panels') > -1;
     var templateVar = isPanel ? 'panel' : 'w';
-    return 'module.exports=' + _.template(contents, {variable: templateVar}).source + ';';
+    return 'module.exports=' + _.template(contents, {
+      variable: templateVar
+    }).source + ';';
   }
 };
