@@ -11,7 +11,7 @@ function applyProperties(node, props) {
       for (var attrName in propValue) {
         var attrValue = propValue[attrName];
 
-        if (attrValue === undefined) {
+        if (attrValue !== undefined) {
           node.setAttribute(attrName, attrValue);
         }
       }
