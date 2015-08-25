@@ -63,14 +63,12 @@ BackboneViewWidget.prototype.type = 'Widget';
  * @return {Element} DOM node with the child view attached
  */
 BackboneViewWidget.prototype.init = function init() {
-  // toDom returns a DocumentFragment with one child node
-  var docFrag = this.template.toDom(this.context);
+  var elem = this.template.toDom(this.context);
   this.view = new this.ViewConstructor({
     template: this.template,
     model: this.model,
     context: this.context,
-    // Since we can't attach a view to a DocumentFragment, pull out firstChild
-    el: docFrag.childNodes[0],
+    el: elem,
     parentView: this.parentView
   });
   return this.view.el;
