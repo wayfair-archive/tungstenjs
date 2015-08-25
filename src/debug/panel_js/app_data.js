@@ -48,7 +48,7 @@ var appData = window.appData = module.exports = {
       bgData.lastName = name;
       bgData.counter = (bgData.counter + 1) % bgData.colors.length;
     }
-      return bgData.colors[bgData.counter];
+    return bgData.colors[bgData.counter];
   },
   selectView: function(viewWrapper) {
     if (appData.selectedView) {

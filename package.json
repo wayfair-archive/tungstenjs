@@ -13,6 +13,7 @@
   "scripts": {
     "jasmine": "node node_modules/jasmine/bin/jasmine JASMINE_CONFIG_PATH=test/jasmine.json",
     "test-debug": "npm run build-test-debug && npm run jasmine",
+    "pretest": "npm run eslint && npm run jscs",
     "test": "npm run build-test && npm run jasmine",
     "build-test": "webpack  ./src/tungsten ./dist/tungsten.test.js --config webpack.test.config.js",
     "build-test-debug": "webpack  ./src/tungsten ./dist/tungsten.test.js --config webpack.test.config.js --dev",
@@ -20,7 +21,8 @@
     "build-bb-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p",
     "build-ampersand-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.js -d",
     "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p",
-    "jscs": "node node_modules/jscs/bin/jscs src"
+    "jscs": "node node_modules/jscs/bin/jscs src",
+    "eslint": "node node_modules/eslint/bin/eslint src"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
@@ -38,6 +40,7 @@
   },
   "devDependencies": {
     "chai": "^2.2.0",
+    "eslint": "^1.2.1",
     "express": "^4.13.3",
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",

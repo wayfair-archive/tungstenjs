@@ -21,9 +21,7 @@ function toString(vtree, escaped) {
     var tagName = vtree.tagName.toLowerCase();
     output += chars.open + tagName;
     var addAttributes = function(val, key) {
-      var attrVal = val;
       if (virtualDomImplementation.isHook(val)) {
-        attrVal = val.value;
         return;
       }
       if (key === 'attributes') {
