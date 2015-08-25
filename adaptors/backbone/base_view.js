@@ -262,9 +262,9 @@ var BaseView = Backbone.View.extend({
    */
   setState: function(data) {
     var dataObj = this.serialize();
-    if (dataObj.reset) {
+    if (typeof dataObj.reset === 'function') {
       dataObj.reset(data);
-    } else {
+    } else if (typeof dataObj.set === 'function') {
       dataObj.set(data, {reset: true});
     }
     return data;
