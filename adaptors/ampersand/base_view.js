@@ -151,7 +151,6 @@ var BaseView = AmpersandView.extend({
    * @return {Array<Object>}                      List of trackable functions
    */
   getFunctions: function(trackedFunctions, getTrackableFunction) {
-    var result = [];
     // Debug functions shouldn't be debuggable
     var blacklist = {
       constructor: true,
@@ -166,31 +165,8 @@ var BaseView = AmpersandView.extend({
       getChildren: true,
       getDebugName: true
     };
-    for (var key in this) {
-      if (typeof this[key] === 'function' && blacklist[key] !== true) {
-        result.push({
-          name: key,
-          fn: this[key],
-          inherited: (key in BaseView.prototype)
-        });
-        this[key] = getTrackableFunction(this, key, trackedFunctions);
-      }
-    }
-    // Support for non-enumerable methods...such as methods in es6 transpiled classes
-    if (typeof Object.getOwnPropertyNames === 'function' && this.constructor && this.constructor.prototype) {
-      var allProps = Object.getOwnPropertyNames(this.constructor.prototype);
-      for (var i = 0; i < allProps.length; i++) {
-        if (!(this.propertyIsEnumerable(allProps[i])) && typeof this[allProps[i]] === 'function' && blacklist[allProps[i]] !== true) {
-          result.push({
-            name: allProps[i],
-            fn: this[allProps[i]],
-            inherited: (allProps[i] in BaseView.prototype)
-          });
-          this[allProps[i]] = getTrackableFunction(this, allProps[i], trackedFunctions);
-        }
-      }
-    }
-    return result;
+    var getFunctions = require('../shared/get_functions');
+    return getFunctions(trackedFunctions, getTrackableFunction, this, BaseView.prototype, blacklist);
   },
 
   /**

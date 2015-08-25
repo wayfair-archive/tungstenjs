@@ -65,7 +65,6 @@ var BaseCollection = Backbone.Collection.extend({
    * @return {Array<Object>}                      List of trackable functions
    */
   getFunctions: function(trackedFunctions, getTrackableFunction) {
-    var result = [];
     // Debug functions shouldn't be debuggable
     var blacklist = {
       constructor: true,
@@ -79,17 +78,8 @@ var BaseCollection = Backbone.Collection.extend({
       getChildren: true,
       getDebugName: true
     };
-    for (var key in this) {
-      if (typeof this[key] === 'function' && blacklist[key] !== true) {
-        result.push({
-          name: key,
-          fn: this[key],
-          inherited: (key in BaseCollection.prototype)
-        });
-        this[key] = getTrackableFunction(this, key, trackedFunctions);
-      }
-    }
-    return result;
+    var getFunctions = require('../shared/get_functions');
+    return getFunctions(trackedFunctions, getTrackableFunction, this, BaseCollection.prototype, blacklist);
   },
   /* develblock:end */
 
