@@ -21,8 +21,8 @@
     "build-bb-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p",
     "build-ampersand-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.js -d",
     "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p",
-    "jscs": "node node_modules/jscs/bin/jscs src",
-    "eslint": "node node_modules/eslint/bin/eslint src"
+    "jscs": "node node_modules/jscs/bin/jscs src adaptors",
+    "eslint": "node node_modules/eslint/bin/eslint src adaptors"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",

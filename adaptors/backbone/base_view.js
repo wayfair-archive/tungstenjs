@@ -215,7 +215,7 @@ var BaseView = Backbone.View.extend({
       }
     }
     // Support for non-enumerable methods...such as methods in es6 transpiled classes
-    if(typeof Object.getOwnPropertyNames === 'function' && this.constructor && this.constructor.prototype) {
+    if (typeof Object.getOwnPropertyNames === 'function' && this.constructor && this.constructor.prototype) {
       var allProps = Object.getOwnPropertyNames(this.constructor.prototype);
       for (var i = 0; i < allProps.length; i++) {
         if (!(this.propertyIsEnumerable(allProps[i])) && typeof this[allProps[i]] === 'function' && blacklist[allProps[i]] !== true) {
