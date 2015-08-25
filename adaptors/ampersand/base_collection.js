@@ -7,6 +7,7 @@ var AmpersandCollection = require('ampersand-collection');
 var eventBubbler = require('./event_bubbler');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
+var _ = require('underscore');
 
 /**
  * BaseCollection
