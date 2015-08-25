@@ -137,6 +137,8 @@ var BaseView = AmpersandView.extend({
     var data = dataset(this.el);
     data.view = this;
     tungsten.debug.registry.register(this);
+    // Rebind events so that they can be tracked
+    this.delegateEvents();
     // These methods are often invoked oddly, so ensure their context
     _.bindAll(this, 'getEvents', 'getDebugName', 'getChildViews');
   },
