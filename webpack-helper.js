@@ -2,7 +2,7 @@
 
 var path = require('path');
 
-function ensureLoader(loaders, test, loader) {
+function ensureLoader(loaders, test, loader, exclude) {
   for (var i = 0; i < loaders.length; i++) {
     var l = loaders[i];
     if (l.test.source === test.source && l.loader === loader) {
@@ -11,7 +11,8 @@ function ensureLoader(loaders, test, loader) {
   }
   loaders.push({
     test: test,
-    loader: loader
+    loader: loader,
+    exclude: exclude
   });
 }
 
@@ -50,6 +51,7 @@ module.exports = function(config, dev) {
   }
   ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
   ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
+  ensureLoader(config.module.loaders, /\.jsx?$/, 'babel', /(node_modules|bower_components)/);
 
   return config;
 };
