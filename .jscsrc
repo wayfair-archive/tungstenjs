@@ -7,7 +7,7 @@
     "disallowTrailingWhitespace": true,
     "disallowTrailingComma": true,
     "requireCapitalizedConstructors": true,
-    "requireDotNotation": true,
+    "requireDotNotation":  { "allExcept": [ "keywords" ] },
     "requireSpaceBeforeBlockStatements": true,
     "disallowMixedSpacesAndTabs": true,
     "requireSpacesInConditionalExpression": {
@@ -76,7 +76,7 @@
         "while",
         "do"
     ],
-    "validateJSDoc": {
+    "jsDoc": {
         "checkParamNames": true,
         "checkRedundantParams": true,
         "requireParamTypes": true

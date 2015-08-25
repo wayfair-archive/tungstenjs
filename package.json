@@ -19,7 +19,8 @@
     "build-bb-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/backbone ./dist/tungsten.backbone.js -d",
     "build-bb-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p",
     "build-ampersand-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.js -d",
-    "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p"
+    "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p",
+    "jscs": "node node_modules/jscs/bin/jscs src"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
@@ -41,12 +42,13 @@
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",
     "jasmine": "^2.3.1",
+    "jscs": "^2.1.0",
     "jsdom-nogyp": "^0.8.3",
     "mkdirp": "~0.5.0",
     "opener": "^1.4.1",
     "webpack": "^1.5.1",
-    "webpack-strip-block": "0.0.1",
-    "webpack-dev-middleware": "^1.2.0"
+    "webpack-dev-middleware": "^1.2.0",
+    "webpack-strip-block": "0.0.1"
   },
   "directories": {
     "example": "./examples",
