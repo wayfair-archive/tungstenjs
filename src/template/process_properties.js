@@ -3,6 +3,65 @@
 var _ = require('underscore');
 var Autofocus = require('./hooks/autofocus');
 
+/** @type {Object} Whitelist of properties. All others are treated as attributes */
+var nonTransformedProperties = {
+  'accept': true,
+  'action': true,
+  'alt': true,
+  'async': true,
+  'autocapitalize': true,
+  'autocomplete': true,
+  'autocorrect': true,
+  'autoplay': true,
+  'checked': true,
+  'content': true,
+  'controls': true,
+  'data': true,
+  'dataset': true,
+  'defer': true,
+  'dir': true,
+  'download': true,
+  'draggable': true,
+  'enctype': true,
+  'href': true,
+  'hreflang': true,
+  'icon': true,
+  'id': true,
+  'label': true,
+  'lang': true,
+  'list': true,
+  'loop': true,
+  'max': true,
+  'method': true,
+  'min': true,
+  'multiple': true,
+  'muted': true,
+  'name': true,
+  'pattern': true,
+  'placeholder': true,
+  'poster': true,
+  'preload': true,
+  'radiogroup': true,
+  'rel': true,
+  'required': true,
+  'sandbox': true,
+  'scope': true,
+  'scrolling': true,
+  'selected': true,
+  'span': true,
+  'spellcheck': true,
+  'src': true,
+  'srcdoc': true,
+  'srcset': true,
+  'start': true,
+  'step': true,
+  'style': true,
+  'target': true,
+  'title': true,
+  'type': true,
+  'value': true
+};
+
 /**
  * Map of attribute to property transforms
  * Templates use attribute name, but virtual-dom references properties first
@@ -20,10 +79,14 @@ var propertiesToTransform = {
   'colspan': 'colSpan',
   'contenteditable': 'contentEditable',
   'contextmenu': 'contextMenu',
+  'crossorigin': 'crossOrigin',
   'formnovalidate': 'formNoValidate',
   'frameborder': 'frameBorder',
   'maxlength': 'maxLength',
+  'mediagroup': 'mediaGroup',
   'novalidate': 'noValidate',
+  'scrollleft': 'scrollLeft',
+  'scrolltop': 'scrollTop',
   'readonly': 'readOnly',
   'rowspan': 'rowSpan',
   'tabindex': 'tabIndex',
@@ -38,10 +101,7 @@ function transformPropertyName(attributeName) {
   if (propertiesToTransform[attributeName]) {
     return propertiesToTransform[attributeName];
   }
-  // Data attributes are a special case..
-  // Persisting them as attributes as they are often accessed via jQuery (i.e. data-click-location)
-  // Use the nested attributes hash to avoid datasets because IE
-  if (attributeName.substr(0, 5) === 'data-') {
+  if (nonTransformedProperties[attributeName] !== true) {
     return false;
   }
   return attributeName;
@@ -59,19 +119,11 @@ module.exports = function processProperties(properties, options) {
   var propertyNames = _.keys(properties);
   var result = {};
 
-  // Defaulting contentEditable to 'inherit'
-  // If an element goes from an explicitly set value to null, it will use this value rather than error
-  var hasContentEditable = false;
-
   for (var i = 0; i < propertyNames.length; i++) {
     var propName = propertyNames[i];
     var propValue = properties[propName];
     var lowerPropName = propName.toLowerCase();
     var transformedName = transformPropertyName(lowerPropName);
-
-    if (lowerPropName === 'contenteditable') {
-      hasContentEditable = true;
-    }
 
     if (opts.useHooks) {
       if (lowerPropName === 'autofocus') {
@@ -99,10 +151,6 @@ module.exports = function processProperties(properties, options) {
     } else {
       result[transformedName] = propValue;
     }
-  }
-
-  if (!hasContentEditable) {
-    result.contentEditable = 'inherit';
   }
 
   return result;
