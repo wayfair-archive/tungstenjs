@@ -1,6 +1,8 @@
 'use strict';
 
 var processProperties = require('../process_properties');
+var htmlHelpers = require('../html_helpers');
+var logger = require('../../utils/logger');
 
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either
@@ -11,30 +13,64 @@ var supportsWhitespaceTextNodes = (function() {
   return d.childNodes.length === 1;
 })();
 
-function DefaultStack(attributesOnly, debugMode) {
+/**
+ * [DefaultStack description]
+ *
+ * @param {Boolean} attributesOnly Render all properties as attributes
+ * @param {String}  startID        Base ID for elements, for nested views
+ * @param {Boolean} debugMode      Flag for extra debugging
+ */
+function DefaultStack(attributesOnly, startID, debugMode) {
   this.propertyOpts = {
     attributesOnly: attributesOnly,
     useHooks: false
   };
+  // If startID is passed in, append a separator
+  this.startID = typeof startID === 'string' ? (startID + '.') : '';
   this.debugMode = debugMode;
   this.result = [];
   this.stack = [];
 }
 
-DefaultStack.prototype.openElement = function(tagName, properties) {
+DefaultStack.prototype.peek = function() {
+  return this.stack[this.stack.length - 1];
+};
+
+DefaultStack.prototype.getID = function() {
+  var id;
+  if (this.stack.length) {
+    var openElem = this.peek();
+    id = openElem.id + '.' + openElem.children.length;
+  } else {
+    id = this.startID + this.result.length;
+  }
+  return id;
+};
+
+
+DefaultStack.prototype.openElement = function(tagName, attributes) {
+  var id = this.getID();
+  var properties = processProperties(attributes, this.propertyOpts);
   this.stack.push({
     tagName: tagName,
-    properties: processProperties(properties, this.propertyOpts),
+    properties: properties,
     children: [],
-    type: 'node'
+    type: 'node',
+    id: id
   });
+
+  return id;
 };
 
 DefaultStack.prototype.processObject = function(obj) {
   return obj;
 };
 
-DefaultStack.prototype.validStackAddition = function(node) {
+DefaultStack.prototype.validateStackAddition = function(node) {
+  var openElem = this.peek();
+  while (openElem && htmlHelpers.validation.impliedCloseTag(openElem.tagName, node.tagName)) {
+    this.closeElement();
+  }
   return true;
 };
 
@@ -68,8 +104,8 @@ DefaultStack.prototype._closeElem = function(obj) {
     }
   }
 
-  while (this.stack.length > 0 && !this.validStackAddition(this.stack, obj)) {
-    this.closeElement();
+  if (this.stack.length > 0) {
+    this.validateStackAddition(this.stack, obj);
   }
   var pushingTo;
   if (this.stack.length > 0) {
@@ -87,6 +123,9 @@ DefaultStack.prototype._closeElem = function(obj) {
 };
 
 DefaultStack.prototype.createObject = function(obj, options) {
+  if (obj && obj.type === 'Widget') {
+    obj.id = this.getID();
+  }
   this._closeElem(obj, options);
 };
 
@@ -97,8 +136,25 @@ DefaultStack.prototype.createComment = function(text) {
   });
 };
 
-DefaultStack.prototype.closeElement = function() {
-  this._closeElem(this.stack.pop());
+DefaultStack.prototype.closeElement = function(id, tagName) {
+  var openElem = this.peek();
+  if (openElem) {
+    var openID = openElem.id;
+    if (openID !== id) {
+      logger.warn(tagName + ' tags improperly paired, closing ' + openID + ' with close tag from ' + id);
+        openElem = this.stack.pop();
+      while (openElem && openElem.tagName !== tagName) {
+        this._closeElem(openElem);
+        openElem = this.stack.pop();
+      }
+    } else {
+      // If they match, everything lines up
+      this._closeElem(this.stack.pop());
+    }
+  } else {
+    // Something has gone terribly wrong
+    logger.warn('Closing element ' + id + ' when the stack was empty');
+  }
 };
 
 DefaultStack.prototype.getOutput = function() {

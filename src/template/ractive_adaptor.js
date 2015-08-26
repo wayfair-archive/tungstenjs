@@ -170,7 +170,8 @@ function render(stack, template, context, partials, parentView) {
         }
       }
 
-      stack.openElement(template.e, properties);
+      // openElement gives back a unique ID so it can validate pairs when closing
+      var elemID = stack.openElement(template.e, properties);
 
       // Recuse into the elements' children
       var children = [];
@@ -178,7 +179,7 @@ function render(stack, template, context, partials, parentView) {
         children = render(stack, template.f, context, partials, parentView);
       }
 
-      stack.closeElement(template.e);
+      stack.closeElement(elemID, template.e);
   }
 }
 
