@@ -3,7 +3,7 @@
  *
  * @author    Andrew Rota <anrota@wayfair.com>
  */
-/* global describe, it, expect, require */
+/* global describe, it, require */
 'use strict';
 
 // Include Chai assertion library
