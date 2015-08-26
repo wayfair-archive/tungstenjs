@@ -69,7 +69,9 @@ DefaultStack.prototype.processObject = function(obj) {
 DefaultStack.prototype.validateStackAddition = function(node) {
   var openElem = this.peek();
   while (openElem && htmlHelpers.validation.impliedCloseTag(openElem.tagName, node.tagName)) {
-    this.closeElement();
+    logger.info('Opening ' + node.tagName + ' implicitly closes ' + openElem.tagName);
+    this.closeElement(openElem.id);
+    openElem = this.peek();
   }
   return true;
 };
@@ -102,16 +104,17 @@ DefaultStack.prototype._closeElem = function(obj) {
     for (i = obj.children.length; i--;) {
       obj.children[i] = this.processObject(obj.children[i]);
     }
+    if (this.stack.length > 0) {
+      this.validateStackAddition(obj);
+    }
   }
 
-  if (this.stack.length > 0) {
-    this.validateStackAddition(this.stack, obj);
-  }
   var pushingTo;
   if (this.stack.length > 0) {
     pushingTo = this.stack[this.stack.length - 1].children;
   } else {
     pushingTo = this.result;
+    obj = this.processObject(obj);
   }
 
   // Combine adjacent strings
@@ -142,7 +145,7 @@ DefaultStack.prototype.closeElement = function(id, tagName) {
     var openID = openElem.id;
     if (openID !== id) {
       logger.warn(tagName + ' tags improperly paired, closing ' + openID + ' with close tag from ' + id);
-        openElem = this.stack.pop();
+      openElem = this.stack.pop();
       while (openElem && openElem.tagName !== tagName) {
         this._closeElem(openElem);
         openElem = this.stack.pop();
@@ -158,6 +161,9 @@ DefaultStack.prototype.closeElement = function(id, tagName) {
 };
 
 DefaultStack.prototype.getOutput = function() {
+  while (this.stack.length) {
+    this.closeElement(this.peek().id);
+  }
   for (var i = this.result.length; i--;) {
     this.result[i] = this.processObject(this.result[i]);
   }

@@ -36,7 +36,6 @@ function escapeString(str) {
  * @return {[type]}     [description]
  */
 HtmlStringStack.prototype.processObject = function(obj) {
-  // if this is an element, create a VNode now so that count is set properly
   if (obj.type === 'node') {
     var htmlStr = '<' + obj.tagName;
     _.each(obj.properties.attributes, function(value, name) {
