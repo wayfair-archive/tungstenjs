@@ -16,12 +16,12 @@ var parser = new htmlparser.Parser({
       _stack.createObject(text);
     },
     onclosetag: function() {
-      _stack.closeElement();
+      _stack.closeElement(_stack.peek().id);
     }
 }, {decodeEntities: true});
 
 module.exports = function(html, stack) {
-  _stack = stack || new DefaultStack();
+  _stack = stack || new DefaultStack(true);
   parser.write(html);
   parser.end();
   if (!stack) {

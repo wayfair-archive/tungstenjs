@@ -30,7 +30,7 @@ function parseStringAttrs(templates, context) {
     return null;
   }
   var node = htmlParser('<div ' + stringAttrs + '></div>');
-  return node.properties;
+  return node.properties.attributes;
 }
 
 /**
