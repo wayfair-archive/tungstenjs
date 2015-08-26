@@ -16,6 +16,8 @@ function ensureLoader(loaders, test, loader, exclude) {
   });
 }
 
+
+
 /**
  * Extends an existing webpack config with necessary loaders for Tungsten
  *
@@ -45,9 +47,10 @@ module.exports = function(config, dev) {
 
   config.module = config.module || {};
   config.module.loaders = config.module.loaders || [];
+  config.module.preLoaders = config.module.preLoaders || [];
 
   if (!dev) {
-    ensureLoader(config.module.loaders, /\.js$/, 'webpack-strip-block');
+    ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
   }
   ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
   ensureLoader(config.module.loaders, /\.json$/, 'json-loader');

@@ -24,11 +24,13 @@ module.exports = {
     modulesDirectories: ['node_modules', path.join(__dirname, 'precompile')]
   },
   module: {
+    preLoaders: [
+      {test: /\.js$/, loader: 'webpack-strip-block'}
+    ],
     loaders: [
-      { test: /\.jsx?$/, loader: 'babel', exclude: /(node_modules|bower_components)/ },
-      { test: /\.js$/, loader: 'webpack-strip-block' },
-      { test: /\.mustache$/, loader: 'tungsten_template' },
-      { test: /\.json$/, loader: 'json-loader' }
+      {test: /\.jsx?$/, loader: 'babel', exclude: /(node_modules|bower_components)/},
+      {test: /\.mustache$/, loader: 'tungsten_template'},
+      {test: /\.json$/, loader: 'json-loader'}
     ]
   }
 };
