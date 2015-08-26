@@ -54,7 +54,7 @@ module.exports = function(config, dev) {
   }
   ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
   ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
-  ensureLoader(config.module.loaders, /\.jsx?$/, 'babel', /(node_modules|bower_components)/);
+  ensureLoader(config.module.loaders, /\.jsx?$/, 'babel');
 
   return config;
 };

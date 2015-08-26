@@ -28,7 +28,11 @@ module.exports = {
       {test: /\.js$/, loader: 'webpack-strip-block'}
     ],
     loaders: [
-      {test: /\.jsx?$/, loader: 'babel', exclude: /(node_modules|bower_components)/},
+      {
+        test: /\.jsx?$/,
+        loader: 'babel',
+        exclude: /(node_modules|bower_components)/
+      },
       {test: /\.mustache$/, loader: 'tungsten_template'},
       {test: /\.json$/, loader: 'json-loader'}
     ]
