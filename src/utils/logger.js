@@ -3,7 +3,6 @@
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
-/*eslint-env node */
 'use strict';
 
 var _ = require('underscore');

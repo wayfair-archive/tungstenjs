@@ -8,7 +8,6 @@
  *
  * @license Apache-2.0
  */
-/*eslint-env node */
 'use strict';
 
 var path = require('path');
