@@ -120,7 +120,7 @@ module.exports = function() {
     utils.render();
   });
   utils.addEvent('js-get-model-data', 'click', function() {
-    appData.selectedModel.outputData = JSON.stringify(appData.selectedModel.obj.doSerialize());
+    appData.selectedModel.outputData = JSON.stringify(appData.selectedModel.obj);
     utils.render();
   });
   utils.addEvent('js-set-model-data', 'click', function() {
