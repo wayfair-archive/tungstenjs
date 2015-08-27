@@ -71,13 +71,23 @@ module.exports = function(render) {
       row: '<tr><td>Row</td></tr>'
     }), '<div><tr><td>Row</td></tr></div>');
 
-    // Depending on which render function is in play, the outcome changes
-    var expected = render.correctsHTML ? '<p>1</p><p>2</p>3' : '<p>1<p>2</p>3</p>';
-    equal(render('<p>1{{{row}}}3</p>', {
-      row: '<p>2</p>'
-    }), expected);
+    equal(render('<p>1<p>2</p>3</p>', {}), '<p>1</p><p>2</p>3');
   });
 
+  /**
+   * Some stacks parse unescaped blocks to HTML while some use it verbatim
+   */
+  if (render.parsesTriple) {
+    describe('HTML correction', function() {
+      equal(render('<p>1{{{row}}}3</p>', {
+        row: '<p>2</p>'
+      }), '<p>1</p><p>2</p>3<p></p>');
+
+      equal(render('<div>1{{{row}}}3</div>', {
+        row: '<div>2'
+      }), '<div>1<div>2</div>3</div>');
+    });
+  }
 
 
   /*

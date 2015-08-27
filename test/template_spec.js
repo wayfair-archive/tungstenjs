@@ -85,7 +85,7 @@ function toHtmlViaVdom(templateStr, data, partials) {
   var docFrag = vdomToDom(template.toVdom(data));
   return domToString(docFrag.childNodes);
 }
-toHtmlViaVdom.correctsHTML = true;
+toHtmlViaVdom.parsesTriple = true;
 toHtmlViaVdom.entities = {
   escaped: {
     amp: '&amp;',
@@ -105,7 +105,7 @@ function toHtmlViaDom(templateStr, data, partials) {
   var template = getTemplate(templateStr, partials);
   return domToString(template.toDom(data));
 }
-toHtmlViaDom.correctsHTML = true;
+toHtmlViaDom.parsesTriple = true;
 toHtmlViaDom.entities = {
   escaped: {
     amp: '&amp;',
@@ -125,7 +125,7 @@ function toHtmlViaString(templateStr, data, partials) {
   var template = getTemplate(templateStr, partials);
   return template.toString(data);
 }
-toHtmlViaString.correctsHTML = false;
+toHtmlViaString.parsesTriple = false;
 toHtmlViaString.entities = {
   escaped: {
     amp: '&amp;',
