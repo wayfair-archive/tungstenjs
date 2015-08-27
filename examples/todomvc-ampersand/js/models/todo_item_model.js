@@ -16,6 +16,7 @@ var ItemModel = Model.extend({
       'default': false
     }
   },
+  debugName: 'TodoItemModel',
   toggle: function() {
     this.completed = !this.completed;
   }

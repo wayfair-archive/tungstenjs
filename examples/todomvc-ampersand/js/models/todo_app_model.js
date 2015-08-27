@@ -11,6 +11,7 @@ var AppModel = Model.extend({
   collections: {
     todoItems: TodoItemCollection
   },
+  debugName: 'TodoAppModel',
   derived: {
     completed: {
       deps: ['todoItems'],
