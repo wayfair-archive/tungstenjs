@@ -1,7 +1,5 @@
 {
-  "rules": {
-    "env": {
-      "node": true
-    }
+  "env": {
+    "node": true
   }
 }
