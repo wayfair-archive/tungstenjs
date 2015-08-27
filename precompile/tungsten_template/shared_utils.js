@@ -1,7 +1,7 @@
 'use strict';
 
 var Ractive = require('ractive');
-var logger = require('logger');
+
 var ractiveTypes = require('../../src/template/ractive_types');
 
 /**
@@ -73,8 +73,10 @@ module.exports.compileTemplate = function(contents, srcFile) {
       preserveWhitespace: true
     });
   } catch (ex) {
-    logger.log('Unable to parse ' + (srcFile || contents));
-    logger.log(ex.message);
+    /*eslint-disable no-console */
+    console.log('Unable to parse ' + (srcFile || contents));
+    console.log(ex.message);
+    /*eslint-enable no-console */
     process.exit(1);
   }
 
