@@ -49,17 +49,18 @@ DefaultStack.prototype.getID = function() {
 
 
 DefaultStack.prototype.openElement = function(tagName, attributes) {
-  var id = this.getID();
   var properties = processProperties(attributes, this.propertyOpts);
-  this.stack.push({
+
+  var elem = {
     tagName: tagName,
     properties: properties,
     children: [],
     type: 'node',
-    id: id
-  });
+    id: this.getID()
+  };
+  this.stack.push(elem);
 
-  return id;
+  return elem;
 };
 
 DefaultStack.prototype.processObject = function(obj) {
@@ -70,7 +71,7 @@ DefaultStack.prototype.validateStackAddition = function(node) {
   var openElem = this.peek();
   while (openElem && htmlHelpers.validation.impliedCloseTag(openElem.tagName, node.tagName)) {
     logger.info('Opening ' + node.tagName + ' implicitly closes ' + openElem.tagName);
-    this.closeElement(openElem.id);
+    this.closeElement(openElem);
     openElem = this.peek();
   }
   return true;
@@ -139,8 +140,10 @@ DefaultStack.prototype.createComment = function(text) {
   });
 };
 
-DefaultStack.prototype.closeElement = function(id, tagName) {
+DefaultStack.prototype.closeElement = function(closingElem) {
   var openElem = this.peek();
+  var id = closingElem.id;
+  var tagName = closingElem.tagName;
   if (openElem) {
     var openID = openElem.id;
     if (openID !== id) {
@@ -154,6 +157,9 @@ DefaultStack.prototype.closeElement = function(id, tagName) {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
     }
+  } else if (tagName === 'p') {
+    // For some reason a </p> creates an empty tag
+    this.closeElement(this.openElement('p', {}));
   } else {
     // Something has gone terribly wrong
     logger.warn('Closing element ' + id + ' when the stack was empty');
@@ -162,7 +168,7 @@ DefaultStack.prototype.closeElement = function(id, tagName) {
 
 DefaultStack.prototype.getOutput = function() {
   while (this.stack.length) {
-    this.closeElement(this.peek().id);
+    this.closeElement(this.peek());
   }
   for (var i = this.result.length; i--;) {
     this.result[i] = this.processObject(this.result[i]);
