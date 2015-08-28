@@ -241,7 +241,9 @@ var BaseView = Backbone.View.extend({
     if (typeof dataObj.reset === 'function') {
       dataObj.reset(data);
     } else if (typeof dataObj.set === 'function') {
-      dataObj.set(data, {reset: true});
+      dataObj.set(data, {
+        reset: true
+      });
     }
     return data;
   },

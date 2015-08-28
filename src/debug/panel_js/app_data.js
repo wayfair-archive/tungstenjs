@@ -13,18 +13,15 @@ var bgData = {
 var appData = window.appData = module.exports = {
   styles: styles,
   tabs: {
-    tabs: [
-      {
-        name: 'View <span class="glyphicon glyphicon-search js-find-view tab-action"></span>',
-        isActive: true,
-        activeTabName: 'showViewTab'
-      },
-      {
-        name: 'Data',
-        isActive: false,
-        activeTabName: 'showModelTab'
-      }
-    ],
+    tabs: [{
+      name: 'View <span class="glyphicon glyphicon-search js-find-view tab-action"></span>',
+      isActive: true,
+      activeTabName: 'showViewTab'
+    }, {
+      name: 'Data',
+      isActive: false,
+      activeTabName: 'showModelTab'
+    }],
     selected: {
       showViewTab: true
     }
@@ -48,7 +45,7 @@ var appData = window.appData = module.exports = {
       bgData.lastName = name;
       bgData.counter = (bgData.counter + 1) % bgData.colors.length;
     }
-      return bgData.colors[bgData.counter];
+    return bgData.colors[bgData.counter];
   },
   selectView: function(viewWrapper) {
     if (appData.selectedView) {

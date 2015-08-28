@@ -23,7 +23,7 @@ var BaseModel = Backbone.Model.extend({
     var relations = _.result(this, 'relations') || {};
     if (derived) {
       var self = this;
-      _.each(derived, function (props, name) {
+      _.each(derived, function(props, name) {
         // Check if a collection relation is declared
         var isCollection = false;
         if (relations[name] && relations[name].tungstenCollection) {

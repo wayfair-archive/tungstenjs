@@ -229,7 +229,7 @@ function renderVdom(template, context, partials, parentView, firstRender) {
     // <!-- comment -->
     case ractiveTypes.COMMENT:
       return new HTMLCommentWidget(renderVdom(template.c, context, partials, parentView, firstRender));
-    // {{value}} or {{{value}}} or {{& value}}
+      // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
     case ractiveTypes.TRIPLE:
       value = context.lookup(Context.getInterpolatorKey(template));
@@ -243,7 +243,7 @@ function renderVdom(template, context, partials, parentView, firstRender) {
       }
       return '';
 
-    // {{> partial}}
+      // {{> partial}}
     case ractiveTypes.PARTIAL:
       var partialName = Context.getInterpolatorKey(template);
       result = null;
@@ -259,7 +259,7 @@ function renderVdom(template, context, partials, parentView, firstRender) {
       }
       return result;
 
-    // {{# section}} or {{^ unless}}
+      // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
       value = Context.parseValue(context.lookup(Context.getInterpolatorKey(template)));
       if (template.n === ractiveTypes.SECTION_UNLESS) {
@@ -285,7 +285,7 @@ function renderVdom(template, context, partials, parentView, firstRender) {
       }
       break;
 
-    // DOM node
+      // DOM node
     case ractiveTypes.ELEMENT:
       var properties = {
         // Defaulting contentEditable to 'inherit'

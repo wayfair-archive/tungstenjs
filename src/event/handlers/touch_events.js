@@ -30,8 +30,6 @@ if (typeof document.createEvent === 'function') {
   var _ = require('underscore');
 
   // some helpers borrowed from https://github.com/WebReflection/ie-touch
-  var msPointerEnabled = !!navigator.pointerEnabled || navigator.msPointerEnabled;
-  var isTouch = (!!('ontouchstart' in window) && navigator.userAgent.indexOf('PhantomJS') < 0) || msPointerEnabled;
   var msEventType = function(type) {
     var lo = type.toLowerCase(),
       ms = 'MS' + type;

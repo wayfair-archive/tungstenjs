@@ -9,7 +9,6 @@
 'use strict';
 
 var isArray = require('../utils/is_array');
-var _ = require('underscore');
 var IS_DEV = require('../tungsten.js').IS_DEV;
 
 /**

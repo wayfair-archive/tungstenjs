@@ -38,8 +38,12 @@ var BaseModel = AmpersandModel.extend({
   postInitialize: function() {},
 
   reset: function(attrs, options) {
-    var opts = _.extend({reset:true}, options);
-    var currentKeys = this.getAttributes({props: true}, true);
+    var opts = _.extend({
+      reset: true
+    }, options);
+    var currentKeys = this.getAttributes({
+      props: true
+    }, true);
     currentKeys = currentKeys.concat(_.keys(this._children));
     currentKeys = currentKeys.concat(_.keys(this._collections));
     var key;
