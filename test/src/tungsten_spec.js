@@ -3,9 +3,7 @@
  *
  * @author    Andrew Rota <anrota@wayfair.com>
  */
-/* global describe, it, expect, require */
-/*eslint-disable no-undef */
-/*eslint-env node, jasmine */
+/* global describe, it, require */
 'use strict';
 
 // Include Chai assertion library
@@ -13,29 +11,56 @@ var expect = require('chai').expect;
 
 
 // Module to test is tungsten.js
-var tungsten = require('../dist/tungsten.test.js');
+var tungsten = require('../../dist/tungsten.test.js');
 
 // Start test suite
 describe('tungsten.js public API', function() {
+  describe('VERSION', function() {
+    it('should be a numeric string', function() {
+      expect(tungsten.VERSION).to.be.a('string');
+      expect(tungsten.VERSION).to.match(/^\d+\.\d+\.\d+$/);
+    });
+  });
+  describe('IS_DEV', function() {
+    it('should be a boolean', function() {
+      expect(tungsten.IS_DEV).to.be.a('boolean');
+    });
+  });
+  describe('addEventPlugin', function() {
+    it('should be a function', function() {
+      expect(tungsten.addEventPlugin).to.be.a('function');
+    });
+  });
   describe('bindEvent', function() {
     it('should be a function', function() {
-      expect(typeof tungsten.bindEvent).to.equal('function');
+      expect(tungsten.bindEvent).to.be.a('function');
     });
   });
   describe('unbindEvent', function() {
     it('should be a function', function() {
-      expect(typeof tungsten.unbindEvent).to.equal('function');
+      expect(tungsten.unbindEvent).to.be.a('function');
     });
   });
+
+  describe('parseString', function() {
+    it('should be a function', function() {
+      expect(tungsten.parseString).to.be.a('function');
+    });
+    // @TODO test accuracy of returned VDOM
+  });
+  describe('parseDOM', function() {
+    it('should be a function', function() {
+      expect(tungsten.parseDOM).to.be.a('function');
+    });
+    // @TODO test accuracy of returned VDOM
+  });
+
   describe('toDOM', function() {
     it('should be a function', function() {
-      expect(typeof tungsten.toDOM).to.equal('function');
+      expect(tungsten.toDOM).to.be.a('function');
     });
     it('should return document fragment', function() {
-      var props = {
-        className: ' js-dom',
-        style: {}
-      };
+      var props = {className: ' js-dom', style: {}};
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       var dom = tungsten.toDOM(vNode);
@@ -46,33 +71,22 @@ describe('tungsten.js public API', function() {
   });
   describe('toString', function() {
     it('should be a function', function() {
-      expect(typeof tungsten.toString).to.equal('function');
+      expect(tungsten.toString).to.be.a('function');
     });
     it('should return a string', function() {
-      var props = {
-        className: ' js-dom',
-        style: {}
-      };
+      var props = {className: ' js-dom', style: {}};
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       expect(typeof tungsten.toString(vNode)).to.equal('string');
     });
     it('should return a DOM string', function() {
-      var props = {
-        className: ' js-dom',
-        style: {}
-      };
+      var props = {className: ' js-dom', style: {}};
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       expect(tungsten.toString(vNode)).to.equal('<div class=" js-dom" style=""></div>');
     });
     it('should return a DOM string with styles', function() {
-      var props = {
-        className: ' js-dom',
-        style: {
-          color: 'red'
-        }
-      };
+      var props = {className: ' js-dom', style: {color: 'red'}};
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       expect(tungsten.toString(vNode)).to.equal('<div class=" js-dom" style="color: red;"></div>');
@@ -80,26 +94,19 @@ describe('tungsten.js public API', function() {
   });
   describe('createVNode', function() {
     it('should be a function', function() {
-      expect(typeof tungsten.createVNode).to.equal('function');
+      expect(tungsten.createVNode).to.be.a('function');
     });
     it('should return a vnode', function() {
-      var props = {
-        className: ' js-root',
-        style: {}
-      };
+      var props = {className: ' js-root', style: {}};
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       expect(vNode.tagName).to.equal('DIV');
-      expect(vNode.properties).to.deep.equal({
-        className: ' js-root',
-        style: {}
-      });
+      expect(vNode.properties).to.deep.equal({className: ' js-root', style: {}});
     });
   });
   describe('updateTree', function() {
     it('should be a function', function() {
-      expect(typeof tungsten.updateTree).to.equal('function');
+      expect(tungsten.updateTree).to.be.a('function');
     });
   });
 });
-/*eslint-enable no-undef */
