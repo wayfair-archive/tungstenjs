@@ -85,6 +85,7 @@ function toHtmlViaVdom(templateStr, data, partials) {
   var docFrag = vdomToDom(template.toVdom(data));
   return domToString(docFrag.childNodes);
 }
+toHtmlViaVdom.suiteName = 'Vdom Stack';
 toHtmlViaVdom.parsesTriple = true;
 toHtmlViaVdom.entities = {
   escaped: {
@@ -105,6 +106,7 @@ function toHtmlViaDom(templateStr, data, partials) {
   var template = getTemplate(templateStr, partials);
   return domToString(template.toDom(data));
 }
+toHtmlViaDom.suiteName = 'Dom Stack';
 toHtmlViaDom.parsesTriple = true;
 toHtmlViaDom.entities = {
   escaped: {
@@ -125,6 +127,7 @@ function toHtmlViaString(templateStr, data, partials) {
   var template = getTemplate(templateStr, partials);
   return template.toString(data);
 }
+toHtmlViaString.suiteName = 'HtmlString Stack';
 toHtmlViaString.parsesTriple = false;
 toHtmlViaString.entities = {
   escaped: {
@@ -140,6 +143,13 @@ toHtmlViaString.entities = {
     quote: '"'
   }
 };
+
+function compileOnly(templateStr) {
+  return getTemplate(templateStr, {}).templateObj;
+}
+toHtmlViaString.compile = compileOnly;
+toHtmlViaDom.compile = compileOnly;
+toHtmlViaVdom.compile = compileOnly;
 
 var specs = require('./get_template_spec_for_renderer');
 specs(toHtmlViaString);
