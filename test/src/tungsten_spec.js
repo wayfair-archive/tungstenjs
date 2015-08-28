@@ -6,10 +6,6 @@
 /* global describe, it, require */
 'use strict';
 
-// Include Chai assertion library
-var expect = require('chai').expect;
-
-
 // Module to test is tungsten.js
 var tungsten = require('../../dist/tungsten.test.js');
 

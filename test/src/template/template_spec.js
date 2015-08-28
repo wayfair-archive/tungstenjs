@@ -32,9 +32,6 @@
 //   Additionally, current compiler will only output valid HTML so {{{}}} don't leave character literals
 // Tests whose expected value have been changed are marked with "@adjusted"
 
-// Include Chai assertion library
-var expect = require('chai').expect;
-
 // Use Backbone adaptor
 var Context = require('../../../src/template/template_context');
 var compiler = require('../../../precompile/tungsten_template/inline');
