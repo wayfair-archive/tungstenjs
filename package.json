@@ -12,11 +12,9 @@
   "main": "tungsten.js",
   "scripts": {
     "jasmine": "node node_modules/jasmine/bin/jasmine JASMINE_CONFIG_PATH=test/jasmine.json",
-    "test-debug": "npm run build-test-debug && npm run jasmine",
     "pretest": "npm run eslint && npm run jscs",
-    "test": "npm run build-test && npm run jasmine",
-    "build-test": "webpack  ./src/tungsten ./dist/tungsten.test.js --config webpack.test.config.js",
-    "build-test-debug": "webpack  ./src/tungsten ./dist/tungsten.test.js --config webpack.test.config.js --dev",
+    "test": "npm run tests",
+    "tests": "node ./test/build.js && npm run jasmine",
     "build-bb-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/backbone ./dist/tungsten.backbone.js -d",
     "build-bb-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p",
     "build-ampersand-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.js -d",

@@ -3,11 +3,11 @@
  *
  * @author    Andrew Rota <anrota@wayfair.com>
  */
-/* global describe, it, require */
+/* global describe, it, expect, require */
 'use strict';
 
 // Module to test is tungsten.js
-var tungsten = require('../../dist/tungsten.test.js');
+var tungsten = require('../../src/tungsten');
 
 // Start test suite
 describe('tungsten.js public API', function() {
