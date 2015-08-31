@@ -53,7 +53,7 @@ module.exports = function(config, dev) {
   }
   ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
   ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
-  ensureLoader(config.module.loaders, /tungstenjs[0-9a-zA-Z_\-\\\/]*\.js$/, 'babel');
+  ensureLoader(config.module.loaders, /tungstenjs[\\\/].*\.js$/, 'babel');
 
   return config;
 };
