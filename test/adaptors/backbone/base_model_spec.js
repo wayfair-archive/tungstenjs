@@ -3,7 +3,7 @@
 var BaseModel = require('../../../adaptors/backbone/base_model');
 var Backbone = require('backbone');
 
-describe('base_view.js public api', function () {
+describe('base_model.js public api', function () {
   describe('extend', function () {
     it('should be a function', function () {
       expect(BaseModel.extend).to.be.a('function');
