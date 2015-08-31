@@ -83,7 +83,7 @@ describe('base_model.js constructed api', function () {
       expect(BaseModel.prototype.reset.length).to.equal(2);
     });
   });
-  
+
   /* develblock:start */
   describe('initDebug', function() {
     it('should be a function', function() {
