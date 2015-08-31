@@ -2,7 +2,7 @@
 
 var path = require('path');
 
-function ensureLoader(loaders, test, loader, exclude) {
+function ensureLoader(loaders, test, loader) {
   for (var i = 0; i < loaders.length; i++) {
     var l = loaders[i];
     if (l.test.source === test.source && l.loader === loader) {
@@ -11,8 +11,7 @@ function ensureLoader(loaders, test, loader, exclude) {
   }
   loaders.push({
     test: test,
-    loader: loader,
-    exclude: exclude
+    loader: loader
   });
 }
 
