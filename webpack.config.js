@@ -29,9 +29,9 @@ module.exports = {
     ],
     loaders: [
       {
-        test: /\.jsx?$/,
+        test: /\.js$/,
         loader: 'babel',
-        exclude: /(node_modules|bower_components)/
+        exclude: /node_modules/
       },
       {test: /\.mustache$/, loader: 'tungsten_template'},
       {test: /\.json$/, loader: 'json-loader'}
