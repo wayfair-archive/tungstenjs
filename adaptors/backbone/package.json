@@ -1,0 +1,16 @@
+{
+  "name": "tungstenjs-backbone-adaptor",
+  "version": "0.5.3",
+  "description": "Backbone API adaptor for Tungsten.js",
+  "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "backbone": "^1.1.2",
+    "backbone.native": "~1.0.0",
+    "underscore": "^1.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wayfair/tungstenjs.git"
+  }
+}

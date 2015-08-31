@@ -26,16 +26,10 @@
     "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r"
   },
   "dependencies": {
-    "ampersand-collection": "^1.4.5",
-    "ampersand-model": "^5.0.3",
-    "ampersand-view": "^7.3.0",
-    "backbone": "^1.1.2",
-    "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
     "html-tokenizer": "^1.4.4",
     "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
-    "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
     "webpack-strip-block": "0.0.1",
     "x-is-array": "^0.1.0"
@@ -43,6 +37,12 @@
   "devDependencies": {
     "chai": "^2.2.0",
     "eslint": "^1.2.1",
+    "ampersand-collection": "^1.4.5",
+    "ampersand-model": "^5.0.3",
+    "ampersand-view": "^7.3.0",
+    "backbone": "^1.1.2",
+    "backbone.native": "~1.0.0",
+    "underscore": "^1.7.0",
     "express": "^4.13.3",
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",
@@ -52,6 +52,9 @@
     "jsdom-nogyp": "^0.8.3",
     "mkdirp": "~0.5.0",
     "opener": "^1.4.1",
+    "readline-sync": "^1.2.21",
+    "semver": "^5.0.1",
+    "shelljs": "^0.5.3",
     "webpack": "^1.5.1",
     "webpack-dev-middleware": "^1.2.0"
   },
