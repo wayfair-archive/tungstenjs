@@ -1,7 +1,8 @@
 'use strict';
 
-var BaseView = require('../../../adaptors/backbone/base_view');
-var Backbone = require('backbone');
+var BackboneAdaptor = require('../../../adaptors/backbone');
+var BaseView = BackboneAdaptor.View;
+var Backbone = BackboneAdaptor.Backbone;
 
 describe('base_view.js public api', function () {
   describe('extend', function () {

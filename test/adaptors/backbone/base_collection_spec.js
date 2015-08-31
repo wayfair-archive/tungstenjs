@@ -1,7 +1,8 @@
 'use strict';
 
-var BaseCollection = require('../../../adaptors/backbone/base_collection');
-var Backbone = require('backbone');
+var BackboneAdaptor = require('../../../adaptors/backbone');
+var BaseCollection = BackboneAdaptor.Collection;
+var Backbone = BackboneAdaptor.Backbone;
 
 describe('base_collection.js public api', function () {
   describe('extend', function () {

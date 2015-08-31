@@ -1,7 +1,8 @@
 'use strict';
 
-var BaseModel = require('../../../adaptors/backbone/base_model');
-var Backbone = require('backbone');
+var BackboneAdaptor = require('../../../adaptors/backbone');
+var BaseModel = BackboneAdaptor.Model;
+var Backbone = BackboneAdaptor.Backbone;
 
 describe('base_model.js public api', function () {
   describe('extend', function () {
