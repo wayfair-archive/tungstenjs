@@ -126,7 +126,7 @@ RegistryWrapper.prototype.getChildren = function() {
   if (typeof this.obj.getChildren !== 'function') {
     return [];
   }
-  var children =  this.obj.getChildren();
+  var children = this.obj.getChildren();
   var registry = RegistryWrapper.flatRegistry[this.type];
   var result = new Array(children.length);
   for (var i = 0; i < children.length; i++) {

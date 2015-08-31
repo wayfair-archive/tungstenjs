@@ -19,7 +19,7 @@
                 tabName: tabName,
                 collapsed: w.hiddenPanels[tabName],
                 model: w.selectedModel,
-                settings: {},
+                settings: w.settings,
                 partials: w.partials
               }))
             }

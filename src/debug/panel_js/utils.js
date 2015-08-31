@@ -4,6 +4,7 @@ var _ = require('underscore');
 var logger = require('../../utils/logger');
 
 var debugWindow;
+
 function setDebugWindow(panel) {
   debugWindow = panel;
 }
@@ -55,7 +56,7 @@ function selectElements(className, docToSearch) {
     var pattern = new RegExp('(^|\\s)' + className + '(\\s|$)');
     var results = [];
     for (var i = 0; i < elements.length; i++) {
-      if ( pattern.test(elements[i].className) ) {
+      if (pattern.test(elements[i].className)) {
         results.push(elements[i]);
       }
     }
@@ -110,6 +111,7 @@ function addListener(obj, eventName) {
   obj.on(eventName, listener);
   return listener;
 }
+
 function removeListener(obj, name, listener) {
   obj.off(name, listener);
 }

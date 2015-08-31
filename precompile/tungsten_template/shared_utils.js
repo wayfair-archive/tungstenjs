@@ -1,7 +1,7 @@
 'use strict';
 
 var Ractive = require('ractive');
-
+var logger = require('../../src/utils/logger');
 var ractiveTypes = require('../../src/template/ractive_types');
 
 /**
@@ -48,7 +48,7 @@ module.exports.findPartials = function(template, partials) {
       partials[partialName] = true;
       break;
 
-    // Element or Sections should be iterated into
+      // Element or Sections should be iterated into
     case ractiveTypes.ELEMENT:
     case ractiveTypes.SECTION:
       module.exports.findPartials(template.f, partials);
@@ -73,8 +73,8 @@ module.exports.compileTemplate = function(contents, srcFile) {
       preserveWhitespace: true
     });
   } catch (ex) {
-    console.log('Unable to parse ' + (srcFile || contents));
-    console.log(ex.message);
+    logger.log('Unable to parse ' + (srcFile || contents));
+    logger.log(ex.message);
     process.exit(1);
   }
 
@@ -103,7 +103,7 @@ module.exports.handleDynamicComments = function(template) {
       template.c = parsed.t;
       break;
 
-    // Element or Sections should be iterated into
+      // Element or Sections should be iterated into
     case ractiveTypes.ELEMENT:
     case ractiveTypes.SECTION:
       module.exports.handleDynamicComments(template.f);
