@@ -37,6 +37,7 @@
     "ractive": "^0.6.1",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
+    "webpack-strip-block": "0.0.1",
     "x-is-array": "^0.1.0"
   },
   "devDependencies": {
@@ -52,8 +53,7 @@
     "mkdirp": "~0.5.0",
     "opener": "^1.4.1",
     "webpack": "^1.5.1",
-    "webpack-dev-middleware": "^1.2.0",
-    "webpack-strip-block": "0.0.1"
+    "webpack-dev-middleware": "^1.2.0"
   },
   "directories": {
     "example": "./examples",
