@@ -11,6 +11,11 @@ var debugConfig = webpackHelper({
   output: {
     filename: __dirname + '/test.debug',
     libraryTarget: 'commonjs2'
+  },
+  resolve: {
+    alias: {
+      'jquery': 'backbone.native'
+    }
   }
 }, true);
 
@@ -19,6 +24,11 @@ var prodConfig = webpackHelper({
   output: {
     filename: __dirname + '/test.prod',
     libraryTarget: 'commonjs2'
+  },
+  resolve: {
+    alias: {
+      'jquery': 'backbone.native'
+    }
   }
 }, false);
 
