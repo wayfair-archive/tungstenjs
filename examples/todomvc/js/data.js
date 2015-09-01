@@ -1,9 +1,5 @@
 (function() {
   var data = {
-    'todoItems': [{'title': 'lorem ipsum'}, {'title': 'foo'}],
-    'hasTodos': true,
-    'todoCount': 2,
-    'todoCountPlural': true,
     'filters': [
       {
         name: 'All',

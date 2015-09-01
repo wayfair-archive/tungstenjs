@@ -5,7 +5,7 @@
     <input placeholder="What needs to be done?" type="text" autofocus="true" class="new-todo js-new-todo">
   </header>
   <section class="main">
-    <input class="toggle-all js-toggle-all" type="checkbox">
+    <input class="toggle-all js-toggle-all" type="checkbox" {{#allCompleted}}checked="checked"{{/allCompleted}}>
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list js-todo-list">
       {{#todoItems}}

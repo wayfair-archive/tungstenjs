@@ -42,6 +42,16 @@ var AppModel = Model.extend({
         });
       }
     },
+    allCompleted: {
+      deps: ['todoItems'],
+      fn: function() {
+        if (this.get('todoItems').length) {
+          return this.get('todoItems').every(function(item) {
+            return item.get('completed');
+          });
+        }
+      }
+    },
     todoCount: {
       deps: ['incompletedItems'],
       fn: function() {
