@@ -81,7 +81,7 @@ function render(stack, template, context, partials, parentView) {
       stack.createObject(new template.constructor(template.template, template.childView, context, parentView));
     } else {
       // If we aren't in the context of a view, just render out the widget without attaching the child view
-      template.template._render(null, context, null, null, stack);
+      template.template._iterate(null, context, null, null, stack);
     }
     return;
   }
@@ -117,9 +117,9 @@ function render(stack, template, context, partials, parentView) {
       var partialName = Context.getInterpolatorKey(template);
       if (partials[partialName]) {
         var partialTemplate = partials[partialName];
-        if (partialTemplate._render) {
+        if (partialTemplate._iterate) {
           // @Todo determine if using partial context is necessary
-          partialTemplate._render(null, context, parentView, partials, stack);
+          partialTemplate._iterate(null, context, parentView, partials, stack);
         } else {
           render(stack, partialTemplate, context, partials[partialName].partials || partials, parentView);
         }
@@ -174,9 +174,8 @@ function render(stack, template, context, partials, parentView) {
       var elem = stack.openElement(template.e, properties);
 
       // Recuse into the elements' children
-      var children = [];
       if (template.f) {
-        children = render(stack, template.f, context, partials, parentView);
+        render(stack, template.f, context, partials, parentView);
       }
 
       stack.closeElement(elem);

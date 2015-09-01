@@ -40,14 +40,18 @@ Template.prototype.register = function(partialName) {
   registeredPartials[partialName] = this.templateObj;
 };
 
-Template.prototype._render = function(template, data, view, partials, stack) {
-  var context = (data && data.constructor && data instanceof Context) ? data : new Context(data);
+Template.prototype._iterate = function(template, context, view, partials, stack) {
   ractiveAdaptor.render(
     stack,
     template || this.templateObj,
     context,
     partials || registeredPartials,
-    view);
+    view
+  );
+};
+Template.prototype._render = function(template, data, view, partials, stack) {
+  var context = (data && data.constructor && data instanceof Context) ? data : new Context(data);
+  this._iterate(template, context, view, partials, stack);
   return stack.getOutput();
 };
 
