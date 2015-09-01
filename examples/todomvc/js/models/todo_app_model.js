@@ -35,7 +35,7 @@ var AppModel = Model.extend({
       }
     },
     incompletedItems: {
-      deps: ['todoItems:completed'],
+      deps: ['todoItems'],
       fn: function() {
         return this.get('todoItems').filter(function(item) {
           return !item.get('completed');
