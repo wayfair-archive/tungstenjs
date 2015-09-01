@@ -127,9 +127,9 @@ function equal(actual, expected) {
   expect(actual).to.equal(expected);
 }
 
-function notEqual(actual, expected) {
-  expect(actual).to.not.equal(expected);
-}
+// function notEqual(actual, expected) {
+//   expect(actual).to.not.equal(expected);
+// }
 
 function strictEqual(actual, expected) {
   expect(actual).to.equal(expected);
@@ -181,7 +181,7 @@ describe('base_model.js backbone functionality', function() {
     equal(model.collection, collection);
   });
   // failing
-  //it('initialize with attributes and options', function() {
+  // it('initialize with attributes and options', function() {
   //  var Model = BaseModel.extend({
   //    postInitialize: function(attributes, options) {
   //      this.one = options.one;
@@ -282,7 +282,6 @@ describe('base_model.js backbone functionality', function() {
       'bar': 'b',
       'baz': 'c'
     });
-    var model2 = model.clone();
     deepEqual(model.keys(), ['foo', 'bar', 'baz']);
     deepEqual(model.values(), ['a', 'b', 'c']);
     deepEqual(model.invert(), {
@@ -466,7 +465,7 @@ describe('base_model.js backbone functionality', function() {
     strictEqual(model.matches(function(attr) {
       return attr.a > 1 && attr.b != null;
     }), true);
-  })
+  });
 
   it('set and unset', function() {
     var a = new BaseModel({
@@ -825,7 +824,9 @@ describe('base_model.js backbone functionality', function() {
     var lastError;
     var model = new BaseModel();
     model.validate = function(attrs) {
-      if (attrs.admin != this.get('admin')) return 'Can\'t change admin status.';
+      if (attrs.admin != this.get('admin')) {
+        return 'Can\'t change admin status.';
+      }
     };
     model.on('invalid', function(model, error) {
       lastError = error;
@@ -882,12 +883,14 @@ describe('base_model.js backbone functionality', function() {
   });
 
   it('validate with error callback', function() {
-    var lastError, boundError;
+    var boundError;
     var model = new BaseModel();
     model.validate = function(attrs) {
-      if (attrs.admin) return 'Can\'t change admin status.';
+      if (attrs.admin) {
+        return 'Can\'t change admin status.';
+      }
     };
-    model.on('invalid', function(model, error) {
+    model.on('invalid', function() {
       boundError = true;
     });
     var result = model.set({
@@ -912,16 +915,14 @@ describe('base_model.js backbone functionality', function() {
   });
 
   it('defaults always extend attrs (#459)', function() {
-    var Defaulted = BaseModel.extend({
+    BaseModel.extend({
       defaults: {
         one: 1
       },
-      postInitialize: function(attrs, opts) {
+      postInitialize: function() {
         equal(this.attributes.one, 1);
       }
     });
-    var providedattrs = new Defaulted({});
-    var emptyattrs = new Defaulted();
   });
   // failing
   // it('Inherit class properties', function() {
@@ -973,8 +974,8 @@ describe('base_model.js backbone functionality', function() {
         a: null
       });
     model.on('change', function() {
-        ok(this.hasChanged('a'));
-      })
+      ok(this.hasChanged('a'));
+    })
       .on('change:a', function() {
         changed++;
       })
@@ -1102,7 +1103,7 @@ describe('base_model.js backbone functionality', function() {
     model.sync = function() {};
     model.validate = function() {
       ++times;
-    }
+    };
     model.save({});
     equal(times, 1);
   });
@@ -1422,16 +1423,14 @@ describe('base_model.js backbone functionality', function() {
   });
 
   it('#1545 - `undefined` can be passed to a model constructor without coersion', function() {
-    var Model = BaseModel.extend({
+    BaseModel.extend({
       defaults: {
         one: 1
       },
-      postInitialize: function(attrs, opts) {
+      postInitialize: function(attrs) {
         equal(attrs, undefined);
       }
     });
-    var emptyattrs = new Model();
-    var undefinedattrs = new Model(undefined);
   });
 
   // failing
@@ -1483,13 +1482,12 @@ describe('base_model.js backbone functionality', function() {
   it('#1791 - `attributes` is available for `parse`', function() {
     var Model = BaseModel.extend({
       parse: function() {
-          this.has('a');
-        } // shouldn\'t throw an error
+        this.has('a');
+      } // shouldn\'t throw an error
     });
-    var model = new Model(null, {
+    new Model(null, {
       parse: true
     });
-    expect(0);
   });
 
   it('silent changes in last `change` event back to original triggers change', function() {
@@ -1547,7 +1545,9 @@ describe('base_model.js backbone functionality', function() {
       valid: true
     });
     model.validate = function(attrs) {
-      if (!attrs.valid) return 'invalid';
+      if (!attrs.valid) {
+        return 'invalid';
+      }
     };
     equal(model.isValid(), true);
     equal(model.set({
@@ -1574,7 +1574,9 @@ describe('base_model.js backbone functionality', function() {
   it('#1961 - Creating a model with {validate:true} will call validate and use the error callback', function() {
     var Model = BaseModel.extend({
       validate: function(attrs) {
-        if (attrs.id === 1) return 'This shouldn\'t happen';
+        if (attrs.id === 1) {
+          return 'This shouldn\'t happen';
+        }
       }
     });
     var model = new Model({
