@@ -4,12 +4,12 @@ var BackboneAdaptor = require('../../../adaptors/backbone');
 var BaseCollection = BackboneAdaptor.Collection;
 var Backbone = BackboneAdaptor.Backbone;
 
-describe('base_collection.js public api', function () {
-  describe('extend', function () {
-    it('should be a function', function () {
+describe('base_collection.js public api', function() {
+  describe('extend', function() {
+    it('should be a function', function() {
       expect(BaseCollection.extend).to.be.a('function');
     });
-    it('should accept two arguments', function () {
+    it('should accept two arguments', function() {
       expect(BaseCollection.extend.length).to.equal(2);
     });
     it('should be different than Backbone\'s', function() {
@@ -18,7 +18,7 @@ describe('base_collection.js public api', function () {
   });
 });
 
-describe('base_collection.js constructed api', function () {
+describe('base_collection.js constructed api', function() {
   describe('postInitialize', function() {
     it('should be a function', function() {
       expect(BaseCollection.prototype.postInitialize).to.be.a('function');

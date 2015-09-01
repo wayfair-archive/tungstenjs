@@ -61,12 +61,16 @@ describe('events_core.js public API', function() {
     });
 
     it('should return an array of js- classes', function() {
-      var classes = eventsCore.getActiveClasses({className: 'js-test1 test2 js-test3'});
+      var classes = eventsCore.getActiveClasses({
+        className: 'js-test1 test2 js-test3'
+      });
       expect(classes).to.be.instanceof(Array);
       expect(classes.length).to.equal(2);
       expect(classes).members(['js-test1', 'js-test3']);
 
-      classes = eventsCore.getActiveClasses({className: 'test1 test2 test3'});
+      classes = eventsCore.getActiveClasses({
+        className: 'test1 test2 test3'
+      });
       expect(classes).to.be.instanceof(Array);
       expect(classes.length).to.equal(0);
     });

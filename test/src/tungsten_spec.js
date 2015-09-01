@@ -56,7 +56,10 @@ describe('tungsten.js public API', function() {
       expect(tungsten.toDOM).to.be.a('function');
     });
     it('should return document fragment', function() {
-      var props = {className: ' js-dom', style: {}};
+      var props = {
+        className: ' js-dom',
+        style: {}
+      };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       var dom = tungsten.toDOM(vNode);
@@ -70,19 +73,30 @@ describe('tungsten.js public API', function() {
       expect(tungsten.toString).to.be.a('function');
     });
     it('should return a string', function() {
-      var props = {className: ' js-dom', style: {}};
+      var props = {
+        className: ' js-dom',
+        style: {}
+      };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       expect(typeof tungsten.toString(vNode)).to.equal('string');
     });
     it('should return a DOM string', function() {
-      var props = {className: ' js-dom', style: {}};
+      var props = {
+        className: ' js-dom',
+        style: {}
+      };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       expect(tungsten.toString(vNode)).to.equal('<div class=" js-dom" style=""></div>');
     });
     it('should return a DOM string with styles', function() {
-      var props = {className: ' js-dom', style: {color: 'red'}};
+      var props = {
+        className: ' js-dom',
+        style: {
+          color: 'red'
+        }
+      };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       expect(tungsten.toString(vNode)).to.equal('<div class=" js-dom" style="color: red;"></div>');
@@ -93,11 +107,17 @@ describe('tungsten.js public API', function() {
       expect(tungsten.createVNode).to.be.a('function');
     });
     it('should return a vnode', function() {
-      var props = {className: ' js-root', style: {}};
+      var props = {
+        className: ' js-root',
+        style: {}
+      };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
       expect(vNode.tagName).to.equal('DIV');
-      expect(vNode.properties).to.deep.equal({className: ' js-root', style: {}});
+      expect(vNode.properties).to.deep.equal({
+        className: ' js-root',
+        style: {}
+      });
     });
   });
   describe('updateTree', function() {

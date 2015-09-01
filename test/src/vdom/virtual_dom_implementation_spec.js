@@ -10,11 +10,20 @@ describe('virtual_dom_implementation public API', function() {
     node = new virtualDomImplementation.VNode('div', {}, []);
     // VTexts are an object created with the VText constructor
     text = new virtualDomImplementation.VText('text');
-    widget = {type: 'Widget'};
+    widget = {
+      type: 'Widget'
+    };
     // Hooks are objects with a prototype property named hook and/or unhook
-    hook1 = Object.create({hook: function() {}});
-    hook2 = Object.create({unhook: function() {}});
-    hook3 = Object.create({hook: function() {}, unhook: function() {}});
+    hook1 = Object.create({
+      hook: function() {}
+    });
+    hook2 = Object.create({
+      unhook: function() {}
+    });
+    hook3 = Object.create({
+      hook: function() {},
+      unhook: function() {}
+    });
   });
   describe('VNode', function() {
     it('should be a function', function() {

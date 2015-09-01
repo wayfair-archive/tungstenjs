@@ -4,12 +4,12 @@ var AmpersandAdaptor = require('../../../adaptors/ampersand');
 var BaseView = AmpersandAdaptor.View;
 var Ampersand = AmpersandAdaptor.Ampersand;
 
-describe('base_view.js public api', function () {
-  describe('extend', function () {
-    it('should be a function', function () {
+describe('base_view.js public api', function() {
+  describe('extend', function() {
+    it('should be a function', function() {
       expect(BaseView.extend).to.be.a('function');
     });
-    it('should accept one argument', function () {
+    it('should accept one argument', function() {
       expect(BaseView.extend.length).to.equal(1);
     });
     it('should be different than Ampersand\'s', function() {
@@ -17,14 +17,14 @@ describe('base_view.js public api', function () {
     });
   });
 
-  describe('tungstenView', function () {
+  describe('tungstenView', function() {
     it('should be set', function() {
       expect(BaseView.tungstenView).to.be.true;
     });
   });
 });
 
-describe('base_view.js constructed api', function () {
+describe('base_view.js constructed api', function() {
   describe('tungstenViewInstance', function() {
     it('should be set', function() {
       expect(BaseView.prototype.tungstenViewInstance).to.be.true;

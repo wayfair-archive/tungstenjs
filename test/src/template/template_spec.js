@@ -602,7 +602,9 @@ describe('Context Stack', function() {
           field_values: ['etc', 'etc', 'etc']
         }]
       }
-    ), '<tr><td><a href="?view=alpha">my</a></td><td><a href="?view=alpha">very</a></td><td><a href="?view=alpha">own</a></td><td><a href="?view=alpha">table</a></td></tr><tr></tr><tr><td><a href="?view=delta">etc</a></td><td><a href="?view=delta">etc</a></td><td><a href="?view=delta">etc</a></td></tr>', 'Correct stack-based interpolation.'
+    ),
+    '<tr><td><a href="?view=alpha">my</a></td><td><a href="?view=alpha">very</a></td><td><a href="?view=alpha">own</a></td><td><a href="?view=alpha">table</a></td></tr><tr></tr><tr><td><a href="?view=delta">etc</a></td><td><a href="?view=delta">etc</a></td><td><a href="?view=delta">etc</a></td></tr>',
+    'Correct stack-based interpolation.'
   );
 
   equal(
@@ -711,7 +713,8 @@ describe('Demo', function() {
 
   // var expectedResult = '<h1>Colors</h1>\n  <ul>\n  \n      <li><strong>red</strong></li>\n      <li><a href=\"#Red\">red</a></li>\n        <li><a href=\"#Green\">green</a></li>\n        <li><a href=\"#Blue\">blue</a></li>\n  </ul>\n';
   // @adjusted
-  var expectedResult = '<h1>Colors</h1>\n  <ul>\n  \n      <li><strong>red</strong></li>\n  \n      <li><a href="#Red">red</a></li>\n    \n      <li><a href="#Green">green</a></li>\n    \n      <li><a href="#Blue">blue</a></li>\n  </ul>\n';
+  var expectedResult =
+    '<h1>Colors</h1>\n  <ul>\n  \n      <li><strong>red</strong></li>\n  \n      <li><a href="#Red">red</a></li>\n    \n      <li><a href="#Green">green</a></li>\n    \n      <li><a href="#Blue">blue</a></li>\n  </ul>\n';
 
   equal(
     toHTML(

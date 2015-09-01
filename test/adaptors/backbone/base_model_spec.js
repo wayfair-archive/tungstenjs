@@ -150,7 +150,9 @@ function throws(fn) {
 describe('base_model.js backbone functionality', function() {
   var doc, collection, value = 0;
   var CollectionClass = BackboneAdaptor.Collection.extend({
-    url: function() { return '/collection'; }
+    url: function() {
+      return '/collection';
+    }
   });
   beforeEach(function() {
     doc = new BaseModel({
@@ -172,7 +174,9 @@ describe('base_model.js backbone functionality', function() {
         equal(this.collection, collection);
       }
     });
-    var model = new Model({}, {collection: collection});
+    var model = new Model({}, {
+      collection: collection
+    });
     equal(model.one, 1);
     equal(model.collection, collection);
   });
@@ -185,7 +189,7 @@ describe('base_model.js backbone functionality', function() {
   //  });
   //  var model = new Model({}, {one: 1});
   //  equal(model.one, 1);
- // });
+  // });
 
   it('initialize with parsed attributes', function() {
     var Model = BaseModel.extend({
@@ -194,7 +198,11 @@ describe('base_model.js backbone functionality', function() {
         return attrs;
       }
     });
-    var model = new Model({value: 1}, {parse: true});
+    var model = new Model({
+      value: 1
+    }, {
+      parse: true
+    });
     equal(model.get('value'), 2);
   });
 
@@ -205,7 +213,9 @@ describe('base_model.js backbone functionality', function() {
         last_name: 'Unknown'
       }
     });
-    var model = new Model({'first_name': 'John'});
+    var model = new Model({
+      'first_name': 'John'
+    });
     equal(model.get('first_name'), 'John');
     equal(model.get('last_name'), 'Unknown');
   });
@@ -217,7 +227,11 @@ describe('base_model.js backbone functionality', function() {
         return null;
       }
     });
-    var model = new Model({value: 1}, {parse: true});
+    var model = new Model({
+      value: 1
+    }, {
+      parse: true
+    });
     equal(JSON.stringify(model.toJSON()), '{}');
   });
 
@@ -227,7 +241,9 @@ describe('base_model.js backbone functionality', function() {
     doc.collection.url = '/collection/';
     equal(doc.url(), '/collection/1-the-tempest');
     doc.collection = null;
-    throws(function() { doc.url(); });
+    throws(function() {
+      doc.url();
+    });
     doc.collection = collection;
   });
 
@@ -237,7 +253,9 @@ describe('base_model.js backbone functionality', function() {
     });
     var model = new Model();
     equal(model.url(), '/collection');
-    model.set({id: '+1+'});
+    model.set({
+      id: '+1+'
+    });
     equal(model.url(), '/collection/%2B1%2B');
   });
 
@@ -248,29 +266,54 @@ describe('base_model.js backbone functionality', function() {
       }
     });
 
-    var model = new Model({parent_id: 1});
+    var model = new Model({
+      parent_id: 1
+    });
     equal(model.url(), '/nested/1/collection');
-    model.set({id: 2});
+    model.set({
+      id: 2
+    });
     equal(model.url(), '/nested/1/collection/2');
   });
 
   it('underscore methods', function() {
-    var model = new BaseModel({'foo': 'a', 'bar': 'b', 'baz': 'c'});
+    var model = new BaseModel({
+      'foo': 'a',
+      'bar': 'b',
+      'baz': 'c'
+    });
     var model2 = model.clone();
     deepEqual(model.keys(), ['foo', 'bar', 'baz']);
     deepEqual(model.values(), ['a', 'b', 'c']);
-    deepEqual(model.invert(), {'a': 'foo', 'b': 'bar', 'c': 'baz'});
-    deepEqual(model.pick('foo', 'baz'), {'foo': 'a', 'baz': 'c'});
-    deepEqual(model.omit('foo', 'bar'), {'baz': 'c'});
+    deepEqual(model.invert(), {
+      'a': 'foo',
+      'b': 'bar',
+      'c': 'baz'
+    });
+    deepEqual(model.pick('foo', 'baz'), {
+      'foo': 'a',
+      'baz': 'c'
+    });
+    deepEqual(model.omit('foo', 'bar'), {
+      'baz': 'c'
+    });
   });
 
   it('chain', function() {
-    var model = new BaseModel({a: 0, b: 1, c: 2});
+    var model = new BaseModel({
+      a: 0,
+      b: 1,
+      c: 2
+    });
     deepEqual(model.chain().pick('a', 'b', 'c').values().compact().value(), [1, 2]);
   });
 
   it('clone', function() {
-    var a = new BaseModel({'foo': 1, 'bar': 2, 'baz': 3});
+    var a = new BaseModel({
+      'foo': 1,
+      'bar': 2,
+      'baz': 3
+    });
     var b = a.clone();
     equal(a.get('foo'), 1);
     equal(a.get('bar'), 2);
@@ -278,27 +321,53 @@ describe('base_model.js backbone functionality', function() {
     equal(b.get('foo'), a.get('foo'), 'Foo should be the same on the clone.');
     equal(b.get('bar'), a.get('bar'), 'Bar should be the same on the clone.');
     equal(b.get('baz'), a.get('baz'), 'Baz should be the same on the clone.');
-    a.set({foo: 100});
+    a.set({
+      foo: 100
+    });
     equal(a.get('foo'), 100);
     equal(b.get('foo'), 1, 'Changing a parent attribute does not change the clone.');
 
-    var foo = new BaseModel({p: 1});
-    var bar = new BaseModel({p: 2});
-    bar.set(foo.clone().attributes, {unset: true});
+    var foo = new BaseModel({
+      p: 1
+    });
+    var bar = new BaseModel({
+      p: 2
+    });
+    bar.set(foo.clone().attributes, {
+      unset: true
+    });
     equal(foo.get('p'), 1);
     equal(bar.get('p'), undefined);
   });
 
   it('isNew', function() {
-    var a = new BaseModel({'foo': 1, 'bar': 2, 'baz': 3});
+    var a = new BaseModel({
+      'foo': 1,
+      'bar': 2,
+      'baz': 3
+    });
     ok(a.isNew(), 'it should be new');
-    a = new BaseModel({'foo': 1, 'bar': 2, 'baz': 3, 'id': -5});
+    a = new BaseModel({
+      'foo': 1,
+      'bar': 2,
+      'baz': 3,
+      'id': -5
+    });
     ok(!a.isNew(), 'any defined ID is legal, negative or positive');
-    a = new BaseModel({'foo': 1, 'bar': 2, 'baz': 3, 'id': 0});
+    a = new BaseModel({
+      'foo': 1,
+      'bar': 2,
+      'baz': 3,
+      'id': 0
+    });
     ok(!a.isNew(), 'any defined ID is legal, including zero');
     ok(new BaseModel({}).isNew(), 'is true when there is no id');
-    ok(!new BaseModel({'id': 2}).isNew(), 'is false for a positive integer');
-    ok(!new BaseModel({'id': -5}).isNew(), 'is false for a negative integer');
+    ok(!new BaseModel({
+      'id': 2
+    }).isNew(), 'is false for a positive integer');
+    ok(!new BaseModel({
+      'id': -5
+    }).isNew(), 'is false for a negative integer');
   });
 
   it('get', function() {
@@ -308,11 +377,17 @@ describe('base_model.js backbone functionality', function() {
 
   it('escape', function() {
     equal(doc.escape('title'), 'The Tempest');
-    doc.set({audience: 'Bill & Bob'});
+    doc.set({
+      audience: 'Bill & Bob'
+    });
     equal(doc.escape('audience'), 'Bill &amp; Bob');
-    doc.set({audience: 'Tim > Joan'});
+    doc.set({
+      audience: 'Tim > Joan'
+    });
     equal(doc.escape('audience'), 'Tim &gt; Joan');
-    doc.set({audience: 10101});
+    doc.set({
+      audience: 10101
+    });
     equal(doc.escape('audience'), '10101');
     doc.unset('audience');
     equal(doc.escape('audience'), '');
@@ -351,23 +426,42 @@ describe('base_model.js backbone functionality', function() {
   it('matches', function() {
     var model = new BaseModel();
 
-    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), false);
+    strictEqual(model.matches({
+      'name': 'Jonas',
+      'cool': true
+    }), false);
 
-    model.set({name: 'Jonas', 'cool': true});
+    model.set({
+      name: 'Jonas',
+      'cool': true
+    });
 
-    strictEqual(model.matches({'name': 'Jonas'}), true);
-    strictEqual(model.matches({'name': 'Jonas', 'cool': true}), true);
-    strictEqual(model.matches({'name': 'Jonas', 'cool': false}), false);
+    strictEqual(model.matches({
+      'name': 'Jonas'
+    }), true);
+    strictEqual(model.matches({
+      'name': 'Jonas',
+      'cool': true
+    }), true);
+    strictEqual(model.matches({
+      'name': 'Jonas',
+      'cool': false
+    }), false);
   });
 
   it('matches with predicate', function() {
-    var model = new BaseModel({a: 0});
+    var model = new BaseModel({
+      a: 0
+    });
 
     strictEqual(model.matches(function(attr) {
       return attr.a > 1 && attr.b != null;
     }), false);
 
-    model.set({a: 3, b: true});
+    model.set({
+      a: 3,
+      b: true
+    });
 
     strictEqual(model.matches(function(attr) {
       return attr.a > 1 && attr.b != null;
@@ -375,20 +469,33 @@ describe('base_model.js backbone functionality', function() {
   })
 
   it('set and unset', function() {
-    var a = new BaseModel({id: 'id', foo: 1, bar: 2, baz: 3});
+    var a = new BaseModel({
+      id: 'id',
+      foo: 1,
+      bar: 2,
+      baz: 3
+    });
     var changeCount = 0;
-    a.on('change:foo', function() { changeCount += 1; });
-    a.set({'foo': 2});
+    a.on('change:foo', function() {
+      changeCount += 1;
+    });
+    a.set({
+      'foo': 2
+    });
     ok(a.get('foo') == 2, 'Foo should have changed.');
     ok(changeCount == 1, 'Change count should have incremented.');
-    a.set({'foo': 2}); // set with value that is not new shouldn\'t fire change event
+    a.set({
+      'foo': 2
+    }); // set with value that is not new shouldn\'t fire change event
     ok(a.get('foo') == 2, 'Foo should NOT have changed, still 2');
     ok(changeCount == 1, 'Change count should NOT have incremented.');
 
     a.validate = function(attrs) {
       equal(attrs.foo, void 0, 'validate:true passed while unsetting');
     };
-    a.unset('foo', {validate: true});
+    a.unset('foo', {
+      validate: true
+    });
     equal(a.get('foo'), void 0, 'Foo should have changed');
     delete a.validate;
     ok(changeCount == 2, 'Change count should have incremented for unset.');
@@ -398,7 +505,9 @@ describe('base_model.js backbone functionality', function() {
   });
 
   it('#2030 - set with failed validate, followed by another set triggers change', function() {
-    var attr = 0, main = 0, error = 0;
+    var attr = 0,
+      main = 0,
+      error = 0;
     var Model = BaseModel.extend({
       validate: function(attr) {
         if (attr.x > 1) {
@@ -407,34 +516,68 @@ describe('base_model.js backbone functionality', function() {
         }
       }
     });
-    var model = new Model({x: 0});
-    model.on('change:x', function() { attr++; });
-    model.on('change', function() { main++; });
-    model.set({x: 2}, {validate: true});
-    model.set({x: 1}, {validate: true});
+    var model = new Model({
+      x: 0
+    });
+    model.on('change:x', function() {
+      attr++;
+    });
+    model.on('change', function() {
+      main++;
+    });
+    model.set({
+      x: 2
+    }, {
+      validate: true
+    });
+    model.set({
+      x: 1
+    }, {
+      validate: true
+    });
     deepEqual([attr, main, error], [1, 1, 1]);
   });
 
   it('set triggers changes in the correct order', function() {
     var value = null;
     var model = new BaseModel;
-    model.on('last', function() { value = 'last'; });
-    model.on('first', function() { value = 'first'; });
+    model.on('last', function() {
+      value = 'last';
+    });
+    model.on('first', function() {
+      value = 'first';
+    });
     model.trigger('first');
     model.trigger('last');
     equal(value, 'last');
   });
 
   it('set falsy values in the correct order', function() {
-    var model = new BaseModel({result: 'result'});
+    var model = new BaseModel({
+      result: 'result'
+    });
     model.on('change', function() {
       equal(model.changed.result, void 0);
       equal(model.previous('result'), false);
     });
-    model.set({result: void 0}, {silent: true});
-    model.set({result: null}, {silent: true});
-    model.set({result: false}, {silent: true});
-    model.set({result: void 0});
+    model.set({
+      result: void 0
+    }, {
+      silent: true
+    });
+    model.set({
+      result: null
+    }, {
+      silent: true
+    });
+    model.set({
+      result: false
+    }, {
+      silent: true
+    });
+    model.set({
+      result: void 0
+    });
   });
 
   it('nested set triggers with the correct options', function() {
@@ -459,17 +602,25 @@ describe('base_model.js backbone functionality', function() {
 
   it('multiple unsets', function() {
     var i = 0;
-    var counter = function() { i++; };
-    var model = new BaseModel({a: 1});
+    var counter = function() {
+      i++;
+    };
+    var model = new BaseModel({
+      a: 1
+    });
     model.on('change:a', counter);
-    model.set({a: 2});
+    model.set({
+      a: 2
+    });
     model.unset('a');
     model.unset('a');
     equal(i, 2, 'Unset does not fire an event for missing attributes.');
   });
 
   it('unset and changedAttributes', function() {
-    var model = new BaseModel({a: 1});
+    var model = new BaseModel({
+      a: 1
+    });
     model.on('change', function() {
       ok('a' in model.changedAttributes(), 'changedAttributes should contain unset properties');
     });
@@ -477,8 +628,14 @@ describe('base_model.js backbone functionality', function() {
   });
 
   it('using a non-default id attribute.', function() {
-    var MongoModel = BaseModel.extend({idAttribute: '_id'});
-    var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
+    var MongoModel = BaseModel.extend({
+      idAttribute: '_id'
+    });
+    var model = new MongoModel({
+      id: 'eye-dee',
+      _id: 25,
+      title: 'Model'
+    });
     equal(model.get('id'), 'eye-dee');
     equal(model.id, 25);
     equal(model.isNew(), false);
@@ -492,17 +649,17 @@ describe('base_model.js backbone functionality', function() {
   //     cidPrefix: 'm'
   //   });
   //   var model = new Model();
-//
+  //
   //   equal(model.cid.charAt(0), 'm');
-//
+  //
   //   model = new BaseModel();
   //   equal(model.cid.charAt(0), 'c');
-//
+  //
   //   var Collection = Backbone.Collection.extend({
   //     model: Model
   //   });
   //   var collection = new Collection([{id: 'c5'}, {id: 'c6'}, {id: 'c7'}]);
-//
+  //
   //   equal(collection.get('c6').cid.charAt(0), 'm');
   //   collection.set([{id: 'c6', value: 'test'}], {
   //     merge: true,
@@ -513,30 +670,45 @@ describe('base_model.js backbone functionality', function() {
   // });
 
   it('set an empty string', function() {
-    var model = new BaseModel({name: 'Model'});
-    model.set({name: ''});
+    var model = new BaseModel({
+      name: 'Model'
+    });
+    model.set({
+      name: ''
+    });
     equal(model.get('name'), '');
   });
 
   it('setting an object', function() {
     var model = new BaseModel({
-      custom: {foo: 1}
+      custom: {
+        foo: 1
+      }
     });
     model.on('change', function() {
       ok(1);
     });
     model.set({
-      custom: {foo: 1} // no change should be fired
+      custom: {
+        foo: 1
+      } // no change should be fired
     });
     model.set({
-      custom: {foo: 2} // change event should be fired
+      custom: {
+        foo: 2
+      } // change event should be fired
     });
   });
 
   it('clear', function() {
     var changed;
-    var model = new BaseModel({id: 1, name: 'Model'});
-    model.on('change:name', function() { changed = true; });
+    var model = new BaseModel({
+      id: 1,
+      name: 'Model'
+    });
+    model.on('change:name', function() {
+      changed = true;
+    });
     model.on('change', function() {
       var changedAttrs = model.changedAttributes();
       ok('name' in changedAttrs);
@@ -553,7 +725,9 @@ describe('base_model.js backbone functionality', function() {
         'two': 2
       }
     });
-    var model = new Defaulted({two: undefined});
+    var model = new Defaulted({
+      two: undefined
+    });
     equal(model.get('one'), 1);
     equal(model.get('two'), 2);
     Defaulted = BaseModel.extend({
@@ -564,51 +738,85 @@ describe('base_model.js backbone functionality', function() {
         };
       }
     });
-    model = new Defaulted({two: undefined});
+    model = new Defaulted({
+      two: undefined
+    });
     equal(model.get('one'), 3);
     equal(model.get('two'), 4);
   });
 
   it('change, hasChanged, changedAttributes, previous, previousAttributes', function() {
-    var model = new BaseModel({name: 'Tim', age: 10});
+    var model = new BaseModel({
+      name: 'Tim',
+      age: 10
+    });
     deepEqual(model.changedAttributes(), false);
     model.on('change', function() {
       ok(model.hasChanged('name'), 'name changed');
       ok(!model.hasChanged('age'), 'age did not');
-      ok(_.isEqual(model.changedAttributes(), {name: 'Rob'}), 'changedAttributes returns the changed attrs');
+      ok(_.isEqual(model.changedAttributes(), {
+        name: 'Rob'
+      }), 'changedAttributes returns the changed attrs');
       equal(model.previous('name'), 'Tim');
-      ok(_.isEqual(model.previousAttributes(), {name: 'Tim', age: 10}), 'previousAttributes is correct');
+      ok(_.isEqual(model.previousAttributes(), {
+        name: 'Tim',
+        age: 10
+      }), 'previousAttributes is correct');
     });
     equal(model.hasChanged(), false);
     equal(model.hasChanged(undefined), false);
-    model.set({name: 'Rob'});
+    model.set({
+      name: 'Rob'
+    });
     equal(model.get('name'), 'Rob');
   });
 
   it('changedAttributes', function() {
-    var model = new BaseModel({a: 'a', b: 'b'});
+    var model = new BaseModel({
+      a: 'a',
+      b: 'b'
+    });
     deepEqual(model.changedAttributes(), false);
-    equal(model.changedAttributes({a: 'a'}), false);
-    equal(model.changedAttributes({a: 'b'}).a, 'b');
+    equal(model.changedAttributes({
+      a: 'a'
+    }), false);
+    equal(model.changedAttributes({
+      a: 'b'
+    }).a, 'b');
   });
 
   it('change with options', function() {
     var value;
-    var model = new BaseModel({name: 'Rob'});
+    var model = new BaseModel({
+      name: 'Rob'
+    });
     model.on('change', function(model, options) {
       value = options.prefix + model.get('name');
     });
-    model.set({name: 'Bob'}, {prefix: 'Mr. '});
+    model.set({
+      name: 'Bob'
+    }, {
+      prefix: 'Mr. '
+    });
     equal(value, 'Mr. Bob');
-    model.set({name: 'Sue'}, {prefix: 'Ms. '});
+    model.set({
+      name: 'Sue'
+    }, {
+      prefix: 'Ms. '
+    });
     equal(value, 'Ms. Sue');
   });
 
   it('change after initialize', function() {
     var changed = 0;
-    var attrs = {id: 1, label: 'c'};
+    var attrs = {
+      id: 1,
+      label: 'c'
+    };
     var obj = new BaseModel(attrs);
-    obj.on('change', function() { changed += 1; });
+    obj.on('change', function() {
+      changed += 1;
+    });
     obj.set(attrs);
     equal(changed, 0);
   });
@@ -622,13 +830,22 @@ describe('base_model.js backbone functionality', function() {
     model.on('invalid', function(model, error) {
       lastError = error;
     });
-    var result = model.set({a: 100});
+    var result = model.set({
+      a: 100
+    });
     equal(result, model);
     equal(model.get('a'), 100);
     equal(lastError, undefined);
-    result = model.set({admin: true});
+    result = model.set({
+      admin: true
+    });
     equal(model.get('admin'), true);
-    result = model.set({a: 200, admin: false}, {validate: true});
+    result = model.set({
+      a: 200,
+      admin: false
+    }, {
+      validate: true
+    });
     equal(lastError, 'Can\'t change admin status.');
     equal(result, false);
     equal(model.get('a'), 100);
@@ -636,20 +853,28 @@ describe('base_model.js backbone functionality', function() {
 
   it('validate on unset and clear', function() {
     var error;
-    var model = new BaseModel({name: 'One'});
+    var model = new BaseModel({
+      name: 'One'
+    });
     model.validate = function(attrs) {
       if (!attrs.name) {
         error = true;
         return 'No thanks.';
       }
     };
-    model.set({name: 'Two'});
+    model.set({
+      name: 'Two'
+    });
     equal(model.get('name'), 'Two');
     equal(error, undefined);
-    model.unset('name', {validate: true});
+    model.unset('name', {
+      validate: true
+    });
     equal(error, true);
     equal(model.get('name'), 'Two');
-    model.clear({validate: true});
+    model.clear({
+      validate: true
+    });
     equal(model.get('name'), 'Two');
     delete model.validate;
     model.clear();
@@ -665,12 +890,21 @@ describe('base_model.js backbone functionality', function() {
     model.on('invalid', function(model, error) {
       boundError = true;
     });
-    var result = model.set({a: 100}, {validate: true});
+    var result = model.set({
+      a: 100
+    }, {
+      validate: true
+    });
     equal(result, model);
     equal(model.get('a'), 100);
     equal(model.validationError, null);
     equal(boundError, undefined);
-    result = model.set({a: 200, admin: true}, {validate: true});
+    result = model.set({
+      a: 200,
+      admin: true
+    }, {
+      validate: true
+    });
     equal(result, false);
     equal(model.get('a'), 100);
     equal(model.validationError, 'Can\'t change admin status.');
@@ -679,7 +913,9 @@ describe('base_model.js backbone functionality', function() {
 
   it('defaults always extend attrs (#459)', function() {
     var Defaulted = BaseModel.extend({
-      defaults: {one: 1},
+      defaults: {
+        one: 1
+      },
       postInitialize: function(attrs, opts) {
         equal(this.attributes.one, 1);
       }
@@ -698,16 +934,16 @@ describe('base_model.js backbone functionality', function() {
   //   var Child = Parent.extend({
   //     instancePropDiff: function() {}
   //   });
-//
+  //
   //   var adult = new Parent;
   //   var kid = new Child;
-//
+  //
   //   deepEqual(Child.classProp, Parent.classProp);
   //   notEqual(Child.classProp, undefined);
-//
+  //
   //   deepEqual(kid.instancePropSame, adult.instancePropSame);
   //   notEqual(kid.instancePropSame, undefined);
-//
+  //
   //   notEqual(Child.prototype.instancePropDiff, Parent.prototype.instancePropDiff);
   //   notEqual(Child.prototype.instancePropDiff, undefined);
   // });
@@ -718,24 +954,33 @@ describe('base_model.js backbone functionality', function() {
         equal(model.previous('state'), undefined);
         equal(newState, 'hello');
         // Fire a nested change event.
-        model.set({other: 'whatever'});
+        model.set({
+          other: 'whatever'
+        });
       })
       .on('change:state', function(model, newState) {
         equal(model.previous('state'), undefined);
         equal(newState, 'hello');
       })
-      .set({state: 'hello'});
+      .set({
+        state: 'hello'
+      });
   });
 
   it('hasChanged/set should use same comparison', function() {
-    var changed = 0, model = new BaseModel({a: null});
+    var changed = 0,
+      model = new BaseModel({
+        a: null
+      });
     model.on('change', function() {
-      ok(this.hasChanged('a'));
-    })
+        ok(this.hasChanged('a'));
+      })
       .on('change:a', function() {
         changed++;
       })
-      .set({a: undefined});
+      .set({
+        a: undefined
+      });
     equal(changed, 1);
   });
 
@@ -752,62 +997,100 @@ describe('base_model.js backbone functionality', function() {
     model.on('change:b', assertion);
     model.on('change:c', assertion);
 
-    model.set({a: 'a', b: 'b', c: 'c'});
+    model.set({
+      a: 'a',
+      b: 'b',
+      c: 'c'
+    });
   });
 
   it('#871, set with attributes property', function() {
     var model = new BaseModel();
-    model.set({attributes: true});
+    model.set({
+      attributes: true
+    });
     ok(model.has('attributes'));
   });
 
   it('set value regardless of equality/change', function() {
-    var model = new BaseModel({x: []});
+    var model = new BaseModel({
+      x: []
+    });
     var a = [];
-    model.set({x: a});
+    model.set({
+      x: a
+    });
     ok(model.get('x') === a);
   });
 
   it('set same value does not trigger change', function(done) {
-    var model = new BaseModel({x: 1});
-    model.on('change change:x', function() { ok(false); });
-    model.set({x: 1});
-    model.set({x: 1});
+    var model = new BaseModel({
+      x: 1
+    });
+    model.on('change change:x', function() {
+      ok(false);
+    });
+    model.set({
+      x: 1
+    });
+    model.set({
+      x: 1
+    });
     done();
   });
 
   it('unset does not fire a change for undefined attributes', function() {
-    var model = new BaseModel({x: undefined});
-    model.on('change:x', function() { ok(false); });
+    var model = new BaseModel({
+      x: undefined
+    });
+    model.on('change:x', function() {
+      ok(false);
+    });
     model.unset('x');
   });
 
   it('set: undefined values', function() {
-    var model = new BaseModel({x: undefined});
+    var model = new BaseModel({
+      x: undefined
+    });
     ok('x' in model.attributes);
   });
 
   it('hasChanged works outside of change events, and true within', function() {
-    var model = new BaseModel({x: 1});
+    var model = new BaseModel({
+      x: 1
+    });
     model.on('change:x', function() {
       ok(model.hasChanged('x'));
       equal(model.get('x'), 1);
     });
-    model.set({x: 2}, {silent: true});
+    model.set({
+      x: 2
+    }, {
+      silent: true
+    });
     ok(model.hasChanged());
     equal(model.hasChanged('x'), true);
-    model.set({x: 1});
+    model.set({
+      x: 1
+    });
     ok(model.hasChanged());
     equal(model.hasChanged('x'), true);
   });
 
   it('hasChanged gets cleared on the following set', function() {
     var model = new BaseModel;
-    model.set({x: 1});
+    model.set({
+      x: 1
+    });
     ok(model.hasChanged());
-    model.set({x: 1});
+    model.set({
+      x: 1
+    });
     ok(!model.hasChanged());
-    model.set({x: 2});
+    model.set({
+      x: 2
+    });
     ok(model.hasChanged());
     model.set({});
     ok(!model.hasChanged());
@@ -817,21 +1100,35 @@ describe('base_model.js backbone functionality', function() {
     var model = new BaseModel();
     var times = 0;
     model.sync = function() {};
-    model.validate = function() { ++times; }
+    model.validate = function() {
+      ++times;
+    }
     model.save({});
     equal(times, 1);
   });
 
   it('`hasChanged` for falsey keys', function() {
     var model = new BaseModel();
-    model.set({x: true}, {silent: true});
+    model.set({
+      x: true
+    }, {
+      silent: true
+    });
     ok(!model.hasChanged(0));
     ok(!model.hasChanged(''));
   });
 
   it('`previous` for falsey keys', function() {
-    var model = new BaseModel({0: true, '': true});
-    model.set({0: false, '': false}, {silent: true});
+    var model = new BaseModel({
+      0: true,
+      '': true
+    });
+    model.set({
+      0: false,
+      '': false
+    }, {
+      silent: true
+    });
     equal(model.previous(0), true);
     equal(model.previous(''), true);
   });
@@ -840,17 +1137,29 @@ describe('base_model.js backbone functionality', function() {
   it('nested `set` during `change:attr`', function() {
     var events = [];
     var model = new BaseModel();
-    model.on('all', function(event) { events.push(event); });
+    model.on('all', function(event) {
+      events.push(event);
+    });
     model.on('change', function() {
-      model.set({z: true}, {silent: true});
+      model.set({
+        z: true
+      }, {
+        silent: true
+      });
     });
     model.on('change:x', function() {
-      model.set({y: true});
+      model.set({
+        y: true
+      });
     });
-    model.set({x: true});
+    model.set({
+      x: true
+    });
     deepEqual(events, ['change:y', 'change:x', 'change']);
     events = [];
-    model.set({z: true});
+    model.set({
+      z: true
+    });
     deepEqual(events, []);
   });
 
@@ -860,9 +1169,13 @@ describe('base_model.js backbone functionality', function() {
       value++;
       expect(value).to.equal(1);
       done();
-      model.set({x: true});
+      model.set({
+        x: true
+      });
     });
-    model.set({x: true});
+    model.set({
+      x: true
+    });
   });
 
   it('nested `set` during `change`', function() {
@@ -871,94 +1184,161 @@ describe('base_model.js backbone functionality', function() {
     model.on('change', function() {
       switch (count++) {
         case 0:
-          deepEqual(this.changedAttributes(), {x: true});
+          deepEqual(this.changedAttributes(), {
+            x: true
+          });
           equal(model.previous('x'), undefined);
-          model.set({y: true});
+          model.set({
+            y: true
+          });
           break;
         case 1:
-          deepEqual(this.changedAttributes(), {x: true, y: true});
+          deepEqual(this.changedAttributes(), {
+            x: true,
+            y: true
+          });
           equal(model.previous('x'), undefined);
-          model.set({z: true});
+          model.set({
+            z: true
+          });
           break;
         case 2:
-          deepEqual(this.changedAttributes(), {x: true, y: true, z: true});
+          deepEqual(this.changedAttributes(), {
+            x: true,
+            y: true,
+            z: true
+          });
           equal(model.previous('y'), undefined);
           break;
         default:
           ok(false);
       }
     });
-    model.set({x: true});
+    model.set({
+      x: true
+    });
   });
 
   it('nested `change` with silent', function() {
     var count = 0;
     var model = new BaseModel();
-    model.on('change:y', function() { ok(false); });
+    model.on('change:y', function() {
+      ok(false);
+    });
     model.on('change', function() {
       switch (count++) {
         case 0:
-          deepEqual(this.changedAttributes(), {x: true});
-          model.set({y: true}, {silent: true});
-          model.set({z: true});
+          deepEqual(this.changedAttributes(), {
+            x: true
+          });
+          model.set({
+            y: true
+          }, {
+            silent: true
+          });
+          model.set({
+            z: true
+          });
           break;
         case 1:
-          deepEqual(this.changedAttributes(), {x: true, y: true, z: true});
+          deepEqual(this.changedAttributes(), {
+            x: true,
+            y: true,
+            z: true
+          });
           break;
         case 2:
-          deepEqual(this.changedAttributes(), {z: false});
+          deepEqual(this.changedAttributes(), {
+            z: false
+          });
           break;
         default:
           ok(false);
       }
     });
-    model.set({x: true});
-    model.set({z: false});
+    model.set({
+      x: true
+    });
+    model.set({
+      z: false
+    });
   });
 
   it('nested `change:attr` with silent', function() {
     var model = new BaseModel();
-    model.on('change:y', function() { ok(false); });
-    model.on('change', function() {
-      model.set({y: true}, {silent: true});
-      model.set({z: true});
+    model.on('change:y', function() {
+      ok(false);
     });
-    model.set({x: true});
+    model.on('change', function() {
+      model.set({
+        y: true
+      }, {
+        silent: true
+      });
+      model.set({
+        z: true
+      });
+    });
+    model.set({
+      x: true
+    });
   });
 
   it('multiple nested changes with silent', function() {
     var model = new BaseModel();
     model.on('change:x', function() {
-      model.set({y: 1}, {silent: true});
-      model.set({y: 2});
+      model.set({
+        y: 1
+      }, {
+        silent: true
+      });
+      model.set({
+        y: 2
+      });
     });
     model.on('change:y', function(model, val) {
       equal(val, 2);
     });
-    model.set({x: true});
+    model.set({
+      x: true
+    });
   });
 
   it('multiple nested changes with silent', function() {
     var changes = [];
     var model = new BaseModel();
-    model.on('change:b', function(model, val) { changes.push(val); });
-    model.on('change', function() {
-      model.set({b: 1});
+    model.on('change:b', function(model, val) {
+      changes.push(val);
     });
-    model.set({b: 0});
+    model.on('change', function() {
+      model.set({
+        b: 1
+      });
+    });
+    model.set({
+      b: 0
+    });
     deepEqual(changes, [0, 1]);
   });
 
   it('basic silent change semantics', function(done) {
     var model = new BaseModel;
-    model.set({x: 1});
+    model.set({
+      x: 1
+    });
     model.on('change', function() {
       value++;
       expect(value).to.equal(1);
       done();
     });
-    model.set({x: 2}, {silent: true});
-    model.set({x: 1});
+    model.set({
+      x: 2
+    }, {
+      silent: true
+    });
+    model.set({
+      x: 1
+    });
   });
 
   it('nested set multiple times', function(done) {
@@ -969,10 +1349,16 @@ describe('base_model.js backbone functionality', function() {
       done();
     });
     model.on('change:a', function() {
-      model.set({b: true});
-      model.set({b: true});
+      model.set({
+        b: true
+      });
+      model.set({
+        b: true
+      });
     });
-    model.set({a: true});
+    model.set({
+      a: true
+    });
   });
 
   it('#1122 - clear does not alter options.', function() {
@@ -999,14 +1385,20 @@ describe('base_model.js backbone functionality', function() {
     model.sync = function(method, model, options) {
       options.success();
     };
-    model.save({id: 1}, opts);
+    model.save({
+      id: 1
+    }, opts);
     model.fetch(opts);
     model.destroy(opts);
   });
 
   it('#1412 - Trigger \'sync\' event.', function(done) {
-    var model = new BaseModel({id: 1});
-    model.sync = function(method, model, options) { options.success(); };
+    var model = new BaseModel({
+      id: 1
+    });
+    model.sync = function(method, model, options) {
+      options.success();
+    };
     model.on('sync', function() {
       value++;
       expect(value).to.equal(1);
@@ -1020,14 +1412,20 @@ describe('base_model.js backbone functionality', function() {
 
   it('#1433 - Save: An invalid model cannot be persisted.', function() {
     var model = new BaseModel;
-    model.validate = function() { return 'invalid'; };
-    model.sync = function() { ok(false); };
+    model.validate = function() {
+      return 'invalid';
+    };
+    model.sync = function() {
+      ok(false);
+    };
     strictEqual(model.save(), false);
   });
 
   it('#1545 - `undefined` can be passed to a model constructor without coersion', function() {
     var Model = BaseModel.extend({
-      defaults: {one: 1},
+      defaults: {
+        one: 1
+      },
       postInitialize: function(attrs, opts) {
         equal(attrs, undefined);
       }
@@ -1037,56 +1435,97 @@ describe('base_model.js backbone functionality', function() {
   });
 
   // failing
- // it('#1664 - Changing from one value, silently to another, back to original triggers a change.', function(done) {
- //   var model = new BaseModel({x: 1});
- //   model.on('change:x', function() {
- //     value++;
- //     expect(value).to.equal(1);
- //     done();
- //   });
- //   model.set({x: 2}, {silent: true});
- //   model.set({x: 3}, {silent: true});
- //   model.set({x: 1});
- // });
+  // it('#1664 - Changing from one value, silently to another, back to original triggers a change.', function(done) {
+  //   var model = new BaseModel({x: 1});
+  //   model.on('change:x', function() {
+  //     value++;
+  //     expect(value).to.equal(1);
+  //     done();
+  //   });
+  //   model.set({x: 2}, {silent: true});
+  //   model.set({x: 3}, {silent: true});
+  //   model.set({x: 1});
+  // });
 
   it('#1664 - multiple silent changes nested inside a change event', function() {
     var changes = [];
     var model = new BaseModel();
     model.on('change', function() {
-      model.set({a: 'c'}, {silent: true});
-      model.set({b: 2}, {silent: true});
-      model.unset('c', {silent: true});
+      model.set({
+        a: 'c'
+      }, {
+        silent: true
+      });
+      model.set({
+        b: 2
+      }, {
+        silent: true
+      });
+      model.unset('c', {
+        silent: true
+      });
     });
-    model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
-    model.set({a: 'a', b: 1, c: 'item'});
+    model.on('change:a change:b change:c', function(model, val) {
+      changes.push(val);
+    });
+    model.set({
+      a: 'a',
+      b: 1,
+      c: 'item'
+    });
     deepEqual(changes, ['a', 1, 'item']);
-    deepEqual(model.attributes, {a: 'c', b: 2});
+    deepEqual(model.attributes, {
+      a: 'c',
+      b: 2
+    });
   });
 
   it('#1791 - `attributes` is available for `parse`', function() {
     var Model = BaseModel.extend({
-      parse: function() { this.has('a'); } // shouldn\'t throw an error
+      parse: function() {
+          this.has('a');
+        } // shouldn\'t throw an error
     });
-    var model = new Model(null, {parse: true});
+    var model = new Model(null, {
+      parse: true
+    });
     expect(0);
   });
 
   it('silent changes in last `change` event back to original triggers change', function() {
     var changes = [];
     var model = new BaseModel();
-    model.on('change:a change:b change:c', function(model, val) { changes.push(val); });
-    model.on('change', function() {
-      model.set({a: 'c'}, {silent: true});
+    model.on('change:a change:b change:c', function(model, val) {
+      changes.push(val);
     });
-    model.set({a: 'a'});
+    model.on('change', function() {
+      model.set({
+        a: 'c'
+      }, {
+        silent: true
+      });
+    });
+    model.set({
+      a: 'a'
+    });
     deepEqual(changes, ['a']);
-    model.set({a: 'a'});
+    model.set({
+      a: 'a'
+    });
     deepEqual(changes, ['a', 'a']);
   });
 
   it('#1943 change calculations should use _.isEqual', function() {
-    var model = new BaseModel({a: {key: 'value'}});
-    model.set('a', {key: 'value'}, {silent: true});
+    var model = new BaseModel({
+      a: {
+        key: 'value'
+      }
+    });
+    model.set('a', {
+      key: 'value'
+    }, {
+      silent: true
+    });
     equal(model.changedAttributes(), false);
   });
 
@@ -1104,16 +1543,26 @@ describe('base_model.js backbone functionality', function() {
   });
 
   it('isValid', function() {
-    var model = new BaseModel({valid: true});
+    var model = new BaseModel({
+      valid: true
+    });
     model.validate = function(attrs) {
       if (!attrs.valid) return 'invalid';
     };
     equal(model.isValid(), true);
-    equal(model.set({valid: false}, {validate: true}), false);
+    equal(model.set({
+      valid: false
+    }, {
+      validate: true
+    }), false);
     equal(model.isValid(), true);
-    model.set({valid: false});
+    model.set({
+      valid: false
+    });
     equal(model.isValid(), false);
-    ok(!model.set('valid', false, {validate: true}));
+    ok(!model.set('valid', false, {
+      validate: true
+    }));
   });
 
   it('#1179 - isValid returns true in the absence of validate.', function() {
@@ -1128,7 +1577,11 @@ describe('base_model.js backbone functionality', function() {
         if (attrs.id === 1) return 'This shouldn\'t happen';
       }
     });
-    var model = new Model({id: 1}, {validate: true});
+    var model = new Model({
+      id: 1
+    }, {
+      validate: true
+    });
     equal(model.validationError, 'This shouldn\'t happen');
   });
 
@@ -1136,11 +1589,17 @@ describe('base_model.js backbone functionality', function() {
   it('#2034 - nested set with silent only triggers one change', function(done) {
     var model = new BaseModel();
     model.on('change', function() {
-      model.set({b: true}, {silent: true});
+      model.set({
+        b: true
+      }, {
+        silent: true
+      });
       value++;
       expect(value).to.equal(1);
       done();
     });
-    model.set({a: true});
+    model.set({
+      a: true
+    });
   });
 });

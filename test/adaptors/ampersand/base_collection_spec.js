@@ -4,12 +4,12 @@ var AmpersandAdaptor = require('../../../adaptors/ampersand');
 var BaseCollection = AmpersandAdaptor.Collection;
 var Ampersand = AmpersandAdaptor.Ampersand;
 
-describe('base_collection.js public api', function () {
-  describe('extend', function () {
-    it('should be a function', function () {
+describe('base_collection.js public api', function() {
+  describe('extend', function() {
+    it('should be a function', function() {
       expect(BaseCollection.extend).to.be.a('function');
     });
-    it('should accept one argument', function () {
+    it('should accept one argument', function() {
       expect(BaseCollection.extend.length).to.equal(1);
     });
     it('should be different than Ampersand\'s', function() {
@@ -18,7 +18,7 @@ describe('base_collection.js public api', function () {
   });
 });
 
-describe('base_collection.js constructed api', function () {
+describe('base_collection.js constructed api', function() {
   describe('postInitialize', function() {
     it('should be a function', function() {
       expect(BaseCollection.prototype.postInitialize).to.be.a('function');
