@@ -3,3 +3,4 @@ dist/
 build/config.gypi
 test/test.debug
 test/test.prod
+coverage/

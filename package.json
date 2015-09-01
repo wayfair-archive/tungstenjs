@@ -11,7 +11,7 @@
   "bugs": "https://github.com/wayfair/tungstenjs/issues",
   "main": "tungsten.js",
   "scripts": {
-    "jasmine": "node node_modules/jasmine/bin/jasmine JASMINE_CONFIG_PATH=test/jasmine.json",
+    "jasmine": "node test/jasmine.js",
     "pretest": "npm run eslint && npm run jscs",
     "test": "npm run tests",
     "tests": "node ./test/build.js && npm run jasmine",
@@ -22,7 +22,7 @@
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
-    "cover": "node node_modules/istanbul/lib/cli.js cover node_modules/jasmine/bin/jasmine.js -- JASMINE_CONFIG_PATH=test/jasmine.json"
+    "cover": "node node_modules/istanbul/lib/cli.js cover --report=json ./test/jasmine.js"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
@@ -32,7 +32,6 @@
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
     "html-tokenizer": "^1.4.4",
-    "istanbul": "^0.3.19",
     "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
     "underscore": "^1.7.0",
@@ -45,6 +44,7 @@
     "express": "^4.13.3",
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",
+    "istanbul": "^0.3.19",
     "jasmine": "^2.3.1",
     "js-beautify": "^1.5.10",
     "jscs": "^2.1.0",
