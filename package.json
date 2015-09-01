@@ -22,7 +22,7 @@
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
-    "cover": "node node_modules/istanbul/lib/cli.js cover --report=json ./test/jasmine.js"
+    "cover": "node ./test/build.js && node node_modules/istanbul/lib/cli.js cover --report=json ./test/jasmine.js"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
