@@ -23,7 +23,9 @@
     "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p",
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
-    "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r"
+    "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
+    "prepublish": "[ -r ~/.global.npmignore ] && cat ~/.global.npmignore >> .npmignore",
+    "publish": "git checkout .npmignore"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
