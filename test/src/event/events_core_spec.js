@@ -1,5 +1,5 @@
 'use strict';
-
+/* global describe, it, require, beforeEach */
 var eventsCore = require('../../../src/event/events_core.js');
 
 // [ 'validateSelector',
