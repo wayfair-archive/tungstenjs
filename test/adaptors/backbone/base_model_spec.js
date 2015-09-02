@@ -120,8 +120,7 @@ describe('base_model.js constructed api', function() {
 });
 
 /**
- * QUnit to Jasmine mapper functions
- *
+ * QUnit to Jasmine mapper functions:
  */
 function equal(actual, expected) {
   expect(actual).to.equal(expected);
@@ -146,6 +145,30 @@ function ok(state) {
 function throws(fn) {
   expect(fn).to.throw(Error);
 }
+
+/**
+ * Backbone model specs modified from backbone.js:
+ *    @author Jeremy Ashkenas, @license MIT
+ *    Copyright (c) 2010-2015 Jeremy Ashkenas, DocumentCloud
+ *    Permission is hereby granted, free of charge, to any person
+ *    obtaining a copy of this software and associated documentation
+ *    files (the "Software"), to deal in the Software without
+ *    restriction, including without limitation the rights to use,
+ *    copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *    copies of the Software, and to permit persons to whom the
+ *    Software is furnished to do so, subject to the following
+ *    conditions:
+ *    The above copyright notice and this permission notice shall be
+ *    included in all copies or substantial portions of the Software.
+ *    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *    OTHER DEALINGS IN THE SOFTWARE.
+ */
 
 describe('base_model.js backbone functionality', function() {
   var doc, collection, value = 0;
@@ -1583,4 +1606,263 @@ describe('base_model.js backbone functionality', function() {
       a: true
     });
   });
+});
+
+/**
+ * Backbone nested specs modified from backbone-nested-models:
+ *    @author Bret Little, @license MIT
+ *    Copyright (c) 2012 Bret Little
+ *    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ *    associated documentation files (the 'Software'), to deal in the Software without restriction, including
+ *    without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *    copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *    THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *    LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+describe('base_model.js backbone nested functionality', function() {
+  var Book, book;
+  var BaseCollection = BackboneAdaptor.Collection;
+  beforeEach(function() {
+    Book = BaseModel.extend({
+      relations: {
+        'author': BaseModel,
+        'pages': BaseCollection
+      }
+    });
+
+    book = new Book();
+
+    book.set({
+      'author': {
+        'name': 'Heber J. Grant',
+        'title': 'President',
+        'age': '47'
+      },
+      'pages': [
+        {
+          number: 1,
+          words: 500
+        },
+        {
+          number: 2,
+          words: 450
+        }
+      ]
+    });
+  });
+
+  it('Should fire a nested change event', function() {
+    var changeEvents = 0;
+    book.on('change:pages:words', function() {
+      changeEvents++;
+    });
+    book.get('pages').at(0).set({words: 1000});
+    expect(changeEvents).to.equal(1);
+    book.get('pages').at(0).set({words: 500});
+    expect(changeEvents).to.equal(2);
+  });
+
+  it('Should not fire a nested destroy event', function() {
+    var destroyEvents = 0;
+    book.on('destroy', function() {
+      destroyEvents++;
+    });
+    book.get('pages').at(0).destroy();
+    expect(destroyEvents).to.equal(0);
+  });
+
+  it('Should not fire a nested add event', function() {
+    var addEvents = 0;
+    book.on('add', function() {
+      addEvents++;
+    });
+    book.get('pages').add({
+      number: 3,
+      words: 250
+    });
+    expect(addEvents).to.equal(0);
+  });
+
+  it('Should fire a namespaced nested destroy event', function() {
+    var destroyEvents = 0;
+    book.on('destroy:pages', function() {
+      destroyEvents++;
+    });
+    book.get('pages').at(0).destroy();
+    expect(destroyEvents).to.equal(1);
+  });
+
+  it('Should fire a namespaced nested add event', function() {
+    var addEvents = 0;
+    book.on('add:pages', function() {
+      addEvents++;
+    });
+    book.get('pages').add({
+      number: 3,
+      words: 250
+    });
+    expect(addEvents).to.equal(1);
+  });
+
+  it('Should fire a namespaced nested custom event', function() {
+    var randomEvent = 0;
+    book.on('randomEvent:pages', function() {
+      randomEvent++;
+    });
+    book.get('pages').at(0).trigger('randomEvent');
+    expect(randomEvent).to.equal(1);
+  });
+
+
+  it('Should build a model relation', function() {
+    expect(book.get('author').get('name')).to.equal('Heber J. Grant');
+    expect(book.get('author').get('title')).to.equal('President');
+    expect(book.get('author').get('age')).to.equal('47');
+  });
+
+  it('Should build a collection relation', function() {
+    expect(book.get('pages').length).to.equal(2);
+    expect(book.get('pages').at(0).get('number')).to.equal(1);
+    expect(book.get('pages').at(1).get('number')).to.equal(2);
+    expect(book.get('pages').at(0).get('words')).to.equal(500);
+    expect(book.get('pages').at(1).get('words')).to.equal(450);
+  });
+
+  it('Should provide backwards references to the parent models', function() {
+    expect(book.get('author').parent).to.equal(book);
+    expect(book.get('pages').at(0).collection.parent).to.equal(book);
+  });
+
+  it('Should merge in new properties into an existing relation', function() {
+    var author = book.get('author');
+
+    book.set({
+      'author': {
+        'city': 'SLC'
+      }
+    });
+
+    expect(book.get('author')).to.equal(author);
+    expect(book.get('author').get('name')).to.equal('Heber J. Grant');
+    expect(book.get('author').get('city')).to.equal('SLC');
+  });
+
+  it('Should deconstruct model references', function() {
+    var author = book.get('author');
+    book.unset('author');
+
+    expect(typeof author.parent).to.equal('undefined');
+  });
+
+  it('Should merge new models into a relation which is a collection', function() {
+    book.set({
+      'pages': [
+        {
+          number: 3,
+          words: 600
+        }
+      ]
+    });
+
+    expect(book.get('pages').length).to.equal(3);
+  });
+
+  it('Should merge values into models which already exist in a sub collection', function() {
+    book.set({
+      'pages': [
+        {
+          id: 1,
+          number: 3,
+          words: 600
+        }
+      ]
+    });
+
+
+    book.set({
+      'pages': [
+        {
+          id: 1,
+          test: 'test'
+        }
+      ]
+    });
+
+    expect(book.get('pages').length).to.equal(3);
+    expect(book.get('pages').at(2).get('test')).to.equal('test');
+    expect(book.get('pages').at(2).get('words')).to.equal(600);
+  });
+
+  it('Should remove models which no longer exist in a sub collection', function() {
+    book.set({
+      'pages': [
+        {
+          id: 1,
+          number: 3,
+          words: 600
+        }
+      ]
+    });
+
+
+    book.set({
+      'pages': [
+        {
+          id: 2,
+          test: 'test'
+        }
+      ]
+    });
+
+    expect(book.get('pages').length).to.equal(3);
+    expect(book.get('pages').at(2).get('test')).to.equal('test');
+    expect(book.get('pages').at(2).get('words')).not.to.equal(600);
+    expect(book.get('pages').at(2).id).to.equal(2);
+  });
+  // throws exception in debug build
+  // it('Should trigger reset events on nested collection relations', function(done) {
+  //       var Things = BaseCollection.extend({
+  //     model: Thing,
+//
+  //     postInitialize: function() {
+  //       this.listenTo('reset', function() {
+  //         count++;
+  //         expect(count).to.equal(1);
+  //         done();
+  //       });
+  //     }
+  //   });
+//
+  //   var Bucket = BaseModel.extend({
+  //     relations: {
+  //       'things': Things
+  //     }
+  //   });
+//
+  //   var Buckets = BaseCollection.extend({
+  //     model: Bucket
+  //   });
+//
+  //   var buckets = new Buckets();
+  //   buckets.reset([
+  //     {
+  //       name: 'a',
+  //       things: [{num: 1}, {num: 2}]
+  //     },
+  //     {
+  //       name: 'b',
+  //       things: [{num: 1}, {num: 2}]
+  //     }
+  //   ]);
+//
+  // });
+
+  it('Should recursively call .toJSON', function() {
+    var json = book.toJSON();
+    expect(json.pages[0].number).to.equal(1);
+  });
+
 });
