@@ -46,7 +46,7 @@ var BaseModel = Backbone.Model.extend({
         }
       });
     }
-    this.postInitialize(options);
+    this.postInitialize(attributes, options);
   },
 
   /* develblock:start */

@@ -182,7 +182,7 @@ describe('base_model.js backbone functionality', function() {
   });
   it('initialize with attributes and options', function() {
    var Model = BaseModel.extend({
-     postInitialize: function(options) {
+     postInitialize: function(attributes, options) {
        this.one = options.one;
      }
    });
