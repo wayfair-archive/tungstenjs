@@ -21,8 +21,7 @@
     "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p",
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
-    "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
-    "cover": "node ./test/build.js && node node_modules/istanbul/lib/cli.js cover --report=json ./test/jasmine.js"
+    "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
@@ -44,7 +43,6 @@
     "express": "^4.13.3",
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",
-    "istanbul": "^0.3.19",
     "jasmine": "^2.3.1",
     "js-beautify": "^1.5.10",
     "jscs": "^2.1.0",
