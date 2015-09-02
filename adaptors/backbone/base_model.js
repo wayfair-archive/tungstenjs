@@ -15,7 +15,7 @@ var logger = require('../../src/utils/logger');
  */
 var BaseModel = Backbone.Model.extend({
   tungstenModel: true,
-  initialize: function() {
+  initialize: function(attributes, options) {
     /* develblock:start */
     this.initDebug();
     /* develblock:end */
@@ -46,7 +46,7 @@ var BaseModel = Backbone.Model.extend({
         }
       });
     }
-    this.postInitialize();
+    this.postInitialize(options);
   },
 
   /* develblock:start */

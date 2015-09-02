@@ -127,9 +127,9 @@ function equal(actual, expected) {
   expect(actual).to.equal(expected);
 }
 
-// function notEqual(actual, expected) {
-//   expect(actual).to.not.equal(expected);
-// }
+function notEqual(actual, expected) {
+  expect(actual).to.not.equal(expected);
+}
 
 function strictEqual(actual, expected) {
   expect(actual).to.equal(expected);
@@ -180,16 +180,15 @@ describe('base_model.js backbone functionality', function() {
     equal(model.one, 1);
     equal(model.collection, collection);
   });
-  // failing
-  // it('initialize with attributes and options', function() {
-  //  var Model = BaseModel.extend({
-  //    postInitialize: function(attributes, options) {
-  //      this.one = options.one;
-  //    }
-  //  });
-  //  var model = new Model({}, {one: 1});
-  //  equal(model.one, 1);
-  // });
+  it('initialize with attributes and options', function() {
+   var Model = BaseModel.extend({
+     postInitialize: function(options) {
+       this.one = options.one;
+     }
+   });
+   var model = new Model({}, {one: 1});
+   equal(model.one, 1);
+  });
 
   it('initialize with parsed attributes', function() {
     var Model = BaseModel.extend({
@@ -924,30 +923,30 @@ describe('base_model.js backbone functionality', function() {
       }
     });
   });
-  // failing
-  // it('Inherit class properties', function() {
-  //   var Parent = BaseModel.extend({
-  //     instancePropSame: function() {},
-  //     instancePropDiff: function() {}
-  //   }, {
-  //     classProp: function() {}
-  //   });
-  //   var Child = Parent.extend({
-  //     instancePropDiff: function() {}
-  //   });
-  //
-  //   var adult = new Parent;
-  //   var kid = new Child;
-  //
-  //   deepEqual(Child.classProp, Parent.classProp);
-  //   notEqual(Child.classProp, undefined);
-  //
-  //   deepEqual(kid.instancePropSame, adult.instancePropSame);
-  //   notEqual(kid.instancePropSame, undefined);
-  //
-  //   notEqual(Child.prototype.instancePropDiff, Parent.prototype.instancePropDiff);
-  //   notEqual(Child.prototype.instancePropDiff, undefined);
-  // });
+  it('Inherit class properties', function() {
+    var Parent = BaseModel.extend({
+      // modified to be object rather than fn; fn is wrapped with debugger
+      instancePropSame: {foo: 'bar'},
+      instancePropDiff: function() {}
+    }, {
+      classProp: function() {}
+    });
+    var Child = Parent.extend({
+      instancePropDiff: function() {}
+    });
+
+    var adult = new Parent;
+    var kid = new Child;
+
+    deepEqual(Child.classProp, Parent.classProp);
+    notEqual(Child.classProp, undefined);
+    // edited
+    deepEqual(kid.instancePropSame, adult.instancePropSame);
+    notEqual(kid.instancePropSame, undefined);
+
+    notEqual(Child.prototype.instancePropDiff, Parent.prototype.instancePropDiff);
+    notEqual(Child.prototype.instancePropDiff, undefined);
+  });
 
   it('Nested change events don\'t clobber previous attributes', function() {
     new BaseModel()
@@ -1133,7 +1132,6 @@ describe('base_model.js backbone functionality', function() {
     equal(model.previous(0), true);
     equal(model.previous(''), true);
   });
-
 
   it('nested `set` during `change:attr`', function() {
     var events = [];
@@ -1393,24 +1391,6 @@ describe('base_model.js backbone functionality', function() {
     model.destroy(opts);
   });
 
-  it('#1412 - Trigger \'sync\' event.', function(done) {
-    var model = new BaseModel({
-      id: 1
-    });
-    model.sync = function(method, model, options) {
-      options.success();
-    };
-    model.on('sync', function() {
-      value++;
-      expect(value).to.equal(1);
-      done();
-    });
-    model.fetch();
-    model.save();
-    model.destroy();
-  });
-
-
   it('#1433 - Save: An invalid model cannot be persisted.', function() {
     var model = new BaseModel;
     model.validate = function() {
@@ -1586,7 +1566,6 @@ describe('base_model.js backbone functionality', function() {
     });
     equal(model.validationError, 'This shouldn\'t happen');
   });
-
 
   it('#2034 - nested set with silent only triggers one change', function(done) {
     var model = new BaseModel();
