@@ -1,26 +1,31 @@
-<div id="app">
-  <div id="todoapp">
-    <header id="header">
-      <h1>todos</h1>
-      <!-- todoapp -->
-      <input id="new-todo" placeholder="What needs to be done?" type="text" autofocus="true" class="js-new-todo">
+<div class="todoapp">
+    <header class="header">
+        <h1>todos</h1>
+        <!-- todoapp -->
+        <input placeholder="What needs to be done?" type="text" autofocus="true" class="new-todo js-new-todo">
     </header>
-    <div id="main">
-      <input id="toggle-all" class="js-toggle-all" type="checkbox">
-      <label for="toggle-all">Mark all as complete</label>
-      <ul id="todo-list" class="js-todo-list">
-        {{#todoItems}}
-        {{> todo_item_view }}
-        {{/todoItems}}
-      </ul>
-    </div>
-    {{#todoCount}}
-    <footer id="footer">
-      <span class="js-todo-count" id="todo-count"><strong>{{todoCount}}</strong> item{{#todoCountPlural}}s{{/todoCountPlural}} left</span>
-      {{#hasCompleted}}
-      <button id="clear-completed" class="js-clear-completed">Clear completed</button>
-      {{/hasCompleted}}
-    </footer>
-    {{/todoCount}}
-  </div>
+    <section class="main">
+        <input class="toggle-all js-toggle-all" type="checkbox" {{#allCompleted}}checked="checked"{{/allCompleted}}>
+        <label for="toggle-all">Mark all as complete</label>
+        <ul class="todo-list js-todo-list">
+          {{#todoItems}}
+            {{> todo_item_view }}
+          {{/todoItems}}
+        </ul>
+    </section>
+  {{#hasTodos}}
+      <footer class="footer">
+          <span class="js-todo-count todo-count"><strong>{{todoCount}}</strong> item{{#todoCountPlural}}s{{/todoCountPlural}} left</span>
+          <ul class="filters">
+            {{#filters}}
+                <li>
+                    <a {{#selected}}class="selected"{{/selected}} href="#/{{hash}}">{{name}}</a>
+                </li>
+            {{/filters}}
+          </ul>
+        {{#hasCompleted}}
+            <button class="clear-completed js-clear-completed">Clear completed</button>
+        {{/hasCompleted}}
+      </footer>
+  {{/hasTodos}}
 </div>

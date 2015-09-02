@@ -3,7 +3,6 @@
  */
 'use strict';
 
-import { TodoItemModel } from '../models/todo_item_model.js';
 import { Collection } from 'tungstenjs/adaptors/backbone';
 
 function itemIsHidden(item, filter) {
@@ -15,14 +14,11 @@ function itemIsHidden(item, filter) {
   return false;
 }
 
-export class TodoItemCollection extends Collection {
-  filterItems(filterBy) {
+export class TodoFilterCollection extends Collection {
+  selectFilter(filterBy) {
     for (var i = this.length; i--;) {
       var model = this.at(i);
-      model.set('hidden', itemIsHidden(model, filterBy));
+      model.set('selected', model.get('hash') === filterBy);
     }
   }
 }
-// Attaching to prototype is a temporary hack,
-// pending outcome of https://github.com/jashkenas/backbone/issues/3560
-TodoItemCollection.prototype.model = TodoItemModel;

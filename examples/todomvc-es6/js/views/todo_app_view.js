@@ -9,6 +9,11 @@ import { TodoItemView } from './todo_item_view';
 import _ from 'underscore';
 
 export class AppView extends View {
+  postInitialize() {
+    this.on('filter', function(filterBy) {
+      this.model.filter(filterBy);
+    });
+  }
   handleClickClearCompleted() {
     _.invoke(this.model.get('todoItems').where({completed: true}), 'destroy');
     return false;
