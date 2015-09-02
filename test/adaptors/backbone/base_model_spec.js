@@ -181,13 +181,13 @@ describe('base_model.js backbone functionality', function() {
     equal(model.collection, collection);
   });
   it('initialize with attributes and options', function() {
-   var Model = BaseModel.extend({
-     postInitialize: function(attributes, options) {
-       this.one = options.one;
-     }
-   });
-   var model = new Model({}, {one: 1});
-   equal(model.one, 1);
+    var Model = BaseModel.extend({
+      postInitialize: function(attributes, options) {
+        this.one = options.one;
+      }
+    });
+    var model = new Model({}, {one: 1});
+    equal(model.one, 1);
   });
 
   it('initialize with parsed attributes', function() {
