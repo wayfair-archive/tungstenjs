@@ -6,30 +6,17 @@
 import { Model } from 'tungstenjs/adaptors/backbone';
 import { TodoItemCollection } from '../collections/todo_item_collection.js';
 import { TodoFilterCollection } from '../collections/todo_filter_collection.js';
+import { relations, defaults, derived } from '../decorators.js';
 
-export class AppModel extends Model {
-  postInitialize() {
-    this.listenTo(this, 'addItem', function(title) {
-      // @todo add code to clear toggle-all button
-      this.get('todoItems').add({title});
-    });
-  }
-  filter(filterBy) {
-    this.get('todoItems').filterItems(filterBy);
-    this.get('filters').selectFilter(filterBy);
-  }
-}
-// Attaching to prototype is a temporary hack,
-// pending outcome of https://github.com/jashkenas/backbone/issues/3560
-AppModel.prototype.relations = {
+@relations({
   todoItems: TodoItemCollection,
   filters: TodoFilterCollection
-};
-AppModel.prototype.defaults = {
+})
+@defaults({
   todoItems: [],
   filters: []
-};
-AppModel.prototype.derived = {
+})
+@derived({
   hasTodos: {
     deps: ['todoItems'],
     fn: function() {
@@ -72,4 +59,16 @@ AppModel.prototype.derived = {
       return this.get('todoItems').length - this.get('incompletedItems').length > 0;
     }
   }
-};
+})
+export class AppModel extends Model {
+  postInitialize() {
+    this.listenTo(this, 'addItem', function(title) {
+      // @todo add code to clear toggle-all button
+      this.get('todoItems').add({title});
+    });
+  }
+  filter(filterBy) {
+    this.get('todoItems').filterItems(filterBy);
+    this.get('filters').selectFilter(filterBy);
+  }
+}

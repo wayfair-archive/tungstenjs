@@ -5,6 +5,7 @@
 
 import { TodoItemModel } from '../models/todo_item_model.js';
 import { Collection } from 'tungstenjs/adaptors/backbone';
+import { model } from '../decorators.js';
 
 function itemIsHidden(item, filter) {
   if (filter === 'active') {
@@ -15,6 +16,7 @@ function itemIsHidden(item, filter) {
   return false;
 }
 
+@model(TodoItemModel)
 export class TodoItemCollection extends Collection {
   filterItems(filterBy) {
     for (var i = this.length; i--;) {
@@ -23,6 +25,3 @@ export class TodoItemCollection extends Collection {
     }
   }
 }
-// Attaching to prototype is a temporary hack,
-// pending outcome of https://github.com/jashkenas/backbone/issues/3560
-TodoItemCollection.prototype.model = TodoItemModel;

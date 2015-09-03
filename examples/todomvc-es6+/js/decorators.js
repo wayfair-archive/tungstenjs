@@ -10,6 +10,12 @@ export function childViews(value) {
   }
 }
 
+export function derived(value) {
+  return function decorator(target) {
+    target.prototype.derived = value;
+  }
+}
+
 export function relations(value) {
   return function decorator(target) {
     target.prototype.relations = value;

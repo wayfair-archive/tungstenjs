@@ -37,7 +37,7 @@ export class TodoItemView extends View {
       this.model.set('title', this.model.get('title'));
     }
   }
-  @on('keypress .js-todo-edit');
+  @on('keypress .js-todo-edit')
   handleKeyPressTodoEdit(e) {
     if (e.which === ENTER_KEY) {
       this.clear(e.currentTarget);

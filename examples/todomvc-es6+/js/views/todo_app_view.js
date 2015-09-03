@@ -19,7 +19,7 @@ export class AppView extends View {
       this.model.filter(filterBy);
     });
   }
-@on('click .js-clear-completed')
+  @on('click .js-clear-completed')
   handleClickClearCompleted() {
     _.invoke(this.model.get('todoItems').where({completed: true}), 'destroy');
     return false;
