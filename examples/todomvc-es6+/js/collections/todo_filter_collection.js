@@ -3,6 +3,8 @@
  */
 'use strict';
 
+import { Collection } from 'tungstenjs/adaptors/backbone';
+
 function itemIsHidden(item, filter) {
   if (filter === 'active') {
     return item.get('completed');
@@ -12,15 +14,11 @@ function itemIsHidden(item, filter) {
   return false;
 }
 
-var Model = require('../models/todo_item_model.js');
-var Collection = require('tungstenjs/adaptors/backbone').Collection;
-var ItemCollection = Collection.extend({
-  model: Model,
-  filterItems: function(filterBy) {
+export class TodoFilterCollection extends Collection {
+  selectFilter(filterBy) {
     for (var i = this.length; i--;) {
       var model = this.at(i);
-      model.set('hidden', itemIsHidden(model, filterBy));
+      model.set('selected', model.get('hash') === filterBy);
     }
   }
-});
-module.exports = ItemCollection;
+}

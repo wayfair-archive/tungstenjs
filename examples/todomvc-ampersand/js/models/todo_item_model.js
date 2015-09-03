@@ -14,6 +14,10 @@ var ItemModel = Model.extend({
     editing: {
       'type': 'boolean',
       'default': false
+    },
+    hidden: {
+      'type': 'boolean',
+      'default': false
     }
   },
   debugName: 'TodoItemModel',
