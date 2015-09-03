@@ -6,7 +6,7 @@ var webpack = require('webpack');
  */
 
 var debugConfig = webpackHelper({
-  entry: __dirname + '/test_target',
+  entry: __dirname + '\\test_target',
   output: {
     filename: __dirname + '/testbuild.debug.js',
     libraryTarget: 'commonjs2'
@@ -14,15 +14,12 @@ var debugConfig = webpackHelper({
   resolveLoader: {
     modulesDirectories: ['test/_loaders']
   },
-//  module: {
-//    loaders: [
-//      {
-//        test: /node_modules|test/,
-//        loader: 'istanbul-ignore'
-//      }
-//    ]
-//  },
-//
+  module: {
+    loaders: [{
+      test: /\.js(on)?$/,
+      loader: 'istanbul-instrumenter'
+    }]
+  },
   resolve: {
     alias: {
       'jquery': 'backbone.native'
@@ -39,13 +36,14 @@ var prodConfig = webpackHelper({
   resolveLoader: {
     modulesDirectories: ['test/_loaders']
   },
+  node: {
+    fs: 'empty'
+  },
   module: {
-    loaders: [
-      {
-        test: /node_modules|test/,
-        loader: 'istanbul-ignore'
-      }
-    ]
+    loaders: [{
+      test: /\.js(on)?$/,
+      loader: 'istanbul-instrumenter'
+    }]
   },
   resolve: {
     alias: {
@@ -54,9 +52,20 @@ var prodConfig = webpackHelper({
   }
 }, false);
 
-webpack(debugConfig, function(err) {
-  console.log('Debug built', err || 'No errors');
-  webpack(prodConfig, function(err) {
-    console.log('Prod built', err || 'No errors');
+function getErrorString(err, stats) {
+  var errStr = err;
+  if (!err && stats.compilation.errors.length) {
+    err = stats.compilation.errors.map(function (err) {
+      return err.message;
+    }).join('\n');
+  }
+
+  return errStr || 'No errors';
+}
+
+webpack(debugConfig, function(err, stats) {
+  console.log('Debug built:\n', getErrorString(err, stats));
+  webpack(prodConfig, function(err, stats) {
+    console.log('Prod built:\n', getErrorString(err, stats));
   });
 });
