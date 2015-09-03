@@ -664,31 +664,35 @@ describe('base_model.js backbone functionality', function() {
     equal(model.id, undefined);
     equal(model.isNew(), true);
   });
-  // failing
-  // it('setting an alternative cid prefix', function() {
-  //   var Model = BaseModel.extend({
-  //     cidPrefix: 'm'
-  //   });
-  //   var model = new Model();
-  //
-  //   equal(model.cid.charAt(0), 'm');
-  //
-  //   model = new BaseModel();
-  //   equal(model.cid.charAt(0), 'c');
-  //
-  //   var Collection = Backbone.Collection.extend({
-  //     model: Model
-  //   });
-  //   var collection = new Collection([{id: 'c5'}, {id: 'c6'}, {id: 'c7'}]);
-  //
-  //   equal(collection.get('c6').cid.charAt(0), 'm');
-  //   collection.set([{id: 'c6', value: 'test'}], {
-  //     merge: true,
-  //     add: true,
-  //     remove: false
-  //   });
-  //   ok(collection.get('c6').has('value'));
-  // });
+
+  it('setting an alternative cid prefix', function() {
+    var Model = BaseModel.extend({
+      cidPrefix: 'm'
+    });
+    var model = new Model();
+
+    equal(model.cid.charAt(0), 'm');
+
+    model = new BaseModel();
+    // In debugger the default cidPrefix is overrridden
+    var prefix = 'c';
+    /* develblock:start */
+    prefix = BaseModel.prototype.cidPrefix;
+    /* develblock:end */
+    equal(model.cid.substr(0, prefix.length), prefix);
+    var Collection = Backbone.Collection.extend({
+      model: Model
+    });
+    var collection = new Collection([{id: 'c5'}, {id: 'c6'}, {id: 'c7'}]);
+
+    equal(collection.get('c6').cid.charAt(0), 'm');
+    collection.set([{id: 'c6', value: 'test'}], {
+      merge: true,
+      add: true,
+      remove: false
+    });
+    ok(collection.get('c6').has('value'));
+  });
 
   it('set an empty string', function() {
     var model = new BaseModel({
