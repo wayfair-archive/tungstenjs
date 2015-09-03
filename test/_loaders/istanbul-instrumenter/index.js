@@ -21,7 +21,10 @@ function ignoreContent(source) {
 }
 
 module.exports = function(source) {
+  var coverageMatch = this.query.match(/(\?|&)coverageVar=([^&]+)/);
+  var coverageVar = (coverageMatch && coverageMatch[2]) || '__coverage__';
   var instrumenter = new istanbul.Instrumenter({
+    coverageVariable: coverageVar,
     embedSource: true,
     noAutoWrap: true
   });
@@ -42,5 +45,5 @@ module.exports = function(source) {
     this.cacheable();
   }
 
-  return instrumenter.instrumentSync(source);//, path.relative(root, filePath));
+  return instrumenter.instrumentSync(source, path.relative(root, filePath));
 };

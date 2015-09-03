@@ -17,7 +17,7 @@ var debugConfig = webpackHelper({
   module: {
     loaders: [{
       test: /\.js(on)?$/,
-      loader: 'istanbul-instrumenter'
+      loader: 'istanbul-instrumenter?coverageVar=__coverage_debug__'
     }]
   },
   resolve: {
@@ -42,7 +42,7 @@ var prodConfig = webpackHelper({
   module: {
     loaders: [{
       test: /\.js(on)?$/,
-      loader: 'istanbul-instrumenter'
+      loader: 'istanbul-instrumenter?coverageVar=__coverage_prod__'
     }]
   },
   resolve: {
