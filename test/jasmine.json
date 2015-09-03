@@ -1,8 +1,8 @@
 {
   "spec_dir": "test",
   "spec_files": [
-    "./test.prod",
-    "./test.debug"
+    "./testbuild.prod.js",
+    "./testbuild.debug.js"
   ],
   "helpers": [
     "environment.js",

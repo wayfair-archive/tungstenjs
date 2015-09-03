@@ -1,7 +1,7 @@
 var webpackHelper = require('../webpack-helper.js');
 
 var webpack = require('webpack');
-
+var path = require('path');
 /**
  * Build files use non-js extension to avoid linting
  */
@@ -9,9 +9,21 @@ var webpack = require('webpack');
 var debugConfig = webpackHelper({
   entry: __dirname + '/test_target',
   output: {
-    filename: __dirname + '/test.debug',
+    filename: __dirname + '/testbuild.debug.js',
     libraryTarget: 'commonjs2'
   },
+  resolveLoader: {
+    modulesDirectories: ['test/_loaders']
+  },
+//  module: {
+//    loaders: [
+//      {
+//        test: /node_modules|test/,
+//        loader: 'istanbul-ignore'
+//      }
+//    ]
+//  },
+//
   resolve: {
     alias: {
       'jquery': 'backbone.native'
@@ -22,8 +34,19 @@ var debugConfig = webpackHelper({
 var prodConfig = webpackHelper({
   entry: __dirname + '/test_target',
   output: {
-    filename: __dirname + '/test.prod',
+    filename: __dirname + '/testbuild.prod.js',
     libraryTarget: 'commonjs2'
+  },
+  resolveLoader: {
+    modulesDirectories: ['test/_loaders']
+  },
+  module: {
+    loaders: [
+      {
+        test: /node_modules|test/,
+        loader: 'istanbul-ignore'
+      }
+    ]
   },
   resolve: {
     alias: {
