@@ -1,5 +1,5 @@
 var webpackHelper = require('../webpack-helper.js');
-
+var path = require('path');
 var webpack = require('webpack');
 /**
  * Build files use non-js extension to avoid linting
@@ -26,13 +26,15 @@ function getLoader(variable) {
 }
 
 var debugConfig = webpackHelper({
-  entry: __dirname + '\\test_target',
+  entry: path.join(__dirname, '/test_target'),
   output: {
-    filename: __dirname + '/testbuild.debug.js',
+    filename: path.join(__dirname, '/testbuild.debug.js'),
     libraryTarget: 'commonjs2'
   },
   resolveLoader: {
-    modulesDirectories: ['test/_loaders']
+    modulesDirectories: [
+      path.join(__dirname, './_loaders')
+    ]
   },
   module: {
     loaders: getLoader('__coverage_debug__')
@@ -45,13 +47,15 @@ var debugConfig = webpackHelper({
 }, true);
 
 var prodConfig = webpackHelper({
-  entry: __dirname + '/test_target',
+  entry: path.join(__dirname, '/test_target'),
   output: {
-    filename: __dirname + '/testbuild.prod.js',
+    filename: path.join(__dirname, '/testbuild.prod.js'),
     libraryTarget: 'commonjs2'
   },
   resolveLoader: {
-    modulesDirectories: ['test/_loaders']
+    modulesDirectories: [
+      path.join(__dirname, './_loaders')
+    ]
   },
   module: {
     loaders: getLoader('__coverage_prod__')
@@ -66,7 +70,7 @@ var prodConfig = webpackHelper({
 function getErrorString(err, stats) {
   var errStr = err;
   if (!err && stats.compilation.errors.length) {
-    err = stats.compilation.errors.map(function (err) {
+    errStr = stats.compilation.errors.map(function (err) {
       return err.message;
     }).join('\n');
   }
