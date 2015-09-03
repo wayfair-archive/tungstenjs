@@ -25,6 +25,16 @@ var AppModel = Model.extend({
         return this.todoItems.length > 0;
       }
     },
+    allCompleted: {
+      deps: ['todoItems'],
+      fn: function() {
+        if (this.todoItems.length) {
+          return _.every(this.get('todoItems').models, function(item) {
+            return item.completed;
+          });
+        }
+      }
+    },
     incompletedItems: {
       deps: ['todoItems'],
       fn: function() {
