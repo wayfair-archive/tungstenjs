@@ -1,7 +1,6 @@
 var webpackHelper = require('../webpack-helper.js');
 
 var webpack = require('webpack');
-var path = require('path');
 /**
  * Build files use non-js extension to avoid linting
  */
