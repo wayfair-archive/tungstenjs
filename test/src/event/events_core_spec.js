@@ -50,7 +50,7 @@ describe('events_core.js public API', function() {
     it('should bind a virtual event', function() {
       var selector = 'self';
       var result = eventsCore.addEvent(elem, type, selector, handler);
-      
+
       expect(result).to.deep.equal([elem, type, selector, handler]);
 
       var events = eventsCore.getEvents(elem);
@@ -93,14 +93,14 @@ describe('events_core.js public API', function() {
 
         expectedEvents = {};
         expectedEvents[type] = {};
-        expectedEvents[type]['self'] = [{ method: handler }];
+        expectedEvents[type].self = [{ method: handler }];
         expectedEvents[type]['js-test'] = [{ method: handler }];
       });
       it('should remove a specific virtual event', function() {
         eventsCore.removeEvent(event1);
 
         var events = eventsCore.getEvents(elem);
-        expectedEvents[type]['self'] = [];
+        expectedEvents[type].self = [];
 
         expect(events).to.deep.equal(expectedEvents);
       });
@@ -108,7 +108,7 @@ describe('events_core.js public API', function() {
         eventsCore.removeEvent([event1, event2]);
 
         var events = eventsCore.getEvents(elem);
-        expectedEvents[type]['self'] = [];
+        expectedEvents[type].self = [];
         expectedEvents[type]['js-test'] = [];
 
         expect(events).to.deep.equal(expectedEvents);
@@ -133,7 +133,7 @@ describe('events_core.js public API', function() {
         eventsCore.removeEvent([elem, null, 'self', null]);
 
         var events = eventsCore.getEvents(elem);
-        expectedEvents[type]['self'] = [];
+        expectedEvents[type].self = [];
 
         expect(events).to.deep.equal(expectedEvents);
       });
@@ -141,7 +141,7 @@ describe('events_core.js public API', function() {
         eventsCore.removeEvent([elem, null, null, handler]);
 
         var events = eventsCore.getEvents(elem);
-        expectedEvents[type]['self'] = [];
+        expectedEvents[type].self = [];
         expectedEvents[type]['js-test'] = [];
 
         expect(events).to.deep.equal(expectedEvents);
