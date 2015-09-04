@@ -21,11 +21,11 @@ describe('outside_events', function() {
     };
     spyOn(obj, 'bindEventFn').and.callThrough();
     outsideBind(elem, type + '-outside', '', handler, {}, obj.bindEventFn);
-    expect(obj.bindEventFn.calls.count()).to.equal(2)
+    expect(obj.bindEventFn.calls.count()).to.equal(2);
   });
   it('should not call bindVirtualEvent when event is not suffixed with -outside', function() {
     var spy = jasmine.createSpy('spy');
     outsideBind(elem, type + '-foo', '', handler, {}, spy);
-    expect(spy.calls.count()).to.equal(0)
+    expect(spy.calls.count()).to.equal(0);
   });
 });
