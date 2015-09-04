@@ -1870,3 +1870,90 @@ describe('base_model.js backbone nested functionality', function() {
   });
 
 });
+
+/**
+ * Derived and session property unit tests modified from ampersand-state
+ * https://github.com/AmpersandJS/ampersand-state/blob/master/test/basics.js
+ *    @license MIT
+ *    Copyright © 2014 &yet, LLC and AmpersandJS contributors
+ *    Permission is hereby granted, free of charge, to any person obtaining a
+ *    copy of this software and associated documentation files (the
+ *    "Software"), to deal in the Software without restriction, including
+ *    without limitation the rights to use, copy, modify, merge, publish,
+ *    distribute, sublicense, and/or sell copies of the Software, and to
+ *    permit persons to whom the Software is furnished to do so, subject to
+ *    the following conditions:
+ *    The above copyright notice and this permission notice shall be included
+ *    in all copies or substantial portions of the Software.*
+ *    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ *    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ *    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ *    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ *    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ *    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+describe('base_model.js special properties', function() {
+  var Person;
+  beforeEach(function() {
+    Person = BaseModel.extend({
+      defaults: {name: ''}
+    });
+  });
+  afterEach(function() {
+    Person = undefined;
+  });
+  it('should fire events for cached derived properties on dependency change', function() {
+    var count = 0;
+    var NewPerson = Person.extend({
+      derived: {
+        greeting: {
+          deps: ['name'],
+          fn: function() {
+            count++;
+            return 'hi, ' + this.get('name') + '!';
+          }
+        }
+      }
+    });
+    var person = new NewPerson({name: 'world'});
+    expect(person.get('greeting')).to.equal('hi, world!');
+
+    // use again, should not increment counter
+    person.get('greeting');
+    expect(count, 1);
+
+    person.set('name', 'something');
+    expect(person.get('greeting')).to.equal('hi, something!');
+    // reference again
+    person.get('greeting');
+    expect(count).to.equal(2);
+  });
+  it('shouldn\'t fire events for cached derived properties if result is same', function () {
+    var NewPerson = Person.extend({
+      derived: {
+        greeting: {
+          deps: ['name'],
+          fn: function () {
+            return 'hi, ' + this.get('name') + '!';
+          }
+        }
+      }
+    });
+    var person = new NewPerson({name: 'world'});
+    person.on('change:greeting', function () {
+      // shouldn't fire if value is unchanged same value
+      expect(true).to.equal(false);
+    });
+    person.set('name', 'world');
+    expect(person.get('name')).to.equal('world');
+  });
+  it('should exclude session properties from toJSON', function () {
+    var Bar = BaseModel.extend({
+      session: ['active']
+    });
+    var bar = new Bar({name: 'hi', active: true});
+    expect(bar.toJSON()).to.deep.equal({name: 'hi'});
+  });
+});
