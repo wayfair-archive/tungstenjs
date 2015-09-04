@@ -1,8 +1,5 @@
 'use strict';
 
-/* global describe, it, require */
-'use strict';
-
 var logger = require('../../../src/utils/logger.js');
 
 describe('logger.js public API', function() {

@@ -1,5 +1,4 @@
 'use strict';
-/* global describe, it, require, beforeEach */
 var mouseenterleaveBind = require('../../../../src/event/handlers/mouseenter_events.js');
 describe('mouseenter_and_mouseleave_events', function() {
   var elem, otherElem, handler, obj;

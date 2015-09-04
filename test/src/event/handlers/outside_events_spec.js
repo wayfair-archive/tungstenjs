@@ -1,5 +1,4 @@
 'use strict';
-/* global describe, it, require, beforeEach */
 var outsideBind = require('../../../../src/event/handlers/outside_events.js');
 describe('outside_events', function() {
   var elem, type, obj, handler;

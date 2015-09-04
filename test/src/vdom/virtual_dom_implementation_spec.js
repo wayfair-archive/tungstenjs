@@ -1,4 +1,3 @@
-/* global describe, it, require, beforeEach */
 'use strict';
 
 var virtualDomImplementation = require('../../../src/vdom/virtual_dom_implementation');

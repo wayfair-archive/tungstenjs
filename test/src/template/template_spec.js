@@ -25,7 +25,6 @@
  *
  * @author    Andrew Rota <anrota@wayfair.com>
  */
-/* global describe, it, require */
 'use strict';
 
 // Ractive's parser has minor whitespace issues for Mustache Spec.

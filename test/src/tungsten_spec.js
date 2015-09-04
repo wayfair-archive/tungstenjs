@@ -3,7 +3,6 @@
  *
  * @author    Andrew Rota <anrota@wayfair.com>
  */
-/* global describe, it, expect, require */
 'use strict';
 
 // Module to test is tungsten.js

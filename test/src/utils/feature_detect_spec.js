@@ -1,8 +1,5 @@
 'use strict';
 
-/* global describe, it, require */
-'use strict';
-
 var featureDetect = require('../../../src/utils/feature_detect.js');
 
 describe('feature_detect.js public API', function() {

@@ -1,8 +1,5 @@
 'use strict';
 
-/* global describe, it, require */
-'use strict';
-
 var HTMLCommentWidget = require('../../../../src/template/widgets/html_comment.js');
 
 describe('html_comment.js public API', function() {

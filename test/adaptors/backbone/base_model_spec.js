@@ -1,6 +1,5 @@
 'use strict';
 
-/* global describe, it, expect, require, afterEach, beforeEach */
 var BackboneAdaptor = require('../../../adaptors/backbone');
 var BaseModel = BackboneAdaptor.Model;
 var Backbone = BackboneAdaptor.Backbone;

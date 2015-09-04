@@ -1,8 +1,5 @@
 'use strict';
 
-/* global describe, it, require */
-'use strict';
-
 var isArray = require('../../../src/utils/is_array.js');
 
 describe('is_array.js public API', function() {

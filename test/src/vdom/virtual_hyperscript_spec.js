@@ -1,4 +1,3 @@
-/* global describe, it, require */
 'use strict';
 var h = require('../../../src/vdom/virtual_hyperscript');
 /**

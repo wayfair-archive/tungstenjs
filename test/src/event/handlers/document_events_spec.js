@@ -1,5 +1,4 @@
 'use strict';
-/* global describe, it, require, beforeEach */
 var documentBind = require('../../../../src/event/handlers/document_events.js');
 
 describe('document_events', function() {

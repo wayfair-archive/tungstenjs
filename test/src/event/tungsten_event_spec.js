@@ -1,6 +1,5 @@
 'use strict';
 
-/* global describe, it, require */
 var tungstenEvent = require('../../../src/event/tungsten_event.js');
 describe('tungsten_event.js public api', function () {
   it('should be a function', function () {

@@ -1,5 +1,4 @@
 'use strict';
-/* global describe, it, require, beforeEach */
 var eventsCore = require('../../../src/event/events_core.js');
 
 describe('events_core.js public API', function() {
