@@ -167,4 +167,85 @@ describe('base_view.js constructed api', function() {
     });
   });
   /* develblock:end */
+
+  /**
+   * Some backbone view specs modified from backbone.js:
+   *    @author Jeremy Ashkenas, @license MIT
+   *    Copyright (c) 2010-2015 Jeremy Ashkenas, DocumentCloud
+   *    Permission is hereby granted, free of charge, to any person
+   *    obtaining a copy of this software and associated documentation
+   *    files (the "Software"), to deal in the Software without
+   *    restriction, including without limitation the rights to use,
+   *    copy, modify, merge, publish, distribute, sublicense, and/or sell
+   *    copies of the Software, and to permit persons to whom the
+   *    Software is furnished to do so, subject to the following
+   *    conditions:
+   *    The above copyright notice and this permission notice shall be
+   *    included in all copies or substantial portions of the Software.
+   *    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   *    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+   *    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   *    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+   *    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+   *    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   *    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+   *    OTHER DEALINGS IN THE SOFTWARE.
+   */
+
+  describe('base_view.js backbone functionality', function() {
+    var view;
+    beforeEach(function() {
+      view = new BaseView({
+        id: 'test-view',
+        className: 'test-view',
+        other: 'non-special-option'
+      });
+    });
+    afterEach(function() {
+      view = undefined;
+    });
+    it('should call constructor', function() {
+      expect(view.el.id).to.equal('test-view');
+      expect(view.el.className).to.equal('test-view');
+      expect(view.el.other).to.equal(void 0);
+    });
+    it('should set compiled template', function() {
+      var noop = function() {};
+      view = new BaseView({
+        template: noop
+      });
+      expect(view.compiledTemplate).to.equal(noop);
+    });
+    it('should set context', function() {
+      var context = {};
+      view = new BaseView({
+        context: context
+      });
+      expect(view.context).to.equal(context);
+    });
+    it('should set vtree', function() {
+      var vtree = {};
+      view = new BaseView({
+        vtree: vtree
+      });
+      expect(view.vtree).to.equal(vtree);
+    });
+    it('should set parentView', function() {
+      var parentView = {};
+      view = new BaseView({
+        parentView: parentView
+      });
+      expect(view.parentView).to.equal(parentView);
+    });
+    it('should set router', function() {
+      var router = {
+        view: {}
+      };
+      view = new BaseView({
+        router: router
+      });
+      expect(view.router).to.equal(router);
+    });
+  });
+
 });
