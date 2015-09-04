@@ -204,6 +204,22 @@ describe('base_view.js constructed api', function() {
     afterEach(function() {
       view = undefined;
     });
+    it('should render when called with dynamic initialize', function() {
+      var template = {
+        toVdom: function() {},
+        attachView: function() {}
+      };
+      var spy = jasmine.createSpy('spy');
+      var RenderStubBaseView = BaseView.extend({
+        render: spy
+      });
+      view = new RenderStubBaseView({
+        template: template,
+        vtree: {},
+        dynamicInitialize: true
+      });
+      jasmineExpect(spy).toHaveBeenCalled();
+    });
     it('should call constructor', function() {
       expect(view.el.id).to.equal('test-view');
       expect(view.el.className).to.equal('test-view');
