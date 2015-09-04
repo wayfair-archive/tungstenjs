@@ -39,7 +39,6 @@
     "x-is-array": "^0.1.0"
   },
   "devDependencies": {
-    "banner-footer-webpack-plugin": "http://github.com/dtothefp/banner-footer-webpack-plugin/tarball/master",
     "chai": "^2.2.0",
     "eslint": "^1.2.1",
     "express": "^4.13.3",
