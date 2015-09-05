@@ -43,8 +43,9 @@ events.EventTarget.dispatch = function dispatch(event, iterator) {
 var doc = global.document;
 
 function extend(destination, source) {
-  for (var property in source)
+  for (var property in source) {
     destination[property] = source[property];
+  }
   return destination;
 }
 
@@ -64,8 +65,6 @@ var defaultOptions = {
   bubbles: true,
   cancelable: true
 };
-
-var triggerElement = doc.createElement('div');
 
 // Setup helper for triggering DOM events
 // Code taken from http://stackoverflow.com/questions/6157929/how-to-simulate-a-mouse-click-using-javascript/6158050#6158050
