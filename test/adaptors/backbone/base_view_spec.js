@@ -221,6 +221,24 @@ describe('base_view.js constructed api', function() {
       });
       jasmineExpect(spy).toHaveBeenCalled();
     });
+    it('should not render when deferRender is set', function(done) {
+      var template = {
+        toVdom: function() {},
+        attachView: function() {}
+      };
+      var spy = jasmine.createSpy('spy');
+      var RenderStubBaseView = BaseView.extend({
+        render: spy
+      });
+      view = new RenderStubBaseView({
+        template: template,
+        deferRender: true
+      });
+      setTimeout(function() {
+        jasmineExpect(spy).not.toHaveBeenCalled();
+        done();
+      }, 1);
+    });
     it('should call constructor', function() {
       expect(view.el.id).to.equal('test-view');
       expect(view.el.className).to.equal('test-view');
