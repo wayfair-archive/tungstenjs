@@ -68,14 +68,14 @@ describe('events_core.js public API', function() {
       expect(eventsCore.removeEvent.length).to.equal(1);
     });
     it('should expect an array with four elements', function() {
-      spyOn(global._console, 'warn');
+      console.warn.calls.reset();
       eventsCore.removeEvent([elem, null, null, null]);
-      jasmineExpect(global._console.warn).not.toHaveBeenCalled();
+      jasmineExpect(console.warn).not.toHaveBeenCalled();
 
       function faultyCall(evt) {
-        global._console.warn.calls.reset();
+        console.warn.calls.reset();
         eventsCore.removeEvent(evt);
-        jasmineExpect(global._console.warn).toHaveBeenCalledWith(
+        jasmineExpect(console.warn).toHaveBeenCalledWith(
           'Object does not meet expected event spec',
           evt
         );
