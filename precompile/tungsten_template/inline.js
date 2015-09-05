@@ -20,10 +20,10 @@ if (require && require.extensions) {
 
     module.exports = template;
 
-    if (_.size(partials) > 0) {
+    if (partials.length > 0) {
       var dirname = path.dirname(filename);
       var partialMap = {};
-      _.each(partials, function(v, partial) {
+      _.each(partials, function(partial) {
         partialMap[partial] = require(path.join(dirname, partial + '.mustache'));
       });
       template.setPartials(partialMap);
