@@ -7,7 +7,7 @@
 module.exports = {
   isiOS: function() {
     if (!navigator) {
-      return;
+      return false;
     }
     return /iPhone|iPad|iPod/i.test(navigator.userAgent);
   }
