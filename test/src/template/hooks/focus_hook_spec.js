@@ -24,29 +24,30 @@ describe('focus_hook.js', function() {
     });
     it('should focus an element', function(done) {
       var elem = {
-        focus: jasmine.createSpy()
+        focus: jasmine.createSpy('elem.focus')
       };
+      document.activeElement = null;
       var hook = FocusHook();
       hook.hook(elem, null, null);
       setTimeout(function() {
         jasmineExpect(elem.focus).toHaveBeenCalled();
         done();
-      }, 10);
+      }, 100);
     });
     it('should not focus an element if it was previously set', function(done) {
       var elem = {
-        focus: jasmine.createSpy()
+        focus: jasmine.createSpy('elem.focus')
       };
       var hook = FocusHook();
       hook.hook(elem, null, true);
       setTimeout(function() {
         jasmineExpect(elem.focus).not.toHaveBeenCalled();
         done();
-      }, 10);
+      }, 100);
     });
     it('should not focus an element if it is currently set', function(done) {
       var elem = {
-        focus: jasmine.createSpy()
+        focus: jasmine.createSpy('elem.focus')
       };
       var hook = FocusHook();
       document.activeElement = elem;
@@ -54,7 +55,7 @@ describe('focus_hook.js', function() {
       setTimeout(function() {
         jasmineExpect(elem.focus).not.toHaveBeenCalled();
         done();
-      }, 10);
+      }, 100);
     });
   });
 });
