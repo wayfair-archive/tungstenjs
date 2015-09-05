@@ -31,6 +31,9 @@ for (var name in global.console) {
   console[name] = jasmine.jasmine.createSpy('console.' + name);
 }
 
+// Include event simulator to install global.triggerEvent
+require('./event_simulator.js');
+
 jasmine.loadConfig({
   'spec_dir': 'test',
   'spec_files': [
