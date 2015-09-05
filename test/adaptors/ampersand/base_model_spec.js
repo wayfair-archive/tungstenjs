@@ -30,18 +30,6 @@ describe('base_model.js constructed api', function() {
       expect(BaseModel.prototype.set.length).to.equal(3);
     });
   });
-  describe('toJSON', function() {
-    it('should be a function', function() {
-      expect(BaseModel.prototype.toJSON).to.be.a('function');
-      expect(BaseModel.prototype.toJSON.length).to.equal(0);
-    });
-  });
-  describe('serialize', function() {
-    it('should be a function', function() {
-      expect(BaseModel.prototype.serialize).to.be.a('function');
-      expect(BaseModel.prototype.serialize.length).to.equal(0);
-    });
-  });
   describe('postInitialize', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.postInitialize).to.be.a('function');
