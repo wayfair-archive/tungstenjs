@@ -3,6 +3,7 @@
 var AmpersandAdaptor = require('../../../adaptors/ampersand');
 var BaseView = AmpersandAdaptor.View;
 var Ampersand = AmpersandAdaptor.Ampersand;
+var tungsten = require('../../../src/tungsten');
 
 describe('base_view.js public api', function() {
   describe('extend', function() {
@@ -243,5 +244,25 @@ describe('base_view.js ampersand functionality', function() {
       parentView: parentView
     });
     expect(view.parentView).to.equal(parentView);
+  });
+  it('should delegateEvents', function() {
+    spyOn(tungsten, 'bindEvent');
+    var view = new BaseView({el: document.createElement('div')});
+    view.handleClick = function() {};
+    var events = {'click': 'handleClick'};
+
+    view.delegateEvents(events);
+    // delegateEvents fn uses a 1ms setTimeout
+    jasmineExpect(tungsten.bindEvent).toHaveBeenCalledWith(view.el, 'click', '', jasmine.any(Function), undefined);
+  });
+  it('should undelegateEvents', function() {
+    spyOn(tungsten, 'unbindEvent');
+    var view = new BaseView({el: document.createElement('div')});
+    view.handleClick = function() {};
+    var events = {'click': 'handleClick'};
+    view.delegateEvents(events);
+    view.undelegateEvents();
+    // delegateEvents fn uses a 1ms setTimeout
+    jasmineExpect(tungsten.unbindEvent).toHaveBeenCalled();
   });
 });

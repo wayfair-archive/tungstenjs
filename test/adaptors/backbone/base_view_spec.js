@@ -3,6 +3,7 @@
 var BackboneAdaptor = require('../../../adaptors/backbone');
 var BaseView = BackboneAdaptor.View;
 var Backbone = BackboneAdaptor.Backbone;
+var tungsten = require('../../../src/tungsten');
 
 describe('base_view.js public api', function() {
   describe('extend', function() {
@@ -261,6 +262,32 @@ describe('base_view.js constructed api', function() {
         router: router
       });
       expect(view.router).to.equal(router);
+    });
+    it('should delegateEvents', function(done) {
+      spyOn(tungsten, 'bindEvent');
+      var view = new BaseView();
+      view.handleClick = function() {};
+      var events = {'click': 'handleClick'};
+
+      view.delegateEvents(events);
+      // delegateEvents fn uses a 1ms setTimeout
+      window.setTimeout(function() {
+        jasmineExpect(tungsten.bindEvent).toHaveBeenCalledWith(view.el, 'click', '', jasmine.any(Function), undefined);
+        done();
+      }, 1);
+    });
+    it('should undelegateEvents', function(done) {
+      spyOn(tungsten, 'unbindEvent');
+      var view = new BaseView();
+      view.handleClick = function() {};
+      var events = {'click': 'handleClick'};
+      // delegateEvents fn uses a 1ms setTimeout
+      view.delegateEvents(events);
+      window.setTimeout(function() {
+        view.undelegateEvents();
+        jasmineExpect(tungsten.unbindEvent).toHaveBeenCalled();
+        done();
+      }, 1);
     });
   });
 
