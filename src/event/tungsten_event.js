@@ -19,6 +19,8 @@ function WEvent(evt) {
     this.ctrlKey = evt.ctrlKey;
     this.metaKey = evt.metaKey;
   }
+  this.current = undefined;
+  this.previous = undefined;
   this.eventId = _.uniqueId('e');
   this.propagationStopped = false;
   this.immediatePropagationStopped = false;
