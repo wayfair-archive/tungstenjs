@@ -10,6 +10,8 @@ var utils = require('./shared_utils');
 var Template = require('../../src/template/template');
 
 if (require && require.extensions) {
+  // This feature is deprecated, perhaps it should be removed
+  // https://nodejs.org/api/globals.html#globals_require_extensions
   require.extensions['.mustache'] = function(module, filename) {
     var fs = require.ensure('fs');
     var contents = fs.readFileSync(filename, 'utf8');
