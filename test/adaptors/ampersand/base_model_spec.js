@@ -117,7 +117,7 @@ describe('base_model.js ampersand functionality', function() {
   afterEach(function() {
     Person = undefined;
   });
-  it('init with nothing should be okay', function () {
+  it('init with nothing should be okay', function() {
     // extend requires {} for debug
     var EmptyModel = BaseModel.extend({});
     var something = new EmptyModel();
@@ -125,19 +125,19 @@ describe('base_model.js ampersand functionality', function() {
     expect(!!something).to.equal(true);
     expect(something.foo).to.equal('bar');
   });
-  it('init with values', function () {
+  it('init with values', function() {
     var person = new Person({name: 'foo'});
     expect(!!person).to.equal(true);
     expect(person.name).to.equal('foo');
   });
 
-  it('after initialized change should be empty until a set op', function () {
+  it('after initialized change should be empty until a set op', function() {
     var person = new Person({name: 'phil'});
     expect(person._changed).to.deep.equal({});
     expect(!!person.changedAttributes()).to.equal(false);
   });
 
-  it('extended object maintains existing props', function () {
+  it('extended object maintains existing props', function() {
     var AwesomePerson = Person.extend({
       props: {
         awesomeness: 'number'
@@ -153,13 +153,15 @@ describe('base_model.js ampersand functionality', function() {
     expect(awesome.awesomeness).to.equal(11);
   });
 
-  it('extended object maintains existing methods', function () {
+  it('extended object maintains existing methods', function() {
     var NewPerson = BaseModel.extend({
       props: {
         awesomeness: 'number'
       },
-      isTrulyAwesome: function () {
-        if (this.awesomeness > 10) return true;
+      isTrulyAwesome: function() {
+        if (this.awesomeness > 10) {
+          return true;
+        }
       }
     });
     var AwesomePerson = NewPerson.extend({});
@@ -168,7 +170,7 @@ describe('base_model.js ampersand functionality', function() {
     });
     expect(!!awesome.isTrulyAwesome()).to.equal(true);
   });
-  it('instanceof checks should pass for all parents in the chain', function () {
+  it('instanceof checks should pass for all parents in the chain', function() {
     var P1 = Person.extend({});
     var P2 = P1.extend({});
     var P3 = P2.extend({});
