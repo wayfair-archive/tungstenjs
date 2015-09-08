@@ -28,8 +28,12 @@ var eventNameMap = {
 };
 
 module.exports = function(el, eventName, selector, method, options, bindVirtualEvent) {
-  if (nativeFocusin && eventNameMap[eventName]) {
+  if (module.exports.nativeFocusin && eventNameMap[eventName]) {
     // Rename the event and pass through to the default handler
     return bindVirtualEvent(el, eventNameMap[eventName], selector, method, options);
   }
 };
+if (window && window.isTest) {
+  // Exposing value so that it can be overridden for testing
+  module.exports.nativeFocusin = nativeFocusin;
+}
