@@ -6,6 +6,8 @@ global.window = document.parentWindow;
 global.navigator = window.navigator;
 global.Element = window.Element;
 
+window.isTest = true;
+
 // Leaving Jasmine expect available for spies
 global.jasmineExpect = global.expect;
 // Include Chai assertion library
