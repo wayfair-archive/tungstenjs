@@ -9,12 +9,7 @@
 
 var featureDetect = require('../../utils/feature_detect');
 
-var isiOS = (function() {
-  if (typeof featureDetect.isiOS === 'function') {
-    return featureDetect.isiOS();
-  }
-  return false;
-}());
+var isiOS = featureDetect.isiOS();
 
 function FocusHook() {
   if (!(this instanceof FocusHook)) {

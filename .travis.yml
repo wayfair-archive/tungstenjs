@@ -2,6 +2,11 @@ language: node_js
 node_js:
   - "0.10"
 sudo: false
+before_script:
+  - npm install -g codeclimate-test-reporter
 script:
-  - npm test
-  - npm run test-debug
+  - npm run pretest
+  - node ./test/build.js --coverage
+  - node ./test/jasmine.js --coverage
+after_success:
+  - codeclimate-test-reporter < ./test/coverage/lcov.info

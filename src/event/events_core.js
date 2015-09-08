@@ -139,6 +139,8 @@ module.exports.removeEvent = function(evt) {
     } else {
       logger.warn('Object does not meet expected event spec', evt);
     }
+  } else {
+    logger.warn('Object does not meet expected event spec', evt);
   }
 };
 

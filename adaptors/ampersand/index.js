@@ -19,5 +19,11 @@ Context.setAdapterFunctions(AmpersandAdaptor);
 module.exports = {
   Collection: require('./base_collection'),
   Model: require('./base_model'),
-  View: require('./base_view')
+  View: require('./base_view'),
+  ViewWidget: require('./ampersand_view_widget'),
+  Ampersand: {
+    Collection: require('ampersand-collection'),
+    Model: require('ampersand-model'),
+    View: require('ampersand-view')
+  }
 };
