@@ -5,10 +5,11 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node ./node_modules/webpack/bin/webpack.js -d",
+    "build": "node ../../node_modules/webpack/bin/webpack.js -d",
     "start": "node ../examples_server.js --example=\"todomvc-ampersand\""
   },
   "dependencies": {
-    "todomvc-app-css": "^1.0.1"
+    "ampersand-router": "^3.0.2",
+    "todomvc-app-css": "^2.0.1"
   }
 }

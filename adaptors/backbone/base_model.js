@@ -15,7 +15,7 @@ var logger = require('../../src/utils/logger');
  */
 var BaseModel = Backbone.Model.extend({
   tungstenModel: true,
-  initialize: function() {
+  initialize: function(attributes, options) {
     /* develblock:start */
     this.initDebug();
     /* develblock:end */
@@ -46,7 +46,7 @@ var BaseModel = Backbone.Model.extend({
         }
       });
     }
-    this.postInitialize();
+    this.postInitialize(attributes, options);
   },
 
   /* develblock:start */
@@ -121,26 +121,55 @@ var BaseModel = Backbone.Model.extend({
    */
   getPropertiesArray: function() {
     var properties = [];
-    var relations = this.relations;
+    var relations = _.result(this, 'relations') || {};
+    var derived = _.result(this, 'derived') || {};
+
+    var isEditable = function(value) {
+      if (!_.isObject(value)) {
+        return true;
+      } else if (_.isArray(value)) {
+        var result = true;
+        _.each(value, function(i) {
+          result = result && isEditable(i);
+        });
+        return result;
+      } else {
+        try {
+          JSON.stringify(value);
+          return true;
+        } catch (ex) {
+          return false;
+        }
+      }
+    };
+
     _.each(this.attributes, function(value, key) {
+      var prop;
       if (relations && relations[key]) {
-        properties.push({
+        prop = {
           key: key,
           data: {
             isRelation: true,
             name: value.getDebugName()
           }
-        });
+        };
       } else {
-        properties.push({
+        prop = {
           key: key,
           data: {
+            isDerived: derived[key],
+            isEditable: isEditable(value),
             isEditing: false,
             value: value
           }
-        });
+        };
+
+        prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
       }
+      properties.push(prop);
     });
+
+    properties = _.sortBy(properties, 'key');
 
     return properties;
   },

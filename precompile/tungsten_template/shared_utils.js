@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var Ractive = require('ractive');
 var logger = require('../../src/utils/logger');
 var ractiveTypes = require('../../src/template/ractive_types');
@@ -11,6 +12,9 @@ var ractiveTypes = require('../../src/template/ractive_types');
  * @return {String}          Raw value to lookup from context
  */
 module.exports.parseInterpolatorString = function(template) {
+  if (!template) {
+    return '';
+  }
   if (template.x) {
     var str = template.x.s;
     str = str.replace(/_(\d)/g, function(fullMatch, match) {
@@ -28,17 +32,13 @@ module.exports.parseInterpolatorString = function(template) {
  * @param  {Object} partials    Partials object to add to
  * @return {Object}             Partials referenced in this template
  */
-module.exports.findPartials = function(template, partials) {
-  partials = partials || {};
-  if (typeof template === 'string' || typeof template === 'undefined') {
-    // String or undefined means we've bottomed out
-    return partials;
-  } else if (template instanceof Array) {
+function _findPartials(template, partials) {
+  if (template instanceof Array) {
     // Arrays need mapping over
     for (var i = 0; i < template.length; i++) {
-      module.exports.findPartials(template[i], partials);
+      _findPartials(template[i], partials);
     }
-    return partials;
+    return;
   }
 
   switch (template.t) {
@@ -51,11 +51,15 @@ module.exports.findPartials = function(template, partials) {
       // Element or Sections should be iterated into
     case ractiveTypes.ELEMENT:
     case ractiveTypes.SECTION:
-      module.exports.findPartials(template.f, partials);
+      _findPartials(template.f, partials);
       break;
   }
+}
 
-  return partials;
+module.exports.findPartials = function(template) {
+  var partials = {};
+  _findPartials(template, partials);
+  return _.keys(partials);
 };
 
 /**
@@ -73,9 +77,8 @@ module.exports.compileTemplate = function(contents, srcFile) {
       preserveWhitespace: true
     });
   } catch (ex) {
-    logger.log('Unable to parse ' + (srcFile || contents));
-    logger.log(ex.message);
-    process.exit(1);
+    logger.error('Unable to parse ' + (srcFile || contents));
+    throw new Error('Compilation error: ' + ex.message);
   }
 
   return parsed.t;

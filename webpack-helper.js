@@ -1,4 +1,5 @@
 'use strict';
+/* global process, __dirname */
 
 var path = require('path');
 
@@ -26,7 +27,6 @@ function ensureLoader(loaders, test, loader) {
  * @return {Object}         Updated webpack config object
  */
 module.exports = function(config, dev) {
-
   // If dev is not explicitly set, check for the command line flag
   if (dev === undefined) {
     var args = process.argv;
@@ -51,9 +51,9 @@ module.exports = function(config, dev) {
   if (!dev) {
     ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
   }
-  ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
   ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
   ensureLoader(config.module.loaders, /tungstenjs[\\\/].*\.js$/, 'babel');
+  ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
 
   return config;
 };

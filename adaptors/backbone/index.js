@@ -20,5 +20,6 @@ module.exports = {
   Collection: require('./base_collection'),
   Model: require('./base_model'),
   View: require('./base_view'),
+  ViewWidget: require('./backbone_view_widget'),
   Backbone: require('backbone')
 };

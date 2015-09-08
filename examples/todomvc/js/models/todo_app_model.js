@@ -7,12 +7,15 @@ var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
 
 var Model = TungstenBackboneBase.Model;
 var TodoItemCollection = require('../collections/todo_item_collection.js');
+var TodoFilterCollection = require('../collections/todo_filter_collection.js');
 var AppModel = Model.extend({
   relations: {
-    todoItems: TodoItemCollection
+    todoItems: TodoItemCollection,
+    filters: TodoFilterCollection
   },
   defaults: {
-    todoItems: []
+    todoItems: [],
+    filters: []
   },
   postInitialize: function() {
     this.listenTo(this, 'addItem', function(title) {
@@ -20,13 +23,33 @@ var AppModel = Model.extend({
       this.get('todoItems').add({title: title});
     });
   },
+  filter: function(filterBy) {
+    this.get('todoItems').filterItems(filterBy);
+    this.get('filters').selectFilter(filterBy);
+  },
   derived: {
+    hasTodos: {
+      deps: ['todoItems'],
+      fn: function() {
+        return this.get('todoItems').length > 0;
+      }
+    },
     incompletedItems: {
       deps: ['todoItems'],
       fn: function() {
         return this.get('todoItems').filter(function(item) {
           return !item.get('completed');
         });
+      }
+    },
+    allCompleted: {
+      deps: ['todoItems'],
+      fn: function() {
+        if (this.get('todoItems').length) {
+          return this.get('todoItems').every(function(item) {
+            return item.get('completed');
+          });
+        }
       }
     },
     todoCount: {

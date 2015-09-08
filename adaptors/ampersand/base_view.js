@@ -17,7 +17,7 @@ var delegateEventSplitter = /^(\S+)\s*(.*)$/;
  * Provides generic reusable methods that child views can inherit from
  */
 var BaseView = AmpersandView.extend({
-  tungstenView: true,
+  tungstenViewInstance: true,
   /*
    * Default to an empty hash
    */
@@ -58,10 +58,15 @@ var BaseView = AmpersandView.extend({
 
     var dataItem = this.serialize();
 
-    // Sanity check that template exists and has a toVdom method
+    // Sanity check that compiledTemplate exists and has a toVdom method
     if (this.compiledTemplate && this.compiledTemplate.toVdom) {
       // Run attachView with this instance to attach childView widget points
       this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
+
+      // If vtree was passed in, we're switching from another view and need to render
+      if (this.options.vtree) {
+        this.render();
+      }
 
       if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
@@ -78,16 +83,21 @@ var BaseView = AmpersandView.extend({
         var self = this;
         self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
         self.initializeRenderListener(dataItem);
-        if (this.options.dynamicInitialize) {
-          // If dynamicInitialize was set, render was already invoked, so childViews are attached
+        if (this.options.dynamicInitialize || this.options.vtree) {
+          // If certain options were set, render was already invoked, so childViews are attached
           self.postInitialize();
+          if (!this.options.dynamicInitialize) {
+            self.validateVdom();
+          }
         } else {
           setTimeout(function() {
             self.attachChildViews();
             self.postInitialize();
+            self.validateVdom();
           }, 1);
         }
       } else {
+        this.initializeRenderListener(dataItem);
         this.postInitialize();
       }
     } else {
@@ -126,6 +136,38 @@ var BaseView = AmpersandView.extend({
    * Currently unimplemented. Child views should override this if they would like to use it.
    */
   postInitialize: function() {},
+
+  validateVdom: function() {
+    // If the vtree or element hasn't been set for any reason, bail out of validation
+    if (!this.vtree || !this.vtree.children || !this.el || !this.el.childNodes) {
+      return;
+    }
+    var isText = function(node) {
+      return node && (typeof node === 'string' || node.type === 'VirtualText');
+    };
+
+    // If there's a mismatch in childNode counts, it's usually extra whitespace from the server
+    // We can trim those off so that the VTree is unaffected during lookups
+    // Since this is in the form of whitespace around the template, it's a simple type check on the first and last node
+    if (this.vtree.children.length !== this.el.childNodes.length) {
+      // If the first part of the template is a string or the first node isn't a textNode, assume that's fine
+      if (!isText(this.vtree.children[0]) && this.el.childNodes[0] && this.el.childNodes[0].nodeType === 3) {
+        this.el.removeChild(this.el.childNodes[0]);
+      }
+      // If the last part of the template is a string or the last node isn't a textNode, assume that's fine
+      var lastNode = this.el.childNodes[this.el.childNodes.length - 1];
+      if (!isText(this.vtree.children[this.vtree.children.length - 1]) && lastNode && lastNode.nodeType === 3) {
+        this.el.removeChild(lastNode);
+      }
+    }
+    /* develblock:start */
+    // Compare full template against full DOM
+    var diff = this.getTemplateDiff();
+    if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
+      logger.warn('DOM does not match VDOM for view "' + this.getDebugName() + '". Use debug panel to see differences');
+    }
+    /* develblock:end */
+  },
 
 
   /* develblock:start */
@@ -169,6 +211,18 @@ var BaseView = AmpersandView.extend({
     };
     var getFunctions = require('../shared/get_functions');
     return getFunctions(trackedFunctions, getTrackableFunction, this, BaseView.prototype, blacklist);
+  },
+
+  _handleElementChange: function(element, delegate) {
+    var dataset = require('data-set');
+    var data;
+    if (this.el && this.el.tagName && this.el !== element) {
+      data = dataset(this.el);
+      data.view = null;
+    }
+    AmpersandView.prototype._handleElementChange.call(this, element, delegate);
+    data = dataset(this.el);
+    data.view = this;
   },
 
   /**
