@@ -11,6 +11,6 @@ var nativeFn = Array.isArray;
 var polyfillFn = function(object) { return ObjectToString.call(object) === '[object Array]'; };
 module.exports = nativeFn || polyfillFn;
 // only export polyfill if running in node for testing
-if(__dirname) {
+if (__dirname) {
   module.exports.polyfill = polyfillFn;
 }
