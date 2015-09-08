@@ -10,3 +10,6 @@ window.app = module.exports = new AppView({
   model: new AppModel(window.data),
   dynamicInitialize: elem.childNodes.length === 0
 });
+
+var router = require('./app_router');
+router.init(window.app);

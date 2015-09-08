@@ -201,7 +201,10 @@ exports.setNestedModel = function(Model) {
       }
 
       options._parent = this;
-
+      // Since this is a relation for a model, unset any collection option that might be passed through
+      if (options.collection) {
+        options.collection = null;
+      }
       val = new this.relations[attr](val, options);
       val.parent = this;
       val.parentProp = attr;

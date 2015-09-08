@@ -1,16 +1,16 @@
 {
   "name": "tungstenjs-backbone-todomvc-es6",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node ./node_modules/webpack/bin/webpack.js -d",
-    "start": "node ../examples_server.js --example=\"todomvc-es6\""
+    "build": "node ../../node_modules/webpack/bin/webpack.js -d",
+    "start": "node ../examples_server.js --example=\"todomvc-es6+\""
   },
   "dependencies": {
     "babel-core": "5.6.15",
     "babel-loader": "5.3.1",
-    "todomvc-app-css": "^1.0.1"
+    "todomvc-app-css": "^2.0.1"
   }
 }

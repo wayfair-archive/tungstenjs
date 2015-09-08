@@ -18,6 +18,11 @@ var AppView = View.extend({
     'click .js-toggle-all': 'handleClickToggleAll',
     'click .js-clear-completed': 'handleClickClearCompleted'
   },
+  postInitialize: function() {
+    this.on('filter', function(filterBy) {
+      this.model.filter(filterBy);
+    });
+  },
   handleClickClearCompleted: function() {
     _.invoke(this.model.get('todoItems').where({completed: true}), 'destroy');
     return false;
