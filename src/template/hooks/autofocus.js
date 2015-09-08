@@ -9,12 +9,7 @@
 
 var featureDetect = require('../../utils/feature_detect');
 
-var isiOS = (function() {
-  if (typeof featureDetect.isiOS === 'function') {
-    return featureDetect.isiOS();
-  }
-  return false;
-}());
+var isiOS = featureDetect.isiOS();
 
 function FocusHook() {
   if (!(this instanceof FocusHook)) {
@@ -22,11 +17,11 @@ function FocusHook() {
   }
 }
 
-FocusHook.prototype.hook = function (node, prop, prev) {
+FocusHook.prototype.hook = function(node, prop, prev) {
   // Only run this hook if this wasn't on the previous tree
   // and not on iOS because it really breaks things
   if (!isiOS && !prev) {
-    setTimeout(function () {
+    setTimeout(function() {
       if (document.activeElement !== node) {
         node.focus();
       }

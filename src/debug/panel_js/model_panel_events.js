@@ -37,7 +37,9 @@ module.exports = function() {
   });
   utils.addEvent('js-model-property', 'click', function(e) {
     var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
-    var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {key: key});
+    var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {
+      key: key
+    });
     if (selectedProperty && !selectedProperty.data.isRelation && !selectedProperty.data.isEditing) {
       selectedProperty.data.isEditing = true;
       utils.render();
@@ -48,7 +50,9 @@ module.exports = function() {
     var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
     try {
       var value = JSON.parse(e.currentTarget.value);
-      var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {key: key});
+      var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {
+        key: key
+      });
       selectedProperty.data.isEditing = false;
       selectedProperty.data.value = value;
       appData.selectedModel.obj.set(key, value);
@@ -68,7 +72,9 @@ module.exports = function() {
   });
   utils.addEvent('js-track-function', 'click', function(e) {
     var fnName = e.currentTarget.getAttribute('data-fn');
-    var selectedFunction = _.findWhere(appData.selectedModel.objectFunctions, {name: fnName});
+    var selectedFunction = _.findWhere(appData.selectedModel.objectFunctions, {
+      name: fnName
+    });
     selectedFunction.tracked = !selectedFunction.tracked;
     appData.selectedModel.toggleFunctionTracking(fnName, selectedFunction.tracked);
     utils.render();
@@ -114,7 +120,7 @@ module.exports = function() {
     utils.render();
   });
   utils.addEvent('js-get-model-data', 'click', function() {
-    appData.selectedModel.outputData = JSON.stringify(appData.selectedModel.obj.doSerialize());
+    appData.selectedModel.outputData = JSON.stringify(appData.selectedModel.obj);
     utils.render();
   });
   utils.addEvent('js-set-model-data', 'click', function() {

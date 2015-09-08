@@ -1,5 +1,6 @@
 # ![Tungsten.js](https://cdn.rawgit.com/wayfair/tungstenjs/master/extra/tungstenjs_logo.svg)
 [![Build Status](https://travis-ci.org/wayfair/tungstenjs.svg?branch=master)](https://travis-ci.org/wayfair/tungstenjs)
+[![npm version](https://badge.fury.io/js/tungstenjs.svg)](https://www.npmjs.com/package/tungstenjs)
 
 Tungsten.js is a modular framework for creating web UIs with high-performance rendering on both server and client.
 
@@ -26,13 +27,11 @@ An adaptor layer is used to connect with Tungsten.js with a preferred modular cl
 
 Tungsten.js has no hard dependency on [jQuery](https://github.com/jquery/jquery), and uses the jQuery-less [backbone.native](https://github.com/inkling/backbone.native) in its Backbone adaptor.
 
-Tungsten.js is ~15kb packed and gzipped. Bundled with Backbone and the adaptor, it's ~25kb packed and gzipped.
-
 ## Backbone.js Adaptor
 
 Tungsten.js is pre-packaged with an adaptor for using Backbone.js.  This adaptor is can be included via CommonJS or ES6 Modules at `tungstenjs/adaptors/backbone/index.js` and exposes base modules for Backbone (as well as a direct reference to Backbone itself).
 
-`View`, `Model`, and `Collection` are drop-in replacements for `Backbone.View`, `Backbone.Model`, and `Backbone.Collection` constructor functions.  They can be extended as usual to create custom constructors.
+`View`, `Model`, and `Collection` are drop-in replacements for `Backbone.View`, `Backbone.Model`, and `Backbone.Collection` constructor functions.  They can be extended as usual to create custom constructors.  Any initialization logic in views, models, or collections should be put in a `postInitialize` method on the constructor (which automatically gets called after `initialize()`), rather than in `initialize`.
 
 The Backbone.js adaptor includes a forked version of [backbone-nested-models](https://github.com/blittle/backbone-nested-models).
 

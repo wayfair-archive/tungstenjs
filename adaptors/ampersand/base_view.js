@@ -8,6 +8,7 @@ var _ = require('underscore');
 var AmpersandView = require('ampersand-view');
 var tungsten = require('../../src/tungsten');
 var ViewWidget = require('./ampersand_view_widget');
+var logger = require('../../src/utils/logger');
 
 // Cached regex to split keys for `delegate`.
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -16,7 +17,7 @@ var delegateEventSplitter = /^(\S+)\s*(.*)$/;
  * Provides generic reusable methods that child views can inherit from
  */
 var BaseView = AmpersandView.extend({
-  tungstenView: true,
+  tungstenViewInstance: true,
   /*
    * Default to an empty hash
    */
@@ -51,12 +52,21 @@ var BaseView = AmpersandView.extend({
       this.parentView = this.options.parentView;
     }
 
+    /* develblock:start */
+    this.initDebug();
+    /* develblock:end */
+
     var dataItem = this.serialize();
 
-    // Sanity check that template exists and has a toVdom method
+    // Sanity check that compiledTemplate exists and has a toVdom method
     if (this.compiledTemplate && this.compiledTemplate.toVdom) {
       // Run attachView with this instance to attach childView widget points
       this.compiledTemplate = this.compiledTemplate.attachView(this, ViewWidget);
+
+      // If vtree was passed in, we're switching from another view and need to render
+      if (this.options.vtree) {
+        this.render();
+      }
 
       if (this.options.dynamicInitialize) {
         // If dynamicInitialize is set, empty this.el and replace it with the rendered template
@@ -73,16 +83,21 @@ var BaseView = AmpersandView.extend({
         var self = this;
         self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
         self.initializeRenderListener(dataItem);
-        if (this.options.dynamicInitialize) {
-          // If dynamicInitialize was set, render was already invoked, so childViews are attached
+        if (this.options.dynamicInitialize || this.options.vtree) {
+          // If certain options were set, render was already invoked, so childViews are attached
           self.postInitialize();
+          if (!this.options.dynamicInitialize) {
+            self.validateVdom();
+          }
         } else {
           setTimeout(function() {
             self.attachChildViews();
             self.postInitialize();
+            self.validateVdom();
           }, 1);
         }
       } else {
+        this.initializeRenderListener(dataItem);
         this.postInitialize();
       }
     } else {
@@ -121,6 +136,198 @@ var BaseView = AmpersandView.extend({
    * Currently unimplemented. Child views should override this if they would like to use it.
    */
   postInitialize: function() {},
+
+  validateVdom: function() {
+    // If the vtree or element hasn't been set for any reason, bail out of validation
+    if (!this.vtree || !this.vtree.children || !this.el || !this.el.childNodes) {
+      return;
+    }
+    var isText = function(node) {
+      return node && (typeof node === 'string' || node.type === 'VirtualText');
+    };
+
+    // If there's a mismatch in childNode counts, it's usually extra whitespace from the server
+    // We can trim those off so that the VTree is unaffected during lookups
+    // Since this is in the form of whitespace around the template, it's a simple type check on the first and last node
+    if (this.vtree.children.length !== this.el.childNodes.length) {
+      // If the first part of the template is a string or the first node isn't a textNode, assume that's fine
+      if (!isText(this.vtree.children[0]) && this.el.childNodes[0] && this.el.childNodes[0].nodeType === 3) {
+        this.el.removeChild(this.el.childNodes[0]);
+      }
+      // If the last part of the template is a string or the last node isn't a textNode, assume that's fine
+      var lastNode = this.el.childNodes[this.el.childNodes.length - 1];
+      if (!isText(this.vtree.children[this.vtree.children.length - 1]) && lastNode && lastNode.nodeType === 3) {
+        this.el.removeChild(lastNode);
+      }
+    }
+    /* develblock:start */
+    // Compare full template against full DOM
+    var diff = this.getTemplateDiff();
+    if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
+      logger.warn('DOM does not match VDOM for view "' + this.getDebugName() + '". Use debug panel to see differences');
+    }
+    /* develblock:end */
+  },
+
+
+  /* develblock:start */
+  /**
+   * Bootstraps all debug functionality
+   */
+  initDebug: function() {
+    var dataset = require('data-set');
+    var data = dataset(this.el);
+    data.view = this;
+    tungsten.debug.registry.register(this);
+    // Rebind events so that they can be tracked
+    this.delegateEvents();
+    // These methods are often invoked oddly, so ensure their context
+    _.bindAll(this, 'getEvents', 'getDebugName', 'getChildViews');
+  },
+
+  /**
+   * Get a list of all trackable functions for this view instance
+   * Ignores certain base and debugging functions
+   *
+   * @param  {Object}        trackedFunctions     Object to track state
+   * @param  {Function}      getTrackableFunction Callback to get wrapper function
+   *
+   * @return {Array<Object>}                      List of trackable functions
+   */
+  getFunctions: function(trackedFunctions, getTrackableFunction) {
+    // Debug functions shouldn't be debuggable
+    var blacklist = {
+      constructor: true,
+      initialize: true,
+      postInitialize: true,
+      compiledTemplate: true,
+      initDebug: true,
+      getFunctions: true,
+      getEvents: true,
+      getElTemplate: true,
+      getVdomTemplate: true,
+      getChildren: true,
+      getDebugName: true
+    };
+    var getFunctions = require('../shared/get_functions');
+    return getFunctions(trackedFunctions, getTrackableFunction, this, BaseView.prototype, blacklist);
+  },
+
+  _handleElementChange: function(element, delegate) {
+    var dataset = require('data-set');
+    var data;
+    if (this.el && this.el.tagName && this.el !== element) {
+      data = dataset(this.el);
+      data.view = null;
+    }
+    AmpersandView.prototype._handleElementChange.call(this, element, delegate);
+    data = dataset(this.el);
+    data.view = this;
+  },
+
+  /**
+   * Gets a JSON format version of the current state
+   *
+   * @return {Object|Array} Data of bound model or collection
+   */
+  getState: function() {
+    var data = this.serialize();
+    if (data && typeof data.toJSON === 'function') {
+      data = data.toJSON();
+    }
+    return data;
+  },
+
+  /**
+   * Sets the state to the given data
+   * @param {Object|Array} data Object to set state to
+   */
+  setState: function(data) {
+    var dataObj = this.serialize();
+    if (typeof dataObj.reset === 'function') {
+      dataObj.reset(data);
+    } else if (typeof dataObj.set === 'function') {
+      dataObj.set(data, {
+        reset: true
+      });
+    }
+    return data;
+  },
+
+  /**
+   * Return a list of DOM events
+   *
+   * @return {Array<Object>} List of bound DOM events
+   */
+  getEvents: function() {
+    var events = _.result(this, 'events');
+    var eventKeys = _.keys(events);
+
+    var result = new Array(eventKeys.length);
+    for (var i = 0; i < eventKeys.length; i++) {
+      result[i] = {
+        selector: eventKeys[i],
+        name: events[eventKeys[i]],
+        fn: this[events[eventKeys[i]]]
+      };
+    }
+    return result;
+  },
+
+  /**
+   * Converts the current vtree to an HTML structure
+   *
+   * @return {string} HTML representation of VTree
+   */
+  getVdomTemplate: function() {
+    var vtreeToRender = this.vtree;
+    if (!this.parentView) {
+      vtreeToRender = vtreeToRender.children;
+    }
+    return tungsten.debug.vtreeToString(vtreeToRender, true);
+  },
+
+  /**
+   * Compares the current VTree and DOM structure and returns a diff
+   *
+   * @return {string} Diff of VTree vs DOM
+   */
+  getTemplateDiff: function() {
+    if (!this.parentView) {
+      var numChildren = Math.max(this.vtree.children.length, this.el.childNodes.length);
+      var output = '';
+      for (var i = 0; i < numChildren; i++) {
+        output += tungsten.debug.diffVtreeAndElem(this.vtree.children[i], this.el.childNodes[i]);
+      }
+      return output;
+    } else {
+      return tungsten.debug.diffVtreeAndElem(this.vtree, this.el);
+    }
+  },
+
+  /**
+   * Gets children of this object
+   *
+   * @return {Array} Whether this object has children
+   */
+  getChildren: function() {
+    if (this.getChildViews.original) {
+      return this.getChildViews.original.call(this);
+    } else {
+      return this.getChildViews();
+    }
+  },
+
+  /**
+   * Debug name of this object, using declared debugName, falling back to cid
+   *
+   * @return {string} Debug name
+   */
+  getDebugName: function() {
+    return this.debugName ? this.debugName + this.cid.replace('view', '') : this.cid;
+  },
+  /* develblock:end */
+
 
   /**
    * Lets the child view dictate what to pass into the template as context. If not overriden, then it will simply use the default
@@ -294,6 +501,33 @@ var BaseView = AmpersandView.extend({
     }
   }
 });
+
+BaseView.extend = function(protoProps) {
+  /* develblock:start */
+  // Certain methods of BaseView should be unable to be overridden
+  var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
+
+  function wrapOverride(first, second) {
+    return function() {
+      first.apply(this, arguments);
+      second.apply(this, arguments);
+    };
+  }
+  for (var i = 0; i < methods.length; i++) {
+    if (protoProps[methods[i]]) {
+      var msg = 'Model.' + methods[i] + ' may not be overridden';
+      if (protoProps && protoProps.debugName) {
+        msg += ' for model "' + protoProps.debugName + '"';
+      }
+      logger.warn(msg);
+      // Replace attempted override with base version
+      protoProps[methods[i]] = wrapOverride(BaseView.prototype[methods[i]], protoProps[methods[i]]);
+    }
+  }
+  /* develblock:end */
+
+  return AmpersandView.extend.call(this, protoProps);
+};
 
 BaseView.tungstenView = true;
 

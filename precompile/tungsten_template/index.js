@@ -31,9 +31,9 @@ module.exports = function(contents) {
   var output = 'var Template=require("tungstenjs/src/template/template");';
   output += 'var template=new Template(' + template + ');';
   output += 'module.exports=template;';
-  if (_.size(partials) > 0) {
+  if (partials.length > 0) {
     output += 'template.setPartials({';
-    output += _.map(partials, function(v, partial) {
+    output += _.map(partials, function(partial) {
       return '"' + partial + '":require("./' + partial + '.mustache")';
     }).join(',');
     output += '});';

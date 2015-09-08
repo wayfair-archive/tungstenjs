@@ -12,7 +12,6 @@
 'use strict';
 
 var logger = require('../../src/utils/logger');
-var tungsten = require('../../src/tungsten');
 
 /**
  * Wrapper Widget for child views

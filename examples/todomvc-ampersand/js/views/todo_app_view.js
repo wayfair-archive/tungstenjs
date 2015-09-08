@@ -19,13 +19,18 @@ var AppView = View.extend({
     'click .js-clear-completed': 'handleClickClearCompleted'
   },
   handleClickClearCompleted: function() {
-    _.invoke(_.where(this.model.todoItems, {completed: true}), 'destroy');
+    _.invoke(_.where(this.model.todoItems.models, {completed: true}), 'destroy');
     return false;
   },
   handleClickToggleAll: function(e) {
     var completed = e.currentTarget.checked;
     this.model.todoItems.each(function(item) {
       item.completed = completed;
+    });
+  },
+  postInitialize: function() {
+    this.listenTo(this, 'filter', function(filterBy) {
+      this.model.filter(filterBy);
     });
   }
 }, {

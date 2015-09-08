@@ -7,27 +7,31 @@ var path = require('path');
 String.prototype.normalize = null;
 
 var utils = require('./shared_utils');
-var fs = require('fs');
 var Template = require('../../src/template/template');
 
-require.extensions['.mustache'] = function (module, filename) {
-  var contents = fs.readFileSync(filename, 'utf8');
-  var parsedTemplate = utils.compileTemplate(contents, module.src);
-  var partials = utils.findPartials(parsedTemplate);
-  utils.handleDynamicComments(parsedTemplate);
-  var template = new Template(parsedTemplate);
+if (require && require.extensions) {
+  // This feature is deprecated, perhaps it should be removed
+  // https://nodejs.org/api/globals.html#globals_require_extensions
+  require.extensions['.mustache'] = function(module, filename) {
+    var fs = require.ensure('fs');
+    var contents = fs.readFileSync(filename, 'utf8');
+    var parsedTemplate = utils.compileTemplate(contents, module.src);
+    var partials = utils.findPartials(parsedTemplate);
+    utils.handleDynamicComments(parsedTemplate);
+    var template = new Template(parsedTemplate);
 
-  module.exports = template;
+    module.exports = template;
 
-  if (_.size(partials) > 0) {
-    var dirname = path.dirname(filename);
-    var partialMap = {};
-    _.each(partials, function(v, partial) {
-      partialMap[partial] = require(path.join(dirname, partial + '.mustache'));
-    });
-    template.setPartials(partialMap);
-  }
-};
+    if (partials.length > 0) {
+      var dirname = path.dirname(filename);
+      var partialMap = {};
+      _.each(partials, function(partial) {
+        partialMap[partial] = require(path.join(dirname, partial + '.mustache'));
+      });
+      template.setPartials(partialMap);
+    }
+  };
+}
 
 function compile(contents, partials) {
   var parsedTemplate = utils.compileTemplate(contents, module.src);

@@ -201,7 +201,10 @@ exports.setNestedModel = function(Model) {
       }
 
       options._parent = this;
-
+      // Since this is a relation for a model, unset any collection option that might be passed through
+      if (options.collection) {
+        options.collection = null;
+      }
       val = new this.relations[attr](val, options);
       val.parent = this;
       val.parentProp = attr;
@@ -213,7 +216,9 @@ exports.setNestedModel = function(Model) {
   Model.prototype.trigger = newTrigger;
 
   Model.prototype.reset = function(attrs, options) {
-    var opts = _.extend({reset:true}, options);
+    var opts = _.extend({
+      reset: true
+    }, options);
     var currentKeys = _.keys(this.attributes);
     var relations = _.result(this, 'relations') || {};
     var derived = _.result(this, 'derived') || {};
@@ -291,7 +296,9 @@ exports.setNestedModel = function(Model) {
         // Inject in the relational lookup
         var opts = options;
         /* develblock:start */
-        opts = _.extend({initialData: val}, options);
+        opts = _.extend({
+          initialData: val
+        }, options);
         /* develblock:end */
         val = this.setRelation(attr, val, opts);
 
@@ -354,7 +361,7 @@ exports.setNestedModel = function(Model) {
       }
     });
     return data;
-  },
+  };
 
   Model.prototype.doSerialize = function() {
     return this.serialize(this.toJSON());

@@ -34,9 +34,7 @@ exports.bindEvent = function(el, eventName, selector, method, options) {
   return globalEvents.bindVirtualEvent(el, eventName, selector, method, options);
 };
 
-exports.unbindEvent = function(event) {
-  globalEvents.unbindVirtualEvent(event);
-};
+exports.unbindEvent = globalEvents.unbindVirtualEvent;
 
 function updateTree(container, initialTree, newTree) {
   var patch = vdom.diff(initialTree, newTree);

@@ -81,27 +81,30 @@ Context.prototype.isModel = function(object) {
   return object && object.tungstenModel;
 };
 
+/* develblock:start */
+var logger = require('../utils/logger');
 /**
  * Debug Helpers for determining context
  */
 var debugHelpers = {
   context: function() {
     if (arguments.length) {
-      window.console.log('W/CONTEXT:', this, arguments);
+      logger.log('W/CONTEXT:', this, arguments);
     } else {
-      window.console.log('W/CONTEXT:', this);
+      logger.log('W/CONTEXT:', this);
     }
   },
   lastModel: function() {
-    window.console.log('W/LASTMODEL:', this.lastModel);
+    logger.log('W/LASTMODEL:', this.lastModel);
   },
   debug: function() {
     var self = this;
     for (var i = 0; i < arguments.length; i++) {
-      window.console.log('W/DEBUG:', arguments[i], '=>', self.lookup(arguments[i]));
+      logger.log('W/DEBUG:', arguments[i], '=>', self.lookup(arguments[i]));
     }
   }
 };
+/* develblock:end */
 
 /**
  * Creates a new context using the given view with this context
@@ -127,19 +130,14 @@ Context.prototype.lookup = function(name, stack) {
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
-    if (IS_DEV) {
-      var debugName = name.substr(1).split('/');
-      if (debugName[0] === 'w' && debugHelpers[debugName[1]]) {
-        var fn = debugHelpers[debugName[1]];
-        debugName = debugName.slice(2);
-        fn.apply(this, debugName);
-      }
+    /* develblock:start */
+    var debugName = name.substr(1).split('/');
+    if (debugName[0] === 'w' && debugHelpers[debugName[1]]) {
+      var fn = debugHelpers[debugName[1]];
+      debugName = debugName.slice(2);
+      fn.apply(this, debugName);
     }
-    return null;
-  }
-
-  // Sometimes comment blocks get registered as interpolators
-  if (name.substr(0, 1) === '!') {
+    /* develblock:end */
     return null;
   }
 

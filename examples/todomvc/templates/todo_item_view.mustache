@@ -1,3 +1,4 @@
+{{^hidden}}
 <li class="js-todo-item {{#completed}} completed {{/completed}} {{#editing}} editing {{/editing}}">
   <!-- {{title}} -->
   {{^editing}}
@@ -11,3 +12,4 @@
     <input class="edit js-todo-edit" value="{{title}}">
   {{/editing}}
 </li>
+{{/hidden}}

@@ -13,7 +13,7 @@
 
 /**
  * Wrapper Widget for child views
- * @param {Object}   template    Precompiled template object that represents this section
+ * @param {String} text    Text of comment
  */
 function HTMLCommentWidget(text) {
   this.text = text;
@@ -40,7 +40,7 @@ HTMLCommentWidget.prototype.init = function init() {
  */
 HTMLCommentWidget.prototype.update = function update(prev, elem) {
   if (this.text !== prev.text) {
-    elem.textContent = this.text;
+    elem.nodeValue = this.text;
   }
 };
 

@@ -15,7 +15,7 @@ var logger = require('../../src/utils/logger');
  */
 var BaseModel = Backbone.Model.extend({
   tungstenModel: true,
-  initialize: function() {
+  initialize: function(attributes, options) {
     /* develblock:start */
     this.initDebug();
     /* develblock:end */
@@ -23,7 +23,7 @@ var BaseModel = Backbone.Model.extend({
     var relations = _.result(this, 'relations') || {};
     if (derived) {
       var self = this;
-      _.each(derived, function (props, name) {
+      _.each(derived, function(props, name) {
         // Check if a collection relation is declared
         var isCollection = false;
         if (relations[name] && relations[name].tungstenCollection) {
@@ -46,7 +46,7 @@ var BaseModel = Backbone.Model.extend({
         }
       });
     }
-    this.postInitialize();
+    this.postInitialize(attributes, options);
   },
 
   /* develblock:start */
@@ -97,7 +97,6 @@ var BaseModel = Backbone.Model.extend({
    * @return {Array<Object>}                      List of trackable functions
    */
   getFunctions: function(trackedFunctions, getTrackableFunction) {
-    var result = [];
     // Debug functions shouldn't be debuggable
     var blacklist = {
       constructor: true,
@@ -111,17 +110,8 @@ var BaseModel = Backbone.Model.extend({
       getChildren: true,
       getDebugName: true
     };
-    for (var key in this) {
-      if (typeof this[key] === 'function' && blacklist[key] !== true) {
-        result.push({
-          name: key,
-          fn: this[key],
-          inherited: (key in BaseModel.prototype)
-        });
-        this[key] = getTrackableFunction(this, key, trackedFunctions);
-      }
-    }
-    return result;
+    var getFunctions = require('../shared/get_functions');
+    return getFunctions(trackedFunctions, getTrackableFunction, this, BaseModel.prototype, blacklist);
   },
 
   /**
@@ -131,26 +121,55 @@ var BaseModel = Backbone.Model.extend({
    */
   getPropertiesArray: function() {
     var properties = [];
-    var relations = this.relations;
+    var relations = _.result(this, 'relations') || {};
+    var derived = _.result(this, 'derived') || {};
+
+    var isEditable = function(value) {
+      if (!_.isObject(value)) {
+        return true;
+      } else if (_.isArray(value)) {
+        var result = true;
+        _.each(value, function(i) {
+          result = result && isEditable(i);
+        });
+        return result;
+      } else {
+        try {
+          JSON.stringify(value);
+          return true;
+        } catch (ex) {
+          return false;
+        }
+      }
+    };
+
     _.each(this.attributes, function(value, key) {
+      var prop;
       if (relations && relations[key]) {
-        properties.push({
+        prop = {
           key: key,
           data: {
             isRelation: true,
             name: value.getDebugName()
           }
-        });
+        };
       } else {
-        properties.push({
+        prop = {
           key: key,
           data: {
+            isDerived: derived[key],
+            isEditable: isEditable(value),
             isEditing: false,
             value: value
           }
-        });
+        };
+
+        prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
       }
+      properties.push(prop);
     });
+
+    properties = _.sortBy(properties, 'key');
 
     return properties;
   },
