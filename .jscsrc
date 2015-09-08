@@ -1,5 +1,5 @@
 {
-    "excludeFiles": ["test/testbuild.debug.js", "test/testbuild.prod.js", "test/coverage-debug", "test/coverage-prod"],
+    "excludeFiles": ["test/testbuild.debug.js", "test/testbuild.prod.js", "test/coverage"],
     "requireParenthesesAroundIIFE": true,
     "disallowKeywords": ["with"],
     "validateQuoteMarks": "'",
