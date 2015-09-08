@@ -9,4 +9,4 @@ script:
   - node ./test/build.js --coverage
   - node ./test/jasmine.js --coverage
 after_success:
-  - codeclimate-test-reporter < ./test/coverage-prod/lcov.info
+  - codeclimate-test-reporter < ./test/coverage/lcov.info
