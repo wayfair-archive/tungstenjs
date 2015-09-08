@@ -132,5 +132,7 @@ module.exports = {
   validateSelector: eventsCore.validateSelector,
   bindVirtualEvent: bindVirtualEvent,
   unbindVirtualEvent: unbindVirtualEvent,
-  registerEventHandler: registerEventPlugin
+  registerEventHandler: registerEventPlugin,
+  // Exposing for testing purposes, should not be directly accessed
+  _eventHandlers: eventHandlers
 };
