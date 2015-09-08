@@ -33,7 +33,10 @@ module.exports.parseInterpolatorString = function(template) {
  * @return {Object}             Partials referenced in this template
  */
 function _findPartials(template, partials) {
-  if (template instanceof Array) {
+  if (typeof template === 'string' || typeof template === 'undefined') {
+    // String or undefined means we've bottomed out
+    return;
+  } else if (template instanceof Array || template == null) {
     // Arrays need mapping over
     for (var i = 0; i < template.length; i++) {
       _findPartials(template[i], partials);
