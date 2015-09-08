@@ -39,6 +39,7 @@ HTMLCommentWidget.prototype.init = function init() {
  * @param  {Element}            elem DOM node to act upon
  */
 HTMLCommentWidget.prototype.update = function update(prev, elem) {
+  this.text = this.text.toString();
   if (this.text !== prev.text) {
     elem.nodeValue = this.text;
   }
