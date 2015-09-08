@@ -39,10 +39,8 @@ function getReporter(variable, dir) {
   };
 }
 
-var debugReporter = getReporter('__coverage_debug__', path.join(__dirname, './coverage-debug'));
-var prodReporter = getReporter('__coverage_prod__', path.join(__dirname, './coverage-prod'));
+var reporter = getReporter('__coverage__', path.join(__dirname, './coverage'));
 
 module.exports = function() {
-  debugReporter();
-  prodReporter();
+  reporter();
 };

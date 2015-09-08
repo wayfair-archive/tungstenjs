@@ -18,7 +18,7 @@ function getLoader(variable) {
   if (doCoverage) {
     return [{
       test: /\.js(on)?$/,
-      loader: 'istanbul-instrumenter?coverageVar=' + variable
+      loader: 'istanbul-instrumenter?version=' + variable
     }];
   } else {
     return [];
@@ -37,7 +37,7 @@ var debugConfig = webpackHelper({
     ]
   },
   module: {
-    loaders: getLoader('__coverage_debug__')
+    loaders: getLoader('debug')
   },
   resolve: {
     alias: {
@@ -58,7 +58,7 @@ var prodConfig = webpackHelper({
     ]
   },
   module: {
-    loaders: getLoader('__coverage_prod__')
+    loaders: getLoader('prod')
   },
   resolve: {
     alias: {
