@@ -113,8 +113,8 @@ Template.prototype.attachView = function(view, widgetWrapper) {
   var templateObj = ractiveAdaptor.attach(
     _.clone(this.templateObj),
     view,
-    this.getPartials(),
-    createChildView
+    createChildView,
+    this.getPartials()
   );
   return new Template(templateObj, this.partials, view);
 };

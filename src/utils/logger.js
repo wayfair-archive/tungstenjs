@@ -13,8 +13,14 @@ var _ = require('underscore');
  * @return {Function}      Bound console function
  */
 /*eslint-disable no-console */
+var defaultConsole = console && typeof console.log === 'function' ? console.log : function() {
+  if (console && typeof console.log === 'function') {
+    console.log.apply(console, arguments);
+  }
+};
+
 var getConsoleMethod = function(name) {
-  var func = console[name] || console.log;
+  var func = typeof console[name] === 'function' ? console[name] : defaultConsole;
   return _.bind(func, console);
 };
 /*eslint-enable no-console */

@@ -187,12 +187,12 @@ function render(stack, template, context, partials, parentView) {
  * @todo attach events?
  * @param  {Object}   view          View to attach
  * @param  {Object}   template      Template object to attach to
- * @param  {Object}   partials      Dictionary to lookup partials from
  * @param  {Function} createWidget Constructor function to wrap childViews with
+ * @param  {Object}   partials      Dictionary to lookup partials from
  * @param  {Object}   childClasses  Classes to look for for this View wrapper
  * @return {Object}                 Template object with attached view
  */
-var attachView = function(view, template, partials, createWidget, childClasses) {
+var attachView = function(view, template, createWidget, partials, childClasses) {
   var i;
 
   // If cached version hasn't been passed down, parse childViews into an array of class names
