@@ -1,7 +1,7 @@
 /**
  * Widget wrapper for HTML Comment
  * Widgets in Virtual-Dom have three lifecycle methods: init, update, destroy
- *
+ *propertyName
  * 'init' is called when the new VTree contains a widget that the old VTree does not
  * 'update' is called when the old and the new VTree contains a widget at the same position
  * 'destroy' is called when the old VTree contains a widget that the new VTree does not
@@ -16,7 +16,7 @@
  * @param {String} text    Text of comment
  */
 function HTMLCommentWidget(text) {
-  this.text = this.text.toString();
+  this.text = text.toString();
 }
 
 /**
