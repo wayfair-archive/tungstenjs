@@ -194,7 +194,7 @@ Unlike the app view, child views should not set their own template.
 
 Tungsten.js will automatically infer the scope of the model for this child view as it traverses the template to build out the initial state.  If the child view element is wrapped in `{{#myModel}}{{/myModel}}` where `myModel` refers to a property on the current view's `this.model` that references another model (see `relations` hash), then that child view's `this.model` will be `myModel`.   If the child view element is wrapped in `{{#myCollection}}{{/myCollection}}` where `myCollection` refers to a property on the current view's `this.model` that references another collection (see `relations` hash), then Tungsten.js will create a child view for each rendered element, and each of those child views' `this.model` will be the relevant model from `myCollection`.
 
-Usually this inferred scope is the expected behavior for the application.  However, it can be overridden by replacing the child view constructor with an object which has two properties: a key `propertyName` with the value being the string referencing the property name for the scope, and a key `view` with the value being the child view constructor.
+Usually this inferred scope is the expected behavior for the application.  However, it can be overridden by replacing the child view constructor with an object which has two properties: a key `scope` with the value being the string referencing the property name for the scope, and a key `view` with the value being the child view constructor.
 
 ```javascript
 BaseView.extend({
@@ -207,7 +207,7 @@ BaseView.extend({
     // render the data in the property 'meta' using
     // MetaView with 'js-meta' as the views element
     'js-meta': {
-      propertyName: 'meta',
+      scope: 'meta',
       view: MetaView
     }
 }
