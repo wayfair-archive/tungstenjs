@@ -19,7 +19,7 @@ module.exports = {
       'jquery': 'backbone.native'
     }
   },
-  devtool: '#eval-source-map',
+  devtool: '#source-map',
   resolveLoader: {
     modulesDirectories: ['node_modules', path.join(__dirname, 'precompile')]
   },
