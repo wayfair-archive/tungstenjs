@@ -25,14 +25,11 @@
  *
  * @author    Andrew Rota <anrota@wayfair.com>
  */
-/* global describe, it, require */
 'use strict';
 
 // Ractive's parser has minor whitespace issues for Mustache Spec.
 // Tests whose expected value have been changed are marked with "@adjusted"
 
-// Include Chai assertion library
-var expect = require('chai').expect;
 /**
  * QUnit to Jasmine mapper function
  *
@@ -93,11 +90,6 @@ module.exports = function(render) {
         equal(render('<div>1{{{html}}}3</div>', {
           html: '2</div>'
         }), '<div>123</div>');
-
-        equal(render('<div>1{{{html}}}3</div>', {
-          html: '2</p>'
-        }), '<div>12<p></p>3</div>');
-
       });
     }
 
@@ -1279,15 +1271,6 @@ module.exports = function(render) {
       });
     });
 
-    function getTemplate(templateStr, partials) {
-      return compiler(templateStr || '', partials || {});
-    }
-
-    function toHTML(templateStr, data, partials) {
-      var template = getTemplate(templateStr, partials);
-      return template.toString(data);
-    }
-
     describe('HTML composition', function() {
       equal(render('<tr><div>{{hi}}</div></tr>', {
         hi: 'Hi.'
@@ -1998,12 +1981,6 @@ module.exports = function(render) {
           }]
         }), 'name1234', 'Nested Lists with the same name');
     });
-
-    function specTests(json) {
-      for (var i = 0, n = json.tests.length; i < n; ++i) {
-        equal(render(json.tests[i].template, json.tests[i].data, json.tests[i].partials || {}), json.tests[i].expected, json.tests[i].name + ' (' + json.tests[i].desc + ')');
-      }
-    }
 
     describe('Spec - Comments', function() {
       specTests({
@@ -3625,4 +3602,4 @@ module.exports = function(render) {
         'Standalone flag is not too eager');
     });
   });
-}
+};

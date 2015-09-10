@@ -8,9 +8,7 @@
  */
 'use strict';
 
-var _ = require('underscore');
 var isArray = require('../utils/is_array');
-var IS_DEV = require('../tungsten.js').IS_DEV;
 
 /**
  * Represents a rendering context by wrapping a view object and

@@ -25,18 +25,14 @@
  *
  * @author    Andrew Rota <anrota@wayfair.com>
  */
-/* global describe, it, require */
 'use strict';
 
 // Ractive's parser has minor whitespace issues for Mustache Spec.
 // Tests whose expected value have been changed are marked with "@adjusted"
 
-// Include Chai assertion library
-var expect = require('chai').expect;
-
-var vdomToDom = require('../src/tungsten').toDOM;
-var Context = require('../src/template/template_context');
-var compiler = require('../precompile/tungsten_template/inline');
+var vdomToDom = require('../../../src/tungsten').toDOM;
+var Context = require('../../../src/template/template_context');
+var compiler = require('../../../precompile/tungsten_template/inline');
 
 // Using simplified lookup functions
 Context.setAdapterFunctions({

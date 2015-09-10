@@ -28,7 +28,7 @@ describe('virtual_hyperscript public API', function() {
     expect(h.length).to.equal(3);
   });
   it('should returns a vnode', function() {
-    expect(h('div').tagName).to.equal('DIV');
+    expect(h('div').tagName).to.equal('div');
   });
   it('should have props', function() {
     expect(h('div', {
@@ -49,11 +49,11 @@ describe('virtual_hyperscript public API', function() {
   });
   it('should work with child', function() {
     var node = h('div', h('span'));
-    expect(node.children[0].tagName).to.equal('SPAN');
+    expect(node.children[0].tagName).to.equal('span');
   });
   it('should work with children', function() {
     var node = h('div', [h('span')]);
-    expect(node.children[0].tagName).to.equal('SPAN');
+    expect(node.children[0].tagName).to.equal('span');
   });
   it('should work with null', function() {
     var node = h('div', null);

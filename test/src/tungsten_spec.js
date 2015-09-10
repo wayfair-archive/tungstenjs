@@ -163,7 +163,7 @@ describe('tungsten.js public API', function() {
       };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
-      expect(vNode.tagName).to.equal('DIV');
+      expect(vNode.tagName).to.equal('div');
       expect(vNode.properties).to.deep.equal({
         className: ' js-root',
         style: {}

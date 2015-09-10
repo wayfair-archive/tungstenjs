@@ -61,7 +61,7 @@ function addChild(c, childNodes) {
 
 function h(tagName, properties, children) {
   var childNodes = [];
-  var tag, props, key, namespace;
+  var props, key, namespace;
 
   if (!children && isChildren(properties)) {
     children = properties;

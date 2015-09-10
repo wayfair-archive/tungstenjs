@@ -40,7 +40,7 @@ DomStack.prototype.processObject = function(obj) {
     }
     return frag;
   } else if (obj.type === 'node') {
-    var node = obj.properties.namespace ? 
+    var node = obj.properties.namespace ?
       document.createElementNS(obj.properties.namespace, obj.tagName) :
       document.createElement(obj.tagName);
     applyProperties(node, obj.properties);
