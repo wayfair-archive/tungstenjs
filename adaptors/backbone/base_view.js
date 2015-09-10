@@ -385,7 +385,9 @@ var BaseView = Backbone.View.extend({
     // Uses array created in delegateEvents to unbind events
     if (this.eventsToRemove) {
       for (var i = 0; i < this.eventsToRemove.length; i++) {
-        tungsten.unbindEvent(this.eventsToRemove[i]);
+        if (typeof this.eventsToRemove[i] !== 'undefined') {
+          tungsten.unbindEvent(this.eventsToRemove[i]);
+        }
       }
       this.eventsToRemove = null;
     }
