@@ -288,24 +288,18 @@ describe('base_view.js constructed api', function() {
       var events = {'click': 'handleClick'};
 
       view.delegateEvents(events);
-      // delegateEvents fn uses a 1ms setTimeout
-      window.setTimeout(function() {
-        jasmineExpect(tungsten.bindEvent).toHaveBeenCalledWith(view.el, 'click', '', jasmine.any(Function), undefined);
-        done();
-      }, 1);
+      jasmineExpect(tungsten.bindEvent).toHaveBeenCalledWith(view.el, 'click', '', jasmine.any(Function), undefined);
+      done();
     });
     it('should undelegateEvents', function(done) {
       spyOn(tungsten, 'unbindEvent');
       var view = new BaseView();
       view.handleClick = function() {};
       var events = {'click': 'handleClick'};
-      // delegateEvents fn uses a 1ms setTimeout
       view.delegateEvents(events);
-      window.setTimeout(function() {
-        view.undelegateEvents();
-        jasmineExpect(tungsten.unbindEvent).toHaveBeenCalled();
-        done();
-      }, 1);
+      view.undelegateEvents();
+      jasmineExpect(tungsten.unbindEvent).toHaveBeenCalled();
+      done();
     });
   });
 

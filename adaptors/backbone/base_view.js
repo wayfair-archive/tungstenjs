@@ -344,35 +344,33 @@ var BaseView = Backbone.View.extend({
       return;
     }
     var self = this;
-    setTimeout(function() {
-      // Unbind any current events
-      self.undelegateEvents();
-      // Get any options that may  have been set
-      var eventOptions = _.result(self, 'eventOptions');
-      // Event / selector strings
-      var keys = _.keys(events);
-      var key;
-      // Create an array to hold the information to detach events
-      self.eventsToRemove = new Array(keys.length);
-      for (var i = keys.length; i--;) {
-        key = keys[i];
-        // Sanity check that value maps to a function
-        var method = events[key];
-        if (!_.isFunction(method)) {
-          method = self[events[key]];
-        }
-        if (!method) {
-          throw new Error('Method "' + events[key] + '" does not exist');
-        }
-        var match = key.match(delegateEventSplitter);
-        var eventName = match[1],
-          selector = match[2];
-        method = _.bind(method, self);
-
-        // throws an error if invalid
-        self.eventsToRemove[i] = tungsten.bindEvent(self.el, eventName, selector, method, eventOptions[key]);
+    // Unbind any current events
+    self.undelegateEvents();
+    // Get any options that may  have been set
+    var eventOptions = _.result(self, 'eventOptions');
+    // Event / selector strings
+    var keys = _.keys(events);
+    var key;
+    // Create an array to hold the information to detach events
+    self.eventsToRemove = new Array(keys.length);
+    for (var i = keys.length; i--;) {
+      key = keys[i];
+      // Sanity check that value maps to a function
+      var method = events[key];
+      if (!_.isFunction(method)) {
+        method = self[events[key]];
       }
-    }, 1);
+      if (!method) {
+        throw new Error('Method "' + events[key] + '" does not exist');
+      }
+      var match = key.match(delegateEventSplitter);
+      var eventName = match[1],
+        selector = match[2];
+      method = _.bind(method, self);
+
+      // throws an error if invalid
+      self.eventsToRemove[i] = tungsten.bindEvent(self.el, eventName, selector, method, eventOptions[key]);
+    }
   },
 
   /**
@@ -508,6 +506,7 @@ var BaseView = Backbone.View.extend({
         second.apply(this, arguments);
       };
     }
+
     for (var i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'View.' + methods[i] + ' may not be overridden';
