@@ -7,6 +7,7 @@
     <div class="app-layout-body">
       <nav class="app-header navbar navbar-default navbar-fixed-top">
         <div class="navbar-header">
+          <div class="tungsten_version">Tungsten.js <%= w.tungstenVersion %></div>
         </div>
         <ul class="nav navbar-nav js-tabs-bar">
           <% _.each(w.tabs.tabs, function(tab) { %>

@@ -12,6 +12,7 @@ var bgData = {
 
 var appData = window.appData = module.exports = {
   styles: styles,
+  tungstenVersion: require('../../../package.json').version,
   tabs: {
     tabs: [{
       name: 'View <span class="glyphicon glyphicon-search js-find-view tab-action"></span>',
