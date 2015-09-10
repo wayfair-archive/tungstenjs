@@ -69,7 +69,6 @@ function h(tagName, properties, children) {
   }
 
   props = props || properties || {};
-  tag = tagName.toUpperCase();
 
   // support keys
   if (props.hasOwnProperty('key')) {
@@ -88,7 +87,7 @@ function h(tagName, properties, children) {
   }
 
   // Call constructor with allocated node
-  return vnodePool.allocate(tag, props, childNodes, key, namespace);
+  return vnodePool.allocate(tagName, props, childNodes, key, namespace);
 }
 
 vdomImpl.VNode.prototype.recycleObj = function() {

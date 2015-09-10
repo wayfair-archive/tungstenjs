@@ -12,7 +12,7 @@ function applyProperties(node, props) {
         var attrValue = propValue[attrName];
 
         if (attrValue !== undefined) {
-          node.setAttribute(attrName, attrValue);
+          node.setAttributeNS(null, attrName, attrValue);
         }
       }
     }
@@ -40,7 +40,9 @@ DomStack.prototype.processObject = function(obj) {
     }
     return frag;
   } else if (obj.type === 'node') {
-    var node = document.createElement(obj.tagName);
+    var node = obj.properties.namespace ? 
+      document.createElementNS(obj.properties.namespace, obj.tagName) :
+      document.createElement(obj.tagName);
     applyProperties(node, obj.properties);
     for (i = 0, l = obj.children.length; i < l; i++) {
       node.appendChild(obj.children[i]);

@@ -116,6 +116,17 @@ module.exports = function processProperties(properties, options) {
     };
   }
 
+  // Elements with namespaces are finicky, usually SVG
+  // Treat all properties as attributes
+  if (properties.namespace) {
+    var ns = properties.namespace;
+    properties.namespace = undefined;
+    return {
+      namespace: ns,
+      attributes: properties
+    };
+  }
+
   var propertyNames = _.keys(properties);
   var result = {};
 
