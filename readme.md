@@ -129,19 +129,13 @@ Tungsten.js is agnostic to the server technology used to render the template.  T
 
 ### Pre-compiled Templates
 
-Each template and partial should be pre-compiled with the provided wrapper for the Ractive-based pre-compiler. A webpack loader, `tungsten_template`, is provided for this purpose.  With this template pre-compiling, there are a couple edge cases which depart from standard mustache syntax:
+Each template and partial should be pre-compiled with the provided wrapper for the Ractive-based pre-compiler. A webpack loader, `tungsten_template`, is provided for this purpose.  With this template pre-compiling, there are a few edge cases which depart from standard mustache rules:
 
-* Wrapped attributes must be last in the tag:
-    * Fails: `<select {{#some_bool}}data-foo="false"{{/some_bool}} class="foo" ...`
-    * Passes: `<select class="foo" {{#some_bool}}data-foo="false"{{/some_bool}} ...`
-* All attributes must have a value including `disabled`, `selected`, `novalidate`, etc.
-    * Fails: `<select {{#some_bool}}disabled{{/some_bool}} ...`
-    * Passes: `<select class="foo" {{#some_bool}}disabled="disabled"{{/some_bool}} ...`
-* Close tags must match opening tags or be self-closing:
-    * Fails: `<div><p>text content</p><br>`
-    * Passes: `<div><p>text content</p><br /></div>`
-* Open and close tags must be within the same block.
-* Do not nest `<a>` elements.
+* All HTML attributes must have a value, including `disabled`, `selected`, `novalidate`, etc.
+    * Breaks: `<select {{#some_bool}}disabled{{/some_bool}} ...`
+    * Works: `<select class="foo" {{#some_bool}}disabled="disabled"{{/some_bool}} ...`
+* Opening and closing HTML tags must be within the same conditional block.
+* `<a>` elements cannot be nested.
 
 
 ###  App Data
