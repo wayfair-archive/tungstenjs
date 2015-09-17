@@ -1856,3 +1856,98 @@ describe('Spec', function() {
     ' \n\n ',
     'Standalone flag is not too eager');
 });
+
+describe('More HTML Tests', function() {
+  equal(
+    toHTML(
+      '<button id="test" class="{{key}} {{value}} test" value="valueHere">class="{{key}} {{value}} test" value="valueHere"</button>', {key: 'foo', value: 'bar'}
+    ),
+    '<button id="test" class="foo bar test" value="valueHere">class="foo bar test" value="valueHere"</button>',
+    'Attributes in input content'
+  );
+  equal(
+    toHTML(
+      '<table><thead><tr><th>{{key}}</th></tr></thead><tr><td>{{value}}</td></tr></table>', {key: 'foo', value: 'bar'}
+    ),
+    '<table><thead><tr><th>foo</th></tr></thead><tr><td>bar</td></tr></table>',
+    'Table with thead and no tbody'
+  );
+  equal(
+    toHTML(
+      '<table><thead><tr><th>{{key}}</th></tr></thead><tbody><tr><td>{{value}}</td></tr></tbody></table>', {key: 'foo', value: 'bar'}
+    ),
+    '<table><thead><tr><th>foo</th></tr></thead><tbody><tr><td>bar</td></tr></tbody></table>',
+    'Table with thead and tbody'
+  );
+  equal(
+    toHTML(
+      '<table><tr><th>{{key}}</th></tr><tbody><tr><td>{{value}}</td></tr></tbody></table>', {key: 'foo', value: 'bar'}
+    ),
+    '<table><tr><th>foo</th></tr><tbody><tr><td>bar</td></tr></tbody></table>',
+    'Table with tbody and no thead'
+  );
+  equal(
+    toHTML(
+      '<table><tr><th>{{key}}</th></tr><tr><td>{{value}}</td></tr></table>', {key: 'foo', value: 'bar'}
+    ),
+    '<table><tr><th>foo</th></tr><tr><td>bar</td></tr></table>',
+    'Table with no thead or tbody'
+  );
+  equal(
+    toHTML(
+      '<table><tr><th>{{key}}</th></tr><tr><td>{{value}}</td></tr></table>', {key: 'foo', value: 'bar'}
+    ),
+    '<table><tr><th>foo</th></tr><tr><td>bar</td></tr></table>',
+    'Table with no thead or tbody'
+  );
+  equal(
+    toHTML(
+      '<div>{{value}} &&{{key}}&";</div>', {key: 'foo', value: 'bar'}
+    ),
+    '<div>bar &amp;&amp;foo&amp;";</div>',
+    'Div with ampersands in content'
+  );
+  equal(
+    // Note that conditional attributes are added after static attributes
+    toHTML(
+      '<input {{#selected}}disabled="disabled"{{/selected}} value="{{foo}}" type="checkbox" {{#selected}}checked="checked"{{/selected}}>', {selected: true, foo: 'bar'}
+    ),
+    '<input value="bar" type="checkbox" disabled="disabled" checked="checked">',
+    'Input with two boolean attributes'
+  );
+  equal(
+    toHTML(
+      '<!-- Dynamic - {{name}} -->', {name: 'comment'}
+    ),
+    '<!-- Dynamic - comment -->',
+    'Dynamic comment with -'
+  );
+  equal(
+    toHTML(
+      '<!-- Dynamic \n {{name}} -->', {name: 'comment'}
+    ),
+    '<!-- Dynamic \n comment -->',
+    'Dynamic multiline comment'
+  );
+  equal(
+    toHTML(
+      '<my-custom-element>{{name}}</my-custom-element>', {name: 'foo'}
+    ),
+    '<my-custom-element>foo</my-custom-element>',
+    'Custom element'
+  );
+  equal(
+    toHTML(
+      '<my-custom-element><another-custom-element>{{name}}</another-custom-element></my-custom-element>', {name: 'foo'}
+    ),
+    '<my-custom-element><another-custom-element>foo</another-custom-element></my-custom-element>',
+    'Nested custom elements'
+  );
+  equal(
+    toHTML(
+      '<my-custom-element custom="{{name}}">bar</my-custom-element>', {name: 'foo'}
+    ),
+    '<my-custom-element custom="foo">bar</my-custom-element>',
+    'Custom element with dynamic custom attribute value'
+  );
+});
