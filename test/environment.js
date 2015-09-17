@@ -1,8 +1,8 @@
-var jsdom = require('jsdom-nogyp');
+var jsdom = require('jsdom');
 
 var document = jsdom.jsdom('<html><head></head><body></body></html>');
 global.document = document;
-global.window = document.parentWindow;
+global.window = document.defaultView;
 global.navigator = window.navigator;
 global.Element = window.Element;
 
