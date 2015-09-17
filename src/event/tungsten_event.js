@@ -10,7 +10,10 @@ function WEvent(evt) {
     this.originalEvent = evt;
     this.type = evt.type;
     this.which = evt.which || evt.charCode || evt.keyCode;
-    this.button = evt.which || evt.button & 1 ? 1 : ( evt.button & 2 ? 3 : ( evt.button & 4 ? 2 : 0 ) );
+    if (!this.which && evt.button !== undefined) {
+      this.which = ( evt.button & 1 ? 1 : ( evt.button & 2 ? 3 : ( evt.button & 4 ? 2 : 0 ) ) );
+    }
+    this.button = evt.button;
     this.currentTarget = evt.currentTarget;
     this.delegateTarget = null;
     this.target = evt.target || evt.srcElement;

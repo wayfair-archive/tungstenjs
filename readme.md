@@ -7,7 +7,7 @@ Tungsten.js is a modular framework for creating web UIs with high-performance re
 ## What Tungsten.js Provides
 
 * High-performance virtual DOM updates powered by [virtual-dom](https://github.com/Matt-Esch/virtual-dom)
-* Mustache templates, parsed with [Ractive.js](https://github.com/ractivejs/ractive), which render to virtual DOM objects
+* Use of mustache templates, parsed with [Ractive.js](https://github.com/ractivejs/ractive), which render to virtual DOM objects
 * Event system which binds and delegates each event type to the document root
 * Adaptor for [Backbone.js](https://github.com/jashkenas/backbone) or [Ampersand.js](https://github.com/ampersandjs) views
 
@@ -88,7 +88,7 @@ module.exports = new AppView({
 });
 ```
 
-Each template and partial should be pre-compiled with the provided wrapper for the [Ractive](http://www.ractivejs.org/)-based precompiler.  A [webpack](http://webpack.github.io/) loader, `tungsten_template`, is provided for this purpose, and can be included like so in the `webpack.config.js`  (currently we also include a json-loader for the HTML tokenizer)::
+A [webpack](http://webpack.github.io/) loader, `tungsten_template`, is provided to pre-compile JS template functions, and can be included like so in the `webpack.config.js`  (currently a json-loader for the HTML tokenizer is also included)::
 
 ```javascript
 module.exports = {
@@ -105,9 +105,13 @@ module.exports = {
 }
 ```
 
-### Server Side Rendering
+### Templates
 
-By default, Tungsten.js expects that on page load the HTML for the initial state will be rendered from the server using the same data and template that was used to bootstrap the application.  This means that Tunsten.js will not re-render on the application on page load.  This default behavior, however, can be overridden by setting the `dynamicInitialize` property when initializing the app view:
+The markup for Tungsten.js views are described by mustache templates which are shared for both server-side and client-side rendering.
+
+#### Server Side Rendering
+
+By default, Tungsten.js expects that on page load the HTML for the initial state will be rendered from the server using the same data and template that was used to bootstrap the application.  This means that Tungsten.js will not re-render on the application on page load.  This default behavior, however, can be overridden by setting the `dynamicInitialize` property when initializing the app view:
 
 ```javascript
 module.exports = new AppView({
@@ -122,6 +126,17 @@ module.exports = new AppView({
 `dynamicInitialize` should only be set when the application won't be rendered from the server and will instead be client-side rendered only.
 
 Tungsten.js is agnostic to the server technology used to render the template.  The only restriction is that the output of the server-side rendered template mustache match the output of the bootstrapped data and client-side template.  There are implementations of mustache rendering engines available in a variety of server-side technologies, including [Node.js](https://github.com/raycmorgan/Mu), [Java](https://github.com/spullara/mustache.java), [C++](https://github.com/mrtazz/plustache), [PHP](https://github.com/bobthecow/mustache.php), and [Go](https://github.com/hoisie/mustache).
+
+### Pre-compiled Templates
+
+Each template and partial should be pre-compiled with the provided wrapper for the Ractive-based pre-compiler. A webpack loader, `tungsten_template`, is provided for this purpose.  With this template pre-compiling, there are a few edge cases which depart from standard mustache rules:
+
+* All HTML attributes must have a value, including `disabled`, `selected`, `novalidate`, etc.
+    * Breaks: `<select {{#some_bool}}disabled{{/some_bool}} ...`
+    * Works: `<select class="foo" {{#some_bool}}disabled="disabled"{{/some_bool}} ...`
+* Opening and closing HTML tags must be within the same conditional block.
+* `<a>` elements cannot be nested.
+
 
 ###  App Data
 
@@ -186,7 +201,7 @@ BaseView.extend({
 }
 ```
 
-The `js-` class name for the child view must be a descendant element of the current view.  If the element doesn't exist, the view won't be rendered (until the element does exist...so mustache conditionals can be used to hide and show views).  If there are multiple descendant elements for the child view then Tungsten.js will render the view for each element.  If this is because mustache is iterating through a collection, then each of these views will have the model of the collection as its scope (see next section).
+The `js-` class name for the child view must be a descendant element of the current view.  If the element doesn't exist, the view won't be rendered (until the element does exist, so mustache conditionals can be used to hide and show views).  If there are multiple descendant elements for the child view then Tungsten.js will render the view for each element.  If this is because mustache is iterating through a collection, then each of these views will have the model of the collection as its scope (see next section).
 
 Unlike the app view, child views should not set their own template.
 
@@ -194,7 +209,7 @@ Unlike the app view, child views should not set their own template.
 
 Tungsten.js will automatically infer the scope of the model for this child view as it traverses the template to build out the initial state.  If the child view element is wrapped in `{{#myModel}}{{/myModel}}` where `myModel` refers to a property on the current view's `this.model` that references another model (see `relations` hash), then that child view's `this.model` will be `myModel`.   If the child view element is wrapped in `{{#myCollection}}{{/myCollection}}` where `myCollection` refers to a property on the current view's `this.model` that references another collection (see `relations` hash), then Tungsten.js will create a child view for each rendered element, and each of those child views' `this.model` will be the relevant model from `myCollection`.
 
-Usually this inferred scope is the expected behavior for the application.  However, it can be overridden by replacing the child view constructor with an object which has two properties: a key `propertyName` with the value being the string referencing the property name for the scope, and a key `view` with the value being the child view constructor.
+Usually this inferred scope is the expected behavior for the application.  However, it can be overridden by replacing the child view constructor with an object which has two properties: a key `scope` with the value being the string referencing the property name for the scope, and a key `view` with the value being the child view constructor.
 
 ```javascript
 BaseView.extend({
@@ -207,7 +222,7 @@ BaseView.extend({
     // render the data in the property 'meta' using
     // MetaView with 'js-meta' as the views element
     'js-meta': {
-      propertyName: 'meta',
+      scope: 'meta',
       view: MetaView
     }
 }
