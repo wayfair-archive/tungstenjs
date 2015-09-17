@@ -32,9 +32,6 @@ var DraggableContainerView = BaseView.extend({
       }
     });
     dragula(this.draggable);
-  },
-  postRender: function() {
-    dragula(this.draggable);
   }
 });
 
