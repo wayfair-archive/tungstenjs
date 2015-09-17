@@ -137,7 +137,7 @@ describe('tungsten.js public API', function() {
       };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
-      expect(tungsten.toString(vNode)).to.equal('<div class=" js-dom" style=""></div>');
+      expect(tungsten.toString(vNode)).to.equal('<div class=" js-dom"></div>');
     });
     it('should return a DOM string with styles', function() {
       var props = {
