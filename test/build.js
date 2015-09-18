@@ -14,11 +14,11 @@ for (var i = 0; i < args.length; i++) {
   }
 }
 
-function getLoader(variable) {
+function getLoader(extension) {
   if (doCoverage) {
     return [{
       test: /\.js(on)?$/,
-      loader: 'istanbul-instrumenter?version=' + variable
+      loader: 'istanbul-instrumenter?extension=' + extension
     }];
   } else {
     return [];
@@ -37,7 +37,7 @@ var debugConfig = webpackHelper({
     ]
   },
   module: {
-    loaders: getLoader('debug')
+    loaders: getLoader('.js')
   },
   resolve: {
     alias: {
@@ -58,7 +58,7 @@ var prodConfig = webpackHelper({
     ]
   },
   module: {
-    loaders: getLoader('prod')
+    loaders: getLoader('.prod.js')
   },
   resolve: {
     alias: {

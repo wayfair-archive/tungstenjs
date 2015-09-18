@@ -12,16 +12,17 @@ for (var i = 0; i < args.length; i++) {
 
 var Jasmine = require('jasmine');
 var jasmine = new Jasmine();
-if (doCoverage) {
-  var istanbulRunReports = require('./istanbul');
-  jasmine.onComplete(function() {
-    // Restore console functions so reports work
-    for (var name in global.console) {
-      console[name] = _console[name];
-    }
+var istanbulRunReports = require('./istanbul');
+jasmine.onComplete(function() {
+  // Restore console functions so reports work
+  for (var name in global.console) {
+    console[name] = _console[name];
+  }
+  // if the tests were instrumented, run the reports
+  if (global.__coverage__) {
     istanbulRunReports();
-  });
-}
+  }
+});
 
 // Override console methods as spies
 // Allows test to run without output getting into test output
