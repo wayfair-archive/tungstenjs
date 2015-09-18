@@ -1,7 +1,6 @@
 /**
  * Run this file to execute tests
  */
-var doCoverage = false;
 var args = process.argv;
 for (var i = 0; i < args.length; i++) {
   if (args[i] === '--coverage') {
