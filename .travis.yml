@@ -10,3 +10,4 @@ script:
   - node ./test/jasmine.js --coverage
 after_success:
   - codeclimate-test-reporter < ./test/coverage/lcov.info
+  - cat ./test/coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
