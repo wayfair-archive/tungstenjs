@@ -178,7 +178,7 @@ var BaseModel = AmpersandModel.extend({
         parent: self
       });
     });
-    AmpersandModel.prototype._initCollections.call(this);
+    AmpersandModel.prototype._initChildren.call(this);
   },
 
   trigger: eventBubbler(AmpersandModel)

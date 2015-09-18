@@ -2,19 +2,56 @@
 
 var BackboneAdaptor = require('../../../adaptors/backbone');
 var BaseModel = BackboneAdaptor.Model;
+var BaseCollection = BackboneAdaptor.Collection;
 var Backbone = BackboneAdaptor.Backbone;
+var logger = require('../../../src/utils/logger');
 
-describe('base_model.js public api', function() {
-  describe('extend', function() {
+describe('base_model.js static api', function() {
+  describe('extend', function () {
     it('should be a function', function() {
       expect(BaseModel.extend).to.be.a('function');
-    });
-    it('should accept two arguments', function() {
       expect(BaseModel.extend.length).to.equal(2);
     });
     it('should be different than Backbone\'s', function() {
       expect(BaseModel.extend).not.to.equal(Backbone.extend);
     });
+    it('should call extend', function() {
+      spyOn(Backbone.Model, 'extend');
+      BaseModel.extend({});
+      jasmineExpect(Backbone.Model.extend).toHaveBeenCalled();
+    });
+    /* develblock:start */
+    it('should prevent initialize from being overwritten', function() {
+      spyOn(logger, 'warn');
+      spyOn(BaseModel.prototype, 'initialize');
+      var initFn = jasmine.createSpy();
+      var testFn = function() {};
+      var TestModel = BaseModel.extend({
+        initialize: initFn,
+        test: testFn
+      });
+      expect(TestModel.prototype.initialize).not.to.equal(initFn);
+      expect(TestModel.prototype.test).to.equal(testFn);
+      jasmineExpect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.calls.argsFor(0)[0]).to.contain('may not be overridden');
+
+      var args = {};
+      TestModel.prototype.initialize(args);
+      jasmineExpect(BaseModel.prototype.initialize).toHaveBeenCalledWith(args);
+      jasmineExpect(initFn).toHaveBeenCalledWith(args);
+    });
+    it('should error with debugName if available', function() {
+      spyOn(logger, 'warn');
+      var initFn = function() {};
+      BaseModel.extend({
+        initialize: initFn
+      }, {
+        debugName: 'FOOBAR'
+      });
+      jasmineExpect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.calls.argsFor(0)[0]).to.contain(' for model "FOOBAR"');
+    });
+    /* develblock:end */
   });
 });
 
@@ -96,11 +133,48 @@ describe('base_model.js constructed api', function() {
       expect(BaseModel.prototype.getDebugName).to.be.a('function');
       expect(BaseModel.prototype.getDebugName.length).to.equal(0);
     });
+    it('should return the cid if debugName is not available', function() {
+      var result = BaseModel.prototype.getDebugName.call({
+        cid: 'model1'
+      });
+
+      expect(result).to.equal('model1');
+    });
+    it('should return the debugName', function() {
+      var result = BaseModel.prototype.getDebugName.call({
+        cid: 'model1',
+        constructor: {
+          debugName: 'FOOBAR'
+        }
+      });
+
+      expect(result).to.equal('FOOBAR1');
+    });
   });
   describe('getChildren', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getChildren).to.be.a('function');
       expect(BaseModel.prototype.getChildren.length).to.equal(0);
+    });
+    it('should return the model\'s children and collections', function() {
+      var TestModel = BaseModel.extend({
+        defaults: {
+          cl1: [],
+          cl2: [],
+          ch1: {},
+          ch2: {}
+        },
+        relations: {
+          'cl1': BaseCollection,
+          'cl2': BaseCollection,
+          'ch1': BaseModel,
+          'ch2': BaseModel
+        }
+      });
+      var model = new TestModel();
+      var children = model.getChildren();
+      expect(children).to.have.length(4);
+      expect(children).to.include.members([model.get('cl1'), model.get('cl2'), model.get('ch1'), model.get('ch2')]);
     });
   });
   describe('getFunctions', function() {
@@ -113,6 +187,98 @@ describe('base_model.js constructed api', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getPropertiesArray).to.be.a('function');
       expect(BaseModel.prototype.getPropertiesArray.length).to.equal(0);
+    });
+    it('should return an array of properties', function() {
+      var TestModel = BaseModel.extend({
+        defaults: {
+          cl1: [],
+          ch1: {}
+        },
+        derived: {
+          d1: {
+            deps: [],
+            fn: function() {
+              return ['derived'];
+            }
+          }
+        },
+        relations: {
+          'cl1': BaseCollection,
+          'ch1': BaseModel
+        }
+      });
+      var model = new TestModel({
+        prop: 'test'
+      });
+      var serializable = {};
+      var unserializable = {
+        toJSON: function() {
+          throw 'cannot serialize'
+        }
+      };
+      model.set({
+        'serializable': serializable,
+        'unserializable': unserializable
+      });
+
+      spyOn(model.get('ch1'), 'getDebugName').and.returnValue('ModelName');
+      spyOn(model.get('cl1'), 'getDebugName').and.returnValue('CollectionName');
+
+      var properties = model.getPropertiesArray();
+      var expectedProperties = [{
+        key: 'ch1',
+        data: {
+          isRelation: true,
+          name: 'ModelName'
+        }
+      }, {
+        key: 'cl1',
+        data: {
+          isRelation: true,
+          name: 'CollectionName'
+        }
+      }, {
+        key: 'd1',
+        data: {
+          isDerived: true,
+          isEditable: true,
+          isEditing: false,
+          value: ['derived'],
+          displayValue: '["derived"]'
+        }
+      }, {
+        key: 'prop',
+        data: {
+          isDerived: false,
+          isEditable: true,
+          isEditing: false,
+          value: 'test',
+          displayValue: '"test"'
+        }
+      }, {
+        key: 'serializable',
+        data: {
+          isDerived: false,
+          isEditable: true,
+          isEditing: false,
+          value: serializable,
+          displayValue: '{}'
+        }
+      }, {
+        key: 'unserializable',
+        data: {
+          isDerived: false,
+          isEditable: false,
+          isEditing: false,
+          value: unserializable,
+          displayValue: '[object Object]'
+        }
+      }];
+
+      // Sort both arrays by key to allow deep equality check
+      properties = _.sortBy(properties, 'key');
+      expectedProperties = _.sortBy(expectedProperties, 'key');
+      expect(properties).to.eql(expectedProperties);
     });
   });
   /* develblock:end */

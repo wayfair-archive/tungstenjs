@@ -23,6 +23,15 @@ describe('base_view.js public api', function() {
       expect(BaseView.tungstenView).to.be.true;
     });
   });
+
+  describe('constructor', function() {
+    it('should short circuit if el is not set', function() {
+      var view = new BaseView({
+        el: null
+      });
+      expect(view.options).to.be.undefined;
+    });
+  });
 });
 
 describe('base_view.js constructed api', function() {
