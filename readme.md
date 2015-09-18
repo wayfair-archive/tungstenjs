@@ -1,5 +1,6 @@
 # ![Tungsten.js](https://cdn.rawgit.com/wayfair/tungstenjs/master/extra/tungstenjs_logo.svg)
 [![Build Status](https://travis-ci.org/wayfair/tungstenjs.svg?branch=master)](https://travis-ci.org/wayfair/tungstenjs)
+[![Test Coverage](https://codeclimate.com/github/wayfair/tungstenjs/badges/coverage.svg)](https://codeclimate.com/github/wayfair/tungstenjs/coverage)
 [![npm version](https://badge.fury.io/js/tungstenjs.svg)](https://www.npmjs.com/package/tungstenjs)
 
 Tungsten.js is a modular framework for creating web UIs with high-performance rendering on both server and client.

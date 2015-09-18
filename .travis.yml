@@ -10,3 +10,6 @@ script:
   - node ./test/jasmine.js --coverage
 after_success:
   - codeclimate-test-reporter < ./test/coverage/lcov.info
+addons:
+    code_climate:
+        repo_token: 2c660a37685d7d8abe1de978f6ea110a6dbe34f44f9fa89c90de0b040d654c4c
