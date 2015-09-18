@@ -21,8 +21,8 @@ function ignoreContent(source) {
 }
 
 module.exports = function(source) {
-  var versionMatch = this.query.match(/(\?|&)version=([^&]+)/);
-  var versionVar = (versionMatch && versionMatch[2]) || '';
+  var extensionMatch = this.query.match(/(\?|&)extension=([^&]+)/);
+  var extensionVar = (extensionMatch && extensionMatch[2]) || '';
   var instrumenter = new istanbul.Instrumenter({
     coverageVariable: '__coverage__',
     embedSource: true,
@@ -45,6 +45,6 @@ module.exports = function(source) {
     this.cacheable();
   }
 
-  var claimedPath = filePath.replace(/\.js$/, '.' + versionVar + '.js');
+  var claimedPath = filePath.replace(/\.js$/, extensionVar);
   return instrumenter.instrumentSync(source, path.relative(root, claimedPath));
 };
