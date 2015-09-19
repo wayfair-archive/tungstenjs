@@ -114,7 +114,7 @@ var BaseView = Backbone.View.extend({
       var self = this;
       if (!this.parentView) {
         runOnChange = _.bind(this.render, this);
-      } else if (!dataItem.parentProp && this.parentView.model !== dataItem) {
+      } else if (!dataItem.collection && !dataItem.parentProp && this.parentView.model !== dataItem) {
         // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
         runOnChange = function() {
           // trigger event on parent to start a render

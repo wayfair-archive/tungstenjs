@@ -4,6 +4,8 @@ var AmpersandAdaptor = require('../../../adaptors/ampersand');
 var BaseView = AmpersandAdaptor.View;
 var Ampersand = AmpersandAdaptor.Ampersand;
 var tungsten = require('../../../src/tungsten');
+var _ = require('underscore');
+var logger = require('../../../src/utils/logger');
 
 describe('base_view.js public api', function() {
   describe('extend', function() {
@@ -16,6 +18,62 @@ describe('base_view.js public api', function() {
     it('should be different than Ampersand\'s', function() {
       expect(BaseView.extend).not.to.equal(Ampersand.View.extend);
     });
+    /* develblock:start */
+    it('should prevent initialize from being overwritten', function() {
+      spyOn(logger, 'warn');
+      spyOn(BaseView.prototype, 'initialize');
+      spyOn(BaseView.prototype, 'render');
+      spyOn(BaseView.prototype, 'delegateEvents');
+      spyOn(BaseView.prototype, 'undelegateEvents');
+      var initFn = jasmine.createSpy('initFn');
+      var renderFn = jasmine.createSpy('renderFn');
+      var delegateFn = jasmine.createSpy('delegateFn');
+      var undelegateFn = jasmine.createSpy('undelegateFn');
+      var testFn = function() {};
+      var TestModel = BaseView.extend({
+        initialize: initFn,
+        render: renderFn,
+        delegateEvents: delegateFn,
+        undelegateEvents: undelegateFn,
+        test: testFn
+      });
+      expect(TestModel.prototype.initialize).not.to.equal(initFn);
+      expect(TestModel.prototype.test).to.equal(testFn);
+      jasmineExpect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.calls.count()).to.equal(4);
+      expect(logger.warn.calls.argsFor(0)[0]).to.contain('View.initialize may not be overridden');
+      expect(logger.warn.calls.argsFor(1)[0]).to.contain('View.render may not be overridden');
+      expect(logger.warn.calls.argsFor(2)[0]).to.contain('View.delegateEvents may not be overridden');
+      expect(logger.warn.calls.argsFor(3)[0]).to.contain('View.undelegateEvents may not be overridden');
+
+      var args = {};
+      TestModel.prototype.initialize(args);
+      jasmineExpect(BaseView.prototype.initialize).toHaveBeenCalledWith(args);
+      jasmineExpect(initFn).toHaveBeenCalledWith(args);
+
+      TestModel.prototype.render(args);
+      jasmineExpect(BaseView.prototype.render).toHaveBeenCalledWith(args);
+      jasmineExpect(renderFn).toHaveBeenCalledWith(args);
+      
+      TestModel.prototype.delegateEvents(args);
+      jasmineExpect(BaseView.prototype.delegateEvents).toHaveBeenCalledWith(args);
+      jasmineExpect(delegateFn).toHaveBeenCalledWith(args);
+
+      TestModel.prototype.undelegateEvents(args);
+      jasmineExpect(BaseView.prototype.undelegateEvents).toHaveBeenCalledWith(args);
+      jasmineExpect(undelegateFn).toHaveBeenCalledWith(args);
+    });
+    it('should error with debugName if available', function() {
+      spyOn(logger, 'warn');
+      var initFn = function() {};
+      BaseView.extend({
+        initialize: initFn,
+        debugName: 'FOOBAR'
+      });
+      jasmineExpect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.calls.argsFor(0)[0]).to.contain(' for view "FOOBAR"');
+    });
+    /* develblock:end */
   });
 
   describe('tungstenView', function() {
@@ -44,6 +102,79 @@ describe('base_view.js constructed api', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.initializeRenderListener).to.be.a('function');
       expect(BaseView.prototype.initializeRenderListener).to.have.length(1);
+    });
+    it('should bind to render for top level views', function(done) {
+      spyOn(_, 'bind').and.callFake(function(fn) {
+        return fn;
+      });
+      var ctx = {
+        render: jasmine.createSpy('render'),
+        listenTo: jasmine.createSpy('listenTo')
+      };
+      var dataItem = {
+        tungstenModel: true
+      };
+      BaseView.prototype.initializeRenderListener.call(ctx, dataItem);
+      jasmineExpect(_.bind).toHaveBeenCalledWith(ctx.render, ctx);
+      jasmineExpect(ctx.listenTo).toHaveBeenCalled();
+      var args = ctx.listenTo.calls.mostRecent().args;
+      expect(args[0]).to.equal(dataItem);
+
+      // Invoke listened to function
+      args[2]();
+      setTimeout(function() {
+        jasmineExpect(ctx.render).toHaveBeenCalled();
+        done();
+      }, 100);
+    });
+    it('should bind to bubble for non-top level views with detached models', function(done) {
+      var ctx = {
+        parentView: {
+          model: {
+            trigger: jasmine.createSpy('parentModelTrigger')
+          }
+        },
+        render: function() {},
+        listenTo: jasmine.createSpy('listenTo')
+      };
+      var dataItem = {
+        tungstenModel: true
+      };
+      BaseView.prototype.initializeRenderListener.call(ctx, dataItem);
+      jasmineExpect(ctx.listenTo).toHaveBeenCalled();
+      var args = ctx.listenTo.calls.mostRecent().args;
+      expect(args[0]).to.equal(dataItem);
+
+      // Invoke listened to function
+      args[2]();
+      setTimeout(function() {
+        jasmineExpect(ctx.parentView.model.trigger).toHaveBeenCalledWith('render');
+        done();
+      }, 100);
+    });
+    it('should not bind if the model has a parent', function() {
+      var ctx = {
+        parentView: {},
+        listenTo: jasmine.createSpy('listenTo')
+      };
+      var dataItem = {
+        parentProp: 'model',
+        tungstenModel: true
+      };
+      BaseView.prototype.initializeRenderListener.call(ctx, dataItem);
+      jasmineExpect(ctx.listenTo).not.toHaveBeenCalled();
+    });
+    it('should not bind if the model is in a collection', function() {
+      var ctx = {
+        parentView: {},
+        listenTo: jasmine.createSpy('listenTo')
+      };
+      var dataItem = {
+        collection: [],
+        tungstenModel: true
+      };
+      BaseView.prototype.initializeRenderListener.call(ctx, dataItem);
+      jasmineExpect(ctx.listenTo).not.toHaveBeenCalled();
     });
   });
   describe('postInitialize', function() {
@@ -81,6 +212,89 @@ describe('base_view.js constructed api', function() {
       expect(BaseView.prototype.render).to.be.a('function');
       expect(BaseView.prototype.render).to.have.length(0);
     });
+    it('should do nothing without a template', function() {
+      var view = {};
+      expect(BaseView.prototype.render.call(view)).to.equal(undefined);
+    });
+    it('should invoke rendering', function() {
+      var newVdom = {};
+      var serialized = {};
+      var vtree = {
+        recycle: jasmine.createSpy('recycle')
+      };
+      var view = {
+        compiledTemplate: {
+          toVdom: jasmine.createSpy('toVdom').and.returnValue(newVdom)
+        },
+        vtree: vtree,
+        serialize: jasmine.createSpy('serialize').and.returnValue(serialized),
+        trigger: jasmine.createSpy('trigger'),
+        postRender: jasmine.createSpy('postRender')
+      };
+      expect(BaseView.prototype.render.call(view)).to.equal(view);
+      jasmineExpect(view.serialize).toHaveBeenCalled();
+      jasmineExpect(view.compiledTemplate.toVdom).toHaveBeenCalledWith(serialized);
+      jasmineExpect(vtree.recycle).toHaveBeenCalled();
+      jasmineExpect(view.trigger).toHaveBeenCalledWith('rendered');
+      jasmineExpect(view.postRender).toHaveBeenCalled();
+      spyOn(tungsten, 'updateTree');
+    });
+    it('should use passed context over serialize if passed', function() {
+      var newVdom = {};
+      var serialized = {};
+      var context = {};
+      var vtree = {
+        recycle: jasmine.createSpy('recycle')
+      };
+      var view = {
+        compiledTemplate: {
+          toVdom: jasmine.createSpy('toVdom').and.returnValue(newVdom)
+        },
+        vtree: vtree,
+        context: context,
+        serialize: jasmine.createSpy('serialize').and.returnValue(serialized),
+        trigger: jasmine.createSpy('trigger'),
+        postRender: jasmine.createSpy('postRender')
+      };
+      expect(BaseView.prototype.render.call(view)).to.equal(view);
+      jasmineExpect(view.serialize).not.toHaveBeenCalled();
+      jasmineExpect(view.compiledTemplate.toVdom).toHaveBeenCalledWith(context);
+      jasmineExpect(vtree.recycle).toHaveBeenCalled();
+      jasmineExpect(view.trigger).toHaveBeenCalledWith('rendered');
+      jasmineExpect(view.postRender).toHaveBeenCalled();
+      // Context should be cleared for next render
+      expect(view.context).to.be.null;
+      spyOn(tungsten, 'updateTree');
+    });
+    it('should create an initial vtree if one is not passed', function() {
+      var newVdom = {};
+      var serialized = {};
+      var vtree = {
+        recycle: jasmine.createSpy('recycle')
+      };
+      var view = {
+        compiledTemplate: {
+          toVdom: jasmine.createSpy('toVdom').and.callFake(function(data, firstRender) {
+            if (firstRender) {
+              return vtree;
+            } else {
+              return newVdom;
+            }
+          })
+        },
+        serialize: jasmine.createSpy('serialize').and.returnValue(serialized),
+        trigger: jasmine.createSpy('trigger'),
+        postRender: jasmine.createSpy('postRender')
+      };
+      expect(BaseView.prototype.render.call(view)).to.equal(view);
+      jasmineExpect(view.serialize).toHaveBeenCalled();
+      jasmineExpect(view.compiledTemplate.toVdom).toHaveBeenCalledWith(serialized, true);
+      jasmineExpect(view.compiledTemplate.toVdom).toHaveBeenCalledWith(serialized);
+      jasmineExpect(vtree.recycle).toHaveBeenCalled();
+      jasmineExpect(view.trigger).toHaveBeenCalledWith('rendered');
+      jasmineExpect(view.postRender).toHaveBeenCalled();
+      spyOn(tungsten, 'updateTree');
+    });
   });
   describe('postRender', function() {
     it('should be a function', function() {
@@ -92,6 +306,30 @@ describe('base_view.js constructed api', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.update).to.be.a('function');
       expect(BaseView.prototype.update).to.have.length(1);
+    });
+    it('should always call render', function() {
+      var view = {
+        render: jasmine.createSpy('render'),
+        model: {}
+      };
+      BaseView.prototype.update.call(view, view.model);
+      jasmineExpect(view.render).toHaveBeenCalled();
+    });
+    it('should change listeners if model is different', function() {
+      var oldModel = {};
+      var newModel = {};
+      var view = {
+        initializeRenderListener: jasmine.createSpy('initializeRenderListener'),
+        stopListening: jasmine.createSpy('stopListening'),
+        render: jasmine.createSpy('render'),
+        model: oldModel
+      };
+      BaseView.prototype.update.call(view, newModel);
+      jasmineExpect(view.stopListening).toHaveBeenCalledWith(oldModel);
+      jasmineExpect(view.initializeRenderListener).toHaveBeenCalledWith(newModel);
+      jasmineExpect(view.render).toHaveBeenCalled();
+      expect(view.model).to.equal(newModel);
+      expect(view.model).not.to.equal(oldModel);
     });
   });
   describe('getChildViews', function() {
@@ -110,6 +348,24 @@ describe('base_view.js constructed api', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.destroy).to.be.a('function');
       expect(BaseView.prototype.destroy).to.have.length(0);
+    });
+    it('should break down the view', function() {
+      var childView = {
+        destroy: jasmine.createSpy('childDestroy')
+      };
+      var view = {
+        debouncer: {},
+        stopListening: jasmine.createSpy('stopListening'),
+        undelegateEvents: jasmine.createSpy('undelegateEvents'),
+        getChildViews: jasmine.createSpy('getChildViews').and.returnValue([childView])
+      };
+      spyOn(global, 'clearTimeout');
+      BaseView.prototype.destroy.call(view);
+      jasmineExpect(global.clearTimeout).toHaveBeenCalledWith(view.debouncer);
+      jasmineExpect(view.stopListening).toHaveBeenCalled();
+      jasmineExpect(view.undelegateEvents).toHaveBeenCalled();
+      jasmineExpect(view.getChildViews).toHaveBeenCalled();
+      jasmineExpect(childView.destroy).toHaveBeenCalled();
     });
   });
 
