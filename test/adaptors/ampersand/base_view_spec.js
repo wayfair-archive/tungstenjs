@@ -11,7 +11,7 @@ describe('base_view.js public api', function() {
       expect(BaseView.extend).to.be.a('function');
     });
     it('should accept one argument', function() {
-      expect(BaseView.extend.length).to.equal(1);
+      expect(BaseView.extend).to.have.length(1);
     });
     it('should be different than Ampersand\'s', function() {
       expect(BaseView.extend).not.to.equal(Ampersand.View.extend);
@@ -43,73 +43,73 @@ describe('base_view.js constructed api', function() {
   describe('initializeRenderListener', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.initializeRenderListener).to.be.a('function');
-      expect(BaseView.prototype.initializeRenderListener.length).to.equal(1);
+      expect(BaseView.prototype.initializeRenderListener).to.have.length(1);
     });
   });
   describe('postInitialize', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.postInitialize).to.be.a('function');
-      expect(BaseView.prototype.postInitialize.length).to.equal(0);
+      expect(BaseView.prototype.postInitialize).to.have.length(0);
     });
   });
   describe('validateVdom', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.validateVdom).to.be.a('function');
-      expect(BaseView.prototype.validateVdom.length).to.equal(0);
+      expect(BaseView.prototype.validateVdom).to.have.length(0);
     });
   });
   describe('serialize', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.serialize).to.be.a('function');
-      expect(BaseView.prototype.serialize.length).to.equal(0);
+      expect(BaseView.prototype.serialize).to.have.length(0);
     });
   });
   describe('delegateEvents', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.delegateEvents).to.be.a('function');
-      expect(BaseView.prototype.delegateEvents.length).to.equal(1);
+      expect(BaseView.prototype.delegateEvents).to.have.length(1);
     });
   });
   describe('undelegateEvents', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.undelegateEvents).to.be.a('function');
-      expect(BaseView.prototype.undelegateEvents.length).to.equal(0);
+      expect(BaseView.prototype.undelegateEvents).to.have.length(0);
     });
   });
   describe('render', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.render).to.be.a('function');
-      expect(BaseView.prototype.render.length).to.equal(0);
+      expect(BaseView.prototype.render).to.have.length(0);
     });
   });
   describe('postRender', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.postRender).to.be.a('function');
-      expect(BaseView.prototype.postRender.length).to.equal(0);
+      expect(BaseView.prototype.postRender).to.have.length(0);
     });
   });
   describe('update', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.update).to.be.a('function');
-      expect(BaseView.prototype.update.length).to.equal(1);
+      expect(BaseView.prototype.update).to.have.length(1);
     });
   });
   describe('getChildViews', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getChildViews).to.be.a('function');
-      expect(BaseView.prototype.getChildViews.length).to.equal(0);
+      expect(BaseView.prototype.getChildViews).to.have.length(0);
     });
   });
   describe('attachChildViews', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.attachChildViews).to.be.a('function');
-      expect(BaseView.prototype.attachChildViews.length).to.equal(0);
+      expect(BaseView.prototype.attachChildViews).to.have.length(0);
     });
   });
   describe('destroy', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.destroy).to.be.a('function');
-      expect(BaseView.prototype.destroy.length).to.equal(0);
+      expect(BaseView.prototype.destroy).to.have.length(0);
     });
   });
 
@@ -119,55 +119,55 @@ describe('base_view.js constructed api', function() {
   describe('initDebug', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.initDebug).to.be.a('function');
-      expect(BaseView.prototype.initDebug.length).to.equal(0);
+      expect(BaseView.prototype.initDebug).to.have.length(0);
     });
   });
   describe('getFunctions', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getFunctions).to.be.a('function');
-      expect(BaseView.prototype.getFunctions.length).to.equal(2);
+      expect(BaseView.prototype.getFunctions).to.have.length(2);
     });
   });
   describe('getState', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getState).to.be.a('function');
-      expect(BaseView.prototype.getState.length).to.equal(0);
+      expect(BaseView.prototype.getState).to.have.length(0);
     });
   });
   describe('setState', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.setState).to.be.a('function');
-      expect(BaseView.prototype.setState.length).to.equal(1);
+      expect(BaseView.prototype.setState).to.have.length(1);
     });
   });
   describe('getEvents', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getEvents).to.be.a('function');
-      expect(BaseView.prototype.getEvents.length).to.equal(0);
+      expect(BaseView.prototype.getEvents).to.have.length(0);
     });
   });
   describe('getVdomTemplate', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getVdomTemplate).to.be.a('function');
-      expect(BaseView.prototype.getVdomTemplate.length).to.equal(0);
+      expect(BaseView.prototype.getVdomTemplate).to.have.length(0);
     });
   });
   describe('getTemplateDiff', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getTemplateDiff).to.be.a('function');
-      expect(BaseView.prototype.getTemplateDiff.length).to.equal(0);
+      expect(BaseView.prototype.getTemplateDiff).to.have.length(0);
     });
   });
   describe('getChildren', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getChildren).to.be.a('function');
-      expect(BaseView.prototype.getChildren.length).to.equal(0);
+      expect(BaseView.prototype.getChildren).to.have.length(0);
     });
   });
   describe('getDebugName', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getDebugName).to.be.a('function');
-      expect(BaseView.prototype.getDebugName.length).to.equal(0);
+      expect(BaseView.prototype.getDebugName).to.have.length(0);
     });
   });
   /* develblock:end */

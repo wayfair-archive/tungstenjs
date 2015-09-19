@@ -102,7 +102,7 @@ describe('ampersand_view_widget public api', function() {
   describe('init', function() {
     it('should be a function', function() {
       expect(AmpersandViewWidget.prototype.init).to.be.a('function');
-      expect(AmpersandViewWidget.prototype.init.length).to.equal(0);
+      expect(AmpersandViewWidget.prototype.init).to.have.length(0);
     });
     it('should construct from the template\'s DOM and return the element', function() {
       // template.toDom returns a documentFragment
@@ -132,13 +132,13 @@ describe('ampersand_view_widget public api', function() {
   describe('update', function() {
     it('should be a function', function() {
       expect(AmpersandViewWidget.prototype.update).to.be.a('function');
-      expect(AmpersandViewWidget.prototype.update.length).to.equal(2);
+      expect(AmpersandViewWidget.prototype.update).to.have.length(2);
     });
   });
   describe('destroy', function() {
     it('should be a function', function() {
       expect(AmpersandViewWidget.prototype.destroy).to.be.a('function');
-      expect(AmpersandViewWidget.prototype.destroy.length).to.equal(0);
+      expect(AmpersandViewWidget.prototype.destroy).to.have.length(0);
     });
     it('should call view\'s destroy', function() {
       var view = {
@@ -163,7 +163,7 @@ describe('ampersand_view_widget public api', function() {
   describe('attach', function() {
     it('should be a function', function() {
       expect(AmpersandViewWidget.prototype.attach).to.be.a('function');
-      expect(AmpersandViewWidget.prototype.attach.length).to.equal(1);
+      expect(AmpersandViewWidget.prototype.attach).to.have.length(1);
     });
     it('should construct a view for the given element', function() {
       var expectedView;
@@ -184,7 +184,7 @@ describe('ampersand_view_widget public api', function() {
   describe('templateToString', function() {
     it('should be a function', function() {
       expect(AmpersandViewWidget.prototype.templateToString).to.be.a('function');
-      expect(AmpersandViewWidget.prototype.templateToString.length).to.equal(0);
+      expect(AmpersandViewWidget.prototype.templateToString).to.have.length(0);
     });
   });
   /* develblock:end */

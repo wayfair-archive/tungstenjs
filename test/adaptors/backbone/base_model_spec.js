@@ -10,7 +10,7 @@ describe('base_model.js static api', function() {
   describe('extend', function () {
     it('should be a function', function() {
       expect(BaseModel.extend).to.be.a('function');
-      expect(BaseModel.extend.length).to.equal(2);
+      expect(BaseModel.extend).to.have.length(2);
     });
     it('should be different than Backbone\'s', function() {
       expect(BaseModel.extend).not.to.equal(Backbone.extend);
@@ -64,60 +64,60 @@ describe('base_model.js constructed api', function() {
   describe('set', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.set).to.be.a('function');
-      expect(BaseModel.prototype.set.length).to.equal(3);
+      expect(BaseModel.prototype.set).to.have.length(3);
     });
   });
   describe('toJSON', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.toJSON).to.be.a('function');
-      expect(BaseModel.prototype.toJSON.length).to.equal(0);
+      expect(BaseModel.prototype.toJSON).to.have.length(0);
     });
   });
   describe('doSerialize', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.doSerialize).to.be.a('function');
-      expect(BaseModel.prototype.doSerialize.length).to.equal(0);
+      expect(BaseModel.prototype.doSerialize).to.have.length(0);
     });
   });
   describe('serialize', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.serialize).to.be.a('function');
-      expect(BaseModel.prototype.serialize.length).to.equal(1);
+      expect(BaseModel.prototype.serialize).to.have.length(1);
     });
   });
   describe('clone', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.clone).to.be.a('function');
-      expect(BaseModel.prototype.clone.length).to.equal(0);
+      expect(BaseModel.prototype.clone).to.have.length(0);
     });
   });
   describe('postInitialize', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.postInitialize).to.be.a('function');
-      expect(BaseModel.prototype.postInitialize.length).to.equal(0);
+      expect(BaseModel.prototype.postInitialize).to.have.length(0);
     });
   });
   describe('getDeep', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getDeep).to.be.a('function');
-      expect(BaseModel.prototype.getDeep.length).to.equal(1);
+      expect(BaseModel.prototype.getDeep).to.have.length(1);
     });
   });
   describe('setRelation', function() {
     it('should be a function', function() {
-      expect(BaseModel.prototype.setRelation.length).to.equal(3);
+      expect(BaseModel.prototype.setRelation).to.have.length(3);
     });
   });
   describe('trigger', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.trigger).to.be.a('function');
-      expect(BaseModel.prototype.trigger.length).to.equal(0);
+      expect(BaseModel.prototype.trigger).to.have.length(0);
     });
   });
   describe('reset', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.reset).to.be.a('function');
-      expect(BaseModel.prototype.reset.length).to.equal(2);
+      expect(BaseModel.prototype.reset).to.have.length(2);
     });
   });
 
@@ -125,13 +125,13 @@ describe('base_model.js constructed api', function() {
   describe('initDebug', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.initDebug).to.be.a('function');
-      expect(BaseModel.prototype.initDebug.length).to.equal(0);
+      expect(BaseModel.prototype.initDebug).to.have.length(0);
     });
   });
   describe('getDebugName', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getDebugName).to.be.a('function');
-      expect(BaseModel.prototype.getDebugName.length).to.equal(0);
+      expect(BaseModel.prototype.getDebugName).to.have.length(0);
     });
     it('should return the cid if debugName is not available', function() {
       var result = BaseModel.prototype.getDebugName.call({
@@ -154,7 +154,7 @@ describe('base_model.js constructed api', function() {
   describe('getChildren', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getChildren).to.be.a('function');
-      expect(BaseModel.prototype.getChildren.length).to.equal(0);
+      expect(BaseModel.prototype.getChildren).to.have.length(0);
     });
     it('should return the model\'s children and collections', function() {
       var TestModel = BaseModel.extend({
@@ -180,13 +180,13 @@ describe('base_model.js constructed api', function() {
   describe('getFunctions', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getFunctions).to.be.a('function');
-      expect(BaseModel.prototype.getFunctions.length).to.equal(2);
+      expect(BaseModel.prototype.getFunctions).to.have.length(2);
     });
   });
   describe('getPropertiesArray', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getPropertiesArray).to.be.a('function');
-      expect(BaseModel.prototype.getPropertiesArray.length).to.equal(0);
+      expect(BaseModel.prototype.getPropertiesArray).to.have.length(0);
     });
     it('should return an array of properties', function() {
       var TestModel = BaseModel.extend({
@@ -1893,7 +1893,7 @@ describe('base_model.js backbone nested functionality', function() {
   });
 
   it('Should build a collection relation', function() {
-    expect(book.get('pages').length).to.equal(2);
+    expect(book.get('pages')).to.have.length(2);
     expect(book.get('pages').at(0).get('number')).to.equal(1);
     expect(book.get('pages').at(1).get('number')).to.equal(2);
     expect(book.get('pages').at(0).get('words')).to.equal(500);
@@ -1936,7 +1936,7 @@ describe('base_model.js backbone nested functionality', function() {
       ]
     });
 
-    expect(book.get('pages').length).to.equal(3);
+    expect(book.get('pages')).to.have.length(3);
   });
 
   it('Should merge values into models which already exist in a sub collection', function() {
@@ -1960,7 +1960,7 @@ describe('base_model.js backbone nested functionality', function() {
       ]
     });
 
-    expect(book.get('pages').length).to.equal(3);
+    expect(book.get('pages')).to.have.length(3);
     expect(book.get('pages').at(2).get('test')).to.equal('test');
     expect(book.get('pages').at(2).get('words')).to.equal(600);
   });
@@ -1986,7 +1986,7 @@ describe('base_model.js backbone nested functionality', function() {
       ]
     });
 
-    expect(book.get('pages').length).to.equal(3);
+    expect(book.get('pages')).to.have.length(3);
     expect(book.get('pages').at(2).get('test')).to.equal('test');
     expect(book.get('pages').at(2).get('words')).not.to.equal(600);
     expect(book.get('pages').at(2).id).to.equal(2);
