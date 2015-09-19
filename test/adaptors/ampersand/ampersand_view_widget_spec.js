@@ -134,6 +134,95 @@ describe('ampersand_view_widget public api', function() {
       expect(AmpersandViewWidget.prototype.update).to.be.a('function');
       expect(AmpersandViewWidget.prototype.update).to.have.length(2);
     });
+    it('should create a view if one is not provided', function() {
+      var prev = {};
+      var elem = document.createElement('div');
+      var view = {};
+      var widget = {
+        ViewConstructor: jasmine.createSpy('ViewConstructor').and.returnValue(view),
+        parentView: {},
+        model: {},
+        template: {},
+        context: {}
+      };
+      AmpersandViewWidget.prototype.update.call(widget, prev, elem);
+
+      expect(widget.view).to.equal(view);
+      jasmineExpect(widget.ViewConstructor).toHaveBeenCalled();
+      var args = widget.ViewConstructor.calls.mostRecent().args;
+      expect(args).to.have.length(1);
+      expect(args[0]).to.have.keys('el', 'model', 'parentView', 'context', 'vtree', 'template');
+      expect(args[0].el).to.equal(elem);
+      expect(args[0].model).to.equal(widget.model);
+      expect(args[0].parentView).to.equal(widget.parentView);
+      expect(args[0].context).to.equal(widget.context);
+      expect(args[0].vtree).to.be.null;
+      expect(args[0].template).to.equal(widget.template);
+    });
+    it('should recycle a view if one is provided', function() {
+      var ViewConstructor = {};
+      var oldParentView = {};
+      var compiledTemplate = {};
+      var prev = {
+        ViewConstructor: ViewConstructor,
+        view: {
+          el: null,
+          update: jasmine.createSpy('update')
+        },
+        parentView: oldParentView
+      };
+      var elem = document.createElement('div');
+      var widget = {
+        ViewConstructor: ViewConstructor,
+        parentView: {},
+        model: {},
+        template: {
+          attachView: jasmine.createSpy('attachView').and.returnValue(compiledTemplate)
+        },
+        context: {}
+      };
+      AmpersandViewWidget.prototype.update.call(widget, prev, elem);
+
+      expect(widget.view).to.equal(prev.view);
+      expect(widget.view.el).to.equal(elem);
+      expect(widget.view.parentView).not.to.equal(oldParentView);
+      expect(widget.view.parentView).to.equal(widget.parentView);
+      jasmineExpect(widget.template.attachView).toHaveBeenCalledWith(widget.view, AmpersandViewWidget);
+      expect(widget.view.compiledTemplate).to.equal(compiledTemplate);
+      jasmineExpect(widget.view.update).toHaveBeenCalledWith(widget.model);
+    });
+    it('should create a view if an unmatched one is provided', function() {
+      var prev = {
+        ViewConstructor: {},
+        destroy: jasmine.createSpy('destroy'),
+        view: {
+          vtree: {}
+        }
+      };
+      var elem = document.createElement('div');
+      var view = {};
+      var widget = {
+        ViewConstructor: jasmine.createSpy('ViewConstructor').and.returnValue(view),
+        parentView: {},
+        model: {},
+        template: {},
+        context: {}
+      };
+      AmpersandViewWidget.prototype.update.call(widget, prev, elem);
+
+      jasmineExpect(prev.destroy).toHaveBeenCalled();
+      expect(widget.view).to.equal(view);
+      jasmineExpect(widget.ViewConstructor).toHaveBeenCalled();
+      var args = widget.ViewConstructor.calls.mostRecent().args;
+      expect(args).to.have.length(1);
+      expect(args[0]).to.have.keys('el', 'model', 'parentView', 'context', 'vtree', 'template');
+      expect(args[0].el).to.equal(elem);
+      expect(args[0].model).to.equal(widget.model);
+      expect(args[0].parentView).to.equal(widget.parentView);
+      expect(args[0].context).to.equal(widget.context);
+      expect(args[0].vtree).to.equal(prev.view.vtree);
+      expect(args[0].template).to.equal(widget.template);
+    });
   });
   describe('destroy', function() {
     it('should be a function', function() {
@@ -185,6 +274,23 @@ describe('ampersand_view_widget public api', function() {
     it('should be a function', function() {
       expect(AmpersandViewWidget.prototype.templateToString).to.be.a('function');
       expect(AmpersandViewWidget.prototype.templateToString).to.have.length(0);
+    });
+    it('should return nothing if view is not set', function() {
+      var output = AmpersandViewWidget.prototype.templateToString.call({});
+      expect(output).to.be.undefined;
+    });
+    it('should return a string with the debug name', function() {
+      var debugName = 'FOOBAR';
+      var view = {
+        getDebugName: jasmine.createSpy('getDebugName').and.returnValue(debugName)
+      };
+      var widget = {
+        view: view
+      };
+      var output = AmpersandViewWidget.prototype.templateToString.call(widget);
+      expect(output).to.be.a('string');
+      expect(output).to.contain(debugName);
+      jasmineExpect(view.getDebugName).toHaveBeenCalled();
     });
   });
   /* develblock:end */

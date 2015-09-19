@@ -381,11 +381,54 @@ describe('base_view.js constructed api', function() {
       expect(BaseView.prototype._setElement).to.be.a('function');
       expect(BaseView.prototype._setElement).to.have.length(1);
     });
+    var dataset = require('data-set');
+    it('should update the element and set data', function() {
+      spyOn(Backbone.View.prototype, '_setElement').and.callThrough();
+      var el = document.createElement('div');
+      var view = {};
+      BaseView.prototype._setElement.call(view, el);
+      jasmineExpect(Backbone.View.prototype._setElement).toHaveBeenCalledWith(el);
+      expect(view.el).to.equal(el);
+      expect(dataset(el).view).to.equal(view);
+    });
+    it('should unset from an existing element', function() {
+      var el = document.createElement('div');
+      var oldEl = document.createElement('div');
+      var view = {
+        el: oldEl
+      };
+      dataset(view.el).view = view;
+      BaseView.prototype._setElement.call(view, el);
+      expect(view.el).not.to.equal(oldEl);
+      expect(dataset(oldEl).view).to.be.null;
+    });
   });
   describe('getState', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getState).to.be.a('function');
       expect(BaseView.prototype.getState).to.have.length(0);
+    });
+    it('should return the view\'s data object', function() {
+      var dataObj = {};
+      var view = {
+        serialize: function() {
+          return dataObj;
+        }
+      };
+      expect(BaseView.prototype.getState.call(view)).to.equal(dataObj);
+    });
+    it('should serialize the data object', function() {
+      var serializedData = {};
+      var dataObj = {
+        doSerialize: jasmine.createSpy('doSerialize').and.returnValue(serializedData)
+      };
+      var view = {
+        serialize: function() {
+          return dataObj;
+        }
+      };
+      expect(BaseView.prototype.getState.call(view)).to.equal(serializedData);
+      jasmineExpect(dataObj.doSerialize).toHaveBeenCalled();
     });
   });
   describe('setState', function() {
@@ -393,17 +436,110 @@ describe('base_view.js constructed api', function() {
       expect(BaseView.prototype.setState).to.be.a('function');
       expect(BaseView.prototype.setState).to.have.length(1);
     });
+    it('should return the data it was given', function() {
+      var dataObj = {};
+      var view = {
+        serialize: jasmine.createSpy('serialize').and.returnValue(dataObj)
+      };
+      var data = {};
+      expect(BaseView.prototype.setState.call(view, data)).to.equal(data);
+    });
+    it('should call reset where available', function() {
+      var dataObj = {
+        reset: jasmine.createSpy('reset')
+      };
+      var view = {
+        serialize: jasmine.createSpy('serialize').and.returnValue(dataObj)
+      };
+      var data = {};
+      expect(BaseView.prototype.setState.call(view, data)).to.equal(data);
+      jasmineExpect(dataObj.reset).toHaveBeenCalledWith(data);
+    });
+    it('should call set where available', function() {
+      var dataObj = {
+        set: jasmine.createSpy('set')
+      };
+      var view = {
+        serialize: jasmine.createSpy('serialize').and.returnValue(dataObj)
+      };
+      var data = {};
+      expect(BaseView.prototype.setState.call(view, data)).to.equal(data);
+      jasmineExpect(dataObj.set).toHaveBeenCalledWith(data, {reset: true});
+    });
+    it('should prefer reset', function() {
+      var dataObj = {
+        reset: jasmine.createSpy('reset'),
+        set: jasmine.createSpy('set')
+      };
+      var view = {
+        serialize: jasmine.createSpy('serialize').and.returnValue(dataObj)
+      };
+      var data = {};
+      expect(BaseView.prototype.setState.call(view, data)).to.equal(data);
+      jasmineExpect(dataObj.reset).toHaveBeenCalledWith(data);
+      jasmineExpect(dataObj.set).not.toHaveBeenCalled();
+    });
   });
   describe('getEvents', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getEvents).to.be.a('function');
       expect(BaseView.prototype.getEvents).to.have.length(0);
     });
+    it('should return a map of events', function() {
+      var view = {
+        events: {
+          'click': 'click',
+          'click .js-sub': 'subClick'
+        },
+        click: function() {},
+        subClick: function() {}
+      };
+      var output = BaseView.prototype.getEvents.call(view);
+      expect(output).to.have.length(2);
+
+      var expectedOutput = [{
+        selector: 'click',
+        name: 'click',
+        fn: view.click
+      }, {
+        selector: 'click .js-sub',
+        name: 'subClick',
+        fn: view.subClick
+      }];
+
+      output = _.sortBy(output, 'selector');
+      expectedOutput = _.sortBy(expectedOutput, 'selector');
+
+      expect(output).to.eql(expectedOutput);
+    });
   });
   describe('getVdomTemplate', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getVdomTemplate).to.be.a('function');
       expect(BaseView.prototype.getVdomTemplate).to.have.length(0);
+    });
+    var vtreeString = 'FOO';
+    beforeEach(function() {
+      spyOn(tungsten.debug, 'vtreeToString').and.returnValue(vtreeString);
+    });
+    it('should pass the vtree to vtreeToString', function() {
+      var view = {
+        parentView: true,
+        vtree: {}
+      };
+      var output = BaseView.prototype.getVdomTemplate.call(view);
+      jasmineExpect(tungsten.debug.vtreeToString).toHaveBeenCalledWith(view.vtree, true);
+      expect(output).to.equal(vtreeString);
+    });
+    it('should ignore the wrapper element for top level views', function() {
+      var view = {
+        vtree: {
+          children: []
+        }
+      };
+      var output = BaseView.prototype.getVdomTemplate.call(view);
+      jasmineExpect(tungsten.debug.vtreeToString).toHaveBeenCalledWith(view.vtree.children, true);
+      expect(output).to.equal(vtreeString);
     });
   });
   describe('getTemplateDiff', function() {
@@ -417,11 +553,48 @@ describe('base_view.js constructed api', function() {
       expect(BaseView.prototype.getChildren).to.be.a('function');
       expect(BaseView.prototype.getChildren).to.have.length(0);
     });
+    it('should pass through to getChildViews', function() {
+      var children = [];
+      var view = {
+        getChildViews: jasmine.createSpy('getChildViews').and.returnValue(children)
+      };
+      var output = BaseView.prototype.getChildren.call(view);
+      expect(output).to.equal(children);
+      jasmineExpect(view.getChildViews).toHaveBeenCalled();
+    });
+    it('should bypass debug wrapping getChildViews', function() {
+      var children = [];
+      var view = {
+        getChildViews: jasmine.createSpy('wrappedGetChildViews').and.returnValue(children)
+      };
+      view.getChildViews.original = jasmine.createSpy('getChildViews').and.returnValue(children);
+      var output = BaseView.prototype.getChildren.call(view);
+      expect(output).to.equal(children);
+      jasmineExpect(view.getChildViews).not.toHaveBeenCalled();
+      jasmineExpect(view.getChildViews.original).toHaveBeenCalled();
+    });
   });
   describe('getDebugName', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.getDebugName).to.be.a('function');
       expect(BaseView.prototype.getDebugName).to.have.length(0);
+    });
+    it('should return the cid if debugName is not available', function() {
+      var result = BaseView.prototype.getDebugName.call({
+        cid: 'view1'
+      });
+
+      expect(result).to.equal('view1');
+    });
+    it('should return the debugName', function() {
+      var result = BaseView.prototype.getDebugName.call({
+        cid: 'view1',
+        constructor: {
+          debugName: 'FOOBAR'
+        }
+      });
+
+      expect(result).to.equal('FOOBAR1');
     });
   });
   /* develblock:end */
