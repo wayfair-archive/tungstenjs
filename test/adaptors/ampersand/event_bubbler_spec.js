@@ -1,7 +1,6 @@
 'use strict';
 
 var eventBubbler = require('../../../adaptors/ampersand/event_bubbler');
-var _ = require('underscore');
 
 describe('event_bubbler public api', function() {
   it('should be a function', function() {

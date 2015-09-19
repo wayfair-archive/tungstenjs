@@ -213,7 +213,7 @@ describe('base_model.js constructed api', function() {
       var serializable = {};
       var unserializable = {
         toJSON: function() {
-          throw 'cannot serialize'
+          throw 'cannot serialize';
         }
       };
       model.set({

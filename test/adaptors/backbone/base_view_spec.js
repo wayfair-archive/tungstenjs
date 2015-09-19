@@ -54,7 +54,7 @@ describe('base_view.js public api', function() {
       TestModel.prototype.render(args);
       jasmineExpect(BaseView.prototype.render).toHaveBeenCalledWith(args);
       jasmineExpect(renderFn).toHaveBeenCalledWith(args);
-      
+
       TestModel.prototype.delegateEvents(args);
       jasmineExpect(BaseView.prototype.delegateEvents).toHaveBeenCalledWith(args);
       jasmineExpect(delegateFn).toHaveBeenCalledWith(args);
