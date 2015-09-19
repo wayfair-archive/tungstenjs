@@ -1,2 +1,25 @@
 <button id="btn">button</button>
 <b-tooltip for="btn" position="right">{{name}} | {{count}}</b-tooltip>
+
+<br/><br/>
+<b-tabs selected="0">
+    <b-tab for="one">One</b-tab>
+    <b-tab for="two">Two  {{count}}</b-tab>
+    <b-tab for="three">Three</b-tab>
+</b-tabs>
+<div id="one">
+    Lorem ipsum... {{count}}
+</div>
+<div id="two">
+    Iste, reiciendis...
+</div>
+<div id="three">
+    Nisi, ipsum...
+</div>
+<br/><br/><br/>
+<button id="toggle-collapsible" aria-controls="collapsible" aria-expanded="false">Toogle collapsible</button>
+<b-collapsible id="collapsible" aria-labelledby="toggle-collapsible" duration="100">
+    <div>
+        Lorem ipsum... {{ count }}
+    </div>
+</b-collapsible>
