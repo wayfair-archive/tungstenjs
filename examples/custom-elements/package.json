@@ -1,0 +1,15 @@
+{
+  "name": "tungstenjs-custom-elements-example",
+  "version": "0.1.0",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node ../../node_modules/webpack/bin/webpack.js -d",
+    "start": "node ../examples_server.js --example=\"custom-elements\""
+  },
+  "dependencies": {
+    "bosonic": "^1.0.0",
+    "bosonic-core-elements": "^1.0.0"
+  }
+}
