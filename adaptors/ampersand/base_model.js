@@ -41,11 +41,10 @@ var BaseModel = AmpersandModel.extend({
     var opts = _.extend({
       reset: true
     }, options);
-    var currentKeys = this.getAttributes({
+    var currentKeys = _.keys(this.getAttributes({
       props: true
-    }, true);
-    currentKeys = currentKeys.concat(_.keys(this._children));
-    currentKeys = currentKeys.concat(_.keys(this._collections));
+    }, true));
+    currentKeys = currentKeys.concat(_.keys(this._children), _.keys(this._collections));
     var key;
     for (var i = 0; i < currentKeys.length; i++) {
       key = currentKeys[i];
@@ -178,7 +177,7 @@ var BaseModel = AmpersandModel.extend({
         parent: self
       });
     });
-    AmpersandModel.prototype._initCollections.call(this);
+    AmpersandModel.prototype._initChildren.call(this);
   },
 
   trigger: eventBubbler(AmpersandModel)

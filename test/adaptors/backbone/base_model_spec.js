@@ -2,19 +2,56 @@
 
 var BackboneAdaptor = require('../../../adaptors/backbone');
 var BaseModel = BackboneAdaptor.Model;
+var BaseCollection = BackboneAdaptor.Collection;
 var Backbone = BackboneAdaptor.Backbone;
+var logger = require('../../../src/utils/logger');
 
-describe('base_model.js public api', function() {
-  describe('extend', function() {
+describe('base_model.js static api', function() {
+  describe('extend', function () {
     it('should be a function', function() {
       expect(BaseModel.extend).to.be.a('function');
-    });
-    it('should accept two arguments', function() {
-      expect(BaseModel.extend.length).to.equal(2);
+      expect(BaseModel.extend).to.have.length(2);
     });
     it('should be different than Backbone\'s', function() {
       expect(BaseModel.extend).not.to.equal(Backbone.extend);
     });
+    it('should call extend', function() {
+      spyOn(Backbone.Model, 'extend');
+      BaseModel.extend({});
+      jasmineExpect(Backbone.Model.extend).toHaveBeenCalled();
+    });
+    /* develblock:start */
+    it('should prevent initialize from being overwritten', function() {
+      spyOn(logger, 'warn');
+      spyOn(BaseModel.prototype, 'initialize');
+      var initFn = jasmine.createSpy();
+      var testFn = function() {};
+      var TestModel = BaseModel.extend({
+        initialize: initFn,
+        test: testFn
+      });
+      expect(TestModel.prototype.initialize).not.to.equal(initFn);
+      expect(TestModel.prototype.test).to.equal(testFn);
+      jasmineExpect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.calls.argsFor(0)[0]).to.contain('may not be overridden');
+
+      var args = {};
+      TestModel.prototype.initialize(args);
+      jasmineExpect(BaseModel.prototype.initialize).toHaveBeenCalledWith(args);
+      jasmineExpect(initFn).toHaveBeenCalledWith(args);
+    });
+    it('should error with debugName if available', function() {
+      spyOn(logger, 'warn');
+      var initFn = function() {};
+      BaseModel.extend({
+        initialize: initFn
+      }, {
+        debugName: 'FOOBAR'
+      });
+      jasmineExpect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.calls.argsFor(0)[0]).to.contain(' for model "FOOBAR"');
+    });
+    /* develblock:end */
   });
 });
 
@@ -27,60 +64,60 @@ describe('base_model.js constructed api', function() {
   describe('set', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.set).to.be.a('function');
-      expect(BaseModel.prototype.set.length).to.equal(3);
+      expect(BaseModel.prototype.set).to.have.length(3);
     });
   });
   describe('toJSON', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.toJSON).to.be.a('function');
-      expect(BaseModel.prototype.toJSON.length).to.equal(0);
+      expect(BaseModel.prototype.toJSON).to.have.length(0);
     });
   });
   describe('doSerialize', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.doSerialize).to.be.a('function');
-      expect(BaseModel.prototype.doSerialize.length).to.equal(0);
+      expect(BaseModel.prototype.doSerialize).to.have.length(0);
     });
   });
   describe('serialize', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.serialize).to.be.a('function');
-      expect(BaseModel.prototype.serialize.length).to.equal(1);
+      expect(BaseModel.prototype.serialize).to.have.length(1);
     });
   });
   describe('clone', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.clone).to.be.a('function');
-      expect(BaseModel.prototype.clone.length).to.equal(0);
+      expect(BaseModel.prototype.clone).to.have.length(0);
     });
   });
   describe('postInitialize', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.postInitialize).to.be.a('function');
-      expect(BaseModel.prototype.postInitialize.length).to.equal(0);
+      expect(BaseModel.prototype.postInitialize).to.have.length(0);
     });
   });
   describe('getDeep', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getDeep).to.be.a('function');
-      expect(BaseModel.prototype.getDeep.length).to.equal(1);
+      expect(BaseModel.prototype.getDeep).to.have.length(1);
     });
   });
   describe('setRelation', function() {
     it('should be a function', function() {
-      expect(BaseModel.prototype.setRelation.length).to.equal(3);
+      expect(BaseModel.prototype.setRelation).to.have.length(3);
     });
   });
   describe('trigger', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.trigger).to.be.a('function');
-      expect(BaseModel.prototype.trigger.length).to.equal(0);
+      expect(BaseModel.prototype.trigger).to.have.length(0);
     });
   });
   describe('reset', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.reset).to.be.a('function');
-      expect(BaseModel.prototype.reset.length).to.equal(2);
+      expect(BaseModel.prototype.reset).to.have.length(2);
     });
   });
 
@@ -88,31 +125,160 @@ describe('base_model.js constructed api', function() {
   describe('initDebug', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.initDebug).to.be.a('function');
-      expect(BaseModel.prototype.initDebug.length).to.equal(0);
+      expect(BaseModel.prototype.initDebug).to.have.length(0);
     });
   });
   describe('getDebugName', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getDebugName).to.be.a('function');
-      expect(BaseModel.prototype.getDebugName.length).to.equal(0);
+      expect(BaseModel.prototype.getDebugName).to.have.length(0);
+    });
+    it('should return the cid if debugName is not available', function() {
+      var result = BaseModel.prototype.getDebugName.call({
+        cid: 'model1'
+      });
+
+      expect(result).to.equal('model1');
+    });
+    it('should return the debugName', function() {
+      var result = BaseModel.prototype.getDebugName.call({
+        cid: 'model1',
+        constructor: {
+          debugName: 'FOOBAR'
+        }
+      });
+
+      expect(result).to.equal('FOOBAR1');
     });
   });
   describe('getChildren', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getChildren).to.be.a('function');
-      expect(BaseModel.prototype.getChildren.length).to.equal(0);
+      expect(BaseModel.prototype.getChildren).to.have.length(0);
+    });
+    it('should return the model\'s children and collections', function() {
+      var TestModel = BaseModel.extend({
+        defaults: {
+          cl1: [],
+          cl2: [],
+          ch1: {},
+          ch2: {}
+        },
+        relations: {
+          'cl1': BaseCollection,
+          'cl2': BaseCollection,
+          'ch1': BaseModel,
+          'ch2': BaseModel
+        }
+      });
+      var model = new TestModel();
+      var children = model.getChildren();
+      expect(children).to.have.length(4);
+      expect(children).to.include.members([model.get('cl1'), model.get('cl2'), model.get('ch1'), model.get('ch2')]);
     });
   });
   describe('getFunctions', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getFunctions).to.be.a('function');
-      expect(BaseModel.prototype.getFunctions.length).to.equal(2);
+      expect(BaseModel.prototype.getFunctions).to.have.length(2);
     });
   });
   describe('getPropertiesArray', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.getPropertiesArray).to.be.a('function');
-      expect(BaseModel.prototype.getPropertiesArray.length).to.equal(0);
+      expect(BaseModel.prototype.getPropertiesArray).to.have.length(0);
+    });
+    it('should return an array of properties', function() {
+      var TestModel = BaseModel.extend({
+        defaults: {
+          cl1: [],
+          ch1: {}
+        },
+        derived: {
+          d1: {
+            deps: [],
+            fn: function() {
+              return ['derived'];
+            }
+          }
+        },
+        relations: {
+          'cl1': BaseCollection,
+          'ch1': BaseModel
+        }
+      });
+      var model = new TestModel({
+        prop: 'test'
+      });
+      var serializable = {};
+      var unserializable = {
+        toJSON: function() {
+          throw 'cannot serialize';
+        }
+      };
+      model.set({
+        'serializable': serializable,
+        'unserializable': unserializable
+      });
+
+      spyOn(model.get('ch1'), 'getDebugName').and.returnValue('ModelName');
+      spyOn(model.get('cl1'), 'getDebugName').and.returnValue('CollectionName');
+
+      var properties = model.getPropertiesArray();
+      var expectedProperties = [{
+        key: 'ch1',
+        data: {
+          isRelation: true,
+          name: 'ModelName'
+        }
+      }, {
+        key: 'cl1',
+        data: {
+          isRelation: true,
+          name: 'CollectionName'
+        }
+      }, {
+        key: 'd1',
+        data: {
+          isDerived: true,
+          isEditable: true,
+          isEditing: false,
+          value: ['derived'],
+          displayValue: '["derived"]'
+        }
+      }, {
+        key: 'prop',
+        data: {
+          isDerived: false,
+          isEditable: true,
+          isEditing: false,
+          value: 'test',
+          displayValue: '"test"'
+        }
+      }, {
+        key: 'serializable',
+        data: {
+          isDerived: false,
+          isEditable: true,
+          isEditing: false,
+          value: serializable,
+          displayValue: '{}'
+        }
+      }, {
+        key: 'unserializable',
+        data: {
+          isDerived: false,
+          isEditable: false,
+          isEditing: false,
+          value: unserializable,
+          displayValue: '[object Object]'
+        }
+      }];
+
+      // Sort both arrays by key to allow deep equality check
+      properties = _.sortBy(properties, 'key');
+      expectedProperties = _.sortBy(expectedProperties, 'key');
+      expect(properties).to.eql(expectedProperties);
     });
   });
   /* develblock:end */
@@ -1727,7 +1893,7 @@ describe('base_model.js backbone nested functionality', function() {
   });
 
   it('Should build a collection relation', function() {
-    expect(book.get('pages').length).to.equal(2);
+    expect(book.get('pages')).to.have.length(2);
     expect(book.get('pages').at(0).get('number')).to.equal(1);
     expect(book.get('pages').at(1).get('number')).to.equal(2);
     expect(book.get('pages').at(0).get('words')).to.equal(500);
@@ -1770,7 +1936,7 @@ describe('base_model.js backbone nested functionality', function() {
       ]
     });
 
-    expect(book.get('pages').length).to.equal(3);
+    expect(book.get('pages')).to.have.length(3);
   });
 
   it('Should merge values into models which already exist in a sub collection', function() {
@@ -1794,7 +1960,7 @@ describe('base_model.js backbone nested functionality', function() {
       ]
     });
 
-    expect(book.get('pages').length).to.equal(3);
+    expect(book.get('pages')).to.have.length(3);
     expect(book.get('pages').at(2).get('test')).to.equal('test');
     expect(book.get('pages').at(2).get('words')).to.equal(600);
   });
@@ -1820,7 +1986,7 @@ describe('base_model.js backbone nested functionality', function() {
       ]
     });
 
-    expect(book.get('pages').length).to.equal(3);
+    expect(book.get('pages')).to.have.length(3);
     expect(book.get('pages').at(2).get('test')).to.equal('test');
     expect(book.get('pages').at(2).get('words')).not.to.equal(600);
     expect(book.get('pages').at(2).id).to.equal(2);

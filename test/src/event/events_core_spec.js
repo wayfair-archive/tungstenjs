@@ -65,7 +65,7 @@ describe('events_core.js public API', function() {
   describe('removeEvent', function() {
     it('should be a function', function() {
       expect(eventsCore.removeEvent).to.be.a('function');
-      expect(eventsCore.removeEvent.length).to.equal(1);
+      expect(eventsCore.removeEvent).to.have.length(1);
     });
     it('should expect an array with four elements', function() {
       console.warn.calls.reset();
@@ -157,14 +157,14 @@ describe('events_core.js public API', function() {
         className: 'js-test1 test2 js-test3'
       });
       expect(classes).to.be.instanceof(Array);
-      expect(classes.length).to.equal(2);
+      expect(classes).to.have.length(2);
       expect(classes).members(['js-test1', 'js-test3']);
 
       classes = eventsCore.getActiveClasses({
         className: 'test1 test2 test3'
       });
       expect(classes).to.be.instanceof(Array);
-      expect(classes.length).to.equal(0);
+      expect(classes).to.have.length(0);
     });
   });
   describe('bindEventType', function() {
