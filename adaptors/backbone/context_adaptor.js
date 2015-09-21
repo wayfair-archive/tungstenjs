@@ -77,6 +77,5 @@ var lookupValue = function(view, name) {
 
 module.exports = {
   initialize: initialize,
-  lookupValue: lookupValue,
-  ComponentWidget: require('./component_widget')
+  lookupValue: lookupValue
 };
