@@ -11,7 +11,7 @@ var Context = require('./template_context');
 var logger = require('./../utils/logger');
 var ractiveTypes = require('./ractive_types');
 var htmlToVdom = require('./html_to_vdom');
-var FocusHook = require('./hooks/focus_hook');
+var FocusHook = require('./hooks/autofocus');
 var exports = {};
 
 var HTMLCommentWidget = require('./widgets/html_comment');
