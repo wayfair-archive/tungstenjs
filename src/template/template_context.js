@@ -44,30 +44,11 @@ Context.prototype.lookupValue = function() {
 
 Context.SUBVIEW_KEY = 'nested_content';
 
-Context.ComponentWidget = function() {
-  throw 'ComponentWidget not set';
-};
-
 /**
  * Internal lookup function to intercept interesting lookups
  */
-Context.prototype._lookupValue = function(view, name, stack) {
-  if (stack && name === Context.SUBVIEW_KEY) {
-    if (view.is_subview) {
-      if (view.template && typeof view.template._render === 'function') {
-        return view.template._render(null, view.data, null, null, stack);
-      }
-    }
-    if (view.is_tungsten_component) {
-      if (!view.instance) {
-        view.template = view.template.wrap(view.tag_name || 'span');
-        view.model = new view.model(view.data || {});
-        view.instance = new Context.ComponentWidget(view.view, view.model, view.template);
-      }
-      return stack.createObject(view.instance);
-    }
-  }
-  return this.lookupValue(view, name);
+Context.prototype._lookupValue = function(view, name) {
+    return this.lookupValue(view, name);
 };
 
 /**
@@ -240,9 +221,6 @@ Context.setAdapterFunctions = function(adaptor) {
   }
   if (typeof adaptor.lookupValue === 'function') {
     Context.prototype.lookupValue = adaptor.lookupValue;
-  }
-  if (typeof adaptor.ComponentWidget === 'function') {
-    Context.ComponentWidget = adaptor.ComponentWidget;
   }
 };
 
