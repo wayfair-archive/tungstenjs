@@ -74,26 +74,6 @@ module.exports = function(render) {
       equal(render('<div>12</p>3</div>', {}), '<div>12</div>3');
     });
 
-    /**
-     * Some stacks parse unescaped blocks to HTML while some use it verbatim
-     */
-    if (render.parsesTriple) {
-      describe('HTML correction', function() {
-        equal(render('<p>1{{{html}}}3</p>', {
-          html: '<p>2</p>'
-        }), '<p>1</p><p>2</p>3<p></p>');
-
-        equal(render('<div>1{{{html}}}3</div>', {
-          html: '<div>2'
-        }), '<div>1<div>2</div>3</div>');
-
-        equal(render('<div>1{{{html}}}3</div>', {
-          html: '2</div>'
-        }), '<div>123</div>');
-      });
-    }
-
-
     /*
      * QUnit tests from https://github.com/thegrandpoobah/mustache.js
      */
