@@ -1,7 +1,6 @@
 'use strict';
 
 var processProperties = require('../process_properties');
-var htmlHelpers = require('../html_helpers');
 var logger = require('../../utils/logger');
 
 // IE8 and back don't create whitespace-only nodes from the DOM
