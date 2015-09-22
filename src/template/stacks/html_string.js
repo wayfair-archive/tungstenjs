@@ -70,9 +70,8 @@ HtmlStringStack.prototype.createObject = function(obj, options) {
   }
 };
 
-HtmlStringStack.prototype.getOutput = function() {
-  DefaultStack.prototype.getOutput.call(this);
-  return this.result.join('');
+HtmlStringStack.prototype.processArrayOutput = function(output) {
+  return output.join('');
 };
 
 module.exports = HtmlStringStack;

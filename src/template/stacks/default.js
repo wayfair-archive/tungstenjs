@@ -166,6 +166,16 @@ DefaultStack.prototype.closeElement = function(closingElem) {
   }
 };
 
+/**
+ * Postprocessing for an array result
+ * This allows stacks to create DocumentFragments or join the array to create the expected output type
+ * @param  {Array<Any>} output Array of result objects
+ * @return {Any}               Processed result
+ */
+DefaultStack.prototype.processArrayOutput = function(output) {
+  return output;
+};
+
 DefaultStack.prototype.getOutput = function() {
   while (this.stack.length) {
     this.closeElement(this.peek());
@@ -173,7 +183,9 @@ DefaultStack.prototype.getOutput = function() {
   for (var i = this.result.length; i--;) {
     this.result[i] = this.processObject(this.result[i]);
   }
-  return this.result.length === 1 ? this.result[0] : this.result;
+  // If there is only one result, it's already been processed
+  // For multiple results, allow Stacks to process array
+  return this.result.length === 1 ? this.result[0] : this.processArrayOutput(this.result);
 };
 
 DefaultStack.prototype.clear = function() {

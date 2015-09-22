@@ -70,4 +70,12 @@ DomStack.prototype.createObject = function(obj, options) {
   }
 };
 
+DomStack.prototype.processArrayOutput = function(output) {
+  var domFrag = document.createDocumentFragment();
+  for (var i = 0; i < output.length; i++) {
+    domFrag.appendChild(output[i]);
+  }
+  return domFrag;
+};
+
 module.exports = DomStack;

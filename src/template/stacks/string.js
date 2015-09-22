@@ -20,8 +20,8 @@ StringStack.prototype.closeElement = function() {
   throw 'An attribute cannot contain an element';
 };
 
-StringStack.prototype.getOutput = function() {
-  return this.result.join('');
+StringStack.prototype.processArrayOutput = function(output) {
+  return output.join('');
 };
 
 module.exports = StringStack;
