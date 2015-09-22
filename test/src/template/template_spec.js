@@ -67,6 +67,8 @@ function domToString(dom) {
       htmlString += d.innerHTML;
     } else if (dom.nodeType === 1) {
       htmlString += dom.outerHTML;
+    } else if (dom.nodeType === 11) {
+      htmlString += domToString(dom.childNodes);
     } else if (dom.length) {
       for (var i = 0; i < dom.length; i++) {
         htmlString += domToString(dom[i]);
