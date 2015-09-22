@@ -67,16 +67,6 @@ DefaultStack.prototype.processObject = function(obj) {
   return obj;
 };
 
-DefaultStack.prototype.validateStackAddition = function(node) {
-  var openElem = this.peek();
-  while (openElem && htmlHelpers.validation.impliedCloseTag(openElem.tagName, node.tagName)) {
-    logger.info('Opening ' + node.tagName + ' implicitly closes ' + openElem.tagName);
-    this.closeElement(openElem);
-    openElem = this.peek();
-  }
-  return true;
-};
-
 /**
  * When an element is resolved, push it to the result or the parent item on the stack
  * @param  {Object} obj Text / Widget / or Tungsten node
@@ -104,9 +94,6 @@ DefaultStack.prototype._closeElem = function(obj) {
     // Process child nodes
     for (i = obj.children.length; i--;) {
       obj.children[i] = this.processObject(obj.children[i]);
-    }
-    if (this.stack.length > 0) {
-      this.validateStackAddition(obj);
     }
   }
 
