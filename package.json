@@ -31,6 +31,7 @@
     "backbone": "^1.1.2",
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
+    "form-serialize": "^0.6.0",
     "html-tokenizer": "^1.4.4",
     "jsdom": "^6.5.0",
     "json-loader": "^0.5.2",
