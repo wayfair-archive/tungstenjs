@@ -2,6 +2,7 @@
 
 var BackboneAdaptor = require('../../../adaptors/backbone');
 var BaseView = BackboneAdaptor.View;
+var BaseModel = BackboneAdaptor.Model;
 var Backbone = BackboneAdaptor.Backbone;
 var tungsten = require('../../../src/tungsten');
 var _ = require('underscore');
@@ -307,21 +308,44 @@ describe('base_view.js constructed api', function() {
       BaseView.prototype.update.call(view, view.model);
       jasmineExpect(view.render).toHaveBeenCalled();
     });
-    it('should change listeners if model is different', function() {
-      var oldModel = {};
-      var newModel = {};
-      var view = {
-        initializeRenderListener: jasmine.createSpy('initializeRenderListener'),
-        stopListening: jasmine.createSpy('stopListening'),
-        render: jasmine.createSpy('render'),
-        model: oldModel
-      };
-      BaseView.prototype.update.call(view, newModel);
-      jasmineExpect(view.stopListening).toHaveBeenCalledWith(oldModel);
-      jasmineExpect(view.initializeRenderListener).toHaveBeenCalledWith(newModel);
-      jasmineExpect(view.render).toHaveBeenCalled();
-      expect(view.model).to.equal(newModel);
-      expect(view.model).not.to.equal(oldModel);
+    it('should transfer listeners if model is different', function() {
+      var renderSpy = jasmine.createSpy('renderer');
+      var listener = jasmine.createSpy('listener');
+      var eventName = 'FOOBAR';
+
+      var TestView = BaseView.extend({
+        initialize: function() {
+          this.listenTo(this.model, eventName, listener);
+        },
+        render: renderSpy
+      });
+      var firstModel = new BaseModel({});
+      var view = new TestView({
+        model: firstModel
+      });
+
+      firstModel.trigger(eventName);
+      expect(listener.calls.count()).to.equal(1);
+
+      var secondModel = new BaseModel({});
+      view.update(secondModel);
+      expect(view.model).to.equal(secondModel);
+      expect(view.model).not.to.equal(firstModel);
+      // Expect that update triggers a render
+      jasmineExpect(renderSpy).toHaveBeenCalled();
+
+      secondModel.trigger(eventName);
+      expect(listener.calls.count()).to.equal(2);
+
+      // StopListening to the firstModel shouldn't do anything
+      view.stopListening(firstModel);
+      secondModel.trigger(eventName);
+      expect(listener.calls.count()).to.equal(3);
+
+      // StopListening to the current model should stop events
+      view.stopListening(secondModel);
+      secondModel.trigger(eventName);
+      expect(listener.calls.count()).to.equal(3);
     });
   });
   describe('getChildViews', function() {
