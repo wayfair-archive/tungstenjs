@@ -310,63 +310,108 @@ describe('base_view.js constructed api', function() {
     });
     it('should transfer listeners if model is different', function() {
       var renderSpy = jasmine.createSpy('renderer');
-      var firstListener = jasmine.createSpy('listener');
-      var secondListener = jasmine.createSpy('listener');
-      var eventName = 'FOOBAR';
 
       var TestView = BaseView.extend({
-        initialize: function() {
+        initialize: function(options) {
           var self = this;
-          this.listenTo(this.model, eventName, firstListener);
-          firstListener.and.callFake(function() {
-            // Check context of call
-            expect(this).to.equal(self);
-          });
-          this.model.on(eventName, secondListener);
-          secondListener.and.callFake(function() {
-            // Check context of call
-            expect(this).to.equal(self.model);
-          });
+          this.eventName = options.eventName;
+          this.testListeners = [
+            jasmine.createSpy('listenToListener').and.callFake(function() {
+              // Check context of call
+              expect(this).to.equal(self);
+            }),
+            jasmine.createSpy('onListener').and.callFake(function() {
+              // Check context of call
+              expect(this).to.equal(self.model);
+            })
+          ];
+          this.listenTo(this.model, this.eventName, this.testListeners[0]);
+          this.model.on(this.eventName, this.testListeners[1]);
         },
         render: renderSpy
       });
+
       var firstModel = new BaseModel({});
-      var view = new TestView({
-        model: firstModel
+      var secondModel = new BaseModel({});
+      var firstView = new TestView({
+        model: firstModel,
+        eventName: 'FOO'
+      });
+      var secondView = new TestView({
+        model: secondModel,
+        eventName: 'BAR'
       });
 
-      firstModel.trigger(eventName);
-      expect(firstListener.calls.count()).to.equal(1);
-      expect(secondListener.calls.count()).to.equal(1);
+      firstView.model.trigger(firstView.eventName);
+      expect(firstView.testListeners[0].calls.count()).to.equal(1);
+      expect(firstView.testListeners[1].calls.count()).to.equal(1);
 
-      var secondModel = new BaseModel({});
-      view.update(secondModel);
-      expect(view.model).to.equal(secondModel);
-      expect(view.model).not.to.equal(firstModel);
+      secondView.model.trigger(secondView.eventName);
+      expect(secondView.testListeners[0].calls.count()).to.equal(1);
+      expect(secondView.testListeners[1].calls.count()).to.equal(1);
+
+      // Swap the models between views
+      firstView.update(secondModel);
+      secondView.update(firstModel);
+
+      expect(firstView.model).to.equal(secondModel);
+      expect(firstView.model).not.to.equal(firstModel);
+      expect(secondView.model).to.equal(firstModel);
+      expect(secondView.model).not.to.equal(secondModel);
       // Expect that update triggers a render
       jasmineExpect(renderSpy).toHaveBeenCalled();
+      // Render should have been called for each view
+      expect(renderSpy.calls.count()).to.equal(2);
 
-      secondModel.trigger(eventName);
-      expect(firstListener.calls.count()).to.equal(2);
-      expect(secondListener.calls.count()).to.equal(2);
+      firstView.model.trigger(firstView.eventName);
+      expect(firstView.testListeners[0].calls.count()).to.equal(2);
+      expect(firstView.testListeners[1].calls.count()).to.equal(2);
+
+      // Triggering the original model should have no effect
+      firstModel.trigger(firstView.eventName);
+      expect(firstView.testListeners[0].calls.count()).to.equal(2);
+      expect(firstView.testListeners[1].calls.count()).to.equal(2);
+      expect(secondView.testListeners[0].calls.count()).to.equal(1);
+      expect(secondView.testListeners[1].calls.count()).to.equal(1);
+
+      secondView.model.trigger(secondView.eventName);
+      expect(secondView.testListeners[0].calls.count()).to.equal(2);
+      expect(secondView.testListeners[1].calls.count()).to.equal(2);
 
       // StopListening to the firstModel shouldn't do anything
-      view.stopListening(firstModel);
-      secondModel.trigger(eventName);
-      expect(firstListener.calls.count()).to.equal(3);
-      expect(secondListener.calls.count()).to.equal(3);
+      firstView.stopListening(secondView.model);
+      firstView.model.trigger(firstView.eventName);
+      expect(firstView.testListeners[0].calls.count()).to.equal(3);
+      expect(firstView.testListeners[1].calls.count()).to.equal(3);
 
       // StopListening to the current model should stop events
-      view.stopListening(secondModel);
-      secondModel.trigger(eventName);
-      expect(firstListener.calls.count()).to.equal(3);
+      firstView.stopListening(firstView.model);
+      firstView.model.trigger(firstView.eventName);
+      expect(firstView.testListeners[0].calls.count()).to.equal(3);
       // explicit .on() still fires
-      expect(secondListener.calls.count()).to.equal(4);
+      expect(firstView.testListeners[1].calls.count()).to.equal(4);
 
-      view.model.off(eventName);
-      secondModel.trigger(eventName);
-      expect(firstListener.calls.count()).to.equal(3);
-      expect(secondListener.calls.count()).to.equal(4);
+      firstView.model.off(firstView.eventName);
+      firstView.model.trigger(firstView.eventName);
+      expect(firstView.testListeners[0].calls.count()).to.equal(3);
+      expect(firstView.testListeners[1].calls.count()).to.equal(4);
+
+      // Switching the models back maintains the removal of listeners and still works
+      firstView.update(firstModel);
+      secondView.update(secondModel);
+
+      expect(firstView.model).to.equal(firstModel);
+      expect(firstView.model).not.to.equal(secondModel);
+      expect(secondView.model).to.equal(secondModel);
+      expect(secondView.model).not.to.equal(firstModel);
+
+      firstView.model.trigger(firstView.eventName);
+      expect(firstView.testListeners[0].calls.count()).to.equal(3);
+      expect(firstView.testListeners[1].calls.count()).to.equal(4);
+
+      secondView.model.trigger(secondView.eventName);
+      expect(secondView.testListeners[0].calls.count()).to.equal(3);
+      expect(secondView.testListeners[1].calls.count()).to.equal(3);
     });
   });
   describe('getChildViews', function() {
