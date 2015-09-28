@@ -310,12 +310,23 @@ describe('base_view.js constructed api', function() {
     });
     it('should transfer listeners if model is different', function() {
       var renderSpy = jasmine.createSpy('renderer');
-      var listener = jasmine.createSpy('listener');
+      var firstListener = jasmine.createSpy('listener');
+      var secondListener = jasmine.createSpy('listener');
       var eventName = 'FOOBAR';
 
       var TestView = BaseView.extend({
         initialize: function() {
-          this.listenTo(this.model, eventName, listener);
+          var self = this;
+          this.listenTo(this.model, eventName, firstListener);
+          firstListener.and.callFake(function() {
+            // Check context of call
+            expect(this).to.equal(self);
+          });
+          this.model.on(eventName, secondListener);
+          secondListener.and.callFake(function() {
+            // Check context of call
+            expect(this).to.equal(self.model);
+          });
         },
         render: renderSpy
       });
@@ -325,7 +336,8 @@ describe('base_view.js constructed api', function() {
       });
 
       firstModel.trigger(eventName);
-      expect(listener.calls.count()).to.equal(1);
+      expect(firstListener.calls.count()).to.equal(1);
+      expect(secondListener.calls.count()).to.equal(1);
 
       var secondModel = new BaseModel({});
       view.update(secondModel);
@@ -335,17 +347,26 @@ describe('base_view.js constructed api', function() {
       jasmineExpect(renderSpy).toHaveBeenCalled();
 
       secondModel.trigger(eventName);
-      expect(listener.calls.count()).to.equal(2);
+      expect(firstListener.calls.count()).to.equal(2);
+      expect(secondListener.calls.count()).to.equal(2);
 
       // StopListening to the firstModel shouldn't do anything
       view.stopListening(firstModel);
       secondModel.trigger(eventName);
-      expect(listener.calls.count()).to.equal(3);
+      expect(firstListener.calls.count()).to.equal(3);
+      expect(secondListener.calls.count()).to.equal(3);
 
       // StopListening to the current model should stop events
       view.stopListening(secondModel);
       secondModel.trigger(eventName);
-      expect(listener.calls.count()).to.equal(3);
+      expect(firstListener.calls.count()).to.equal(3);
+      // explicit .on() still fires
+      expect(secondListener.calls.count()).to.equal(4);
+
+      view.model.off(eventName);
+      secondModel.trigger(eventName);
+      expect(firstListener.calls.count()).to.equal(3);
+      expect(secondListener.calls.count()).to.equal(4);
     });
   });
   describe('getChildViews', function() {
