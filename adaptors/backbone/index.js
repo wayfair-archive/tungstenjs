@@ -21,5 +21,7 @@ module.exports = {
   Model: require('./base_model'),
   View: require('./base_view'),
   ViewWidget: require('./backbone_view_widget'),
-  Backbone: require('backbone')
+  Backbone: require('backbone'),
+  _Template: require('../../src/template/template'),
+  _template_utils: require('../../precompile/tungsten_template/shared_utils')
 };

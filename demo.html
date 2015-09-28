@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tungsten.js Demo</title>
+</head>
+<body>
+<div id="appwrapper"></div>
+<script src="dist/tungsten.backbone.min.js"></script>
+<script>
+        var AppView = tungsten.View.extend({});
+        var AppModel = tungsten.Model.extend({});
+        var template = new tungsten._Template(tungsten._template_utils.compileTemplate('<div><h1>Hello, {{name}}</h1></div>'));
+        var view = new AppView({
+            el: '#appwrapper',
+            template: template,
+            model: new AppModel({name: 'world'}),
+            dynamicInitialize: true
+        });
+</script>
+</body>
+</html>
