@@ -50,6 +50,7 @@ module.exports = function(config, dev) {
     ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
   }
   ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
+  ensureLoader(config.module.loaders, /VERSION$/, 'raw-loader');
   ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
 
   return config;

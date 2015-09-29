@@ -22,7 +22,8 @@
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
-    "cover": "node ./test/build.js --coverage && npm run jasmine"
+    "cover": "node ./test/build.js --coverage && npm run jasmine",
+    "version": "npm view tungstenjs version | awk 1 ORS='' > ./VERSION"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
@@ -36,6 +37,7 @@
     "jsdom": "^6.5.0",
     "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
+    "raw-loader": "^0.5.1",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
     "webpack-strip-block": "0.0.1",
