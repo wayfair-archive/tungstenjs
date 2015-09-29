@@ -17,8 +17,8 @@ var htmlToVdom = require('./template/html_to_vdom');
 var vdom = virtualDomImplementation.vdom;
 var exports = {};
 
-var packageJson = require('../package.json');
-exports.VERSION = packageJson.version;
+var packageJson = require('../VERSION');
+exports.VERSION = packageJson;
 
 exports.IS_DEV = false;
 
