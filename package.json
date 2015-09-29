@@ -13,6 +13,7 @@
   "scripts": {
     "jasmine": "node test/jasmine.js",
     "pretest": "npm run eslint && npm run jscs",
+    "postinstall": "npm run version",
     "test": "npm run tests",
     "tests": "node ./test/build.js && npm run jasmine",
     "build-bb-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/backbone ./dist/tungsten.backbone.js -d",
@@ -22,7 +23,8 @@
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
-    "cover": "node ./test/build.js --coverage && npm run jasmine"
+    "cover": "node ./test/build.js --coverage && npm run jasmine",
+    "version": "npm view tungstenjs version  | awk '{ print \"module.exports=\\'\" $1 \"\\';\" }' | awk 1 ORS='' > ./__VERSION__"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
