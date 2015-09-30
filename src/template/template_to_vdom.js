@@ -15,6 +15,9 @@ var exports = {};
 
 var HTMLCommentWidget = require('./widgets/html_comment');
 
+// Indicator to only render attributes rather than properties
+var attributesOnly = false;
+
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either
 var whitespaceOnlyRegex = /^\s*$/;
@@ -319,10 +322,12 @@ function renderVdom(template, context, partials, parentView, firstRender) {
         // If an element goes from an explicitly set value to null, it will use this value rather than error
         contentEditable: 'inherit'
       };
+
+      var isWebComponent = template.e.indexOf('-') > -1;
       var attributeHandler = function(values, attr) {
-        var propName = transformPropertyName(attr);
+        var propName = isWebComponent ? false : transformPropertyName(attr);
         var attrString = renderAttributeString(values, context);
-        if (propName === false) {
+        if (attributesOnly || propName === false) {
           properties.attributes = properties.attributes || {};
           properties.attributes[attr] = attrString;
         } else if (propName === 'autofocus') {
@@ -403,7 +408,10 @@ exports.renderToDom = function renderToDom(template, data, partials) {
  * @return {String}          The string result
  */
 exports.renderToString = function renderToString(template, data, partials) {
+  // Set attributesOnly flag for this render
+  attributesOnly = true;
   var vdom = exports.renderToVdom(template, data, partials);
+  attributesOnly = false;
   var str = tungsten.toString(vdom);
   if (Context.isArray(vdom)) {
     _.each(vdom, function(node) {
