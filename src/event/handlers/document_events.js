@@ -1,3 +1,6 @@
+/**
+ * Module to bind events at the document level
+ */
 'use strict';
 
 module.exports = function(el, eventName, selector, method, options, bindVirtualEvent) {

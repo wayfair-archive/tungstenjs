@@ -1,3 +1,6 @@
+/**
+ * Module to handle "intent" delay on events
+ */
 'use strict';
 
 var _ = require('underscore');
@@ -13,6 +16,12 @@ var eventPairs = {
   'touchend': 'touchstart'
 };
 
+/**
+ * Get handler for start and stop of intent events
+ * @param  {function} method  [description]
+ * @param  {object} options - intent options
+ * @return {object}         - the start and stop intent events
+ */
 function getIntentHandler(method, options) {
   var lastEvent = null;
   var timeout = null;

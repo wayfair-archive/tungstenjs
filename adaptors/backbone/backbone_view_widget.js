@@ -85,6 +85,20 @@ BackboneViewWidget.prototype.destroy = function destroy() {
 };
 
 /**
+ * Attaches the childView to the given DOM node
+ * Used for initial startup where a full render and update is excessive
+ * @param  {Element}            elem DOM node to act upon
+ */
+BackboneViewWidget.prototype.attach = function attach(elem) {
+  this.view = new this.ViewConstructor({
+    el: elem,
+    model: this.model,
+    parentView: this.parentView,
+    template: this.template
+  });
+};
+
+/**
  * Updates an existing childView
  * @param  {BackboneViewWidget} prev Widget instance from old VTree
  * @param  {Element}            elem DOM node to act upon
@@ -127,7 +141,22 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
     // Call the update model to run and updates if the model has changed
     this.view.update(this.model);
   }
-
 };
+
+/* develblock:start */
+/**
+ * Function to allow the Widget to control how it is viewed on the debug panel
+ * ChildViews are displayed as a clickable link
+ *
+ * @return {string} Debug panel version of this widget
+ */
+BackboneViewWidget.prototype.templateToString = function() {
+  if (!this.view) {
+    return;
+  }
+  var name = this.view.getDebugName();
+  return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
+};
+/* develblock:end */
 
 module.exports = BackboneViewWidget;

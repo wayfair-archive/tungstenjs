@@ -40,7 +40,15 @@ Template.prototype.register = function(partialName) {
  * @return {String}      HTML string of the rendered template
  */
 Template.prototype.toString = function(data) {
-  return templateToVdom.renderToString(this.templateObj, data, this.partials || registeredPartials);
+  var templateToRender = this.templateObj;
+  var tempView = this.view;
+  if (this.view && !this.view.parentView) {
+    templateToRender = templateToRender.f;
+  }
+  this.view = null;
+  var output = templateToVdom.renderToString(templateToRender, data, this.partials || registeredPartials);
+  this.view = tempView;
+  return output;
 };
 /**
  * Outputs the template to a DocumentFragment
@@ -119,7 +127,7 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
       }
       // Pad with spaces for better hasClass-ing
       className = ' ' + className + ' ';
-      for (i = childClasses.length; i--; ) {
+      for (i = childClasses.length; i--;) {
         if (className.indexOf(childClasses.padded[i]) > -1) {
           // If we match a childView class, replace the template with a Widget
           template = {
@@ -162,6 +170,19 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
 };
 
 /**
+ * Wrap the template in a given tag, defaulting to <div>
+ * @param  {String} tagName Tag name to wrap the template in
+ * @return {Object}         Wrapped template
+ */
+Template.prototype.wrap = function(tagName) {
+  return new Template({
+    't': ractiveTypes.ELEMENT,
+    'e': tagName || 'div',
+    'f': this.templateObj
+  }, this.partials);
+};
+
+/**
  * Exposed function to attachView
  * @param  {Object}   view          View to attach to
  * @param  {Function} widgetWrapper Constructor function for widget from adaptor
@@ -178,26 +199,6 @@ Template.prototype.attachView = function(view, widgetWrapper) {
       'e': view.el.nodeName,
       'f': templateObj
     };
-    // If there's a mismatch in childNode counts, it's usually extra whitespace from the server
-    // We can trim those off so that the VTree is unaffected during lookups
-    // Since this is in the form of whitespace around the template, it's a simple type check on the first and last node
-    if (templateObj.f.length !== view.el.childNodes.length) {
-      // If the first part of the template is a string or the first node isn't a textNode, assume that's fine
-      if (typeof templateObj.f[0] !== 'string' && view.el.childNodes[0].nodeType === 3) {
-        view.el.removeChild(view.el.childNodes[0]);
-      }
-      // If the last part of the template is a string or the last node isn't a textNode, assume that's fine
-      var lastNode = view.el.childNodes[view.el.childNodes.length - 1];
-      if (typeof templateObj.f[templateObj.f.length - 1] !== 'string' && lastNode && lastNode.nodeType === 3) {
-        view.el.removeChild(lastNode);
-      }
-
-      // If neither of the above, something's borked
-      if (templateObj.f.length !== view.el.childNodes.length) {
-        // This is also logged if there are HTML comments in your template; @todo find an alternative solution
-        logger.info('DOM does not match given template, consider using dynamicInitialize.');
-      }
-    }
   }
   templateObj = attachViews(view, templateObj, widgetWrapper, this.partials || registeredPartials);
   return new Template(templateObj, this.partials, view);

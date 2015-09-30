@@ -1,0 +1,45 @@
+<% if (panel.model && panel.model.obj && panel.model.obj.tungstenModel) { %>
+<div class="properties_panel">
+    <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+        Attributes
+    </div>
+    <% if (!panel.collapsed && panel.model) { %>
+      <div class="sidebar-pane visible">
+          <div class="body">
+              <div class="section expanded">
+                  <ol data-property-key="" class="properties properties-tree monospace">
+                    <% _.each(panel.model.modelProperties, function(prop) {
+                        var wrapperClassName = '';
+                        var clickableClassName = ''
+                        var isEditable = prop.data.isEditable && !prop.data.isDerived;
+                        if (isEditable) {
+                          clickableClassName = 'clickable-property';
+                          wrapperClassName += 'js-model-property';
+                        }
+
+                        if (prop.data.isDerived) {
+                          wrapperClassName += ' derived_property';
+                        }
+                      %>
+                    <li data-property-name="attributes" class="<%= wrapperClassName %>" data-key="<%= prop.key %>">
+                        <span class="name"><%= prop.key %></span><span class="separator">: </span>
+                        <% if (prop.data.isRelation) { %>
+                          <span class="value console-formatted-undefined clickable-property js-model-list-item" data-id="<%= prop.data.name %>"> <%= prop.data.name %> </span>
+                        <% } else { %>
+                          <span class="value console-formatted-undefined <%= clickableClassName %>">
+                            <% if (prop.data.isEditing) { %>
+                              <input type="text" value="<%- prop.data.displayValue %>" autofocus="true" class="js-model-property-value">
+                            <% } else { %>
+                              <span><%- prop.data.displayValue %></span>
+                            <% } %>
+                          </span>
+                        <% } %>
+                    </li>
+                    <% }) %>
+                  </ol>
+              </div>
+          </div>
+      </div>
+    <% } %>
+</div>
+<% } %>

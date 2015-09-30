@@ -58,8 +58,7 @@ var TodoItemView = View.extend({
     } else {
       this.handleClickDestroy();
     }
-  }
-}, {
+  },
   debugName: 'TodoItemView'
 });
 module.exports = TodoItemView;

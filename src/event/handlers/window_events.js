@@ -1,3 +1,6 @@
+/**
+ * Module to bind to common window events
+ */
 'use strict';
 
 var eventsCore = require('../events_core');
@@ -5,33 +8,24 @@ var eventWrapper = require('../tungsten_event');
 
 /**
  * Read data to pass through for Scroll event to prevent repeated reads
- * @param  {Element} elem Target element of scroll event
  * @return {Object}       Scroll properties of element
  */
-var getScrollData = function(elem) {
+var getScrollData = function() {
   return {
-    x: elem.scrollX,
-    y: elem.scrollY
+    x: window.scrollX,
+    y: window.scrollY
   };
 };
 
 /**
- * [getSizeData description]
- * @param  {[type]} elem [description]
- * @return {[type]}      [description]
+ * Get size data of element
+ * @return {object}      object containing size data
  */
-var getSizeData = function(elem) {
-  if (elem === window) {
-    return {
-      height: window.innerHeight,
-      width: window.innerWidth
-    };
-  } else {
-    return {
-      height: elem.offsetHeight,
-      width: elem.offsetWidth
-    };
-  }
+var getSizeData = function() {
+  return {
+    height: window.innerHeight,
+    width: window.innerWidth
+  };
 };
 
 var previousWindowData = {
@@ -42,16 +36,22 @@ var previousWindowData = {
 var windowEventHandler = function(nativeEvent) {
   var events = eventsCore.getEvents(window);
   // Window has a narrow scope of bindability
-  var eventsToTrigger = events[nativeEvent.type].self;
-  var evt = eventWrapper(nativeEvent);
-  if (evt.type === 'scroll') {
-    evt.previous = previousWindowData.scroll;
-    evt.current = getScrollData(window);
-    previousWindowData.scroll = evt.current;
-  }
-  var eventsToTriggerLength = eventsToTrigger.length;
-  for (var i = 0; i < eventsToTriggerLength; i++) {
-    eventsToTrigger[i].method(evt);
+  if (events[nativeEvent.type]) {
+    var eventsToTrigger = events[nativeEvent.type].self;
+    var evt = eventWrapper(nativeEvent);
+    if (evt.type === 'scroll') {
+      evt.previous = previousWindowData.scroll;
+      evt.current = getScrollData();
+      previousWindowData.scroll = evt.current;
+    } else if (evt.type === 'resize') {
+      evt.previous = previousWindowData.resize;
+      evt.current = getSizeData();
+      previousWindowData.resize = evt.current;
+    }
+    var eventsToTriggerLength = eventsToTrigger.length;
+    for (var i = 0; i < eventsToTriggerLength; i++) {
+      eventsToTrigger[i].method(evt);
+    }
   }
 };
 

@@ -27,6 +27,7 @@
 'use strict';
 var Backbone = require('backbone');
 var _ = require('underscore');
+var logger = require('../../src/utils/logger');
 
 var exports = {};
 var BackboneModel = Backbone.Model,
@@ -136,38 +137,44 @@ exports.setNestedModel = function(Model) {
           val = val.models || val;
           modelsToAdd = _.clone(val);
 
-          relation.each(function(model, i) {
+          if (options.reset) {
+            // Adding option to reset nested collections via Model.set
+            relation.reset(modelsToAdd);
+          } else {
 
-            // If the model does not have an 'id' skip logic to detect if it already
-            // exists and simply add it to the collection
-            if (typeof model[id] === 'undefined') {
-              return;
-            }
+            relation.each(function(model, i) {
 
-            // If the incoming model also exists within the existing collection,
-            // call set on that model. If it doesn't exist in the incoming array,
-            // then add it to a list that will be removed.
-            var rModel = _.find(val, function(_model) {
-              return _model[id] === model[id];
+              // If the model does not have an 'id' skip logic to detect if it already
+              // exists and simply add it to the collection
+              if (typeof model[id] === 'undefined') {
+                return;
+              }
+
+              // If the incoming model also exists within the existing collection,
+              // call set on that model. If it doesn't exist in the incoming array,
+              // then add it to a list that will be removed.
+              var rModel = _.find(val, function(_model) {
+                return _model[id] === model[id];
+              });
+
+              if (rModel) {
+                model.set(rModel.toJSON ? rModel.toJSON() : rModel);
+
+                // Remove the model from the incoming list because all remaining models
+                // will be added to the relation
+                modelsToAdd.splice(i, 1);
+              } else {
+                modelsToRemove.push(model);
+              }
+
             });
 
-            if (rModel) {
-              model.set(rModel.toJSON ? rModel.toJSON() : rModel);
+            _.each(modelsToRemove, function(model) {
+              relation.remove(model);
+            });
 
-              // Remove the model from the incoming list because all remaining models
-              // will be added to the relation
-              modelsToAdd.splice(i, 1);
-            } else {
-              modelsToRemove.push(model);
-            }
-
-          });
-
-          _.each(modelsToRemove, function(model) {
-            relation.remove(model);
-          });
-
-          relation.add(modelsToAdd);
+            relation.add(modelsToAdd);
+          }
 
         } else {
 
@@ -194,7 +201,10 @@ exports.setNestedModel = function(Model) {
       }
 
       options._parent = this;
-
+      // Since this is a relation for a model, unset any collection option that might be passed through
+      if (options.collection) {
+        options.collection = null;
+      }
       val = new this.relations[attr](val, options);
       val.parent = this;
       val.parentProp = attr;
@@ -204,6 +214,26 @@ exports.setNestedModel = function(Model) {
   };
 
   Model.prototype.trigger = newTrigger;
+
+  Model.prototype.reset = function(attrs, options) {
+    var opts = _.extend({
+      reset: true
+    }, options);
+    var currentKeys = _.keys(this.attributes);
+    var relations = _.result(this, 'relations') || {};
+    var derived = _.result(this, 'derived') || {};
+    var key;
+    for (var i = 0; i < currentKeys.length; i++) {
+      key = currentKeys[i];
+      if (_.has(relations, key)) {
+        this.attributes[key].reset(attrs[key], opts);
+        delete attrs[key];
+      } else if (!_.has(attrs, key) && !_.has(derived, key)) {
+        this.unset(key);
+      }
+    }
+    this.set(attrs, opts);
+  };
 
   Model.prototype.set = function(key, val, options) {
     var attr, attrs, unset, changes, silent, changing, prev, current;
@@ -220,6 +250,19 @@ exports.setNestedModel = function(Model) {
     }
 
     options = options || {};
+
+    /* develblock:start */
+    // In order to compare server vs. client data, save off the initial data
+    if (!this.initialData) {
+      // Using JSON to get a deep clone to avoid any overlapping object references
+      var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
+      delete options.initialData;
+      this.initialData = JSON.parse(initialStr);
+      if (!_.isObject(this.initialData) || _.isArray(this.initialData)) {
+        logger.warn('Model expected object of attributes but got: ' + initialStr);
+      }
+    }
+    /* develblock:end */
 
     // Run validation.
     if (!this._validate(attrs, options)) {
@@ -251,7 +294,13 @@ exports.setNestedModel = function(Model) {
         val = attrs[attr];
 
         // Inject in the relational lookup
-        val = this.setRelation(attr, val, options);
+        var opts = options;
+        /* develblock:start */
+        opts = _.extend({
+          initialData: val
+        }, options);
+        /* develblock:end */
+        val = this.setRelation(attr, val, opts);
 
         if (!_.isEqual(current[attr], val)) {
           changes.push(attr);
@@ -294,17 +343,24 @@ exports.setNestedModel = function(Model) {
   };
 
   Model.prototype.toJSON = function() {
-    var attrs = _.clone(this.attributes);
+    var attrs = this.attributes;
+    var relations = _.result(this, 'relations') || {};
+    var derived = _.result(this, 'derived') || {};
+    var session = _.invert(_.result(this, 'session') || []);
 
-    _.each(this.relations, function(Rel, key) {
-      if (_.has(attrs, key)) {
-        attrs[key] = attrs[key].doSerialize();
-      } else {
-        attrs[key] = (new Rel()).doSerialize();
+    var data = {};
+    _.each(attrs, function(val, key) {
+      // Skip any derived or session properties
+      if (!derived[key] && !session[key]) {
+        // Recursively serialize any set relations
+        if (relations[key] && typeof val.doSerialize === 'function') {
+          data[key] = val.doSerialize();
+        } else {
+          data[key] = val;
+        }
       }
     });
-
-    return attrs;
+    return data;
   };
 
   Model.prototype.doSerialize = function() {
@@ -335,7 +391,26 @@ exports.setNestedCollection = function(Collection) {
 
   Collection.prototype.reset = function(models, options) {
     options = options || {};
-    for (var i = 0, l = this.models.length; i < l; i++) {
+    var i, l;
+    /* develblock:start */
+    if (!this.initialData) {
+      // Using JSON to get a deep clone to avoid any overlapping object references
+      var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : models);
+      delete options.initialData;
+      this.initialData = JSON.parse(initialStr);
+      var allObjects = true;
+      for (i = 0; i < models.length; i++) {
+        if (!_.isObject(models[i]) || _.isArray(models[i])) {
+          allObjects = false;
+          break;
+        }
+      }
+      if (!allObjects || !_.isArray(this.initialData)) {
+        logger.warn('Collection expected array of objects but got: ' + initialStr);
+      }
+    }
+    /* develblock:end */
+    for (i = 0, l = this.models.length; i < l; i++) {
       this._removeReference(this.models[i]);
     }
     options.previousModels = this.models;

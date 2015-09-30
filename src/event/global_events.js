@@ -11,7 +11,8 @@ var eventHandlers = [
   require('./handlers/focus_events'),
   require('./handlers/mouseenter_events'),
   require('./handlers/window_events'),
-  require('./handlers/intent_events')
+  require('./handlers/intent_events'),
+  require('./handlers/outside_events')
 ];
 var registerEventPlugin = function(handler) {
   eventHandlers.push(handler);
@@ -131,5 +132,7 @@ module.exports = {
   validateSelector: eventsCore.validateSelector,
   bindVirtualEvent: bindVirtualEvent,
   unbindVirtualEvent: unbindVirtualEvent,
-  registerEventHandler: registerEventPlugin
+  registerEventHandler: registerEventPlugin,
+  // Exposing for testing purposes, should not be directly accessed
+  _eventHandlers: eventHandlers
 };

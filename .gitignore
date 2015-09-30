@@ -1,3 +1,6 @@
 node_modules/
 dist/
 build/config.gypi
+test/testbuild.debug.js
+test/testbuild.prod.js
+test/coverage/

@@ -12,15 +12,19 @@ var _ = require('underscore');
  * @param  {String}   name Name of the method to get
  * @return {Function}      Bound console function
  */
+/*eslint-disable no-console */
 var getConsoleMethod = function(name) {
   var func = console[name] || console.log;
   return _.bind(func, console);
 };
+/*eslint-enable no-console */
 
 module.exports = {
   info: getConsoleMethod('info'),
   debug: getConsoleMethod('debug'),
   log: getConsoleMethod('log'),
   warn: getConsoleMethod('warn'),
-  error: getConsoleMethod('error')
+  error: getConsoleMethod('error'),
+  trace: getConsoleMethod('trace'),
+  getConsoleMethod: getConsoleMethod
 };

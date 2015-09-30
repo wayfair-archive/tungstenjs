@@ -1,3 +1,6 @@
+/**
+ * Module to map cross browser blur and focus events
+ */
 'use strict';
 
 /**
@@ -11,7 +14,7 @@ var nativeFocusin = (function() {
   // Taken from https://github.com/jquery/jquery/blob/10399ddcf8a239acc27bdec9231b996b178224d3/test/data/jquery-1.9.1.js#L1443
   var d = document.createElement('div');
   d.setAttribute('onfocusin', 't');
-  return d.attributes.onfocusin.expando === false;
+  return d.attributes.onfocusin && d.attributes.onfocusin.expando === false;
 })();
 
 /**
@@ -25,8 +28,12 @@ var eventNameMap = {
 };
 
 module.exports = function(el, eventName, selector, method, options, bindVirtualEvent) {
-  if (nativeFocusin && eventNameMap[eventName]) {
+  if (module.exports.nativeFocusin && eventNameMap[eventName]) {
     // Rename the event and pass through to the default handler
     return bindVirtualEvent(el, eventNameMap[eventName], selector, method, options);
   }
 };
+if (window && window.isTest) {
+  // Exposing value so that it can be overridden for testing
+  module.exports.nativeFocusin = nativeFocusin;
+}

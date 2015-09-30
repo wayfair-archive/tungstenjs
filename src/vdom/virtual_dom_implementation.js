@@ -10,14 +10,14 @@ var VText = require('virtual-dom/vnode/vtext');
 var isVNode = require('virtual-dom/vnode/is-vnode');
 var isVText = require('virtual-dom/vnode/is-vtext');
 var isWidget = require('virtual-dom/vnode/is-widget');
-var domToVdom = require('./dom_to_vdom');
+var isHook = require('virtual-dom/vnode/is-vhook');
 
 module.exports = {
   vdom: vdom,
-  domToVdom: domToVdom,
   VNode: VNode,
   VText: VText,
   isVNode: isVNode,
   isVText: isVText,
-  isWidget: isWidget
+  isWidget: isWidget,
+  isHook: isHook
 };

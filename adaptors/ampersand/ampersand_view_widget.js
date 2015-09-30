@@ -75,6 +75,22 @@ AmpersandViewWidget.prototype.init = function init() {
   return this.view.el;
 };
 
+/* develblock:start */
+/**
+ * Function to allow the Widget to control how it is viewed on the debug panel
+ * ChildViews are displayed as a clickable link
+ *
+ * @return {string} Debug panel version of this widget
+ */
+AmpersandViewWidget.prototype.templateToString = function() {
+  if (!this.view) {
+    return;
+  }
+  var name = this.view.getDebugName();
+  return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
+};
+/* develblock:end */
+
 /**
  * Pass through to the view's destroy method
  */
@@ -82,6 +98,20 @@ AmpersandViewWidget.prototype.destroy = function destroy() {
   if (this.view && this.view.destroy) {
     this.view.destroy();
   }
+};
+
+/**
+ * Attaches the childView to the given DOM node
+ * Used for initial startup where a full render and update is excessive
+ * @param  {Element}            elem DOM node to act upon
+ */
+AmpersandViewWidget.prototype.attach = function attach(elem) {
+  this.view = new this.ViewConstructor({
+    el: elem,
+    model: this.model,
+    parentView: this.parentView,
+    template: this.template
+  });
 };
 
 /**

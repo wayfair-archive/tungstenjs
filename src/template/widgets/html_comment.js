@@ -1,7 +1,6 @@
 /**
  * Widget wrapper for HTML Comment
  * Widgets in Virtual-Dom have three lifecycle methods: init, update, destroy
- *
  * 'init' is called when the new VTree contains a widget that the old VTree does not
  * 'update' is called when the old and the new VTree contains a widget at the same position
  * 'destroy' is called when the old VTree contains a widget that the new VTree does not
@@ -13,10 +12,10 @@
 
 /**
  * Wrapper Widget for child views
- * @param {Object}   template    Precompiled template object that represents this section
+ * @param {String} text    Text of comment
  */
 function HTMLCommentWidget(text) {
-  this.text = text;
+  this.text = text.toString();
 }
 
 /**
@@ -40,8 +39,18 @@ HTMLCommentWidget.prototype.init = function init() {
  */
 HTMLCommentWidget.prototype.update = function update(prev, elem) {
   if (this.text !== prev.text) {
-    elem.textContent = this.text;
+    elem.nodeValue = this.text;
   }
 };
+
+/* develblock:start */
+HTMLCommentWidget.prototype.templateToString = function(escaped) {
+  if (escaped) {
+    return '&lt;!-- ' + this.text + ' --&gt;';
+  } else {
+    return '<!-- ' + this.text + ' -->';
+  }
+};
+/* develblock:end */
 
 module.exports = HTMLCommentWidget;

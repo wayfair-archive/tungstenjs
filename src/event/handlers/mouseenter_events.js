@@ -13,7 +13,7 @@ function contains(container, maybe) {
   // 16 is for a nodeType constant: window.Node.DOCUMENT_POSITION_CONTAINED_BY,
   // but the window.Node object is not available in IE8
   return container.contains ? container.contains(maybe) :
-      !!(container.compareDocumentPosition(maybe) & 16);
+    !!(container.compareDocumentPosition(maybe) & 16);
 }
 
 /**
@@ -26,10 +26,9 @@ function contains(container, maybe) {
 var mouseenterCheck = function(evt) {
   var elem = evt.currentTarget;
   var target = evt.target || evt.originalEvent.srcElement,
-      related = evt.originalEvent.relatedTarget || evt.originalEvent.fromElement;
-  if ((elem === target || contains(elem, target)) &&
-      !contains(elem, related)) {
-          return true;
+    related = evt.originalEvent.relatedTarget || evt.originalEvent.fromElement;
+  if ((elem === target || contains(elem, target)) && !contains(elem, related)) {
+    return true;
   }
   return false;
 };
@@ -44,24 +43,33 @@ var mouseenterCheck = function(evt) {
 var mouseleaveCheck = function(evt) {
   var elem = evt.currentTarget;
   var target = evt.target || evt.originalEvent.srcElement,
-      related = evt.originalEvent.relatedTarget || evt.originalEvent.toElement;
-  if ((elem === target || contains(elem, target)) &&
-      !contains(elem, related)) {
-          return true;
+    related = evt.originalEvent.relatedTarget || evt.originalEvent.toElement;
+  if ((elem === target || contains(elem, target)) && !contains(elem, related)) {
+    return true;
   }
   return false;
 };
 
+/**
+ * Get the mouse enter handler
+ * @param  {[type]} method [description]
+ * @return {[type]}        [description]
+ */
 var getMouseEnterHandler = function(method) {
-  return function (evt) {
+  return function(evt) {
     if (mouseenterCheck(evt)) {
       method(evt);
     }
   };
 };
 
+/**
+ * Get the mouse leave handler
+ * @param  {[type]} method [description]
+ * @return {[type]}        [description]
+ */
 var getMouseLeaveHandler = function(method) {
-  return function (evt) {
+  return function(evt) {
     if (mouseleaveCheck(evt)) {
       method(evt);
     }

@@ -42,8 +42,8 @@ var initialize = function(view, parentContext) {
   if (view == null) {
     view = {};
   }
-  if (!parentContext && (view.collection || view.parent)) {
-    this.parent = new Context(view.collection || view.parent);
+  if (!parentContext && (view.parent || view.collection)) {
+    this.parent = new Context(view.parent || view.collection);
   } else {
     this.parent = parentContext;
   }
@@ -59,7 +59,7 @@ var lookupValue = function(view, name) {
   var value = null;
   if (this.isModel(view) && view.has(name)) {
     value = view.get(name);
-  } else if (view[name]) {
+  } else if (view[name] != null) {
     if (view.tungstenCollection && blockedCollectionProperties[name]) {
       return null;
     }

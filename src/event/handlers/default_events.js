@@ -1,7 +1,6 @@
 /**
  * Module to handle the default pattern for events that aren't handled by any other plugin
  */
-
 'use strict';
 
 var eventsCore = require('../events_core');

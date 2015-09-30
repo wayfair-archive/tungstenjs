@@ -5,18 +5,11 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node ./node_modules/webpack/bin/webpack.js -d",
-    "start": "node ./server.js",
-    "prestart": "npm run build"
-  },
-  "devDependencies": {
-    "webpack": "^1.8.4"
+    "build": "node ../../node_modules/webpack/bin/webpack.js -d",
+    "start": "node ../examples_server.js --example=\"todomvc-ampersand\""
   },
   "dependencies": {
-    "express": "3.20.2",
-    "hogan-express": "^0.5.2",
-    "opener": "^1.4.1",
-    "todomvc-app-css": "^1.0.1",
-    "underscore": "^1.8.3"
+    "ampersand-router": "^3.0.2",
+    "todomvc-app-css": "^2.0.1"
   }
 }

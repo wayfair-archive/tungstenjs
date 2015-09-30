@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.2.5",
+  "version": "0.5.12",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -11,11 +11,18 @@
   "bugs": "https://github.com/wayfair/tungstenjs/issues",
   "main": "tungsten.js",
   "scripts": {
-    "test": "node node_modules/jasmine-node/bin/jasmine-node test/tungsten_spec.js --forceexit",
+    "jasmine": "node test/jasmine.js",
+    "pretest": "npm run eslint && npm run jscs",
+    "test": "npm run tests",
+    "tests": "node ./test/build.js && npm run jasmine",
     "build-bb-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/backbone ./dist/tungsten.backbone.js -d",
     "build-bb-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p",
     "build-ampersand-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.js -d",
-    "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p"
+    "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p",
+    "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
+    "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
+    "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
+    "cover": "node ./test/build.js --coverage && npm run jasmine"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
@@ -24,18 +31,35 @@
     "backbone": "^1.1.2",
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",
+    "html-tokenizer": "^1.4.4",
+    "jsdom": "^6.5.0",
+    "json-loader": "^0.5.2",
     "ractive": "^0.6.1",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
+    "webpack-strip-block": "0.0.1",
     "x-is-array": "^0.1.0"
   },
   "devDependencies": {
     "chai": "^2.2.0",
+    "coveralls": "^2.11.4",
+    "eslint": "1.0.0-rc-1",
+    "express": "^4.13.3",
     "glob": "^4.3.5",
-    "jasmine-node": "^1.14.5",
-    "jsdom-nogyp": "^0.8.3",
+    "hogan-express": "^0.5.2",
+    "isparta-loader": "^0.2.0",
+    "istanbul": "^0.3.19",
+    "jasmine": "^2.3.1",
+    "js-beautify": "^1.5.10",
+    "jscs": "^2.1.0",
+    "loader-utils": "^0.2.11",
     "mkdirp": "~0.5.0",
-    "webpack": "^1.5.1"
+    "opener": "^1.4.1",
+    "webpack": "^1.5.1",
+    "webpack-dev-middleware": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=4.0.0"
   },
   "directories": {
     "example": "./examples",
