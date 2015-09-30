@@ -8,6 +8,7 @@
  * @author Matt DeGennaro <mdegennaro@wayfair.com>
  * @license Apache-2.0
  */
+/*global TUNGSTENJS_VERSION */
 'use strict';
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');
@@ -17,8 +18,7 @@ var htmlToVdom = require('./template/html_to_vdom');
 var vdom = virtualDomImplementation.vdom;
 var exports = {};
 
-var packageJson = require('../package.json');
-exports.VERSION = packageJson.version;
+exports.VERSION = typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null;
 
 exports.IS_DEV = false;
 
