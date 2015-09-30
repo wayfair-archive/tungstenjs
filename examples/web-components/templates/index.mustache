@@ -1,71 +1,72 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Tungsten.js + Web Components</title>
+    <meta charset="UTF-8">
+    <title>Tungsten.js + Web Components</title>
     <script>
         window.Polymer = window.Polymer || {};
         window.Polymer.dom = 'shadow';
     </script>
-  <link rel="import" href="bower_components/google-map/google-map.html"/>
-  <link rel="import" href="bower_components/paper-input/paper-input.html">
-  <link rel="import" href="bower_components/paper-drawer-panel/paper-drawer-panel.html"/>
-  <link rel="import" href="bower_components/paper-item/paper-item.html"/>
-  <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html"/>
-  <link rel="import" href="bower_components/iron-icon/iron-icon.html"/>
-  <link rel="import" href="bower_components/iron-icons/iron-icons.html"/>
-  <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html"/>
-  <link rel="import" href="bower_components/iron-selector/iron-selector.html"/>
-  <style>
-      body {
-          font-family: Arial;
-      }
+    <link rel="import" href="bower_components/google-map/google-map.html"/>
+    <link rel="import" href="bower_components/paper-input/paper-input.html">
+    <link rel="import" href="bower_components/paper-drawer-panel/paper-drawer-panel.html"/>
+    <link rel="import" href="bower_components/paper-item/paper-item.html"/>
+    <link rel="import" href="bower_components/paper-toolbar/paper-toolbar.html"/>
+    <link rel="import" href="bower_components/iron-icon/iron-icon.html"/>
+    <link rel="import" href="bower_components/iron-icons/iron-icons.html"/>
+    <link rel="import" href="bower_components/paper-header-panel/paper-header-panel.html"/>
+    <link rel="import" href="bower_components/iron-selector/iron-selector.html"/>
+    <style>
+        body {
+            font-family: Arial;
+        }
 
-      google-map {
-          width: 100%;
-          height: 400px;
-          display: block;
-      }
+        google-map {
+            width: 100%;
+            height: 400px;
+            display: block;
+        }
 
-      iron-selector {
-          margin-left: 0;
-          margin-right: 0;
-      }
-      /* Polymer sample app styles
- * http://itshackademic.com/static/codelabs/3-polymer-build-mobile/#3
-*/
+        iron-selector {
+            margin-left: 0;
+            margin-right: 0;
+        }
 
-      .drawer-panel {
-          background-color: #fff;
-      }
+        /* Polymer sample app styles
+         * http://itshackademic.com/static/codelabs/3-polymer-build-mobile/#3
+         */
 
-      .main-panel > div {
-          padding: 2em;
-      }
+        .drawer-panel {
+            background-color: #fff;
+        }
 
-      .drawer-panel > core-item {
-          padding: 1em;
-      }
+        .main-panel > div {
+            padding: 2em;
+        }
 
-      .main-panel paper-checkbox {
-          margin-right: 1em;
-      }
+        .drawer-panel > core-item {
+            padding: 1em;
+        }
 
-      .main-panel {
-          height: 100%;
-          background-color: #f1f1f3;
-      }
+        .main-panel paper-checkbox {
+            margin-right: 1em;
+        }
 
-      .drawer-panel paper-toolbar {
-          background-color: #4F7DC9;
-          color: #fff;
-      }
+        .main-panel {
+            height: 100%;
+            background-color: #f1f1f3;
+        }
 
-      .main-panel paper-toolbar {
-          background-color: #526E9C;
-          color: #fff;
-      }
-  </style>
+        .drawer-panel paper-toolbar {
+            background-color: #4F7DC9;
+            color: #fff;
+        }
+
+        .main-panel paper-toolbar {
+            background-color: #526E9C;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
 <div id="appwrapper">{{> app_view }}</div>

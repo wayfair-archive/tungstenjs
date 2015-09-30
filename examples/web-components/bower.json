@@ -1,15 +1,11 @@
 {
   "name": "tungstenjs-web-components",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/wayfair/tungstenjs",
   "private": true,
-  "authors": [
-    "Andrew Rota <rota.andrew@gmail.com>"
-  ],
   "moduleType": [
     "node"
   ],
-  "license": "Apache-2.0",
   "ignore": [
     "**/.*",
     "node_modules",
