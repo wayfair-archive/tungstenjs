@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Tungsten.js + Web Components</title>
+    <script>
+        window.Polymer = window.Polymer || {};
+        window.Polymer.dom = 'shadow';
+    </script>
   <link rel="import" href="bower_components/google-map/google-map.html"/>
   <link rel="import" href="bower_components/paper-input/paper-input.html">
   <link rel="import" href="bower_components/paper-drawer-panel/paper-drawer-panel.html"/>
@@ -67,7 +71,7 @@
 <div id="appwrapper">
     {{> app_view }}
 </div>
-<script src="//localhost:9090/js/data.js"></script>
-<script src="//localhost:9090/js/app.min.js"></script>
+<script src="//localhost:8000/js/data.js"></script>
+<script src="//localhost:8000/js/app.min.js"></script>
 </body>
 </html>
