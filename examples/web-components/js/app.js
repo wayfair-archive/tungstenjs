@@ -6,5 +6,4 @@ module.exports = window.view = new AppView({
   el: '#appwrapper',
   template: template,
   model: new AppModel(window.data),
-  dynamicInitialize: true
 });
