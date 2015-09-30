@@ -17,7 +17,7 @@ var htmlToVdom = require('./template/html_to_vdom');
 var vdom = virtualDomImplementation.vdom;
 var exports = {};
 
-exports.VERSION = TUNGSTENJS_VERSION;
+exports.VERSION = typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null;
 
 exports.IS_DEV = false;
 

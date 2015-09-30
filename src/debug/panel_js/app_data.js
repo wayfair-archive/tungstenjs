@@ -9,10 +9,9 @@ var bgData = {
   lastName: '',
   colors: ['#EDFAFF', '#E8FFF3', '#F5D5D4', '#F0D2F0', '#F4E2CB', '#D2CDFA', '#FFFEBB', '#FFBBF9']
 };
-
 var appData = window.appData = module.exports = {
   styles: styles,
-  tungstenVersion: require('../../../package.json').version,
+  tungstenVersion: typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null,
   tabs: {
     tabs: [{
       name: 'View <span class="glyphicon glyphicon-search js-find-view tab-action"></span>',
