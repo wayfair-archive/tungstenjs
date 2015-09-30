@@ -4,17 +4,15 @@
 'use strict';
 
 var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var MainView = require('./main_view');
+var DrawerView = require('./drawer_view');
+
 var View = TungstenBackboneBase.View;
 
 var AppView = View.extend({
-  postInitialize: function() {
-    var self = this;
-    window.setTimeout(function() {
-      self.model.set({title: 'changed'});
-      self.model.set('selectedCity', self.model.get('cities').at(2).toJSON());
-      self.model.get('selectedCity').trigger('change');
-      console.log('done');
-    }, 3000);
+  childViews: {
+    'js-main': MainView,
+    'js-drawer': DrawerView
   }
 });
 module.exports = AppView;

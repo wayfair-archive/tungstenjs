@@ -5,5 +5,6 @@ var template = window.template = require('../templates/app_view.mustache');
 module.exports = window.view = new AppView({
   el: '#appwrapper',
   template: template,
-  model: new AppModel(window.data)
+  model: new AppModel(window.data),
+  dynamicInitialize: true
 });

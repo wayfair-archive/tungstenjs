@@ -1,6 +1,5 @@
 (function() {
   var data = {
-    'title': 'web components demo',
     'selectedCity': {
       name: 'Boston',
       latitude: '42.3581',
