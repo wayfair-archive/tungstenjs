@@ -432,39 +432,9 @@ var BaseView = Backbone.View.extend({
     // Track if anything has changed in order to trigger a render
     if (newModel !== this.model) {
       // If the model has changed, change listener to new model
-      var currentModel = this.model;
-      var currentModelListeners = currentModel.__listeners || currentModel._listeners;
-      if (currentModelListeners) {
-        var oldListenId = currentModel._listenId;
-        var newListenId = newModel._listenId;
-        _.each(currentModelListeners, function(data) {
-          data.obj = newModel;
-          data.objId = newListenId;
-          // Move listener to new listenId and clear previous
-          data.listeningTo[newListenId] = data.listeningTo[oldListenId];
-          data.listeningTo[oldListenId] = null;
-        });
-      }
-      newModel.__listeners = newModel._listeners;
-      newModel._listeners = currentModelListeners;
-      // Move all events and change any old model contexts to new model
-      var currentModelEvents = currentModel.__events || currentModel._events;
-      _.each(currentModelEvents, function(bound) {
-        for (var i = bound.length; i--;) {
-          if (bound[i].ctx === currentModel) {
-            bound[i].ctx = newModel;
-          }
-        }
-      });
-      newModel.__events = newModel._events;
-      newModel._events = currentModelEvents;
-
-      setTimeout(function() {
-        // Clear stored listeners
-        newModel.__listeners = null;
-        newModel.__events = null;
-      }, 0);
+      this.stopListening(this.model);
       this.model = newModel;
+      this.initializeRenderListener(newModel);
     }
     this.render();
   },
