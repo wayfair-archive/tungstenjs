@@ -5,18 +5,37 @@
     <title>Tungsten.js Demo</title>
 </head>
 <body>
+
 <div id="appwrapper"></div>
+
+<script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
 <script src="dist/tungsten.backbone.min.js"></script>
 <script>
-        var AppView = tungsten.View.extend({});
-        var AppModel = tungsten.Model.extend({});
-        var template = new tungsten._Template(tungsten._template_utils.compileTemplate('<div><h1>Hello, {{name}}</h1></div>'));
-        var view = new AppView({
-            el: '#appwrapper',
-            template: template,
-            model: new AppModel({name: 'world'}),
-            dynamicInitialize: true
+    // Template strings; usually these are in separate files
+    var rawTemplates = {
+        app: '<div><h1>Hello, {{name}}</h1></div>'
+    }, compiledTemplates = {};
+
+    // Compile templates; usually this is done at build time.  Don't change this code.
+    var templateNames = Object.keys(rawTemplates);
+    for (var i = 0; i < templateNames.length; i++) {
+        var parsed = Ractive.parse(rawTemplates[templateNames[i]], {
+            stripComments: false,
+            preserveWhitespace: true
         });
+        compiledTemplates[templateNames[i]] = parsed.t;
+    }
+
+    // Initialize application
+    var AppView = tungsten.View.extend({});
+    var AppModel = tungsten.Model.extend({});
+    var template = new tungsten._Template(compiledTemplates.app);
+    var view = new AppView({
+        el: '#appwrapper',
+        template: template,
+        model: new AppModel({name: 'world'}),
+        dynamicInitialize: true
+    });
 </script>
 </body>
 </html>
