@@ -232,13 +232,44 @@
             }
             return false;
         }
-
-        new AppView({
+        var data = {
+            'filters': [
+                {
+                    name: 'All',
+                    hash: '',
+                    selected: true
+                },
+                {
+                    name: 'Active',
+                    hash: 'active',
+                    selected: false
+                },
+                {
+                    name: 'Completed',
+                    hash: 'completed',
+                    selected: false
+                }
+            ]
+        };
+        var app = new AppView({
             el: '#appwrapper',
             template: compiledTemplates.app_view,
-            model: new AppModel({name: 'world'}),
+            model: new AppModel(data),
             dynamicInitialize: true
         });
+        var TodoRouter = tungsten.backbone.Backbone.Router.extend({
+            routes: {
+                '*filter': 'setFilter'
+            },
+            setFilter: function (filter) {
+                // Trigger a collection filter event, causing hiding/unhiding of Todo view items
+                app.trigger('filter', filter || '');
+            }
+        });
+        if (!tungsten.backbone.Backbone.history.started) {
+            router = new TodoRouter();
+            tungsten.backbone.Backbone.history.start();
+        }
     }());
 </script>
 </body>
