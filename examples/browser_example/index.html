@@ -2,16 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tungsten.js Demo</title>
+    <title>Tungsten.js Browser-Only App</title>
 </head>
 <body>
 
 <div id="appwrapper"></div>
 
-<script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
+<!-- Core Tungsten.js -->
 <script src="../../dist/tungsten.js"></script>
+<!-- Adaptor adds backbone or ampersand adaptor (based on build) -->
 <script src="../../dist/adaptor.js"></script>
+<!-- Ractive.js for parsing templates -->
+<script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
+<!-- Template helper adds tungsten.compileTemplates -->
 <script src="template_helper.js"></script>
+<!-- Application code -->
 <script>
     // Template strings; usually these are in separate files
     var rawTemplates = {
@@ -20,7 +25,7 @@
         foo: '<b>Foo</b>'
     };
 
-    // Compile templates; usually this is done at build time.  Don't change this code.
+    // Compile templates; usually this is done at build time.
     var compiledTemplates = tungsten.compileTemplates(rawTemplates);
 
     // Initialize application
