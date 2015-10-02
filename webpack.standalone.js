@@ -17,12 +17,12 @@ if(!adaptorName) {
 console.log('Building tungsten.js + ' + adaptorName + ' adaptor');
 module.exports = webpackSettings({
   entry: {
-    adaptor: './adaptors/' + adaptorName,
-    tungsten: './tungsten',
-    template: ['./src/template/template.js']
+    'adaptor': './adaptors/' + adaptorName,
+    'core': './tungsten',
+    'template': ['./src/template/template.js']
   },
   output: {
-    filename: './dist/[name].js',
+    filename: './dist/tungsten.[name].js',
     libraryTarget: 'umd',
     library: ['tungsten', '[name]']
   },
@@ -40,6 +40,6 @@ module.exports = webpackSettings({
     loaders: []
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('./dist/adaptor.js', './dist/tungsten.js')
+    new webpack.optimize.CommonsChunkPlugin('./dist/tungsten.adaptor.js', './dist/tungsten.core.js')
   ]
 });
