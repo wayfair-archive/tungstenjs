@@ -4,22 +4,25 @@ var webpackSettings = require('./webpack-helper');
 
 module.exports = webpackSettings({
   entry: {
-    'backbone': './adaptors/backbone',
-    'ampersand': './adaptors/ampersand',
-    'core': './tungsten',
-    'template': ['./src/template/template.js']
+    'backbone': path.join(__dirname, './adaptors/backbone'),
+    'ampersand': path.join(__dirname, './adaptors/ampersand'),
+    'core': path.join(__dirname, './tungsten'),
+    'template': [path.join(__dirname, './src/template/template.js')]
   },
   output: {
-    filename: './dist/tungsten.[name].js',
-    libraryTarget: 'umd',
+    filename: path.join(__dirname, './dist/tungsten.[name].js'),
+    libraryTarget: 'var',
     library: ['tungsten', '[name]']
   },
   resolve: {
     alias: {
-      'jquery': 'backbone.native',
-      'lodash': 'underscore'
+      jquery: 'backbone.native'
     }
   },
+  externals: [
+    {underscore: 'var window._'},
+    {lodash: 'var window._'}
+  ],
   resolveLoader: {
     modulesDirectories: [path.join(__dirname, 'node_modules')]
   },
@@ -28,6 +31,6 @@ module.exports = webpackSettings({
     loaders: []
   },
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('./dist/tungsten.core.js')
+    new webpack.optimize.CommonsChunkPlugin(path.join(__dirname, './dist/tungsten.core.js'))
   ]
 });

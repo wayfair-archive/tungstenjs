@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Tungsten.js standalone browser app (no server needed)</title>
+    <link rel="stylesheet" href="node_modules/todomvc-app-css/index.css"/>
 </head>
 <body>
 
 <div id="appwrapper"></div>
 
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <!-- Core Tungsten.js -->
 <script src="../../dist/tungsten.core.js"></script>
 <!-- Backbone.js Adaptor -->
@@ -20,24 +22,220 @@
 <script src="template_helper.js"></script>
 <!-- Application code -->
 <script>
+    Ractive.DEBUG = false;
     (function() {
         // Template strings; usually these are in separate files
         var rawTemplates = {
-            app: '<div><h1>Hello, {{name}}</h1></div><br>{{>footer}}',
-            footer: '<strong>{{>foo}}</strong>',
-            foo: '<i>Foo</i>'
+            app_view: '<div class="todoapp"> <header class="header"> <h1>todos</h1> <!-- todoapp --> <input placeholder="What needs to be done?" type="text" autofocus="true" class="new-todo js-new-todo"> </header> <section class="main"> <input class="toggle-all js-toggle-all" type="checkbox" {{#allCompleted}}checked="checked"{{/allCompleted}}> <label for="toggle-all">Mark all as complete</label> <ul class="todo-list js-todo-list"> {{#todoItems}} {{> todo_item_view }} {{/todoItems}} </ul> </section> {{#hasTodos}} <footer class="footer"> <span class="js-todo-count todo-count"><strong>{{todoCount}}</strong> item{{#todoCountPlural}}s{{/todoCountPlural}} left</span> <ul class="filters"> {{#filters}} <li> <a {{#selected}}class="selected"{{/selected}} href="#/{{hash}}">{{name}}</a> </li> {{/filters}} </ul> {{#hasCompleted}} <button class="clear-completed js-clear-completed">Clear completed</button> {{/hasCompleted}} </footer> {{/hasTodos}} </div>',
+            todo_item_view: '{{^hidden}} <li class="js-todo-item {{#completed}} completed {{/completed}} {{#editing}} editing {{/editing}}"> <!-- {{title}} --> {{^editing}} <div class="view"> <input class="toggle js-toggle" type="checkbox" {{#completed}}checked="checked"{{/completed}}> <label class="js-todo-title">{{title}}</label> <button class="destroy js-destroy"></button> </div> {{/editing}} {{#editing}} <input class="edit js-todo-edit" value="{{title}}"> {{/editing}} </li> {{/hidden}}'
         };
 
         // Compile templates; usually this is done at build time.
         var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);
+        var View = tungsten.backbone.View, Model = tungsten.backbone.Model, Collection = tungsten.backbone.Collection;
+        var ENTER_KEY = 13;
+        var ESC_KEY = 27;
 
-        // Initialize application
-        var AppView = tungsten.backbone.View.extend({});
-        var AppModel = tungsten.backbone.Model.extend({});
-        var template = compiledTemplates.app;
-        var view = new AppView({
+
+        var TodoItemView = View.extend({
+            events: {
+                'blur .js-todo-edit': 'handleBlurTodoEdit',
+                'click .js-toggle': 'handleClickToggle',
+                'click .js-destroy': 'handleClickDestroy',
+                'dblclick .js-todo-title': 'handleDblClickTodoTitle',
+                'keydown .js-todo-edit': 'handleKeyDownTodoEdit',
+                'keypress .js-todo-edit': 'handleKeyPressTodoEdit'
+            },
+            handleBlurTodoEdit: function(e) {
+                if (!this.model.get('editing')) {
+                    return;
+                }
+                this.clear(e.currentTarget);
+            },
+            handleClickDestroy: function() {
+                this.model.destroy();
+            },
+            handleClickToggle: function() {
+                this.model.toggle();
+            },
+            handleDblClickTodoTitle: function(e) {
+                this.model.set('editing', true);
+                e.currentTarget.focus();
+            },
+            handleKeyDownTodoEdit: function(e) {
+                if (e.which === ESC_KEY) {
+                    this.model.set('editing', false);
+                    this.model.set('title', this.model.get('title'));
+                }
+            },
+            handleKeyPressTodoEdit: function(e) {
+                if (e.which === ENTER_KEY) {
+                    this.clear(e.currentTarget);
+                }
+            },
+            clear: function(input) {
+                var value = input.value;
+
+                var trimmedValue = value.trim();
+
+                if (trimmedValue) {
+                    this.model.set({ title: trimmedValue });
+                    input.value = '';
+                    this.model.set('editing', false);
+                    if (value !== trimmedValue) {
+                        this.model.trigger('change');
+                    }
+                } else {
+                    this.handleClickDestroy();
+                }
+            }
+        }, {
+            debugName: 'TodoItemView'
+        });
+
+        var NewTodoItemView = View.extend({
+            events: {
+                'keyup': 'handleKeyup'
+            },
+            handleKeyup: function(e) {
+                if (e.which === ENTER_KEY && e.currentTarget.value !== '') {
+                    this.model.trigger('addItem', e.currentTarget.value.trim());
+                    this.el.value = '';
+                }
+            }
+        }, {
+            debugName: 'NewTodoItemView'
+        });
+
+        var TodoItemModel = Model.extend({
+            toggle: function() {
+                this.set({
+                    completed: !this.get('completed')
+                });
+            }
+        });
+        var TodoItemCollection = Collection.extend({
+            model: TodoItemModel,
+            filterItems: function(filterBy) {
+                for (var i = this.length; i--;) {
+                    var model = this.at(i);
+                    model.set('hidden', itemIsHidden(model, filterBy));
+                }
+            }
+        });
+        var TodoFilterCollection = Collection.extend({
+            selectFilter: function(filterBy) {
+                for (var i = this.length; i--;) {
+                    var model = this.at(i);
+                    model.set('selected', model.get('hash') === filterBy);
+                }
+            }
+        });
+        var AppView = View.extend({
+            childViews: {
+                'js-new-todo': NewTodoItemView,
+                'js-todo-item': TodoItemView
+            },
+            events: {
+                'click .js-toggle-all': 'handleClickToggleAll',
+                'click .js-clear-completed': 'handleClickClearCompleted'
+            },
+            postInitialize: function() {
+                this.on('filter', function(filterBy) {
+                    this.model.filter(filterBy);
+                });
+            },
+            handleClickClearCompleted: function() {
+                _.invoke(this.model.get('todoItems').where({completed: true}), 'destroy');
+                return false;
+            },
+            handleClickToggleAll: function(e) {
+                var completed = e.currentTarget.checked;
+                this.model.get('todoItems').each(function(item) {
+                    item.set('completed', completed);
+                });
+            }
+        }, {
+            debugName: 'TodoAppView'
+        });
+
+
+        var AppModel = Model.extend({
+            relations: {
+                todoItems: TodoItemCollection,
+                filters: TodoFilterCollection
+            },
+            defaults: {
+                todoItems: [],
+                filters: []
+            },
+            postInitialize: function() {
+                this.listenTo(this, 'addItem', function(title) {
+                    // @todo add code to clear toggle-all button
+                    this.get('todoItems').add({title: title});
+                });
+            },
+            filter: function(filterBy) {
+                this.get('todoItems').filterItems(filterBy);
+                this.get('filters').selectFilter(filterBy);
+            },
+            derived: {
+                hasTodos: {
+                    deps: ['todoItems'],
+                    fn: function() {
+                        return this.get('todoItems').length > 0;
+                    }
+                },
+                incompletedItems: {
+                    deps: ['todoItems'],
+                    fn: function() {
+                        return this.get('todoItems').filter(function(item) {
+                            return !item.get('completed');
+                        });
+                    }
+                },
+                allCompleted: {
+                    deps: ['todoItems'],
+                    fn: function() {
+                        if (this.get('todoItems').length) {
+                            return this.get('todoItems').every(function(item) {
+                                return item.get('completed');
+                            });
+                        }
+                    }
+                },
+                todoCount: {
+                    deps: ['incompletedItems'],
+                    fn: function() {
+                        return this.get('incompletedItems').length;
+                    }
+                },
+                todoCountPlural: {
+                    deps: ['todoCount'],
+                    fn: function() {
+                        return this.get('todoCount') !== 1;
+                    }
+                },
+                hasCompleted: {
+                    deps: ['todoItems'],
+                    fn: function() {
+                        return this.get('todoItems').length - this.get('incompletedItems').length > 0;
+                    }
+                }
+            }
+        });
+        function itemIsHidden(item, filter) {
+            if (filter === 'active') {
+                return item.get('completed');
+            } else if (filter === 'completed') {
+                return !item.get('completed');
+            }
+            return false;
+        }
+
+        new AppView({
             el: '#appwrapper',
-            template: template,
+            template: compiledTemplates.app_view,
             model: new AppModel({name: 'world'}),
             dynamicInitialize: true
         });
