@@ -18,26 +18,28 @@
 <script src="template_helper.js"></script>
 <!-- Application code -->
 <script>
-    // Template strings; usually these are in separate files
-    var rawTemplates = {
-        app: '<div><h1>Hello, {{name}}</h1></div><br>{{>footer}}',
-        footer: '<strong>{{>foo}}</strong>',
-        foo: '<b>Foo</b>'
-    };
+    (function() {
+        // Template strings; usually these are in separate files
+        var rawTemplates = {
+            app: '<div><h1>Hello, {{name}}</h1></div><br>{{>footer}}',
+            footer: '<strong>{{>foo}}</strong>',
+            foo: '<b>Foo</b>'
+        };
 
-    // Compile templates; usually this is done at build time.
-    var compiledTemplates = tungsten.compileTemplates(rawTemplates);
+        // Compile templates; usually this is done at build time.
+        var compiledTemplates = tungsten.compileTemplates(rawTemplates);
 
-    // Initialize application
-    var AppView = tungsten.View.extend({});
-    var AppModel = tungsten.Model.extend({});
-    var template = compiledTemplates.app;
-    var view = new AppView({
-        el: '#appwrapper',
-        template: template,
-        model: new AppModel({name: 'world'}),
-        dynamicInitialize: true
-    });
+        // Initialize application
+        var AppView = tungsten.View.extend({});
+        var AppModel = tungsten.Model.extend({});
+        var template = compiledTemplates.app;
+        var view = new AppView({
+            el: '#appwrapper',
+            template: template,
+            model: new AppModel({name: 'world'}),
+            dynamicInitialize: true
+        });
+    }());
 </script>
 </body>
 </html>
