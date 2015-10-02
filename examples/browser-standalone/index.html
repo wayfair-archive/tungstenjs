@@ -10,8 +10,8 @@
 
 <!-- Core Tungsten.js -->
 <script src="../../dist/tungsten.core.js"></script>
-<!-- Adaptor adds backbone or ampersand adaptor (based on build) -->
-<script src="../../dist/tungsten.adaptor.js"></script>
+<!-- Backbone.js Adaptor -->
+<script src="../../dist/tungsten.backbone.js"></script>
 <!-- Compiler for parsed template objects -->
 <script src="../../dist/tungsten.template.js"></script>
 <!-- Ractive.js for parsing templates -->
@@ -32,8 +32,8 @@
         var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);
 
         // Initialize application
-        var AppView = tungsten.adaptor.View.extend({});
-        var AppModel = tungsten.adaptor.Model.extend({});
+        var AppView = tungsten.backbone.View.extend({});
+        var AppModel = tungsten.backbone.Model.extend({});
         var template = compiledTemplates.app;
         var view = new AppView({
             el: '#appwrapper',
