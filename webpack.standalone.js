@@ -1,4 +1,4 @@
-// to build: webpack --config webpack.dist.js --backbone
+// to build: webpack --config webpack.standalone.js --backbone
 var path = require('path');
 var webpack = require('webpack');
 var webpackSettings = require('./webpack-helper');
@@ -18,12 +18,13 @@ console.log('Building tungsten.js + ' + adaptorName + ' adaptor');
 module.exports = webpackSettings({
   entry: {
     adaptor: './adaptors/' + adaptorName,
-    tungsten: './tungsten'
+    tungsten: './tungsten',
+    template: ['./src/template/template.js']
   },
   output: {
     filename: './dist/[name].js',
-    libraryTarget: 'var',
-    library: 'tungsten'
+    libraryTarget: 'umd',
+    library: ['tungsten', '[name]']
   },
   resolve: {
     alias: {

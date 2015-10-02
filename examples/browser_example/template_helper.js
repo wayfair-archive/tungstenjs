@@ -9,7 +9,7 @@
           stripComments: false,
           preserveWhitespace: true
         });
-        compiledTemplates[templateNames[i]] = new tungsten._Template(parsed.t, partialsList);
+        compiledTemplates[templateNames[i]] = new tungsten.template(parsed.t, partialsList);
       }
     }
     // Compile templates as partials
@@ -22,6 +22,6 @@
     return compiledTemplates;
   }
 
-  var tungsten = window.tungsten || {};
-  tungsten.compileTemplates = compileTemplates;
+  var template = window.tungsten.template || {};
+  template.compileTemplates = compileTemplates;
 }(window));

@@ -12,6 +12,8 @@
 <script src="../../dist/tungsten.js"></script>
 <!-- Adaptor adds backbone or ampersand adaptor (based on build) -->
 <script src="../../dist/adaptor.js"></script>
+<!-- Compiler for parsed template objects -->
+<script src="../../dist/template.js"></script>
 <!-- Ractive.js for parsing templates -->
 <script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
 <!-- Template helper adds tungsten.compileTemplates -->
@@ -27,11 +29,11 @@
         };
 
         // Compile templates; usually this is done at build time.
-        var compiledTemplates = tungsten.compileTemplates(rawTemplates);
+        var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);
 
         // Initialize application
-        var AppView = tungsten.View.extend({});
-        var AppModel = tungsten.Model.extend({});
+        var AppView = tungsten.adaptor.View.extend({});
+        var AppModel = tungsten.adaptor.Model.extend({});
         var template = compiledTemplates.app;
         var view = new AppView({
             el: '#appwrapper',
