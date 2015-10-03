@@ -2,12 +2,8 @@
   "name": "tungstenjs-browser-standalone",
   "version": "0.1.0",
   "private": true,
-  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config ../../webpack.standalone.js"
   },
-  "dependencies": {
-    "todomvc-app-css": "^2.0.1"
-  }
 }
