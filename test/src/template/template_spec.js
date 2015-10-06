@@ -34,6 +34,7 @@
 // Use Backbone adaptor
 var Context = require('../../../src/template/template_context');
 var compiler = require('../../../precompile/tungsten_template/inline');
+var BaseView = require('../../../adaptors/backbone/base_view');
 
 // Using simplified lookup functions
 Context.setAdapterFunctions({
@@ -79,6 +80,64 @@ function toHTML(templateStr, data, partials) {
   var template = getTemplate(templateStr, partials);
   return template.toString(data);
 }
+
+describe('View attachment', function() {
+  var tmpl = getTemplate('{{> p}}', {
+    p: '<div><div class="js-a"></div><div class="js-b"></div></div>'
+  });
+  expect(tmpl.attachView).to.be.a('function');
+  expect(tmpl.attachView).to.have.length(2);
+
+  var WidgetWrapper = function(tmpl, view) {
+    this.view = view;
+  };
+  WidgetWrapper.prototype.type = 'Widget';
+  WidgetWrapper.prototype.init = function() {};
+  WidgetWrapper.prototype.update = function() {};
+  WidgetWrapper.prototype.destroy = function() {};
+
+  var view = {
+    el: { nodeName: 'div' }
+  };
+  var tmplNoChild = tmpl.attachView(view, WidgetWrapper);
+  expect(tmplNoChild).not.to.equal(tmpl);
+  expect(tmplNoChild.templateObj).not.to.equal(tmpl.templateObj);
+  var vtree = tmplNoChild.toVdom({});
+  var childViews = BaseView.prototype.getChildViews.call({vtree: vtree});
+  expect(childViews).to.be.a('array');
+  expect(childViews).to.have.length(0);
+
+  view = {
+    el: { nodeName: 'div' },
+    childViews: {
+      'js-a': jasmine.createSpy('childViewA')
+    }
+  };
+  var tmplOneChild = tmpl.attachView(view, WidgetWrapper);
+  expect(tmplOneChild).not.to.equal(tmpl);
+  expect(tmplOneChild.templateObj).not.to.equal(tmpl.templateObj);
+  vtree = tmplOneChild.toVdom({});
+  childViews = BaseView.prototype.getChildViews.call({vtree: vtree});
+  expect(childViews).to.be.a('array');
+  expect(childViews).to.have.length(1);
+  expect(childViews[0]).to.equal(view.childViews['js-a']);
+
+  view = {
+    el: { nodeName: 'div' },
+    childViews: {
+      'js-b': jasmine.createSpy('childViewB')
+    }
+  };
+  var tmplOtherChild = tmpl.attachView(view, WidgetWrapper);
+  expect(tmplOtherChild).not.to.equal(tmpl);
+  expect(tmplOtherChild.templateObj).not.to.equal(tmpl.templateObj);
+  vtree = tmplOtherChild.toVdom({});
+  childViews = BaseView.prototype.getChildViews.call({vtree: vtree});
+  expect(childViews).to.be.a('array');
+  expect(childViews).to.have.length(1);
+  expect(childViews[0]).to.equal(view.childViews['js-b']);
+});
+
 
 describe('HTML composition', function() {
   equal(toHTML('<tr><div>{{hi}}</div></tr>', {
