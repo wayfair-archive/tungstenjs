@@ -243,6 +243,8 @@ Events are defined with the standard [`events` hash](http://backbonejs.org/#View
     * Bindable by prepending `win-` to any event that the window fires (primarily scroll or resize, and height/width/scroll values are cached to prevent repeated reads)
 * Outside Events - Adds an event binding to events firing outside of the element
     * Bindable by appending `-outside` to any event type
+* Submit Data - Adds an event binding to form submit events with the form's serialized data passed as the second parameter of the callback (uses [form-serialize](https://github.com/defunctzombie/form-serialize))
+    * Bindable by using the `submit-data` event type
 
 They can be used directly in Tungsten.js views by using the events hash as usual.  For example:
 
@@ -257,7 +259,9 @@ View.extend({
     // window scroll event
     'win-scroll' : 'doSomethingOnScroll',
     // outside event
-    'click-outside .js-foo' :'doSomethingOnOutsideClick'
+    'click-outside .js-foo' :'doSomethingOnOutsideClick',
+    // submit data event
+    'submit-data .js-form' : 'setData'
   },
   // eventOptions hash to override default custom event options
   eventOptions: {
