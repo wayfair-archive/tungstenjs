@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tungsten.js standalone browser app (no server needed)</title>
+</head>
+<body>
+
+<div id="appwrapper"></div>
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<!-- Core Tungsten.js -->
+<script src="../../dist/tungsten.core.js"></script>
+<!-- Backbone.js Adaptor -->
+<script src="../../dist/tungsten.backbone.js"></script>
+<!-- Compiler for parsed template objects -->
+<script src="../../dist/tungsten.template.js"></script>
+<!-- Ractive.js for parsing templates -->
+<script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
+<!-- Template helper adds tungsten.template.compileTemplates -->
+<script src="template_helper.js"></script>
+<!-- Application code -->
+<script>
+    Ractive.DEBUG = false;
+    (function() {
+        // Template strings; usually these are in separate files
+        var rawTemplates = {
+            app_view: 'Hello, {{> name_view}}!',
+            name_view: '<b>{{name}}</b>'
+        };
+
+        // Compile templates; usually this is done at build time.
+        var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);
+
+        var View = tungsten.backbone.View, Model = tungsten.backbone.Model;
+
+        new View({
+            el: '#appwrapper',
+            template: compiledTemplates.app_view,
+            model: new Model({name: 'world'}),
+            dynamicInitialize: true
+        });
+    }());
+</script>
+</body>
+</html>
