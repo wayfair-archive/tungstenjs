@@ -88,7 +88,7 @@ Template.prototype.toVdom = function(data, firstRender) {
  * @return {Object}                 Template object with attached view
  */
 var attachViews = function(view, template, widgetWrapper, partials, childClasses) {
-  var i;
+  var i, tmpl;
 
   // String is a dead-end
   if (typeof template === 'string') {
@@ -97,11 +97,12 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
 
   // Arrays need iterating over
   if (Context.isArray(template)) {
+    tmpl = new Array(template.length);
     for (i = 0; i < template.length; i++) {
-      template[i] = attachViews(view, template[i], widgetWrapper, partials, childClasses);
+      tmpl[i] = attachViews(view, template[i], widgetWrapper, partials, childClasses);
     }
     // short circuit
-    return template;
+    return tmpl;
   }
 
   // If the view has childViews and this isn't the root, attempt to attach Widget
@@ -142,15 +143,6 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
     }
   }
 
-  // Recurse on any child elements
-  if (template.f) {
-    for (i = 0; i < template.f.length; i++) {
-      template.f[i] = attachViews(view, template.f[i], widgetWrapper, partials, childClasses);
-    }
-    // in the event of a partial, we may get a nested array, this flattens it out
-    template.f = _.flatten(template.f, true);
-  }
-
   // If this is a partial, lookup and recurse
   if (template.t === ractiveTypes.PARTIAL) {
     var partialName = Context.getInterpolatorKey(template);
@@ -162,11 +154,23 @@ var attachViews = function(view, template, widgetWrapper, partials, childClasses
       if (partialTemplate.templateObj) {
         partialTemplate = partialTemplate.templateObj;
       }
-      template = attachViews(view, _.clone(partialTemplate), widgetWrapper, partials[partialName].partials || registeredPartials, childClasses);
+      return attachViews(view, partialTemplate, widgetWrapper, partials[partialName].partials || registeredPartials, childClasses);
     }
   }
 
-  return template;
+  tmpl = _.clone(template);
+
+  // Recurse on any child elements
+  if (template.f) {
+    tmpl.f = new Array(template.f.length);
+    for (i = 0; i < tmpl.f.length; i++) {
+      tmpl.f[i] = attachViews(view, template.f[i], widgetWrapper, partials, childClasses);
+    }
+    // in the event of a partial, we may get a nested array, this flattens it out
+    tmpl.f = _.flatten(tmpl.f, true);
+  }
+
+  return tmpl;
 };
 
 /**
