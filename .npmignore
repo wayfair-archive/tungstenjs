@@ -2,3 +2,7 @@ dist/
 examples/
 extra/
 test/
+# Dev files, because npmignore has no global ignore
+*.iml
+.idea/
+.DS_Store
