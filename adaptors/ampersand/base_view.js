@@ -31,10 +31,6 @@ var BaseView = AmpersandView.extend({
     }
     this.options = options || {};
 
-    // VTree is passable as an option if we are transitioning in from a different view
-    if (this.options.vtree) {
-      this.vtree = this.options.vtree;
-    }
     // Template object
     if (this.options.template) {
       this.compiledTemplate = this.options.template;
@@ -408,7 +404,15 @@ var BaseView = AmpersandView.extend({
     // defaults to an empty object for context so that our view render won't fail
     var serializedModel = this.context || this.serialize();
     var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize(), true);
-    this.vtree = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    var result = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    this.vtree = result.vtree;
+    if (result.elem !== this.el) {
+      // Needed due to handling of the 'el' property in View constructor
+      var self = this;
+      setTimeout(function() {
+        self.el = result.elem;
+      }, 0);
+    }
 
     // Clear any passed context
     this.context = null;
