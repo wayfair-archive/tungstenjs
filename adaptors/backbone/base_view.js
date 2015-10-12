@@ -406,7 +406,11 @@ var BaseView = Backbone.View.extend({
     // defaults to an empty object for context so that our view render won't fail
     var serializedModel = this.context || this.serialize();
     var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize(), true);
-    this.vtree = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    var result = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    this.vtree = result.vtree;
+    if (result.elem !== this.el) {
+      this.setElement(result.elem);
+    }
 
     // Clear any passed context
     this.context = null;

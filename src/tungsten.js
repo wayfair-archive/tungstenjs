@@ -38,10 +38,13 @@ exports.unbindEvent = globalEvents.unbindVirtualEvent;
 
 function updateTree(container, initialTree, newTree) {
   var patch = vdom.diff(initialTree, newTree);
-  vdom.patch(container, patch);
+  var elem = vdom.patch(container, patch);
   // Repool VDom used in initial tree
   initialTree.recycle();
-  return newTree;
+  return {
+    vtree: newTree,
+    elem: elem
+  };
 }
 
 /* develblock:start */
