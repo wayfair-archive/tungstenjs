@@ -4,7 +4,7 @@ var tungstenEvent = require('../../../src/event/tungsten_event.js');
 describe('tungsten_event.js public api', function () {
   it('should be a function', function () {
     expect(tungstenEvent).to.be.a('function');
-    expect(tungstenEvent.length).to.equal(1);
+    expect(tungstenEvent).to.have.length(1);
   });
   it('should create an event', function() {
     var evt = tungstenEvent({});

@@ -182,14 +182,16 @@ describe('tungsten.js public API', function() {
       };
       var newTree = {};
       var patch = {};
+      var elem = {};
       spyOn(vdom, 'diff').and.returnValue(patch);
-      spyOn(vdom, 'patch');
+      spyOn(vdom, 'patch').and.returnValue(elem);
       var result = tungsten.updateTree(container, initialTree, newTree);
 
       jasmineExpect(vdom.diff).toHaveBeenCalledWith(initialTree, newTree);
       jasmineExpect(vdom.patch).toHaveBeenCalledWith(container, patch);
       jasmineExpect(initialTree.recycle).toHaveBeenCalled();
-      expect(result).to.equal(newTree);
+      expect(result.vtree).to.equal(newTree);
+      expect(result.elem).to.equal(elem);
     });
   });
 });

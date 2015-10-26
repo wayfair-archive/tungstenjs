@@ -8,6 +8,7 @@
  * @author Matt DeGennaro <mdegennaro@wayfair.com>
  * @license Apache-2.0
  */
+/*global TUNGSTENJS_VERSION */
 'use strict';
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');
@@ -17,8 +18,7 @@ var htmlParser = require('./template/html_parser');
 var vdom = virtualDomImplementation.vdom;
 var exports = {};
 
-var packageJson = require('../package.json');
-exports.VERSION = packageJson.version;
+exports.VERSION = typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null;
 
 exports.IS_DEV = false;
 
@@ -38,10 +38,13 @@ exports.unbindEvent = globalEvents.unbindVirtualEvent;
 
 function updateTree(container, initialTree, newTree) {
   var patch = vdom.diff(initialTree, newTree);
-  vdom.patch(container, patch);
+  var elem = vdom.patch(container, patch);
   // Repool VDom used in initial tree
   initialTree.recycle();
-  return newTree;
+  return {
+    vtree: newTree,
+    elem: elem
+  };
 }
 
 /* develblock:start */

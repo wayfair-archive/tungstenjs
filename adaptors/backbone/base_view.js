@@ -114,7 +114,7 @@ var BaseView = Backbone.View.extend({
       var self = this;
       if (!this.parentView) {
         runOnChange = _.bind(this.render, this);
-      } else if (!dataItem.parentProp && this.parentView.model !== dataItem) {
+      } else if (!dataItem.collection && !dataItem.parentProp && this.parentView.model !== dataItem) {
         // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
         runOnChange = function() {
           // trigger event on parent to start a render
@@ -405,8 +405,12 @@ var BaseView = Backbone.View.extend({
     // let the view have a say in what context to pass to the template
     // defaults to an empty object for context so that our view render won't fail
     var serializedModel = this.context || this.serialize();
-    var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize());
-    this.vtree = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize(), true);
+    var result = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    this.vtree = result.vtree;
+    if (result.elem !== this.el) {
+      this.setElement(result.elem);
+    }
 
     // Clear any passed context
     this.context = null;

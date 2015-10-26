@@ -292,8 +292,10 @@ function renderVdom(template, context, partials, parentView, firstRender) {
         // If an element goes from an explicitly set value to null, it will use this value rather than error
         contentEditable: 'inherit'
       };
+
+      var isWebComponent = template.e.indexOf('-') > -1;
       var attributeHandler = function(values, attr) {
-        var propName = transformPropertyName(attr);
+        var propName = isWebComponent ? false : transformPropertyName(attr);
         var attrString = renderAttributeString(values, context);
         if (attributesOnly || propName === false) {
           properties.attributes = properties.attributes || {};

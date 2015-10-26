@@ -12,7 +12,8 @@ var eventHandlers = [
   require('./handlers/mouseenter_events'),
   require('./handlers/window_events'),
   require('./handlers/intent_events'),
-  require('./handlers/outside_events')
+  require('./handlers/outside_events'),
+  require('./handlers/submit_data_events')
 ];
 var registerEventPlugin = function(handler) {
   eventHandlers.push(handler);

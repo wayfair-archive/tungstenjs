@@ -25,7 +25,7 @@ describe('virtual_hyperscript public API', function() {
     expect(h).to.be.a('function');
   });
   it('should accept three arguments', function() {
-    expect(h.length).to.equal(3);
+    expect(h).to.have.length(3);
   });
   it('should returns a vnode', function() {
     expect(h('div').tagName).to.equal('div');
@@ -58,14 +58,14 @@ describe('virtual_hyperscript public API', function() {
   it('should work with null', function() {
     var node = h('div', null);
     var node2 = h('div', [null]);
-    expect(node.children.length).to.equal(0);
-    expect(node2.children.length).to.equal(0);
+    expect(node.children).to.have.length(0);
+    expect(node2.children).to.have.length(0);
   });
   it('should work with undefined', function() {
     var node = h('div', undefined);
     var node2 = h('div', [undefined]);
-    expect(node.children.length).to.equal(0);
-    expect(node2.children.length).to.equal(0);
+    expect(node.children).to.have.length(0);
+    expect(node2.children).to.have.length(0);
   });
   it('should work with namespace', function() {
     var node = h('div', { namespace: 'http://www.w3.org/2000/svg' });

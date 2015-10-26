@@ -10,3 +10,5 @@ script:
   - node ./test/jasmine.js --coverage
 after_success:
   - codeclimate-test-reporter < ./test/coverage/lcov.info
+  - npm install codecov.io
+  - cat ./test/coverage/lcov.info | ./node_modules/.bin/codecov
