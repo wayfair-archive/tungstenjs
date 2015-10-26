@@ -12,7 +12,7 @@ for (var i = 0; i < args.length; i++) {
 var Jasmine = require('jasmine');
 var jasmine = new Jasmine();
 var istanbulRunReports = require('./istanbul');
-jasmine.onComplete(function(passed) {
+jasmine.onComplete(function() {
   // Restore console functions so reports work
   for (var name in global.console) {
     console[name] = _console[name];
@@ -21,9 +21,6 @@ jasmine.onComplete(function(passed) {
   if (global.__coverage__) {
     istanbulRunReports();
   }
-
-  var failedTests = !passed;
-  process.exit(failedTests);
 });
 
 // Override console methods as spies
