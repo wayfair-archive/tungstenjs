@@ -33,7 +33,6 @@
 var vdomToDom = require('../../../src/tungsten').toDOM;
 var Context = require('../../../src/template/template_context');
 var compiler = require('../../../precompile/tungsten_template/inline');
-var BaseView = require('../../../adaptors/backbone/base_view');
 
 // Using simplified lookup functions
 Context.setAdapterFunctions({
