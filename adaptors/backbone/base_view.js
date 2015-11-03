@@ -501,10 +501,6 @@ var BaseView = Backbone.View.extend({
       childInstances[i].destroy();
     }
   },
-  setNestedData: function(prop, data) {
-    var model = this.model.getDeep(prop);
-    model.set(data);
-  },
   setSubview: function(prop, data, Template, View, Model) {
     var model = this.model;
     var propParts = prop.split(':');
