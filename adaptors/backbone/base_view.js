@@ -81,7 +81,7 @@ var BaseView = Backbone.View.extend({
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
         var self = this;
-        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem, true);
+        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
         self.initializeRenderListener(dataItem);
         if (this.options.dynamicInitialize || this.options.vtree) {
           // If certain options were set, render was already invoked, so childViews are attached
@@ -500,6 +500,53 @@ var BaseView = Backbone.View.extend({
     for (var i = 0; i < childInstances.length; i++) {
       childInstances[i].destroy();
     }
+  },
+  setSubview: function(prop, data, Template, View, Model) {
+    var model = this.model;
+    var propParts = prop.split(':');
+    prop = propParts.splice(-1);
+    prop = prop[0];
+    if (propParts.length) {
+      model = model.getDeep(propParts.join(':'));
+    }
+    var subview;
+    if (View && View.tungstenView && (data.tungstenModel || Model)) {
+      Template = Template.wrap('span');
+      Template.wrapped = true;
+
+      var subModel;
+      if (data.tungstenModel) {
+        subModel = data;
+      } else if (Model) {
+        subModel = new Model(data);
+      }
+
+      subview = {
+        is_tungsten_component: true,
+        template: Template,
+        model: subModel,
+        view: View,
+        instance: _.uniqueId('w_subview')
+      };
+    } else {
+      subview = {
+        is_subview: true,
+        template: Template,
+        data: data
+      };
+    }
+
+    model.set(prop, subview);
+  },
+  clearSubview: function(prop) {
+    var model = this.model;
+    var propParts = prop.split(':');
+    prop = propParts.splice(-1);
+    prop = prop[0];
+    if (propParts.length) {
+      model = model.getDeep(propParts.join(':'));
+    }
+    model.unset(prop);
   }
 }, {
   tungstenView: true,

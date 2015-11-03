@@ -87,6 +87,40 @@ module.exports.compileTemplate = function(contents, srcFile) {
   return parsed.t;
 };
 
+module.exports.handleSvg = function(template, inSVG) {
+  if (typeof template === 'string' || typeof template === 'undefined') {
+    // String or undefined means we've bottomed out
+    return;
+  } else if (template instanceof Array) {
+    // Arrays need mapping over
+    for (var i = 0; i < template.length; i++) {
+      module.exports.handleSvg(template[i], inSVG);
+    }
+    return;
+  }
+
+  switch (template.t) {
+
+    case ractiveTypes.SECTION:
+      module.exports.handleSvg(template.f, inSVG || template.e === 'svg');
+      break;
+    case ractiveTypes.ELEMENT:
+      if (!inSVG && template.e === 'svg') {
+        inSVG = true;
+      }
+      if (inSVG) {
+        if (!template.a) {
+          template.a = {};
+        }
+        template.a.namespace = 'http://www.w3.org/2000/svg';
+      }
+      module.exports.handleSvg(template.f, inSVG);
+      break;
+  }
+
+  return;
+};
+
 module.exports.handleDynamicComments = function(template) {
   if (typeof template === 'string' || typeof template === 'undefined') {
     // String or undefined means we've bottomed out

@@ -106,9 +106,7 @@ describe('backbone_view_widget public api', function() {
     });
     it('should construct from the template\'s DOM and return the element', function() {
       // template.toDom returns a documentFragment
-      var elem = {
-        childNodes: [{}]
-      };
+      var elem = {};
       var template = {
         toDom: jasmine.createSpy('toDom').and.returnValue(elem)
       };
@@ -123,7 +121,7 @@ describe('backbone_view_widget public api', function() {
         template: template
       };
       var result = BackboneViewWidget.prototype.init.call(ctx);
-      expect(result).to.equal(elem.childNodes[0]);
+      expect(result).to.equal(elem);
       jasmineExpect(template.toDom).toHaveBeenCalledWith(ctx.context);
       jasmineExpect(ViewConstructor).toHaveBeenCalled();
       expect(ctx.view).to.equal(expectedView);

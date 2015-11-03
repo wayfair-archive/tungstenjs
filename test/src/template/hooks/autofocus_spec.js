@@ -1,8 +1,8 @@
 'use strict';
 
-var FocusHook = require('../../../../src/template/hooks/focus_hook.js');
+var FocusHook = require('../../../../src/template/hooks/autofocus.js');
 
-describe('focus_hook.js', function() {
+describe('autofocus.js', function() {
   it('should be a function', function() {
     expect(FocusHook).to.be.a('function');
     expect(FocusHook).to.have.length(0);
