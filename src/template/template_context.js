@@ -48,7 +48,7 @@ Context.SUBVIEW_KEY = 'nested_content';
  * Internal lookup function to intercept interesting lookups
  */
 Context.prototype._lookupValue = function(view, name) {
-    return this.lookupValue(view, name);
+  return this.lookupValue(view, name);
 };
 
 /**
