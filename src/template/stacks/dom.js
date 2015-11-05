@@ -15,8 +15,7 @@ function applyProperties(node, props) {
           node.setAttributeNS(null, attrName, attrValue);
         }
       }
-    }
-    if (_.isObject(propValue)) {
+    } else if (_.isObject(propValue)) {
       applyProperties(node[propName], propValue);
     } else {
       node[propName] = propValue;
