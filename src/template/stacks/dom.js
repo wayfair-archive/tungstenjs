@@ -19,7 +19,9 @@ function applyProperties(node, props) {
     if (_.isObject(propValue)) {
       applyProperties(node[propName], propValue);
     } else {
-      node[propName] = propValue;
+      if (propName.toLowerCase() !== 'autofocus') {
+        node[propName] = propValue;
+      }
     }
   }
 }
