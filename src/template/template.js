@@ -51,7 +51,7 @@ Template.prototype._iterate = function(template, data, view, partials, stack) {
   );
 };
 Template.prototype._render = function(template, data, view, partials, stack) {
-  this._iterate(template, context, view, partials, stack);
+  this._iterate(template, data, view, partials, stack);
   return stack.getOutput();
 };
 
