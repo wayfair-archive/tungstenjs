@@ -13,7 +13,7 @@ function getHandlers(method) {
 
   var submitHandler = function(evt) {
     var form = evt.target;
-    var data = serialize(form, { hash: true });
+    var data = serialize(form, { hash: true, empty: true });
     method(evt, _.extend(data, submit));
   };
 
