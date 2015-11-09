@@ -62,7 +62,7 @@ HtmlStringStack.prototype.processObject = function(obj) {
 
 HtmlStringStack.prototype.createObject = function(obj, options) {
   if (isWidget(obj)) {
-    obj.template._render(null, obj.model, null, null, this);
+    obj.template._iterate(null, obj.model, null, null, this);
   } else if (typeof obj === 'string' && options && options.escape) {
     this._closeElem(escapeString(obj));
   } else {

@@ -2,6 +2,8 @@
 
 var _ = require('underscore');
 var DefaultStack = require('./default');
+var virtualDomImplementation = require('../../vdom/virtual_dom_implementation');
+var isWidget = virtualDomImplementation.isWidget;
 var htmlParser = require('../html_parser');
 
 function applyProperties(node, props) {
@@ -57,7 +59,9 @@ DomStack.prototype.processObject = function(obj) {
 };
 
 DomStack.prototype.createObject = function(obj, options) {
-  if (typeof obj === 'string' && options && options.parse) {
+  if (isWidget(obj)) {
+    obj.template._iterate(null, obj.model, null, null, this);
+  } else if (typeof obj === 'string' && options && options.parse) {
     // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
     if (obj.indexOf('<') > -1 || obj.indexOf('&') > -1) {
       htmlParser(obj, this);
