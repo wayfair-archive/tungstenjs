@@ -151,7 +151,15 @@ module.exports.removeEvent = function(evt) {
  * @return {Array<String>}         Array of the js- classes
  */
 module.exports.getActiveClasses = function(element) {
-  var classList = (element.className || '').split(/\s/);
+  var classNameStr = '';
+  if (element.className) {
+    if (typeof element.className === 'string') {
+      classNameStr = element.className;
+    } else if (element.className.baseVal) {
+      classNameStr = element.className.baseVal;
+    }
+  }
+  var classList = classNameStr.split(/\s/);
   var className;
   var activeClasses = {};
   for (var i = classList.length; i--;) {

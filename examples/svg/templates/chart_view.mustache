@@ -2,13 +2,13 @@
   <!-- header and options -->
   <div class='chart-header'>
     <h3>Average high and low temperature</h3>
- 
+
     <!-- switch between celsius and fahrenheit -->
     <div class='radio-group'>
       <label>°C <input type='radio' class="js-degree-type" name='degreeType' value='celsius' checked='checked'></label>
       <label>°F <input type='radio' class="js-degree-type" name='degreeType' value='fahrenheit'></label>
     </div>
- 
+
     <!-- dropdown menu -->
     <select class="js-city-select">
       {{#cities}}
@@ -16,7 +16,7 @@
       {{/cities}}
     </select>
   </div>
- 
+
   <div class='chart'>
     <div class='wrapper'> <!-- needed to determine size of SVG element in Firefox -->
       <svg>
@@ -43,13 +43,13 @@
 
         {{#temperatures}}
           <!-- point markers for average highs -->
-          <g class='marker' transform='translate({{ xPos }},{{ high.yPos }})'>
+          <g class='marker js-marker' transform='translate({{ xPos }},{{ high.yPos }})'>
             <circle r='2'/>
             <text y='-10'>{{ high.label }}</text>
           </g>
 
           <!-- point markers for average lows -->
-          <g class='marker' transform='translate({{ xPos }},{{ low.yPos }})'>
+          <g class='marker js-marker' transform='translate({{ xPos }},{{ low.yPos }})'>
             <circle r='2'/>
             <text y='15'>{{ low.label }}</text>
           </g>

@@ -7,14 +7,29 @@ var elem = document.getElementById('appwrapper');
 var DemoModel = TungstenBackboneBase.Model.extend({
   relations: {
     clock: TungstenBackboneBase.Model,
-    chart: TungstenBackboneBase.Model
+    chart: TungstenBackboneBase.Model.extend({
+      relations: {
+        temperatures: TungstenBackboneBase.Collection
+      }
+    })
+  }
+});
+
+var MarkerView = TungstenBackboneBase.View.extend({
+  events: {
+    'click': function() {
+      console.log('the temperature point clicked was', this.model.toJSON());
+    }
   }
 });
 
 var ChartView = TungstenBackboneBase.View.extend({
   events: {
     'change .js-city-select': 'changeCity',
-    'change .js-degree-type': 'changeType',
+    'change .js-degree-type': 'changeType'
+  },
+  childViews: {
+    'js-marker': MarkerView
   },
   setChart: function() {
     var index = this.model.get('selectedCityIndex');
