@@ -77,10 +77,7 @@ Template.prototype.toDom = function(data) {
  * @return {Object}       VirtualTree representing the template
  */
 Template.prototype.toVdom = function(data) {
-  var t = new window.Timer('toVdom');
-  var result =  this._render(this.templateObj, data, this.view, this.partials, new ToVdom());
-  t.check('done');
-  return result;
+  return this._render(this.templateObj, data, this.view, this.partials, new ToVdom());
 };
 
 /**
