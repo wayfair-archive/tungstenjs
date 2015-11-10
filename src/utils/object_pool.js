@@ -53,6 +53,15 @@ ObjectPool.prototype.allocate = function() {
     // If we don't have any preallocated ones available, make a new one
     temp = _.create(this.constructorFunc.prototype);
   }
+  // var a1 = arguments[0], a2 = arguments[1], a3 = arguments[2], a4 = arguments[3];
+  // switch (arguments.length) {
+  //   case 0: this.constructorFunc.call(temp); break;
+  //   case 1: this.constructorFunc.call(temp, a1); break;
+  //   case 2: this.constructorFunc.call(temp, a1, a2); break;
+  //   case 3: this.constructorFunc.call(temp, a1, a2, a3); break;
+  //   case 4: this.constructorFunc.call(temp, a1, a2, a3, a4); break;
+  //   default: this.constructorFunc.apply(temp, arguments); break;
+  // }
   this.constructorFunc.apply(temp, arguments);
   return temp;
 };

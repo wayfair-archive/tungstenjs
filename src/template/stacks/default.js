@@ -2,6 +2,7 @@
 
 var processProperties = require('../process_properties');
 var logger = require('../../utils/logger');
+var stackPool = require('./stack');
 
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either
@@ -27,12 +28,12 @@ function DefaultStack(attributesOnly, startID, debugMode) {
   // If startID is passed in, append a separator
   this.startID = typeof startID === 'string' ? (startID + '.') : '';
   this.debugMode = debugMode;
-  this.result = [];
-  this.stack = [];
+  this.result = stackPool.allocate();
+  this.stack = stackPool.allocate();
 }
 
 DefaultStack.prototype.peek = function() {
-  return this.stack[this.stack.length - 1];
+  return this.stack.peek();
 };
 
 DefaultStack.prototype.getID = function() {
@@ -53,7 +54,7 @@ DefaultStack.prototype.openElement = function(tagName, attributes) {
   var elem = {
     tagName: tagName,
     properties: properties,
-    children: [],
+    children: stackPool.allocate(),
     type: 'node',
     id: this.getID()
   };
@@ -76,7 +77,7 @@ DefaultStack.prototype._closeElem = function(obj) {
   // if this is an element, create a VNode now so that count is set properly
   if (obj.type === 'node') {
     if (!supportsWhitespaceTextNodes) {
-      var children = [];
+      var children = stackPool.allocate(obj.children.length);
       for (i = 0; i < obj.children.length; i++) {
         if (typeof obj.children[i] !== 'string') {
           children.push(obj.children[i]);
@@ -87,29 +88,24 @@ DefaultStack.prototype._closeElem = function(obj) {
       obj.children = children;
     }
     // If the only child is an empty string, set no children
-    if (obj.children.length === 1 && obj.children[0] === '') {
-      obj.children.length = 0;
+    if (obj.children.length === 1 && obj.children.at(0) === '') {
+      obj.children.clear();
     }
     // Process child nodes
-    for (i = obj.children.length; i--;) {
-      obj.children[i] = this.processObject(obj.children[i]);
-    }
+    var processedChildren = obj.children.map(this.processObject);
+    obj.children.recycle();
+    obj.children = processedChildren;
   }
 
   var pushingTo;
   if (this.stack.length > 0) {
-    pushingTo = this.stack[this.stack.length - 1].children;
+    pushingTo = this.stack.peek().children;
   } else {
     pushingTo = this.result;
     obj = this.processObject(obj);
   }
 
-  // Combine adjacent strings
-  if (typeof obj === 'string' && typeof pushingTo[pushingTo.length - 1] === 'string') {
-    pushingTo[pushingTo.length - 1] += obj;
-  } else {
-    pushingTo.push(obj);
-  }
+  pushingTo.push(obj);
 };
 
 DefaultStack.prototype.createObject = function(obj, options) {
@@ -166,17 +162,18 @@ DefaultStack.prototype.getOutput = function() {
   while (this.stack.length) {
     this.closeElement(this.peek());
   }
-  for (var i = this.result.length; i--;) {
-    this.result[i] = this.processObject(this.result[i]);
-  }
+  var result = this.result.map(this.processObject);
+  this.result.recycle();
+  this.result = null;
   // If there is only one result, it's already been processed
   // For multiple results, allow Stacks to process array
-  return this.result.length === 1 ? this.result[0] : this.processArrayOutput(this.result);
+  return result.length === 1 ? result[0] : this.processArrayOutput(result);
 };
 
 DefaultStack.prototype.clear = function() {
-  this.result = [];
-  this.stack = [];
+  if (!this.result) {
+    this.result = stackPool.allocate();
+  }
 };
 
 /* develblock:start */

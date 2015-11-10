@@ -61,8 +61,7 @@ Template.prototype._render = function(template, data, view, partials, stack) {
  * @return {String}      HTML string of the rendered template
  */
 Template.prototype.toString = function(data) {
-  var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
-  return this._render(templateToRender, data, null, this.partials, new ToHtmlString());
+  return this._render(this.templateObj, data, null, this.partials, new ToHtmlString());
 };
 /**
  * Outputs the template to a DocumentFragment
@@ -70,8 +69,7 @@ Template.prototype.toString = function(data) {
  * @return {Object}      DocumentFragment containing the template's DOM nodes
  */
 Template.prototype.toDom = function(data) {
-  var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
-  return this._render(templateToRender, data, null, this.partials, new ToDom());
+  return this._render(this.templateObj, data, null, this.partials, new ToDom());
 };
 /**
  * Outputs the template to a VirtualTree
@@ -79,7 +77,10 @@ Template.prototype.toDom = function(data) {
  * @return {Object}       VirtualTree representing the template
  */
 Template.prototype.toVdom = function(data) {
-  return this._render(this.templateObj, data, this.view, this.partials, new ToVdom());
+  var t = new window.Timer('toVdom');
+  var result =  this._render(this.templateObj, data, this.view, this.partials, new ToVdom());
+  t.check('done');
+  return result;
 };
 
 /**
