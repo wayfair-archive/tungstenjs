@@ -1834,6 +1834,20 @@ describe('base_model.js backbone nested functionality', function() {
     expect(changeEvents).to.equal(2);
   });
 
+  it('Should correctly pass changed attributes when setting attr', function() {
+    book.on('change', function(model) {
+      expect(model.changedAttributes()).to.deep.equal({foo: 'bar'});
+    });
+    book.set('foo', 'bar');
+  });
+
+  it('Should correctly pass changed attributes when setting nested attr', function() {
+    book.on('change', function(model) {
+      expect(model.changedAttributes()).to.deep.equal({author: {name: 'Andrew'}});
+    });
+    book.get('author').set({name: 'Andrew'});
+  });
+
   it('Should not fire a nested destroy event', function() {
     var destroyEvents = 0;
     book.on('destroy', function() {
@@ -2040,7 +2054,7 @@ describe('base_model.js backbone nested functionality', function() {
  * Derived and session property unit tests modified from ampersand-state
  * https://github.com/AmpersandJS/ampersand-state/blob/master/test/basics.js
  *    @license MIT
- *    Copyright © 2014 &yet, LLC and AmpersandJS contributors
+ *    Copyright 2014 &yet, LLC and AmpersandJS contributors
  *    Permission is hereby granted, free of charge, to any person obtaining a
  *    copy of this software and associated documentation files (the
  *    "Software"), to deal in the Software without restriction, including
