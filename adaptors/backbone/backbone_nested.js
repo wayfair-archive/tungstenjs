@@ -14,7 +14,7 @@
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * all copies or substantial portions of the Software.c
  *
  * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -47,48 +47,91 @@ var builtInEvents = {
   route: true
 };
 
-var bubbleEvent = function(parent, parentProp, args) {
+var bubbleEvent = function(parent, parentProp, args, bubblingModel) {
   var name = args[0];
   if (name.indexOf(' ') > -1) {
     // If a multiple events are passed in, split them up and recurse individually
     var names = name.split(/\s+/);
     for (var i = 0; i < names.length; i++) {
       var otherArgs = args.slice(1);
-      bubbleEvent(parent, parentProp, [names[i]].concat(otherArgs));
+      bubbleEvent(parent, parentProp, [names[i]].concat(otherArgs), bubblingModel);
     }
   } else if (name.indexOf(':') > -1) {
     // If we're bubbling a relation event, add this relation into the chain and bubble
     var splitName = name.split(':');
     splitName.splice(1, 0, parentProp);
     args[0] = splitName.join(':');
-    parent.trigger.apply(parent, args);
+    if (splitName[0] === 'change') {
+      triggerNestedChange(parent, bubblingModel, parentProp, args);
+    } else {
+      triggerModelEvent(parent, args);
+    }
   } else if (name === 'change') {
     // Change is unique because the first argument should be the model that was changed
     // Since we bubble a raw change event for each parent model, the first arg needs to change
     // Bubble relation changed with existing context
     args[0] = name + ':' + parentProp;
-    parent.trigger.apply(parent, args);
+    triggerModelEvent(parent, args);
     // Bubble root change with parent as context
     args[0] = name;
     args[1] = parent;
-    parent.trigger.apply(parent, args);
+    triggerNestedChange(parent, bubblingModel, parentProp, args);
   } else if (builtInEvents[name] === true) {
     // If it's a built-in non-change event, add the relation on and bubble
     args[0] = name + ':' + parentProp;
-    parent.trigger.apply(parent, args);
+    triggerModelEvent(parent, args);
   } else {
     // If it's a custom event, add the relation on and a raw form bubble
     args[0] = name + ' ' + name + ':' + parentProp;
-    parent.trigger.apply(parent, args);
+    triggerModelEvent(parent, args);
   }
 };
+
+function triggerNestedChange(model, changingModel, parentProp, args) {
+  var changing = model._changing;
+  model._changing = true;
+  if (!changing) {
+    model._previousAttributes = _.clone(model.attributes);
+    model.changed = {};
+  }
+
+  if (changingModel.tungstenCollection) {
+    var numModels = changingModel.length;
+    model.changed[parentProp] = new Array(numModels);
+    for (var i = 0; i < numModels; i++) {
+      var collectionModel = changingModel.at(i);
+      if (collectionModel._changing) {
+        model.changed[parentProp][i] = collectionModel.changedAttributes();
+      }
+    }
+  } else if (changingModel.tungstenModel) {
+    model.changed[parentProp] = changingModel.changedAttributes();
+  } else {
+    logger.log(changingModel);
+  }
+
+  triggerModelEvent(model, args);
+  model._changing = false;
+}
+
+function triggerModelEvent(model, args) {
+  var a1 = args[0], a2 = args[1], a3 = args[2];
+  switch (args.length) {
+    case 0: model.trigger.call(model); return;
+    case 1: model.trigger.call(model, a1); return;
+    case 2: model.trigger.call(model, a1, a2); return;
+    case 3: model.trigger.call(model, a1, a2, a3); return;
+    default: model.trigger.apply(model, args); return;
+  }
+}
+
 
 var originalTrigger = Backbone.Events.trigger;
 var newTrigger = function() {
   originalTrigger.apply(this, arguments);
   // Collections naturally get events from their models so this only bubbles through relations
   if (this.parentProp && this.parent) {
-    bubbleEvent(this.parent, this.parentProp, Array.prototype.slice.call(arguments));
+    bubbleEvent(this.parent, this.parentProp, Array.prototype.slice.call(arguments), this);
   }
 };
 
