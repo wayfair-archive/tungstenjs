@@ -5,5 +5,6 @@ module.exports = {
   panel: require('./window_manager'),
   vtreeToString: require('./vtree_to_string'),
   diffVtreeAndElem: require('./diff_dom_and_vdom'),
-  diff: require('./text_diff')
+  diff: require('./text_diff'),
+  timer: require('./timer')
 };
