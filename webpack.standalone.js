@@ -26,7 +26,7 @@ module.exports = webpackSettings({
   resolveLoader: {
     modulesDirectories: [path.join(__dirname, 'node_modules')]
   },
-  devtool: '#eval-source-map',
+  devtool: '#source-map',
   module: {
     loaders: []
   },
