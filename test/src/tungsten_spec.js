@@ -137,7 +137,7 @@ describe('tungsten.js public API', function() {
       };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
-      expect(tungsten.toString(vNode)).to.equal('<div class=" js-dom" style=""></div>');
+      expect(tungsten.toString(vNode)).to.equal('<div class=" js-dom"></div>');
     });
     it('should return a DOM string with styles', function() {
       var props = {
@@ -163,7 +163,7 @@ describe('tungsten.js public API', function() {
       };
       var children = [];
       var vNode = tungsten.createVNode('div', props, children);
-      expect(vNode.tagName).to.equal('DIV');
+      expect(vNode.tagName).to.equal('div');
       expect(vNode.properties).to.deep.equal({
         className: ' js-root',
         style: {}
@@ -182,14 +182,16 @@ describe('tungsten.js public API', function() {
       };
       var newTree = {};
       var patch = {};
+      var elem = {};
       spyOn(vdom, 'diff').and.returnValue(patch);
-      spyOn(vdom, 'patch');
+      spyOn(vdom, 'patch').and.returnValue(elem);
       var result = tungsten.updateTree(container, initialTree, newTree);
 
       jasmineExpect(vdom.diff).toHaveBeenCalledWith(initialTree, newTree);
       jasmineExpect(vdom.patch).toHaveBeenCalledWith(container, patch);
       jasmineExpect(initialTree.recycle).toHaveBeenCalled();
-      expect(result).to.equal(newTree);
+      expect(result.vtree).to.equal(newTree);
+      expect(result.elem).to.equal(elem);
     });
   });
 });

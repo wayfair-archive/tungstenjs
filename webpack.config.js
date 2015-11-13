@@ -23,6 +23,11 @@ module.exports = {
   resolveLoader: {
     modulesDirectories: ['node_modules', path.join(__dirname, 'precompile')]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version)
+    })
+  ],
   module: {
     preLoaders: [
       {test: /\.js$/, loader: 'webpack-strip-block'}

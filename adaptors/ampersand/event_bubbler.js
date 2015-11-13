@@ -11,7 +11,7 @@ var getNewTrigger = function(base) {
       var names = name.split(/\s+/);
       for (var i = 0; i < names.length; i++) {
         var otherArgs = args.slice(1);
-        bubbleEvent(parent, [names[i]].concat(otherArgs));
+        bubbleEvent(parent, parentProp, [names[i]].concat(otherArgs));
       }
     } else if (name.indexOf(':') > -1) {
       // If we're bubbling a relation event, add this relation into the chain and bubble

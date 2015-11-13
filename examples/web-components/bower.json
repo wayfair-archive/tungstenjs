@@ -1,0 +1,27 @@
+{
+  "name": "tungstenjs-web-components",
+  "version": "0.2.0",
+  "homepage": "https://github.com/wayfair/tungstenjs",
+  "private": true,
+  "moduleType": [
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "google-map": "~1.0.3",
+    "paper-input": "PolymerElements/paper-input#~1.0.5",
+    "paper-drawer-panel": "https://github.com/andrewrota/paper-drawer-panel.git#master",
+    "paper-header-panel": "PolymerElements/paper-header-panel#~1.0.2",
+    "paper-toolbar": "PolymerElements/paper-toolbar#~1.0.2",
+    "paper-item": "PolymerElements/paper-item#~1.0.1",
+    "iron-selector": "PolymerElements/iron-selector#~1.0.2",
+    "iron-icon": "PolymerElements/iron-icon#~1.0.2",
+    "iron-icons": "PolymerElements/iron-icons#~1.0.3"
+  }
+}

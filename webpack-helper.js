@@ -1,8 +1,7 @@
 'use strict';
 /* global process, __dirname */
-
 var path = require('path');
-
+var webpack = require('webpack');
 function ensureLoader(loaders, test, loader) {
   for (var i = 0; i < loaders.length; i++) {
     var l = loaders[i];
@@ -37,7 +36,10 @@ module.exports = function(config, dev) {
       }
     }
   }
-
+  config.plugins = config.plugins || [];
+  config.plugins.push(new webpack.DefinePlugin({
+    TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version)
+  }));
   config.resolveLoader = config.resolveLoader || {};
   config.resolveLoader.modulesDirectories = config.resolveLoader.modulesDirectories || [];
 

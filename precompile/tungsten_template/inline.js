@@ -17,6 +17,7 @@ if (require && require.extensions) {
     var contents = fs.readFileSync(filename, 'utf8');
     var parsedTemplate = utils.compileTemplate(contents, module.src);
     var partials = utils.findPartials(parsedTemplate);
+    utils.handleSvg(parsedTemplate);
     utils.handleDynamicComments(parsedTemplate);
     var template = new Template(parsedTemplate);
 

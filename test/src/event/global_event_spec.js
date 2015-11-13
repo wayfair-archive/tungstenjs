@@ -20,7 +20,7 @@ describe('global_event.js public api', function () {
       var startingLength = globalEvents._eventHandlers.length;
       var fn = function() {};
       globalEvents.registerEventHandler(fn);
-      expect(globalEvents._eventHandlers.length).to.equal(startingLength + 1);
+      expect(globalEvents._eventHandlers).to.have.length(startingLength + 1);
       expect(globalEvents._eventHandlers[globalEvents._eventHandlers.length - 1]).to.equal(fn);
     });
   });

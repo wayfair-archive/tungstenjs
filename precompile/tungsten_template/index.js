@@ -22,6 +22,7 @@ module.exports = function(contents) {
   this.cacheable();
   var parsedTemplate = utils.compileTemplate(contents, module.src);
   var partials = utils.findPartials(parsedTemplate);
+  utils.handleSvg(parsedTemplate);
   utils.handleDynamicComments(parsedTemplate);
   var template = JSON.stringify(parsedTemplate);
 

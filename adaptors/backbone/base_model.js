@@ -157,7 +157,7 @@ var BaseModel = Backbone.Model.extend({
         prop = {
           key: key,
           data: {
-            isDerived: derived[key],
+            isDerived: !!derived[key],
             isEditable: isEditable(value),
             isEditing: false,
             value: value

@@ -8,17 +8,17 @@
  * @author Matt DeGennaro <mdegennaro@wayfair.com>
  * @license Apache-2.0
  */
+/*global TUNGSTENJS_VERSION */
 'use strict';
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');
 var virtualHyperscript = require('./vdom/virtual_hyperscript');
-var htmlToVdom = require('./template/html_to_vdom');
+var htmlParser = require('./template/html_parser');
 
 var vdom = virtualDomImplementation.vdom;
 var exports = {};
 
-var packageJson = require('../package.json');
-exports.VERSION = packageJson.version;
+exports.VERSION = typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null;
 
 exports.IS_DEV = false;
 
@@ -38,19 +38,27 @@ exports.unbindEvent = globalEvents.unbindVirtualEvent;
 
 function updateTree(container, initialTree, newTree) {
   var patch = vdom.diff(initialTree, newTree);
-  vdom.patch(container, patch);
+  var elem = vdom.patch(container, patch);
   // Repool VDom used in initial tree
   initialTree.recycle();
-  return newTree;
+  return {
+    vtree: newTree,
+    elem: elem
+  };
 }
 
 /* develblock:start */
 exports.debug = require('./debug');
 /* develblock:end */
 
-exports.parseString = htmlToVdom;
+exports.parseString = function (htmlString) {
+  var VdomStack = require('./template/stacks/vdom');
+  var stack = new VdomStack();
+  htmlParser(htmlString, stack);
+  return stack.getOutput();
+};
 exports.parseDOM = function(elem) {
-  return htmlToVdom(elem.outerHTML);
+  return exports.parseString(elem.outerHTML);
 };
 // Methods to output the vtree as a browser-usable format
 // returns document fragment

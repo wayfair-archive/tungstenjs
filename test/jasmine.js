@@ -1,7 +1,6 @@
 /**
  * Run this file to execute tests
  */
-var doCoverage = false;
 var args = process.argv;
 for (var i = 0; i < args.length; i++) {
   if (args[i] === '--coverage') {
@@ -12,16 +11,20 @@ for (var i = 0; i < args.length; i++) {
 
 var Jasmine = require('jasmine');
 var jasmine = new Jasmine();
-if (doCoverage) {
-  var istanbulRunReports = require('./istanbul');
-  jasmine.onComplete(function() {
-    // Restore console functions so reports work
-    for (var name in global.console) {
-      console[name] = _console[name];
-    }
+var istanbulRunReports = require('./istanbul');
+jasmine.onComplete(function(passed) {
+  // Restore console functions so reports work
+  for (var name in global.console) {
+    console[name] = _console[name];
+  }
+  // if the tests were instrumented, run the reports
+  if (global.__coverage__) {
     istanbulRunReports();
-  });
-}
+  }
+
+  var failedTests = !passed;
+  process.exit(failedTests);
+});
 
 // Override console methods as spies
 // Allows test to run without output getting into test output

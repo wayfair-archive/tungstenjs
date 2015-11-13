@@ -31,10 +31,6 @@ var BaseView = AmpersandView.extend({
     }
     this.options = options || {};
 
-    // VTree is passable as an option if we are transitioning in from a different view
-    if (this.options.vtree) {
-      this.vtree = this.options.vtree;
-    }
     // Template object
     if (this.options.template) {
       this.compiledTemplate = this.options.template;
@@ -114,7 +110,7 @@ var BaseView = AmpersandView.extend({
       var self = this;
       if (!this.parentView) {
         runOnChange = _.bind(this.render, this);
-      } else if (!dataItem.parentProp && this.parentView.model !== dataItem) {
+      } else if (!dataItem.collection && !dataItem.parentProp && this.parentView.model !== dataItem) {
         // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
         runOnChange = function() {
           // trigger event on parent to start a render
@@ -408,7 +404,15 @@ var BaseView = AmpersandView.extend({
     // defaults to an empty object for context so that our view render won't fail
     var serializedModel = this.context || this.serialize();
     var initialTree = this.vtree || this.compiledTemplate.toVdom(this.serialize(), true);
-    this.vtree = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    var result = tungsten.updateTree(this.el, initialTree, this.compiledTemplate.toVdom(serializedModel));
+    this.vtree = result.vtree;
+    if (result.elem !== this.el) {
+      // Needed due to handling of the 'el' property in View constructor
+      var self = this;
+      setTimeout(function() {
+        self.el = result.elem;
+      }, 0);
+    }
 
     // Clear any passed context
     this.context = null;
@@ -515,9 +519,9 @@ BaseView.extend = function(protoProps) {
   }
   for (var i = 0; i < methods.length; i++) {
     if (protoProps[methods[i]]) {
-      var msg = 'Model.' + methods[i] + ' may not be overridden';
+      var msg = 'View.' + methods[i] + ' may not be overridden';
       if (protoProps && protoProps.debugName) {
-        msg += ' for model "' + protoProps.debugName + '"';
+        msg += ' for view "' + protoProps.debugName + '"';
       }
       logger.warn(msg);
       // Replace attempted override with base version

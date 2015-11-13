@@ -99,9 +99,9 @@ BaseCollection.extend = function(protoProps) {
   }
   for (var i = 0; i < methods.length; i++) {
     if (protoProps[methods[i]]) {
-      var msg = 'Model.' + methods[i] + ' may not be overridden';
+      var msg = 'Collection.' + methods[i] + ' may not be overridden';
       if (protoProps && protoProps.debugName) {
-        msg += ' for model "' + protoProps.debugName + '"';
+        msg += ' for collection "' + protoProps.debugName + '"';
       }
       logger.warn(msg);
       // Replace attempted override with base version

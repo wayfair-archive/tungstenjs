@@ -1,0 +1,66 @@
+<div class='temperatures js-chart-view'>
+  <!-- header and options -->
+  <div class='chart-header'>
+    <h3>Average high and low temperature</h3>
+
+    <!-- switch between celsius and fahrenheit -->
+    <div class='radio-group'>
+      <label>°C <input type='radio' class="js-degree-type" name='degreeType' value='celsius' checked='checked'></label>
+      <label>°F <input type='radio' class="js-degree-type" name='degreeType' value='fahrenheit'></label>
+    </div>
+
+    <!-- dropdown menu -->
+    <select class="js-city-select">
+      {{#cities}}
+        <option>{{name}}</option>
+      {{/cities}}
+    </select>
+  </div>
+
+  <div class='chart'>
+    <div class='wrapper'> <!-- needed to determine size of SVG element in Firefox -->
+      <svg>
+
+        <!-- gradient - higher temperatures are redder, lower temperatures are bluer -->
+        <defs>
+          <linearGradient id='gradient' x2='0' y2='100%' gradientUnits='userSpaceOnUse'>
+            <stop offset='0%' stop-color='rgb(255,0,0)' />
+            <stop offset='100%' stop-color='rgb(0,0,255)' />
+          </linearGradient>
+        </defs>
+
+        <!-- horizontal line representing freezing -->
+        {{#freezing}}
+        <g transform='translate( 0, {{ yPos }} )'>
+          <line class='freezing' x2='1000'/>
+          <text class='freezing-label-bg' x='{{ xPos }}' y='0.3em'>freezing</text>
+          <text class='freezing-label' x='{{ xPos }}' y='0.3em'>freezing</text>
+        </g>
+        {{/freezing}}
+
+        <!-- the band -->
+        <polygon fill='url(#gradient)' stroke='url(#gradient)' class='temperature-band' points='{{points}}'/>
+
+        {{#temperatures}}
+          <!-- point markers for average highs -->
+          <g class='marker js-marker' transform='translate({{ xPos }},{{ high.yPos }})'>
+            <circle r='2'/>
+            <text y='-10'>{{ high.label }}</text>
+          </g>
+
+          <!-- point markers for average lows -->
+          <g class='marker js-marker' transform='translate({{ xPos }},{{ low.yPos }})'>
+            <circle r='2'/>
+            <text y='15'>{{ low.label }}</text>
+          </g>
+        {{/temperatures}}
+      </svg>
+    </div>
+
+    <div class='month-labels'>
+      {{#monthNames}}
+        <span style='width: {{ monthWidth }}px;'>{{ . }}</span>
+      {{/monthNames}}
+    </div>
+  </div>
+</div>

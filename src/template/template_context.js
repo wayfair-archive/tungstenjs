@@ -15,10 +15,11 @@ var isArray = require('../utils/is_array');
  * maintaining a reference to the parent context.
  */
 function Context(view, parentContext) {
-  this.view = view;
+  this.view = view || {};
   this.cache = {
     '.': this.view
   };
+  this.parent = parentContext;
 
   // If parent context isn't passed, but the model has parents, build the chain
   this.initialize(view, parentContext);
@@ -39,6 +40,15 @@ Context.prototype.initialize = function() {};
  */
 Context.prototype.lookupValue = function() {
   throw 'Lookup function not set.';
+};
+
+Context.SUBVIEW_KEY = 'nested_content';
+
+/**
+ * Internal lookup function to intercept interesting lookups
+ */
+Context.prototype._lookupValue = function(view, name) {
+  return this.lookupValue(view, name);
 };
 
 /**
@@ -84,10 +94,18 @@ Context.prototype.push = function(view) {
 };
 
 /**
+ * Creates a new context using the given view with this context
+ * as the parent.
+ */
+Context.prototype.partial = function() {
+  return new Context(this.view);
+};
+
+/**
  * Returns the value of the given name in this context, traversing
  * up the context hierarchy if the value is absent in this context's view.
  */
-Context.prototype.lookup = function(name) {
+Context.prototype.lookup = function(name, stack) {
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
@@ -124,12 +142,12 @@ Context.prototype.lookup = function(name) {
         index = 0;
 
         while (value != null && index < names.length) {
-          value = this.lookupValue(value, names[index]);
+          value = this._lookupValue(value, names[index], stack);
           index += 1;
         }
       } else {
         // if it isn't a nested lookup, just grab it
-        value = this.lookupValue(context.view, name);
+        value = this._lookupValue(context.view, name, stack);
       }
 
       // If a value was found, break out

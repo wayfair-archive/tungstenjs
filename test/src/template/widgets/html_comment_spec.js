@@ -5,7 +5,7 @@ var HTMLCommentWidget = require('../../../../src/template/widgets/html_comment.j
 describe('html_comment.js public API', function() {
   it('should be a function', function() {
     expect(HTMLCommentWidget).to.be.a('function');
-    expect(HTMLCommentWidget.length).to.equal(1);
+    expect(HTMLCommentWidget).to.have.length(1);
   });
   describe('html_comment prototype', function() {
     var comment, text;
@@ -22,7 +22,7 @@ describe('html_comment.js public API', function() {
     describe('HtmlComment.init', function() {
       it('should have an init function', function() {
         expect(comment.init).to.be.a('function');
-        expect(comment.init.length).to.equal(0);
+        expect(comment.init).to.have.length(0);
         expect(comment.init).to.equal(HTMLCommentWidget.prototype.init);
       });
       it('should create an HTML comment node', function() {
@@ -34,7 +34,7 @@ describe('html_comment.js public API', function() {
     describe('HtmlComment.update', function() {
       it('should have an update function', function() {
         expect(comment.update).to.be.a('function');
-        expect(comment.update.length).to.equal(2);
+        expect(comment.update).to.have.length(2);
         expect(comment.update).to.equal(HTMLCommentWidget.prototype.update);
       });
       it('should update a node', function() {
@@ -55,7 +55,7 @@ describe('html_comment.js public API', function() {
     describe('HtmlComment.templateToString', function() {
       it('should have a templateToString function', function() {
         expect(comment.templateToString).to.be.a('function');
-        expect(comment.templateToString.length).to.equal(1);
+        expect(comment.templateToString).to.have.length(1);
         expect(comment.templateToString).to.equal(HTMLCommentWidget.prototype.templateToString);
       });
       it('should be able to create an escaped string', function() {

@@ -10,8 +10,8 @@ var tungsten = require('./../tungsten');
 var Context = require('./template_context');
 var logger = require('./../utils/logger');
 var ractiveTypes = require('./ractive_types');
-var htmlToVdom = require('./html_to_vdom');
-var FocusHook = require('./hooks/focus_hook');
+var htmlParser = require('./html_parser');
+var FocusHook = require('./hooks/autofocus');
 var exports = {};
 
 var HTMLCommentWidget = require('./widgets/html_comment');
@@ -46,7 +46,7 @@ function parseStringAttrs(templates, context) {
   if (stringAttrs === '') {
     return null;
   }
-  var node = htmlToVdom('<div ' + stringAttrs + '></div>');
+  var node = htmlParser('<div ' + stringAttrs + '></div>');
   return node.properties.attributes;
 }
 
@@ -58,7 +58,7 @@ function parseStringAttrs(templates, context) {
 function parseUnescapedString(value) {
   // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
   if (value.indexOf('<') > -1 || value.indexOf('&') > -1) {
-    return htmlToVdom(value);
+    return htmlParser(value);
   } else {
     return value;
   }
@@ -292,8 +292,10 @@ function renderVdom(template, context, partials, parentView, firstRender) {
         // If an element goes from an explicitly set value to null, it will use this value rather than error
         contentEditable: 'inherit'
       };
+
+      var isWebComponent = template.e.indexOf('-') > -1;
       var attributeHandler = function(values, attr) {
-        var propName = transformPropertyName(attr);
+        var propName = isWebComponent ? false : transformPropertyName(attr);
         var attrString = renderAttributeString(values, context);
         if (attributesOnly || propName === false) {
           properties.attributes = properties.attributes || {};
