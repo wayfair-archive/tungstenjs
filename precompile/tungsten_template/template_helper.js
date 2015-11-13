@@ -1,8 +1,10 @@
 'use strict';
+/*global Ractive */
 var _ = require('underscore');
 var template = require('../../src/template/template.js');
 function compileTemplates(rawTemplates) {
-  var compiledTemplates = {}, partialsList = {}, rawTemplates = rawTemplates || {};
+  var compiledTemplates = {}, partialsList = {};
+  rawTemplates = rawTemplates || {};
   var templateNames = Object.keys(rawTemplates);
 
   function parseTemplates(rawTemplates, templateNames, compiledTemplates) {
