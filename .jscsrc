@@ -76,13 +76,5 @@
         "for",
         "while",
         "do"
-    ],
-    "jsDoc": {
-        "checkParamNames": true,
-        "checkRedundantParams": true,
-        "requireParamTypes": true
-    },
-    "additionalRules": [
-        "node_modules/jscs-jsdoc/lib/rules/*.js"
     ]
 }
