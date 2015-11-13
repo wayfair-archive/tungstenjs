@@ -11,7 +11,7 @@ module.exports = webpackSettings({
   },
   output: {
     filename: path.join(__dirname, './dist/tungsten.[name].js'),
-    libraryTarget: 'var',
+    libraryTarget: 'umd',
     library: ['tungsten', '[name]']
   },
   resolve: {
@@ -26,7 +26,6 @@ module.exports = webpackSettings({
   resolveLoader: {
     modulesDirectories: [path.join(__dirname, 'node_modules')]
   },
-  devtool: '#eval-source-map',
   module: {
     loaders: []
   },
