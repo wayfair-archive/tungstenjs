@@ -1,7 +1,7 @@
 'use strict';
 /*global Ractive */
 var _ = require('underscore');
-var template = require('../../src/template/template.js');
+var Template = require('../../src/template/template.js');
 function compileTemplates(rawTemplates) {
   var compiledTemplates = {}, partialsList = {};
   rawTemplates = rawTemplates || {};
@@ -13,7 +13,7 @@ function compileTemplates(rawTemplates) {
         stripComments: false,
         preserveWhitespace: true
       });
-      compiledTemplates[templateNames[i]] = new template(parsed.t, partialsList);
+      compiledTemplates[templateNames[i]] = new Template(parsed.t, partialsList);
     }
   }
 
