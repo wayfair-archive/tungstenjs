@@ -63,7 +63,7 @@ var bubbleEvent = function(parent, parentProp, args, bubblingModel) {
     args[0] = splitName.join(':');
     if (splitName[0] === 'change') {
       triggerNestedChange(parent, bubblingModel, parentProp, args);
-    } else {
+    } else if (splitName[0] === 'update') {
       triggerModelEvent(parent, args);
     }
   } else if (name === 'change') {
@@ -97,7 +97,8 @@ function triggerNestedChange(model, changingModel, parentProp, args) {
 
   if (changingModel.tungstenCollection) {
     var numModels = changingModel.length;
-    model.changed[parentProp] = new Array(numModels);
+    // Use an array-like object to avoid sparseness
+    model.changed[parentProp] = { length: numModels };
     for (var i = 0; i < numModels; i++) {
       var collectionModel = changingModel.at(i);
       if (collectionModel._changing) {
@@ -475,6 +476,11 @@ exports.setNestedCollection = function(Collection) {
       return model.doSerialize();
     }));
   };
+
+  Collection.prototype._set = Collection.prototype.set;
+  Collection.prototype.set = function() {
+
+  }
 };
 
 module.exports = exports;
