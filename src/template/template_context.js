@@ -35,6 +35,11 @@ function Context(view, parentContext) {
  */
 Context.prototype.initialize = function() {};
 
+/*
+ * Subview Key
+ */
+Context.SUBVIEW_KEY = 'nested_content';
+
 /**
  * Default lookup function to clearly indicate that it wasn't set
  */
@@ -42,7 +47,9 @@ Context.prototype.lookupValue = function() {
   throw 'Lookup function not set.';
 };
 
-Context.SUBVIEW_KEY = 'nested_content';
+Context.ComponentWidget = function() {
+  throw 'ComponentWidget not set';
+};
 
 /**
  * Internal lookup function to intercept interesting lookups
@@ -221,6 +228,9 @@ Context.setAdapterFunctions = function(adaptor) {
   }
   if (typeof adaptor.lookupValue === 'function') {
     Context.prototype.lookupValue = adaptor.lookupValue;
+  }
+  if (typeof adaptor.ComponentWidget === 'function') {
+    Context.ComponentWidget = adaptor.ComponentWidget;
   }
 };
 
