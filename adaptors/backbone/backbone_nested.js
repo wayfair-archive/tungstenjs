@@ -476,11 +476,6 @@ exports.setNestedCollection = function(Collection) {
       return model.doSerialize();
     }));
   };
-
-  Collection.prototype._set = Collection.prototype.set;
-  Collection.prototype.set = function() {
-
-  }
 };
 
 module.exports = exports;
