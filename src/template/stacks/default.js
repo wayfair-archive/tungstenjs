@@ -7,6 +7,10 @@ var logger = require('../../utils/logger');
 // This sets a flag so that templates don't create them either
 var whitespaceOnlyRegex = /^\s*$/;
 var supportsWhitespaceTextNodes = (function() {
+  // if document isn't defined, we're running in node. so use whitespace nodes
+  if (typeof document === 'undefined') {
+    return true;
+  }
   var d = document.createElement('div');
   d.innerHTML = ' ';
   return d.childNodes.length === 1;
