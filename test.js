@@ -42,10 +42,58 @@ function processMustacheTokens(tokens) {
 
 function processMustacheString(str, parse) {
   var tokens = hogan.scan(str);
-  if (parse) {
-    tokens = hogan.parse(tokens, str);
-  }
   return tokens;
+}
+
+var types = {
+  INTERPOLATOR: 2,
+  TRIPLE: 3,
+  SECTION: 4,
+  INVERTED: 5,
+  ELEMENT: 7,
+  PARTIAL: 8,
+  COMMENT: 9
+};
+
+function processHoganObject(token) {
+  if (Array.isArray(token)) {
+    for (var i = 0; i < token.length; i++) {
+      token[i] = processHoganObject(token[i]);
+    }
+    return token;
+  }
+
+  switch (token.tag) {
+    case '#':
+      return {
+        type: types.SECTION,
+        value: token.n,
+        children: processHoganObject(token.nodes)
+      };
+    case '^':
+      return {
+        type: types.INVERTED,
+        value: token.n,
+        children: processHoganObject(token.nodes)
+      };
+    case '{':
+      return {
+        type: types.TRIPLE,
+        value: token.n
+      };
+    case '_v':
+      return {
+        type: types.INTERPOLATOR,
+        value: token.n
+      };
+    case '_t':
+      return token.text;
+  }
+}
+
+function processCompleteMustacheString(str) {
+  var tokens = hogan.parse(hogan.scan(str), str);
+  return processHoganObject(tokens);
 }
 
 var MustacheParser = function(cbs, opts) {
@@ -65,7 +113,7 @@ TemplateStack.prototype.setDynamicAttributes = function(value) {
   if (!elem.dynamicProperties) {
     elem.dynamicProperties = [];
   }
-  var tokens = processMustacheString(value, true);
+  var tokens = processCompleteMustacheString(value);
   elem.dynamicProperties.push(tokens);
 };
 
