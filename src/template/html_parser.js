@@ -1,28 +1,25 @@
 'use strict';
 
 var DefaultStack = require('./stacks/default');
-var entityMap = require('html-tokenizer/entity-map');
-// @TODO examine other tokenizers or parsers
-var Parser = require('html-tokenizer/parser');
+var Parser = require('htmlparser2').Parser;
 
 var defaultStack = new DefaultStack(true);
 var _stack;
 var parser = new Parser({
-  entities: entityMap
-});
-parser.on('open',  function(name, attributes) {
-  _stack.openElement(name, attributes);
-});
-parser.on('comment', function(text) {
-  _stack.createComment(text);
-});
-parser.on('text', function(text) {
-  _stack.createObject(text);
-});
-parser.on('close', function() {
-  var el = _stack.peek();
-  _stack.closeElement(el);
-});
+  onopentag: function(name, attributes) {
+    _stack.openElement(name, attributes);
+  },
+  oncomment: function(text) {
+    _stack.createComment(text);
+  },
+  ontext: function(text) {
+    _stack.createObject(text);
+  },
+  onclosetag: function() {
+    var el = _stack.peek();
+    _stack.closeElement(el);
+  }
+}, {decodeEntities: true});
 
 module.exports = function(html, stack) {
   if (stack) {
@@ -32,7 +29,7 @@ module.exports = function(html, stack) {
     _stack = defaultStack;
   }
 
-  parser.parse(html);
+  parser.end(html);
 
   if (!stack) {
     return _stack.getOutput();
