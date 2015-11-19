@@ -2,7 +2,7 @@
 var DefaultStack = require('./src/template/stacks/default');
 var htmlparser = require('htmlparser2');
 var hogan = require('hogan-express/node_modules/hogan.js/lib/compiler');
-var template = '{{! test }}<div class="{{class}}" {{#a}}{{#b}}data-foo="bar"{{/b}} data-bar="{{foo}}"{{/a}} {{{test}}}> {{#test}}fa<span>ff</span>ce{{/test}} <!-- break --> {{^test}}book{{/test}}</div>';
+var template = '{{! w/test }}<div class="{{class}}" {{#a}}{{#b}}data-foo="bar"{{/b}} data-bar="{{foo}}"{{/a}} {{{test}}}> {{#test}}fa<span>ff</span>ce{{/test}} <!--{{break}}--> {{> partial }} {{^test}}book{{/test}}</div>';
 
 var _stateBeforeAttributeName = htmlparser.Tokenizer.prototype._stateBeforeAttributeName;
 htmlparser.Tokenizer.prototype._stateBeforeAttributeName = function(c) {
@@ -35,27 +35,59 @@ htmlparser.Tokenizer.prototype._stateBeforeAttributeName = function(c) {
   }
 };
 
-function processMustacheTokens(tokens) {
-  // process token array into stack calls?
-  return tokens;
-}
-
-function processMustacheString(str, parse) {
-  var tokens = hogan.scan(str);
-  return tokens;
+function processMustacheString(str, stack) {
+  var tokens = hogan.scan(str).map(processHoganObject);
+  var token;
+  for (var i = 0; i < tokens.length; i++) {
+    token = tokens[i];
+    if (!token) {
+      continue;
+    }
+    if (typeof token === 'string' || token instanceof String) {
+      stack.createObject(token.toString());
+    } else {
+      switch (token.type) {
+        case types.INTERPOLATOR:
+        case types.TRIPLE:
+        case types.REFERENCE:
+        case types.PARTIAL:
+          stack.createObject(token);
+          break;
+        case types.SECTION:
+        case types.SECTION_UNLESS:
+          stack.stack.push(token);
+          break;
+        case types.CLOSING_TAG:
+          var elem = stack.peek();
+          if (elem.type === types.SECTION || elem.type === types.SECTION_UNLESS) {
+            stack.closeElement(elem);
+          } else {
+            throw new Error('closing ' + JSON.stringify(token) + ' from ' + JSON.stringify(elem));
+          }
+          break;
+        default:
+          throw new Error('unhandled Hogan token', JSON.stringify(token));
+      }
+    }
+  }
 }
 
 var types = {
-  INTERPOLATOR: 2,
-  TRIPLE: 3,
-  SECTION: 4,
-  INVERTED: 5,
-  ELEMENT: 7,
-  PARTIAL: 8,
-  COMMENT: 9
+  INTERPOLATOR: 2, // {{ }}
+  TRIPLE: 3, // {{{ }}}
+  SECTION: 4, // {{# }}
+  ELEMENT: 7, // <>
+  PARTIAL: 8, // {{> }}
+  COMMENT: 9, // {{! }}
+  CLOSING_TAG: 14, // {{/ }} 
+  REFERENCE: 30, // {{! w/ }}
+  SECTION_UNLESS: 51 // {{^ }}
 };
 
 function processHoganObject(token) {
+  if (!token) {
+    return token;
+  }
   if (Array.isArray(token)) {
     for (var i = 0; i < token.length; i++) {
       token[i] = processHoganObject(token[i]);
@@ -63,31 +95,50 @@ function processHoganObject(token) {
     return token;
   }
 
+  var obj;
   switch (token.tag) {
+    case '/':
+      obj = {};
+      obj.type = types.CLOSING_TAG;
+      obj.value = token.n;
+      return obj;
+    case '!':
+      if (token.n.indexOf('w/') > -1) {
+        obj = {};
+        obj.type = types.REFERENCE;
+        obj.value = processCompleteMustacheString(token.n);
+        return obj;
+      }
+      return null;
     case '#':
-      return {
-        type: types.SECTION,
-        value: token.n,
-        children: processHoganObject(token.nodes)
-      };
+      obj = {};
+      obj.type = types.SECTION;
+      obj.value = token.n.toString();
+      obj.children = processHoganObject(token.nodes || []);
+      return obj;
     case '^':
-      return {
-        type: types.INVERTED,
-        value: token.n,
-        children: processHoganObject(token.nodes)
-      };
+      obj = {};
+      obj.type = types.SECTION_UNLESS;
+      obj.value = token.n.toString();
+      obj.children = processHoganObject(token.nodes || []);
+      return obj;
     case '{':
-      return {
-        type: types.TRIPLE,
-        value: token.n
-      };
+      obj = {};
+      obj.type = types.TRIPLE;
+      obj.value = token.n.toString();
+      return obj;
+    case '>':
+      obj = {};
+      obj.type = types.PARTIAL;
+      obj.value = token.n.toString();
+      return obj;
     case '_v':
-      return {
-        type: types.INTERPOLATOR,
-        value: token.n
-      };
+      obj = {};
+      obj.type = types.INTERPOLATOR;
+      obj.value = token.n.toString();
+      return obj;
     case '_t':
-      return token.text;
+      return token.text.toString();
   }
 }
 
@@ -103,7 +154,8 @@ MustacheParser.prototype = new htmlparser.Parser();
 MustacheParser.prototype.constructor = MustacheParser;
 
 var TemplateStack = function() {
-  DefaultStack.call(this);
+  // always pass useAttributes
+  DefaultStack.call(this, true);
 };
 TemplateStack.prototype = new DefaultStack();
 TemplateStack.prototype.constructor = TemplateStack;
@@ -117,6 +169,55 @@ TemplateStack.prototype.setDynamicAttributes = function(value) {
   elem.dynamicProperties.push(tokens);
 };
 
+var templateKeys = {
+  type: 'type', // t
+  value: 'value', // r
+  children: 'children', // f
+  tagName: 'tagName', // e
+  properties: 'properties', // a
+  dynamicProperties: 'dynamicProperties' // m
+};
+
+TemplateStack.prototype.processObject = function(obj) {
+  if (typeof obj === 'string') {
+    return obj;
+  }
+  var processed = {};
+  switch (obj.type) {
+    case 'node':
+      processed[templateKeys.type] = types.ELEMENT;
+      processed[templateKeys.tagName] = obj.tagName;
+      if (obj.properties && Object.keys(obj.properties).length > 0) {
+        processed[templateKeys.properties] = obj.properties;
+      }
+      if (obj.dynamicProperties && obj.dynamicProperties.length > 0) {
+        processed[templateKeys.dynamicProperties] = obj.dynamicProperties;
+      }
+      if (obj.children && obj.children.length > 0) {
+        processed[templateKeys.children] = obj.children;
+      }
+      break;
+    case 'comment':
+      processed[templateKeys.type] = types.COMMENT;
+      processed[templateKeys.value] = obj.text;
+      break;
+    case types.INTERPOLATOR:
+    case types.TRIPLE:
+    case types.REFERENCE:
+      return obj;
+    case types.PARTIAL:
+    case types.SECTION:
+    case types.SECTION_UNLESS:
+      processed[templateKeys.type] = obj.type;
+      processed[templateKeys.value] = obj.value;
+      if (obj.children && obj.children.length > 0) {
+        processed[templateKeys.children] = obj.children;
+      }
+      break;
+  }
+  return processed;
+};
+
 var stack = new TemplateStack();
 
 var parser = new MustacheParser({
@@ -126,23 +227,28 @@ var parser = new MustacheParser({
   },
   onopentag: function(name, attrs) {
     delete attrs.__dyn__;
-    // console.log('open', name, attrs);
     stack.openElement(name, attrs);
-    stack.setDynamicAttributes(parser._tokenizer._dynamicAttributes.join(''));
+    if (parser._tokenizer._dynamicAttributes.length) {
+      stack.setDynamicAttributes(parser._tokenizer._dynamicAttributes.join(''));
+    }
   },
   onattribute: function(name, value) {
     if (parser._tokenizer._dynamicAttributeDepth > 0) {
       parser._tokenizer._dynamicAttributes.push(' ' + name + '="' + value + '"');
       parser._attribname = '__dyn__';
     } else {
-      parser._attribs[name] = value;
+      var parsedValue = processCompleteMustacheString(value);
+      if (parsedValue.length === 1 && typeof parsedValue[0] === 'string') {
+        parsedValue = parsedValue[0];
+      }
+      parser._attribs[name] = parsedValue;
     }
   },
   oncomment: function(text) {
-    stack.createComment(processMustacheString(text));
+    stack.createComment(processCompleteMustacheString(text));
   },
   ontext: function(text) {
-    stack.createObject(processMustacheString(text));
+    processMustacheString(text, stack);
   },
   onclosetag: function() {
     var el = stack.peek();
