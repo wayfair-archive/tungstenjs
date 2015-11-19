@@ -94,6 +94,9 @@ DefaultStack.prototype._closeElem = function(obj) {
     if (obj.children.length === 1 && obj.children[0] === '') {
       obj.children.length = 0;
     }
+  }
+
+  if (obj.children && obj.children.length) {
     // Process child nodes
     for (i = obj.children.length; i--;) {
       obj.children[i] = this.processObject(obj.children[i]);
@@ -169,9 +172,6 @@ DefaultStack.prototype.processArrayOutput = function(output) {
 DefaultStack.prototype.getOutput = function() {
   while (this.stack.length) {
     this.closeElement(this.peek());
-  }
-  for (var i = this.result.length; i--;) {
-    this.result[i] = this.processObject(this.result[i]);
   }
   // If there is only one result, it's already been processed
   // For multiple results, allow Stacks to process array
