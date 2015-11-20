@@ -52,7 +52,8 @@ var DraggableContainerView = BaseView.extend({
       for (var i = 0; i < childViews.length; i++) {
         dragEls.push(childViews[i].el);
       };
-      var dragModel = collection.at(_.indexOf(dragEls, el));
+      var originCollectionIndex = _.indexOf(dragEls, el);
+      var dragModel = collection.at(originCollectionIndex);
 
       destinationIndex = _.indexOf(container.childNodes, el);
 
@@ -68,10 +69,22 @@ var DraggableContainerView = BaseView.extend({
       }
 
       collection.remove(dragModel);
-      dragEls.splice(_.indexOf(dragEls, el), 1);
+      dragEls.splice(originCollectionIndex, 1);
 
-      collection.add(dragModel, {at:_.indexOf(dragEls, sibling)}); 
-      dragEls.splice(_.indexOf(dragEls, sibling), 0, el);
+      var destinationCollectionIndex = _.indexOf(dragEls, sibling);
+      collection.add(dragModel, {at: destinationCollectionIndex});
+      dragEls.splice(destinationCollectionIndex, 0, el);
+
+      self.trigger('draggableContainerChange', collection, originCollectionIndex, destinationCollectionIndex);
+    });
+
+    /**
+     * Needed to fix the whitespace issue with Dragula + Tungsten.
+     */
+    drake.on('cancel', function () {
+      if (container.childNodes[originIndex].nodeType === Node.TEXT_NODE && container.childNodes[originIndex + 2]) {
+        container.insertBefore(container.childNodes[originIndex], container.childNodes[originIndex + 2]);
+      }
     });
   }
 }, {
