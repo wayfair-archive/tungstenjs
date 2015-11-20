@@ -1,8 +1,10 @@
 'use strict';
+var fs = require('fs');
 var DefaultStack = require('./src/template/stacks/default');
 var htmlparser = require('htmlparser2');
 var hogan = require('hogan-express/node_modules/hogan.js/lib/compiler');
 var template = '{{! w/test }}<div class="{{class}}" {{#a}}{{#b}}data-foo="bar"{{/b}} data-bar="{{foo}}"{{/a}} {{{test}}}> {{#test}}fa<span>ff</span>ce{{/test}} <!--{{break}}--> {{> partial }} {{^test}}book{{/test}}</div>';
+template = fs.readFileSync('./examples/todomvc/templates/todo_app_view.mustache');
 
 var _stateBeforeAttributeName = htmlparser.Tokenizer.prototype._stateBeforeAttributeName;
 htmlparser.Tokenizer.prototype._stateBeforeAttributeName = function(c) {
@@ -36,6 +38,10 @@ htmlparser.Tokenizer.prototype._stateBeforeAttributeName = function(c) {
 };
 
 function processMustacheString(str, stack) {
+  if (str.indexOf('{{') === -1) {
+    stack.createObject(str);
+    return;
+  }
   var tokens = hogan.scan(str).map(processHoganObject);
   var token;
   for (var i = 0; i < tokens.length; i++) {
@@ -143,8 +149,13 @@ function processHoganObject(token) {
 }
 
 function processCompleteMustacheString(str) {
-  var tokens = hogan.parse(hogan.scan(str), str);
-  return processHoganObject(tokens);
+  if (str.indexOf('{{') === -1) {
+    return [str];
+  }
+  var scan = hogan.scan(str);
+  var tokens = hogan.parse(scan, str);
+  var processed = processHoganObject(tokens);
+  return processed.map(stack.processObject);
 }
 
 var MustacheParser = function(cbs, opts) {
@@ -166,16 +177,27 @@ TemplateStack.prototype.setDynamicAttributes = function(value) {
     elem.dynamicProperties = [];
   }
   var tokens = processCompleteMustacheString(value);
-  elem.dynamicProperties.push(tokens);
+  elem.dynamicProperties = elem.dynamicProperties.concat(tokens);
 };
 
 var templateKeys = {
   type: 'type', // t
   value: 'value', // r
+  commentValue: 'value', // c
   children: 'children', // f
   tagName: 'tagName', // e
   properties: 'properties', // a
   dynamicProperties: 'dynamicProperties' // m
+};
+// Ractive compatibility
+templateKeys = {
+  type: 't',
+  value: 'r',
+  commentValue: 'c',
+  children: 'f',
+  tagName: 'e',
+  properties: 'a',
+  dynamicProperties: 'm'
 };
 
 TemplateStack.prototype.processObject = function(obj) {
@@ -187,11 +209,11 @@ TemplateStack.prototype.processObject = function(obj) {
     case 'node':
       processed[templateKeys.type] = types.ELEMENT;
       processed[templateKeys.tagName] = obj.tagName;
-      if (obj.properties && Object.keys(obj.properties).length > 0) {
-        processed[templateKeys.properties] = obj.properties;
-      }
       if (obj.dynamicProperties && obj.dynamicProperties.length > 0) {
         processed[templateKeys.dynamicProperties] = obj.dynamicProperties;
+      }
+      if (obj.properties && Object.keys(obj.properties.attributes).length > 0) {
+        processed[templateKeys.properties] = obj.properties.attributes;
       }
       if (obj.children && obj.children.length > 0) {
         processed[templateKeys.children] = obj.children;
@@ -199,12 +221,14 @@ TemplateStack.prototype.processObject = function(obj) {
       break;
     case 'comment':
       processed[templateKeys.type] = types.COMMENT;
-      processed[templateKeys.value] = obj.text;
+      processed[templateKeys.commentValue] = obj.text;
       break;
     case types.INTERPOLATOR:
     case types.TRIPLE:
     case types.REFERENCE:
-      return obj;
+      processed[templateKeys.type] = obj.type;
+      processed[templateKeys.value] = obj.value;
+      break;
     case types.PARTIAL:
     case types.SECTION:
     case types.SECTION_UNLESS:
@@ -260,4 +284,4 @@ var parser = new MustacheParser({
 parser.write(template);
 parser.end();
 
-console.log(JSON.stringify(stack.getOutput(), null, '  '));
+console.log(JSON.stringify(stack.getOutput()));
