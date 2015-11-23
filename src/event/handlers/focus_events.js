@@ -33,7 +33,8 @@ module.exports = function(el, eventName, selector, method, options, bindVirtualE
     return bindVirtualEvent(el, eventNameMap[eventName], selector, method, options);
   }
 };
-if (window && window.isTest) {
+/*global TUNGSTENJS_IS_TEST */
+if (typeof TUNGSTENJS_IS_TEST !== 'undefined' && TUNGSTENJS_IS_TEST) {
   // Exposing value so that it can be overridden for testing
   module.exports.nativeFocusin = nativeFocusin;
 }
