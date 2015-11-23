@@ -14,7 +14,7 @@ function applyProperties(node, props) {
         var attrValue = propValue[attrName];
 
         if (attrValue !== undefined) {
-          node.setAttributeNS(null, attrName, attrValue);
+          node.setAttribute(attrName, attrValue);
         }
       }
     } else if (_.isObject(propValue)) {
