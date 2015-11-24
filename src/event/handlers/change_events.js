@@ -15,6 +15,7 @@ var defaultEvents = require('./default_events');
  */
 var changeDoesNotBubble = (function() {
   // Taken from https://github.com/jquery/jquery/blob/10399ddcf8a239acc27bdec9231b996b178224d3/test/data/jquery-1.9.1.js#L1443
+  // @license MIT
   var d = document.createElement('div');
   d.setAttribute('onchange', 't');
   return d.attributes.onchange && d.attributes.onchange.expando === true;
