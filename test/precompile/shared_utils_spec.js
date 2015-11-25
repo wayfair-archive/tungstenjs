@@ -55,12 +55,6 @@ describe('shared_utils.js public api', function() {
       var template = sharedUtils.compileTemplate('<!--{{a}}-->');
       expect(template).to.deep.equal([{
         t: 9,
-        c: '{{a}}'
-      }]);
-
-      sharedUtils.handleDynamicComments(template);
-      expect(template).to.deep.equal([{
-        t: 9,
         c: [{
           t: 2,
           r: 'a'
