@@ -85,7 +85,7 @@ var types = {
   ELEMENT: 7, // <>
   PARTIAL: 8, // {{> }}
   COMMENT: 9, // {{! }}
-  CLOSING_TAG: 14, // {{/ }} 
+  CLOSING_TAG: 14, // {{/ }}
   REFERENCE: 30, // {{! w/ }}
   SECTION_UNLESS: 51 // {{^ }}
 };
@@ -145,6 +145,10 @@ function processHoganObject(token) {
       return obj;
     case '_t':
       return token.text.toString();
+    case '\n':
+      return '\n';
+    default:
+      throw new Error('Unhandled type: ' + JSON.stringify(token.tag));
   }
 }
 
@@ -154,6 +158,7 @@ function processCompleteMustacheString(str) {
   }
   var scan = hogan.scan(str);
   var tokens = hogan.parse(scan, str);
+  console.log(tokens);
   var processed = processHoganObject(tokens);
   return processed.map(stack.processObject);
 }
@@ -281,7 +286,13 @@ var parser = new MustacheParser({
 }, {
   decodeEntities: true
 });
-parser.write(template);
-parser.end();
+// parser.write('<div class="test');
+// parser.write('">asdf</div>');
 
-console.log(JSON.stringify(stack.getOutput()));
+// parser.write(template);
+// parser.end();
+
+// console.log(JSON.stringify(stack.getOutput()));
+
+// console.log('\n\n');
+console.log(JSON.stringify(hogan.parse(hogan.scan(template.toString()))));
