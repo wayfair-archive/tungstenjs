@@ -1,5 +1,5 @@
 'use strict';
-
+var _ = require('underscore');
 var films = [
   {'title': 'Gladiator', 'year': '2000'},
   {'title': 'A Beautiful Mind', 'year': '2001'},
@@ -18,21 +18,4 @@ var films = [
   {'title': 'Birdman or (The Unexpected Virtue of Ignorance)', 'year': '2014'}
 ];
 
-// http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-function shuffle (array) {
-  var currentIndex = array.length;
-  var temporaryValue;
-  var randomIndex;
-
-  while (0 !== currentIndex) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
-
-module.exports = shuffle(films);
+module.exports = _.shuffle(films);

@@ -1,6 +1,7 @@
 var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
 var BaseView = TungstenBackboneBase.View;
 var FilmsView = require('./films_view');
+var _ = require('underscore');
 
 var AppView = BaseView.extend({
   childViews: {
@@ -12,7 +13,7 @@ var AppView = BaseView.extend({
   toggleYear: function () {
     var yearSpans = document.getElementsByClassName('year');
 
-    Array.prototype.forEach.call(yearSpans, function (yearSpan) {
+    _.each(yearSpans, function (yearSpan) {
       if (yearSpan.className.indexOf('hidden') >= 0) {
         yearSpan.className = 'year';
       } else {
