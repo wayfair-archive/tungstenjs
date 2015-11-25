@@ -1,7 +1,7 @@
 'use strict';
 
 var DefaultStack = require('./stacks/default');
-var Parser = require('htmlparser2').Parser;
+var Parser = require('htmlparser2/lib/Parser');
 
 var defaultStack = new DefaultStack(true);
 var _stack;
