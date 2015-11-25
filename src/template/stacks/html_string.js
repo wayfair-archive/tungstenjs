@@ -38,8 +38,17 @@ function escapeString(str) {
 HtmlStringStack.prototype.processObject = function(obj) {
   if (obj.type === 'node') {
     var htmlStr = '<' + obj.tagName;
+    // For HTML strings, a textarea's value is defined by it's childNode
+    // For everything else, it uses the value property
+    // Since .toString is used least by far, add the expense here
+    if (obj.tagName.toLowerCase() === 'textarea' && obj.properties.attributes && obj.properties.attributes.value) {
+      obj.children = [obj.properties.attributes.value];
+      obj.properties.attributes.value = null;
+    }
     _.each(obj.properties.attributes, function(value, name) {
-      htmlStr += ' ' + name + '="' + value + '"';
+      if (value != null) {
+        htmlStr += ' ' + name + '="' + value + '"';
+      }
     });
     if (obj.children.length) {
       htmlStr += '>';

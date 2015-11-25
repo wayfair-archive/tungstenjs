@@ -153,3 +153,23 @@ var specs = require('./get_template_spec_for_renderer');
 specs(toHtmlViaString);
 specs(toHtmlViaDom);
 specs(toHtmlViaVdom);
+
+describe('textarea value sets', function() {
+  var TEST_VALUE = 'testvalue';
+  var template = compiler('<textarea>{{value}}</textarea>');
+  it('should render to vdom with the value property', function() {
+    var output = template.toVdom({value: TEST_VALUE});
+    expect(output.children.length).to.equal(0);
+    expect(output.properties.value).to.equal(TEST_VALUE);
+  });
+  it('should render to dom with the value property', function() {
+    var output = template.toDom({value: TEST_VALUE});
+    expect(output.tagName.toLowerCase()).to.equal('textarea');
+    expect(output.childNodes.length).to.equal(0);
+    expect(output.value).to.equal(TEST_VALUE);
+  });
+  it('should render to string with a childNode', function() {
+    var output = template.toString({value: TEST_VALUE});
+    expect(output).to.equal('<textarea>' + TEST_VALUE + '</textarea>');
+  });
+});
