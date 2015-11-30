@@ -2,6 +2,8 @@
 
 var _ = require('underscore');
 
+var modelFunctions = ['trigger', 'set', 'get', 'has', 'on', 'off', 'listenTo', 'doSerialize'];
+
 /**
  * Similar to BackboneViewWidget, but more simplistic
  * @param {Function} ViewConstructor Constructor function for the view
@@ -15,11 +17,13 @@ function ComponentWidget(ViewConstructor, model, template, key) {
   this.template = template;
   this.key = key;
 
-  this.trigger = _.bind(model.trigger, model);
-  this.set = _.bind(model.set, model);
-  this.get = _.bind(model.get, model);
-  this.has = _.bind(model.has, model);
-  this.doSerialize = _.bind(model.doSerialize, model);
+  for (var i = 0; i < modelFunctions.length; i++) {
+    var fn = modelFunctions[i];
+    this[fn] = _.bind(model[fn], model);
+  }
+  this.idAttribute = 'key';
+  this.attributes = model.attributes;
+  this.cid = model.cid;
 }
 
 /**

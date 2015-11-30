@@ -24,7 +24,11 @@ var AppView = View.extend({
     });
   },
   handleClickClearCompleted: function() {
-    _.invoke(this.model.get('todoItems').where({completed: true}), 'destroy');
+    var todoItems = this.model.get('todoItems');
+    var remainingItems = todoItems.filter(function(model) {
+      return model.get('completed') !== true;
+    });
+    todoItems.reset(remainingItems);
     return false;
   },
   handleClickToggleAll: function(e) {

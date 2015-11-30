@@ -10,7 +10,6 @@ var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
 var ViewWidget = require('./backbone_view_widget');
 var ComponentWidget = require('./component_widget');
-var DumbComponentWidget = require('./dumb_component_widget');
 
 // Cached regex to split keys for `delegate`.
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -524,8 +523,6 @@ var BaseView = Backbone.View.extend({
       }
 
       subview = new ComponentWidget(View, subModel, Template, _.uniqueId('w_subview'));
-    } else {
-      subview = new DumbComponentWidget(Template, data);
     }
 
     model.set(prop, subview);
