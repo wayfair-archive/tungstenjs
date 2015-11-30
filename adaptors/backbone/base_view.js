@@ -105,6 +105,28 @@ var BaseView = Backbone.View.extend({
       this.initializeRenderListener(dataItem);
       this.postInitialize();
     }
+
+    // Bubble whitelisted events from components
+    var self = this;
+    _.each(this.attributes, function(attr) {
+        if (attr &&
+          attr.is_subview &&
+          attr.model &&
+          attr.model.constructor &&
+          attr.model.constructor.prototype &&
+          attr.model.constructor.prototype.exposedEvents
+        ) {
+          window.setTimeout(function() {
+            _.each(attr.model.constructor.prototype.exposedEvents, function(event) {
+              self.listenTo(attr.model, event, function() {
+                var args = Array.prototype.slice.call(arguments);
+                self.trigger.apply(self, [event].concat(args));
+              });
+            });
+          }, 0);
+        }
+    });
+
   },
   tungstenViewInstance: true,
   debouncer: null,
