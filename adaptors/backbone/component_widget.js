@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('underscore');
+
 /**
  * Similar to BackboneViewWidget, but more simplistic
  * @param {Function} ViewConstructor Constructor function for the view
@@ -12,6 +14,12 @@ function ComponentWidget(ViewConstructor, model, template, key) {
   this.model = model;
   this.template = template;
   this.key = key;
+
+  this.trigger = _.bind(model.trigger, model);
+  this.set = _.bind(model.set, model);
+  this.get = _.bind(model.get, model);
+  this.has = _.bind(model.has, model);
+  this.doSerialize = _.bind(model.doSerialize, model);
 }
 
 /**
@@ -25,14 +33,16 @@ ComponentWidget.prototype.type = 'Widget';
  * @return {Element} DOM node with the child view attached
  */
 ComponentWidget.prototype.init = function init() {
-  // toDom returns a DocumentFragment with one child node
-  var docFrag = this.template.toDom(this.model);
   this.view = new this.ViewConstructor({
     template: this.template,
     model: this.model,
-    el: docFrag
+    dynamicInitialize: true
   });
   return this.view.el;
+};
+
+ComponentWidget.prototype.nested_content = function() {
+  return this;
 };
 
 /**

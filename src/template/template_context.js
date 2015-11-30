@@ -35,11 +35,6 @@ function Context(view, parentContext) {
  */
 Context.prototype.initialize = function() {};
 
-/*
- * Subview Key
- */
-Context.SUBVIEW_KEY = 'nested_content';
-
 /**
  * Default lookup function to clearly indicate that it wasn't set
  */
