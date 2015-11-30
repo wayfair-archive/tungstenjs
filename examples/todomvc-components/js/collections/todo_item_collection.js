@@ -12,21 +12,11 @@ function itemIsHidden(item, filter) {
   return false;
 }
 
-var ComponentWidget = require('tungstenjs/adaptors/backbone').ComponentWidget;
-var ItemView = require('../views/todo_item_view');
-var itemTemplate = require('../../templates/todo_item_view.mustache');
-
 var Collection = require('tungstenjs/adaptors/backbone').Collection;
-var TodoItemModel = require('../models/todo_item_model');
+var ItemComponent = require('../../components/todo_item');
+
 var ItemCollection = Collection.extend({
-  model: function(data) {
-    if (data && data.constructor === ComponentWidget) {
-      return data;
-    }
-    var id = _.uniqueId('w_subview');
-    var model = new TodoItemModel(data);
-    return new ComponentWidget(ItemView, model, itemTemplate, id);
-  },
+  model: ItemComponent,
   filterItems: function(filterBy) {
     for (var i = this.length; i--;) {
       var model = this.at(i);

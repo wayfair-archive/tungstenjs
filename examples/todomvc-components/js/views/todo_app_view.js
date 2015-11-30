@@ -6,13 +6,11 @@
 var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
 var View = TungstenBackboneBase.View;
 var NewItemView = require('./todo_new_item_view');
-var TodoItemView = require('./todo_item_view');
 var _ = require('underscore');
 
 var AppView = View.extend({
   childViews: {
-    'js-new-todo': NewItemView,
-    'js-todo-item': TodoItemView
+    'js-new-todo': NewItemView
   },
   events: {
     'click .js-toggle-all': 'handleClickToggleAll',
