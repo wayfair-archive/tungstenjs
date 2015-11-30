@@ -9,6 +9,8 @@ var backboneNested = require('./backbone_nested');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
 
+var ComponentWidget = require('./component_widget');
+
 /**
  * BaseCollection
  *
@@ -21,6 +23,7 @@ var BaseCollection = Backbone.Collection.extend({
     /* develblock:start */
     this.initDebug();
     /* develblock:end */
+    this.attachComponents();
     this.postInitialize();
   },
 
@@ -32,6 +35,25 @@ var BaseCollection = Backbone.Collection.extend({
   initDebug: function() {
     tungsten.debug.registry.register(this);
     _.bindAll(this, 'getDebugName', 'getChildren');
+  },
+
+  attachComponents: function() {
+    // Bubble whitelisted events from components
+    this.each(function(model) {
+      if (ComponentWidget.isComponent(model)) {
+        if (model.model &&
+          model.model.constructor &&
+          model.model.constructor.prototype &&
+          model.model.constructor.prototype.exposedEvents) {
+          _.each(model.model.constructor.prototype.exposedEvents, function(event) {
+            self.listenTo(model.model, event, function() {
+              var args = Array.prototype.slice.call(arguments);
+              self.trigger.apply(self, [event].concat(args));
+            });
+          });
+        }
+      }
+    });
   },
 
   /**

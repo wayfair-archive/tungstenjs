@@ -16,7 +16,7 @@ function ComponentWidget(ViewConstructor, model, template, key) {
   this.ViewConstructor = ViewConstructor;
   this.model = model;
   this.template = template;
-  this.key = key;
+  this.key = key || _.uniqueId('w_subview');
 
   var i, fn;
   for (i = 0; i < modelFunctionsToMap.length; i++) {
@@ -114,6 +114,13 @@ ComponentWidget.prototype.update = function update(prev, elem) {
     // Call the update model to run and updates if the model has changed
     this.view.update(this.model);
   }
+};
+
+ComponentWidget.isComponent = function(obj) {
+  if (obj && obj.type === ComponentWidget.prototype.type && obj.model && obj.model.tungstenModel) {
+    return true;
+  }
+  return false;
 };
 
 module.exports = ComponentWidget;

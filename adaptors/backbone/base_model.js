@@ -7,6 +7,9 @@ var Backbone = require('backbone');
 var backboneNested = require('./backbone_nested');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
+
+var ComponentWidget = require('./component_widget');
+
 /**
  * BaseModel
  *
@@ -46,7 +49,27 @@ var BaseModel = Backbone.Model.extend({
         }
       });
     }
+    this.attachComponents();
     this.postInitialize(attributes, options);
+  },
+
+  attachComponents: function() {
+    // Bubble whitelisted events from components
+    _.each(this.attributes, function(attr) {
+      if (ComponentWidget.isComponent(attr)) {
+        if (attr.model &&
+          attr.model.constructor &&
+          attr.model.constructor.prototype &&
+          attr.model.constructor.prototype.exposedEvents) {
+          _.each(attr.model.constructor.prototype.exposedEvents, function(event) {
+            self.listenTo(attr.model, event, function() {
+              var args = Array.prototype.slice.call(arguments);
+              self.trigger.apply(self, [event].concat(args));
+            });
+          });
+        }
+      }
+    });
   },
 
   /* develblock:start */
