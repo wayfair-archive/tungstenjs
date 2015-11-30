@@ -6,10 +6,9 @@ var Model = require('./model');
 var View = require('./view');
 var template = require('./template.mustache');
 
-module.exports = function(data) {
+module.exports = function(data, options) {
   if (data && data.constructor === ComponentWidget) {
     return data;
   }
-  var model = new Model(data);
-  return new ComponentWidget(View, model, template);
+  return new ComponentWidget(View, new Model(data), template, options);
 };

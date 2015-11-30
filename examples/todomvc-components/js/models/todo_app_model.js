@@ -8,10 +8,12 @@ var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
 var Model = TungstenBackboneBase.Model;
 var TodoItemCollection = require('../collections/todo_item_collection.js');
 var TodoFilterCollection = require('../collections/todo_filter_collection.js');
+var ItemComponent = require('../../components/todo_item');
 var AppModel = Model.extend({
   relations: {
     todoItems: TodoItemCollection,
-    filters: TodoFilterCollection
+    filters: TodoFilterCollection,
+    test: ItemComponent
   },
   defaults: {
     todoItems: [],
