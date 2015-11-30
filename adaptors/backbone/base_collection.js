@@ -41,8 +41,12 @@ var BaseCollection = Backbone.Collection.extend({
     Backbone.Collection.prototype._addReference.call(this, model, options);
     if (ComponentWidget.isComponent(model) && model.model && model.model.exposedEvents) {
       var events = model.model.exposedEvents;
-      for (var i = 0; i < events.length; i++) {
-        this.bindExposedEvent(events[i], model);
+      if (events === true) {
+        model.model.on('all', this._onModelEvent, this);
+      } else if (events.length) {
+        for (var i = 0; i < events.length; i++) {
+          this.bindExposedEvent(events[i], model);
+        }
       }
     }
   },

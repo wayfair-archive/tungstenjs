@@ -237,11 +237,11 @@ exports.setNestedModel = function(Model) {
     this.set(attrs, opts);
   };
 
-  Model.prototype.bindExposedEvent = function(event, childComponent) {
+  Model.prototype.bindExposedEvent = function(event, prop, childComponent) {
     var self = this;
     self.listenTo(childComponent.model, event, function() {
       var args = Array.prototype.slice.call(arguments);
-      self.trigger.apply(self, [event].concat(args));
+      bubbleEvent(self, prop, [event].concat(args));
     });
   };
 
@@ -329,8 +329,13 @@ exports.setNestedModel = function(Model) {
         if (ComponentWidget.isComponent(val)) {
           if (val.model && val.model.exposedEvents) {
             var events = val.model.exposedEvents;
-            for (var i = 0; i < events.length; i++) {
-              this.bindExposedEvent(events[i], val);
+            if (events === true) {
+              val.model.parent = this;
+              val.model.parentProp = attr;
+            } else if (events.length) {
+              for (var i = 0; i < events.length; i++) {
+                this.bindExposedEvent(events[i], attr, val);
+              }
             }
           }
         }
