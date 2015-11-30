@@ -10,9 +10,10 @@ var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
  * @param {Function} ViewConstructor Constructor function for the view
  * @param {Object}   model           Model data
  * @param {Function} template        Template function
+ * @param {Object}   options         Options object from set call
  * @param {String}   key             VDom Key
  */
-function ComponentWidget(ViewConstructor, model, template, key) {
+function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.ViewConstructor = ViewConstructor;
   this.model = model;
   this.template = template;
@@ -31,6 +32,21 @@ function ComponentWidget(ViewConstructor, model, template, key) {
   this.idAttribute = 'key';
   this.attributes = model.attributes;
   this.cid = model.cid;
+
+  if (options && options.collection) {
+    this.collection = options.collection;
+  }
+
+  var self = this;
+  var _destroy = _.bind(this.model.destroy, this.model);
+  this.model.destroy = function(opts) {
+    if (self.collection) {
+      self.collection.remove(self);
+    } else if (self.parent) {
+      self.parent.unset(self.parentProp);
+    }
+    _destroy(opts);
+  };
 }
 
 /**
