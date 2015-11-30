@@ -23,8 +23,28 @@ var BaseCollection = Backbone.Collection.extend({
     /* develblock:start */
     this.initDebug();
     /* develblock:end */
-    this.attachComponents();
     this.postInitialize();
+  },
+
+  bindExposedEvent: function(event, childComponent) {
+    var self = this;
+    self.listenTo(childComponent.model, event, function() {
+      var args = Array.prototype.slice.call(arguments);
+      self.trigger.apply(self, [event].concat(args));
+      if (event.substr(0, 7) === 'change:') {
+        self.trigger('change', self);
+      }
+    });
+  },
+
+  _addReference: function(model, options) {
+    Backbone.Collection.prototype._addReference.call(this, model, options);
+    if (ComponentWidget.isComponent(model) && model.model && model.model.exposedEvents) {
+      var events = model.model.exposedEvents;
+      for (var i = 0; i < events.length; i++) {
+        this.bindExposedEvent(events[i], model);
+      }
+    }
   },
 
   /* develblock:start */
@@ -35,25 +55,6 @@ var BaseCollection = Backbone.Collection.extend({
   initDebug: function() {
     tungsten.debug.registry.register(this);
     _.bindAll(this, 'getDebugName', 'getChildren');
-  },
-
-  attachComponents: function() {
-    // Bubble whitelisted events from components
-    this.each(function(model) {
-      if (ComponentWidget.isComponent(model)) {
-        if (model.model &&
-          model.model.constructor &&
-          model.model.constructor.prototype &&
-          model.model.constructor.prototype.exposedEvents) {
-          _.each(model.model.constructor.prototype.exposedEvents, function(event) {
-            self.listenTo(model.model, event, function() {
-              var args = Array.prototype.slice.call(arguments);
-              self.trigger.apply(self, [event].concat(args));
-            });
-          });
-        }
-      }
-    });
   },
 
   /**

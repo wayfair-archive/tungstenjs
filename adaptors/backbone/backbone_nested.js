@@ -29,6 +29,8 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 var logger = require('../../src/utils/logger');
 
+var ComponentWidget = require('./component_widget');
+
 var exports = {};
 var BackboneModel = Backbone.Model,
   BackboneCollection = Backbone.Collection;
@@ -235,6 +237,14 @@ exports.setNestedModel = function(Model) {
     this.set(attrs, opts);
   };
 
+  Model.prototype.bindExposedEvent = function(event, childComponent) {
+    var self = this;
+    self.listenTo(childComponent.model, event, function() {
+      var args = Array.prototype.slice.call(arguments);
+      self.trigger.apply(self, [event].concat(args));
+    });
+  };
+
   Model.prototype.set = function(key, val, options) {
     var attr, attrs, unset, changes, silent, changing, prev, current;
     if (key == null) {
@@ -315,6 +325,15 @@ exports.setNestedModel = function(Model) {
         } else {
           current[attr] = val;
         }
+
+        if (ComponentWidget.isComponent(val)) {
+          if (val.model && val.model.exposedEvents) {
+            var events = val.model.exposedEvents;
+            for (var i = 0; i < events.length; i++) {
+              this.bindExposedEvent(events[i], val);
+            }
+          }
+        }
       }
     }
 
@@ -339,6 +358,7 @@ exports.setNestedModel = function(Model) {
     }
     this._pending = false;
     this._changing = false;
+
     return this;
   };
 
