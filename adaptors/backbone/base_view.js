@@ -29,6 +29,7 @@ var BaseView = Backbone.View.extend({
     if (!this.el) {
       return false;
     }
+    var self = this;
 
     this.options = options || {};
 
@@ -81,7 +82,6 @@ var BaseView = Backbone.View.extend({
 
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
-        var self = this;
         self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
         self.initializeRenderListener(dataItem);
         if (this.options.dynamicInitialize || this.options.vtree) {
@@ -107,24 +107,23 @@ var BaseView = Backbone.View.extend({
     }
 
     // Bubble whitelisted events from components
-    var self = this;
     _.each(this.attributes, function(attr) {
-        if (attr &&
-          attr.is_subview &&
-          attr.model &&
-          attr.model.constructor &&
-          attr.model.constructor.prototype &&
-          attr.model.constructor.prototype.exposedEvents
-        ) {
-          window.setTimeout(function() {
-            _.each(attr.model.constructor.prototype.exposedEvents, function(event) {
-              self.listenTo(attr.model, event, function() {
-                var args = Array.prototype.slice.call(arguments);
-                self.trigger.apply(self, [event].concat(args));
-              });
+      if (attr &&
+        attr.type === 'Widget' &&
+        attr.model &&
+        attr.model.constructor &&
+        attr.model.constructor.prototype &&
+        attr.model.constructor.prototype.exposedEvents
+      ) {
+        window.setTimeout(function() {
+          _.each(attr.model.constructor.prototype.exposedEvents, function(event) {
+            self.listenTo(attr.model, event, function() {
+              var args = Array.prototype.slice.call(arguments);
+              self.trigger.apply(self, [event].concat(args));
             });
-          }, 0);
-        }
+          });
+        }, 0);
+      }
     });
 
   },

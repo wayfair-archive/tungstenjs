@@ -2,7 +2,8 @@
 
 var _ = require('underscore');
 
-var modelFunctions = ['trigger', 'set', 'get', 'has', 'on', 'off', 'listenTo', 'doSerialize'];
+var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize'];
+var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
 
 /**
  * Similar to BackboneViewWidget, but more simplistic
@@ -17,9 +18,15 @@ function ComponentWidget(ViewConstructor, model, template, key) {
   this.template = template;
   this.key = key;
 
-  for (var i = 0; i < modelFunctions.length; i++) {
-    var fn = modelFunctions[i];
+  var i, fn;
+  for (i = 0; i < modelFunctionsToMap.length; i++) {
+    fn = modelFunctionsToMap[i];
     this[fn] = _.bind(model[fn], model);
+  }
+
+  for (i = 0; i < modelFunctionsToDummy.length; i++) {
+    fn = modelFunctionsToDummy[i];
+    this[fn] = _.noop;
   }
   this.idAttribute = 'key';
   this.attributes = model.attributes;
