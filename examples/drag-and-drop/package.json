@@ -1,15 +1,15 @@
 {
-  "name": "tungstenjs-dnd",
-  "version": "0.2.0",
+  "name": "tungstenjs-drag-and-drop",
+  "version": "0.1.0",
   "private": true,
   "main": "js/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "start": "node ../examples_server.js --example=dnd"
+    "start": "node ../examples_server.js --example=\"drag-and-drop\""
   },
   "dependencies": {
-    "dragula": "^3.3.0",
+    "dragula": "3.5.4",
     "underscore": "^1.8.3"
   }
 }
