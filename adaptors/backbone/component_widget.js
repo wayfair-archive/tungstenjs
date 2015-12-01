@@ -95,42 +95,10 @@ ComponentWidget.prototype.attach = function attach(elem) {
 };
 
 /**
- * Updates an existing childView
- * @param  {ComponentWidget} prev Widget instance from old VTree
- * @param  {Element}         elem DOM node to act upon
+ * Updates an existing childView;  should not be possible with
+ * components since they're standalone
  */
-ComponentWidget.prototype.update = function update(prev, elem) {
-  var vtree = null;
-  // If the previous tree was instantiated, check if it's usable
-  if (prev.view) {
-    if (this.ViewConstructor === prev.ViewConstructor) {
-      // if the two widgets have the same constructor, it's fully usable
-      this.view = prev.view;
-      this.view.setElement(elem);
-    } else {
-      // if they are different
-      //   save the vtree off so we can diff against what's on the DOM
-      vtree = prev.view.vtree;
-      //   and destroy the old one to remove events
-      prev.destroy();
-    }
-  }
-
-  // If the view for this instance isn't created, we need to make one
-  if (!this.view) {
-    // Pass in vtree from previous view, if available
-    // Constructing the view automatically calls render
-    this.view = new this.ViewConstructor({
-      el: elem,
-      model: this.model,
-      vtree: vtree,
-      template: this.template
-    });
-  } else {
-    // Call the update model to run and updates if the model has changed
-    this.view.update(this.model);
-  }
-};
+ComponentWidget.prototype.update = _.noop;
 
 ComponentWidget.isComponent = function(obj) {
   if (obj && obj.type === ComponentWidget.prototype.type && obj.model && obj.model.tungstenModel) {

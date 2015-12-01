@@ -42,9 +42,9 @@ describe('component_widget public api', function() {
     });
   });
   describe('update', function() {
-    it('should be a function', function() {
+    it('should be a noop function', function() {
       expect(ComponentWidget.prototype.update).to.be.a('function');
-      expect(ComponentWidget.prototype.update).to.have.length(2);
+      expect(ComponentWidget.prototype.update).to.equal(_.noop);
     });
 
   });
