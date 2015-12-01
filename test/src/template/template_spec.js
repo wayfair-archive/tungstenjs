@@ -173,7 +173,6 @@ describe('textarea value sets', function() {
     expect(output).to.equal('<textarea>' + TEST_VALUE + '</textarea>');
   });
 });
-
 describe('wrap', function() {
   it('should be able to access the ractive adaptor\'s wrap function', function() {
     var template = getTemplate('<div>{{value}}</div>');
@@ -183,7 +182,6 @@ describe('wrap', function() {
     expect(pWrappedTemplate.templateObj.e).to.equal('p');
   });
 });
-
 describe('attachView', function() {
   var template = getTemplate('<div>{{value}}</div>');
   var template2 = getTemplate('<div>{{value}}</div>');

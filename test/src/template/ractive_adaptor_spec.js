@@ -39,9 +39,7 @@ describe('ractive_adaptor.js public API', function() {
       expect(fakeWidgetConstructor.calls.count()).to.equal(1);
       fakeWidgetConstructor.calls.reset();
     });
-
   });
-
   describe('wrap', function() {
     var wrap = ractiveAdaptor.wrap;
     it('should be a function', function() {
