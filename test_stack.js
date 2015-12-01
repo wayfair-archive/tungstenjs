@@ -6,19 +6,19 @@ var templateKeys = {
   commentValue: 'value', // c
   children: 'children', // f
   tagName: 'tagName', // e
-  properties: 'properties', // a
-  dynamicProperties: 'dynamicProperties' // m
+  attributes: 'attributes', // a
+  dynamicAttributes: 'dynamicAttributes' // m
 };
 // Ractive compatibility
-templateKeys = {
-  type: 't',
-  value: 'r',
-  commentValue: 'c',
-  children: 'f',
-  tagName: 'e',
-  properties: 'a',
-  dynamicProperties: 'm'
-};
+// templateKeys = {
+//   type: 't',
+//   value: 'r',
+//   commentValue: 'c',
+//   children: 'f',
+//   tagName: 'e',
+//   attributes: 'a',
+//   dynamicAttributes: 'm'
+// };
 
 var types = {
   INTERPOLATOR: 2, // {{ }}
@@ -32,14 +32,8 @@ var types = {
   SECTION_UNLESS: 51 // {{^ }}
 };
 
-function TemplateStack(attributesOnly, startID, debugMode) {
-  this.propertyOpts = {
-    attributesOnly: attributesOnly,
-    useHooks: false
-  };
-  // If startID is passed in, append a separator
-  this.startID = typeof startID === 'string' ? (startID + '.') : '';
-  this.debugMode = debugMode;
+function TemplateStack() {
+  this.startID = '';
   this.result = [];
   this.stack = [];
 }
@@ -60,14 +54,19 @@ TemplateStack.prototype.getID = function() {
 };
 
 
-TemplateStack.prototype.openElement = function(tagName) {
+TemplateStack.prototype.openElement = function(type, value) {
   var elem = {
-    tagName: tagName,
-    attributes: {},
     children: [],
-    type: types.ELEMENT,
+    type: type,
     id: this.getID()
   };
+  if (type === types.ELEMENT) {
+    elem.tagName = value;
+    elem.attributes = [];
+    elem.isOpen = true;
+  } else {
+    elem.value = value;
+  }
   this.stack.push(elem);
 
   return elem;
@@ -79,15 +78,10 @@ TemplateStack.prototype.processObject = function(obj) {
   }
   var processed = {};
   switch (obj.type) {
-    case 'node':
+    case types.ELEMENT:
       processed[templateKeys.type] = types.ELEMENT;
       processed[templateKeys.tagName] = obj.tagName;
-      if (obj.dynamicProperties && obj.dynamicProperties.length > 0) {
-        processed[templateKeys.dynamicProperties] = obj.dynamicProperties;
-      }
-      if (obj.properties && Object.keys(obj.properties.attributes).length > 0) {
-        processed[templateKeys.properties] = obj.properties.attributes;
-      }
+      processed[templateKeys.attributes] = obj.attributes;
       if (obj.children && obj.children.length > 0) {
         processed[templateKeys.children] = obj.children;
       }
@@ -111,6 +105,10 @@ TemplateStack.prototype.processObject = function(obj) {
         processed[templateKeys.children] = obj.children;
       }
       break;
+    case 'attributename':
+    case 'attributevalue':
+    case 'attributeend':
+      processed = obj;
   }
   return processed;
 };
@@ -132,7 +130,12 @@ TemplateStack.prototype._closeElem = function(obj) {
 
   var pushingTo;
   if (this.stack.length > 0) {
-    pushingTo = this.stack[this.stack.length - 1].children;
+    var top = this.peek();
+    if (top.type === types.ELEMENT && top.isOpen) {
+      pushingTo = top.attributes;
+    } else {
+      pushingTo = top.children;
+    }
   } else {
     pushingTo = this.result;
     obj = this.processObject(obj);
@@ -158,6 +161,10 @@ TemplateStack.prototype.createComment = function(text) {
     type: 'comment',
     text: text
   });
+};
+
+TemplateStack.prototype.popElement = function() {
+  return this.stack.pop();
 };
 
 TemplateStack.prototype.closeElement = function(closingElem) {
@@ -211,3 +218,10 @@ TemplateStack.prototype.clear = function() {
 };
 
 module.exports = TemplateStack;
+
+function processAttributeArray(attrArray) {
+  var attrs = {
+    'static': {},
+    'dynamic': []
+  };
+}
