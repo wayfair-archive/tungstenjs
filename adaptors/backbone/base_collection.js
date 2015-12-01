@@ -79,7 +79,14 @@ var BaseCollection = Backbone.Collection.extend({
    * @return {Array} Whether this object has children
    */
   getChildren: function() {
-    return this.models;
+    return this.map(function(model) {
+      // Pull out component models
+      if (model.type === 'Widget' && model.model) {
+        return model.model;
+      } else {
+        return model;
+      }
+    });
   },
 
   /**

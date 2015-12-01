@@ -67,7 +67,8 @@ ComponentWidget.prototype.init = function init() {
   this.view = new this.ViewConstructor({
     template: this.template,
     model: this.model,
-    dynamicInitialize: true
+    dynamicInitialize: true,
+    isComponentView: true
   });
   return this.view.el;
 };
@@ -90,7 +91,8 @@ ComponentWidget.prototype.attach = function attach(elem) {
   this.view = new this.ViewConstructor({
     el: elem,
     model: this.model,
-    template: this.template
+    template: this.template,
+    isComponentView: true
   });
 };
 
@@ -106,5 +108,21 @@ ComponentWidget.isComponent = function(obj) {
   }
   return false;
 };
+
+/* develblock:start */
+/**
+ * Function to allow the Widget to control how it is viewed on the debug panel
+ * ChildViews are displayed as a clickable link
+ *
+ * @return {string} Debug panel version of this widget
+ */
+ComponentWidget.prototype.templateToString = function() {
+  if (!this.view) {
+    return;
+  }
+  var name = this.view.getDebugName();
+  return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
+};
+/* develblock:end */
 
 module.exports = ComponentWidget;

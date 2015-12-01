@@ -54,6 +54,10 @@ var BaseView = Backbone.View.extend({
     if (this.options.parentView) {
       this.parentView = this.options.parentView;
     }
+    // Indicator that this is the view of a component
+    if (this.options.isComponentView) {
+      this.isComponentView = this.options.isComponentView;
+    }
 
     /* develblock:start */
     this.initDebug();
