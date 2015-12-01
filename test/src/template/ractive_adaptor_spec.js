@@ -25,24 +25,6 @@ describe('ractive_adaptor.js public API', function() {
     it('should be a function', function() {
       expect(attach).to.be.a('function');
     });
-    /*it('should attempt to attach widgets', function() {
-      var template = getTemplate('<div>{{value}}</div>');
-      template.templateObj.root = false;
-      var template2 = getTemplate('<div><span class="js-testChildView1">{{value}}</span></div>');
-      template2.view = {
-        el: { nodeName: 'div' },
-        childViews: {
-          'js-testChildView1': function() {},
-          'js-testChildView2': function() {}
-        }
-      };
-      var fakeWidgetConstructor = function() {
-        return {};
-      };
-      var attached = attach(template.templateObj, template2.view, fakeWidgetConstructor, {});
-      expect(attached.view).to.not.equal(undefined);
-    });*/
-
   });
 
   describe('wrap', function() {
