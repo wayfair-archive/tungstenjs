@@ -68,10 +68,6 @@ ComponentWidget.prototype.init = function init() {
   return this.view.el;
 };
 
-ComponentWidget.prototype.nested_content = function() {
-  return this;
-};
-
 /**
  * Pass through to the view's destroy method
  */

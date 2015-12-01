@@ -35,12 +35,6 @@ describe('component_widget public api', function() {
       expect(ComponentWidget.prototype.init).to.have.length(0);
     });
   });
-  describe('nested_content', function() {
-    it('should be a function', function() {
-      expect(ComponentWidget.prototype.nested_content).to.be.a('function');
-      expect(ComponentWidget.prototype.nested_content).to.have.length(0);
-    });
-  });
   describe('update', function() {
     it('should be a noop function', function() {
       expect(ComponentWidget.prototype.update).to.be.a('function');

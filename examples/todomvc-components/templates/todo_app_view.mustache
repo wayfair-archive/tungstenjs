@@ -9,7 +9,7 @@
     <label for="toggle-all">Mark all as complete</label>
     <ul class="todo-list js-todo-list">
       {{#todoItems}}
-        {{{ nested_content }}}
+        {{{ . }}}
       {{/todoItems}}
     </ul>
   </section>
@@ -29,5 +29,5 @@
   </footer>
   {{/hasTodos}}
 
-  {{{test.nested_content}}}
+  {{{test}}}
 </div>
