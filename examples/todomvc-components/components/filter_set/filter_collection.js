@@ -11,5 +11,7 @@ var FilterCollection = Collection.extend({
       model.set('selected', model.get('hash') === filterBy);
     }
   }
+}, {
+  debugName: 'TodoFilterCollection'
 });
 module.exports = FilterCollection;

@@ -23,5 +23,7 @@ var ItemCollection = Collection.extend({
       model.set('hidden', itemIsHidden(model, filterBy));
     }
   }
+}, {
+  debugName: 'TodoItemComponentCollection'
 });
 module.exports = ItemCollection;

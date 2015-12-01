@@ -9,5 +9,7 @@ var ItemModel = Model.extend({
   relations: {
     filters: FilterCollection
   }
+}, {
+  debugName: 'TodoFilterSetModel'
 });
 module.exports = ItemModel;

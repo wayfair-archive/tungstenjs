@@ -3,16 +3,14 @@
 */
 'use strict';
 
+var ENTER_KEY = 13;
 var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
 var View = TungstenBackboneBase.View;
-var NewItemView = require('./todo_new_item_view');
 var _ = require('underscore');
 
 var AppView = View.extend({
-  childViews: {
-    'js-new-todo': NewItemView
-  },
   events: {
+    'keyup .js-new-todo': 'handleKeyup',
     'click .js-toggle-all': 'handleClickToggleAll',
     'click .js-clear-completed': 'handleClickClearCompleted'
   },
@@ -21,6 +19,12 @@ var AppView = View.extend({
     this.listenTo(this, 'filter', function(filterBy) {
       self.model.filter(filterBy);
     });
+  },
+  handleKeyup: function(e) {
+    if (e.which === ENTER_KEY && e.currentTarget.value !== '') {
+      this.model.trigger('addItem', e.currentTarget.value.trim());
+      e.currentTarget.value = '';
+    }
   },
   handleClickClearCompleted: function() {
     var todoItems = this.model.get('todoItems');

@@ -8,5 +8,7 @@ var ItemModel = Model.extend({
       completed: !this.get('completed')
     });
   }
+}, {
+  debugName: 'TodoItemModel'
 });
 module.exports = ItemModel;
