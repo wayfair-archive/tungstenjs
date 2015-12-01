@@ -9,6 +9,7 @@ require('./handlers/touch_events');
 var eventHandlers = [
   require('./handlers/document_events'),
   require('./handlers/focus_events'),
+  require('./handlers/change_events'),
   require('./handlers/mouseenter_events'),
   require('./handlers/window_events'),
   require('./handlers/intent_events'),
