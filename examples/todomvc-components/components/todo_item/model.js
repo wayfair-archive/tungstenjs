@@ -1,6 +1,3 @@
-/**
- * Todo App Demo for Tungsten.js
- */
 'use strict';
 
 var Model = require('tungstenjs/adaptors/backbone').Model;

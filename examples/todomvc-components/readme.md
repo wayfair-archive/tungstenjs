@@ -1,6 +1,6 @@
-# Tungsten.js + Backbone TodoMVC Example
+# Tungsten.js with Components + Backbone TodoMVC Example
 
-Example application showing how [TodoMVC](http://todomvc.com/) can be implemented with Tungsten.js and [Backbone.js](http://backbonejs.org/).
+Example application showing how [TodoMVC](http://todomvc.com/) can be implemented with Tungsten.js and [Backbone.js](http://backbonejs.org/), with a reusable a Tungsten.js component for each todo item.
 
 ## Run
 

@@ -1,6 +1,3 @@
-/**
-* Todo App Demo for Tungsten.js
-*/
 'use strict';
 
 
