@@ -90,6 +90,15 @@ var debugHelpers = {
  * as the parent.
  */
 Context.prototype.push = function(view) {
+  // If pushing a context, push its parent first, then it to ensure stack order
+  if (view && view.constructor && view instanceof Context) {
+    if (view.parent) {
+      var ctx = this.push(view.parent);
+      return ctx.push(view.view);
+    } else {
+      return this.push(view.view);
+    }
+  }
   return new Context(view, this);
 };
 
@@ -105,7 +114,7 @@ Context.prototype.partial = function() {
  * Returns the value of the given name in this context, traversing
  * up the context hierarchy if the value is absent in this context's view.
  */
-Context.prototype.lookup = function(name, stack) {
+Context.prototype.lookup = function(name, handleLambda) {
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
@@ -132,7 +141,7 @@ Context.prototype.lookup = function(name, stack) {
     value = cache[name];
   } else {
     var context = this;
-    var names, index;
+    var names, index, fnContext;
 
     while (context) {
       // If this is a nested lookup, upward lookups can't occur mid-lookup
@@ -142,16 +151,28 @@ Context.prototype.lookup = function(name, stack) {
         index = 0;
 
         while (value != null && index < names.length) {
-          value = this._lookupValue(value, names[index], stack);
+          fnContext = value;
+          value = this._lookupValue(value, names[index]);
           index += 1;
+          if (typeof value === 'function' && index < names.length) {
+            value = value.call(fnContext);
+          }
         }
       } else {
+        fnContext = context.view;
         // if it isn't a nested lookup, just grab it
-        value = this._lookupValue(context.view, name, stack);
+        value = this._lookupValue(context.view, name);
       }
 
       // If a value was found, break out
       if (value != null) {
+        if (typeof value === 'function') {
+          if (handleLambda) {
+            value = handleLambda(value, fnContext);
+          } else {
+            value = value.call(fnContext);
+          }
+        }
         break;
       }
 

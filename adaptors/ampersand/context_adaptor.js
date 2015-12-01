@@ -53,9 +53,6 @@ var lookupValue = function(view, name) {
     value = view[name];
   }
 
-  if (typeof value === 'function') {
-    value = value.call(view);
-  }
   return value;
 };
 

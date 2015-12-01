@@ -69,14 +69,11 @@ describe('context_adaptor.js public api', function() {
       expect(callLookup(collection, 'models')).to.be.null;
       expect(callLookup(collection, 'baz')).to.be.null;
     });
-    it('can execute functions', function() {
+    it('does not execute functions', function() {
       var view = {
-        _foo: {},
-        foo: function() {
-          return this._foo;
-        }
+        foo: function() {}
       };
-      expect(callLookup(view, 'foo')).to.equal(view._foo);
+      expect(callLookup(view, 'foo')).to.be.a.function;
       expect(callLookup(view, 'bar')).to.be.null;
     });
   });

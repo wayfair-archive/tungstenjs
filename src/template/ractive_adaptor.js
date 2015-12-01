@@ -131,7 +131,28 @@ function render(stack, template, context, partials, parentView) {
 
     // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
-      value = Context.parseValue(context.lookup(Context.getInterpolatorKey(template), stack));
+      var handleLambda = null;
+      var lambdaHandled = false;
+      if (template.n !== ractiveTypes.SECTION_UNLESS) {
+        // Section tags can be lambdas with contents
+        handleLambda = function(fn, ctx) {
+          // Create a template from the section's children
+          var tmpl = new (require('./template'))(template.f);
+          tmpl.context = context;
+          return fn.call(ctx, tmpl, function(template) {
+            lambdaHandled = true;
+            // Allow for either the template object or a custom replacement to be passed
+            var tmpl = template && template.templateObj ? template.templateObj : template;
+            return render(stack, tmpl, context, partials, parentView);
+          });
+        };
+      }
+      value = context.lookup(Context.getInterpolatorKey(template), handleLambda);
+      // if the render function passed into the lambda handler was invoked, don't process further
+      if (lambdaHandled) {
+        break;
+      }
+      value = Context.parseValue(value);
       if (template.n === ractiveTypes.SECTION_UNLESS) {
         if (!value.isTruthy) {
           render(stack, template.f, context, partials, parentView);

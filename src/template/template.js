@@ -42,6 +42,10 @@ Template.prototype.register = function(partialName) {
 
 Template.prototype._iterate = function(template, data, view, partials, stack) {
   var context = (data && data.constructor && data instanceof Context) ? data : new Context(data);
+  // If the template has declared context, ensure that it is within lookup scope but prioritize passed data
+  if (this.context) {
+    context = this.context.push(context);
+  }
   ractiveAdaptor.render(
     stack,
     template || this.templateObj,
