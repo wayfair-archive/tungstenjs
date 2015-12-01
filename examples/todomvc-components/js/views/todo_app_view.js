@@ -17,8 +17,9 @@ var AppView = View.extend({
     'click .js-clear-completed': 'handleClickClearCompleted'
   },
   postInitialize: function() {
-    this.on('filter', function(filterBy) {
-      this.model.filter(filterBy);
+    var self = this;
+    this.listenTo(this, 'filter', function(filterBy) {
+      self.model.filter(filterBy);
     });
   },
   handleClickClearCompleted: function() {
