@@ -1,7 +1,6 @@
 'use strict';
 
 var BackboneAdaptor = require('../../../adaptors/backbone');
-var logger = require('../../../src/utils/logger.js');
 var ComponentWidget = BackboneAdaptor.ComponentWidget;
 var _ = require('underscore');
 
@@ -23,6 +22,84 @@ describe('component_widget public api', function() {
       expect(obj.key).to.equal(key);
       expect(obj.ViewConstructor).to.equal(ViewConstructor);
     });
+    it('should map certain functions to the model', function() {
+      var template = {};
+      var fnsToCheck = ['get', 'set', 'trigger'];
+      var model = {};
+      var i, fn;
+      for (i = 0; i < fnsToCheck.length; i++) {
+        fn = fnsToCheck[i];
+        model[fn] = jasmine.createSpy('model.' + fn);
+      }
+      var ViewConstructor = function() {};
+
+      var obj = new ComponentWidget(ViewConstructor, model, template);
+      var params = {};
+      for (i = 0; i < fnsToCheck.length; i++) {
+        fn = fnsToCheck[i];
+        expect(obj[fn]).to.be.a.function;
+        expect(obj[fn]).not.to.equal(model[fn]);
+        obj[fn](params);
+        jasmineExpect(model[fn]).toHaveBeenCalledWith(params);
+      }
+    });
+    it('should allow collection to be passed', function() {
+      var collection = {};
+      var obj = new ComponentWidget({}, {}, {}, {collection: collection});
+      expect(obj.collection).to.equal(collection);
+    });
+  });
+  describe('model.destroy', function() {
+    describe('should pass up the model\'s destroy event', function() {
+      it('for nothing', function() {
+        var modelDestroy = jasmine.createSpy('model.destroy');
+        var model = {
+          destroy: modelDestroy
+        };
+
+        var obj = new ComponentWidget({}, model, {});
+        expect(obj.model.destroy).not.to.equal(modelDestroy);
+        var opts = {};
+        obj.model.destroy(opts);
+        jasmineExpect(modelDestroy).toHaveBeenCalledWith(opts);
+      });
+      it('for collections', function() {
+        var modelDestroy = jasmine.createSpy('model.destroy');
+        var model = {
+          destroy: modelDestroy
+        };
+        var collection = {
+          remove: jasmine.createSpy('collection.remove')
+        };
+
+        var obj = new ComponentWidget({}, model, {}, {
+          collection: collection
+        });
+        expect(obj.model.destroy).not.to.equal(modelDestroy);
+        var opts = {};
+        obj.model.destroy(opts);
+        jasmineExpect(collection.remove).toHaveBeenCalledWith(obj);
+        jasmineExpect(modelDestroy).toHaveBeenCalledWith(opts);
+      });
+      it('for models', function() {
+        var modelDestroy = jasmine.createSpy('model.destroy');
+        var model = {
+          destroy: modelDestroy
+        };
+        var parent = {
+          unset: jasmine.createSpy('parent.unset')
+        };
+
+        var obj = new ComponentWidget({}, model, {});
+        obj.parent = parent;
+        obj.parentProp = 'foo';
+        expect(obj.model.destroy).not.to.equal(modelDestroy);
+        var opts = {};
+        obj.model.destroy(opts);
+        jasmineExpect(parent.unset).toHaveBeenCalledWith(obj.parentProp);
+        jasmineExpect(modelDestroy).toHaveBeenCalledWith(opts);
+      });
+    });
   });
   describe('type', function() {
     it('should be declared', function() {
@@ -33,6 +110,27 @@ describe('component_widget public api', function() {
     it('should be a function', function() {
       expect(ComponentWidget.prototype.init).to.be.a('function');
       expect(ComponentWidget.prototype.init).to.have.length(0);
+    });
+    it('should construct the view', function() {
+      var template = {};
+      var model = {};
+
+      var view = {
+        el: {}
+      };
+      var ViewConstructor = jasmine.createSpy('ViewConstructor').and.callFake(function(options) {
+        view.options = options;
+        return view;
+      });
+      var obj = new ComponentWidget(ViewConstructor, model, template);
+
+      var elem = obj.init();
+      expect(elem).to.equal(view.el);
+      expect(view.options).to.deep.equal({
+        template: template,
+        model: model,
+        dynamicInitialize: true
+      });
     });
   });
   describe('update', function() {

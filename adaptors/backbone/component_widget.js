@@ -17,12 +17,14 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.ViewConstructor = ViewConstructor;
   this.model = model;
   this.template = template;
-  this.key = key || _.uniqueId('w_subview');
+  this.key = key || _.uniqueId('w_component');
 
   var i, fn;
   for (i = 0; i < modelFunctionsToMap.length; i++) {
     fn = modelFunctionsToMap[i];
-    this[fn] = _.bind(model[fn], model);
+    if (typeof model[fn] === 'function') {
+      this[fn] = _.bind(model[fn], model);
+    }
   }
 
   for (i = 0; i < modelFunctionsToDummy.length; i++) {
@@ -37,16 +39,18 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
     this.collection = options.collection;
   }
 
-  var self = this;
-  var _destroy = _.bind(this.model.destroy, this.model);
-  this.model.destroy = function(opts) {
-    if (self.collection) {
-      self.collection.remove(self);
-    } else if (self.parent) {
-      self.parent.unset(self.parentProp);
-    }
-    _destroy(opts);
-  };
+  if (typeof this.model.destroy === 'function') {
+    var self = this;
+    var _destroy = _.bind(this.model.destroy, this.model);
+    this.model.destroy = function(opts) {
+      if (self.collection) {
+        self.collection.remove(self);
+      } else if (self.parent) {
+        self.parent.unset(self.parentProp);
+      }
+      _destroy(opts);
+    };
+  }
 }
 
 /**

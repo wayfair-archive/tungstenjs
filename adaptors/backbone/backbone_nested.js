@@ -298,6 +298,8 @@ exports.setNestedModel = function(Model) {
       this.id = attrs[this.idAttribute];
     }
 
+    var i, l;
+
     // For each `set` attribute, update or delete the current value.
     for (attr in attrs) {
       if (attrs.hasOwnProperty(attr)) {
@@ -333,7 +335,7 @@ exports.setNestedModel = function(Model) {
               val.model.parent = this;
               val.model.parentProp = attr;
             } else if (events.length) {
-              for (var i = 0; i < events.length; i++) {
+              for (i = 0; i < events.length; i++) {
                 this.bindExposedEvent(events[i], attr, val);
               }
             }
@@ -347,7 +349,7 @@ exports.setNestedModel = function(Model) {
       if (changes.length) {
         this._pending = true;
       }
-      for (var i = 0, l = changes.length; i < l; i++) {
+      for (i = 0, l = changes.length; i < l; i++) {
         this.trigger('change:' + changes[i], this, current[changes[i]], options);
       }
     }
