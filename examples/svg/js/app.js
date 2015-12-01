@@ -7,11 +7,7 @@ var elem = document.getElementById('appwrapper');
 var DemoModel = TungstenBackboneBase.Model.extend({
   relations: {
     clock: TungstenBackboneBase.Model,
-    chart: TungstenBackboneBase.Model.extend({
-      relations: {
-        temperatures: TungstenBackboneBase.Collection
-      }
-    })
+    chart: TungstenBackboneBase.Model
   }
 });
 
