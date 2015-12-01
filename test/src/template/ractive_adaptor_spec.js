@@ -25,6 +25,21 @@ describe('ractive_adaptor.js public API', function() {
     it('should be a function', function() {
       expect(attach).to.be.a('function');
     });
+    it('should attempt to attach widgets', function() {
+      var template = getTemplate('<div class="js-test {{foo}}">{{value}}</div><div class="js-not-test">{{value}}</div>');
+      var template2 = getTemplate('<div><span class="js-testChildView1">{{value}}</span></div>');
+      template2.view = {
+        el: { nodeName: 'div' },
+        childViews: {
+          'js-test': function() {}
+        }
+      };
+      var fakeWidgetConstructor = jasmine.createSpy('fakeWidgetConstructor').and.returnValue({});
+      attach(template.templateObj, template2.view, fakeWidgetConstructor, {});
+      expect(fakeWidgetConstructor.calls.count()).to.equal(1);
+      fakeWidgetConstructor.calls.reset();
+    });
+
   });
 
   describe('wrap', function() {
