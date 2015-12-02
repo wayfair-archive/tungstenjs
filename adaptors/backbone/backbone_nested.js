@@ -329,8 +329,8 @@ exports.setNestedModel = function(Model) {
         }
 
         if (ComponentWidget.isComponent(val)) {
-          if (val.model && val.model.exposedEvents) {
-            var events = val.model.exposedEvents;
+          if (val.exposedEvents) {
+            var events = val.exposedEvents;
             if (events === true) {
               val.model.parent = this;
               val.model.parentProp = attr;
@@ -375,8 +375,8 @@ exports.setNestedModel = function(Model) {
     if (this.has(attr)) {
       var val = this.get(attr);
       if (ComponentWidget.isComponent(val)) {
-        if (val.model && val.model.exposedEvents) {
-          var events = val.model.exposedEvents;
+        if (val.model && val.exposedEvents) {
+          var events = val.exposedEvents;
           if (events === true) {
             val.model.parent = null;
             val.model.parentProp = null;

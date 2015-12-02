@@ -57,8 +57,8 @@ var BaseCollection = Backbone.Collection.extend({
    */
   _addReference: function(model, options) {
     Backbone.Collection.prototype._addReference.call(this, model, options);
-    if (ComponentWidget.isComponent(model) && model.model && model.model.exposedEvents) {
-      var events = model.model.exposedEvents;
+    if (ComponentWidget.isComponent(model) && model.exposedEvents) {
+      var events = model.exposedEvents;
       if (events === true) {
         model.model.on('all', this._onModelEvent, this);
       } else if (events.length) {
@@ -76,8 +76,8 @@ var BaseCollection = Backbone.Collection.extend({
    * @param {Object} options
    */
   _removeReference: function(model, options) {
-    if (ComponentWidget.isComponent(model) && model.model && model.model.exposedEvents) {
-      var events = model.model.exposedEvents;
+    if (ComponentWidget.isComponent(model) && model.model && model.exposedEvents) {
+      var events = model.exposedEvents;
       if (events === true) {
         model.model.off('all', this._onModelEvent, this);
       } else if (events.length) {

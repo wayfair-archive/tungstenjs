@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
+var logger = require('../../src/utils/logger');
 
 var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize'];
 var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
@@ -19,13 +20,42 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.template = template;
   this.key = key || _.uniqueId('w_component');
 
+  // Start with generic model functions
+  var methodsToExpose = modelFunctionsToMap;
+  // Add any methods declared by the model
+  if (model.exposedFunctions && _.isArray(model.exposedFunctions)) {
+    methodsToExpose = methodsToExpose.concat(model.exposedFunctions);
+  }
+  // Add any methods declared by the component
+  if (options && options.exposedFunctions && _.isArray(options.exposedFunctions)) {
+    methodsToExpose = methodsToExpose.concat(options.exposedFunctions);
+  }
+  // dedupe
+  methodsToExpose = _.uniq(methodsToExpose);
+
   var i, fn;
-  // Map generic model functions up to the component
-  for (i = 0; i < modelFunctionsToMap.length; i++) {
-    fn = modelFunctionsToMap[i];
+  for (i = 0; i < methodsToExpose.length; i++) {
+    fn = methodsToExpose[i];
     if (typeof model[fn] === 'function') {
-      this[fn] = _.bind(model[fn], model);
+      if (typeof this[fn] === 'undefined') {
+        this[fn] = _.bind(model[fn], model);
+      } else {
+        logger.warn('Cannot overwrite component method: ' + fn);
+      }
     }
+  }
+
+  if (options && options.exposedEvents === true || model.exposedEvents === true) {
+    this.exposedEvents = true;
+  } else {
+    this.exposedEvents = [];
+    if (options.exposedEvents && _.isArray(options.exposedEvents)) {
+      this.exposedEvents = this.exposedEvents.concat(options.exposedEvents);
+    }
+    if (model.exposedEvents && _.isArray(model.exposedEvents)) {
+      this.exposedEvents = this.exposedEvents.concat(model.exposedEvents);
+    }
+    this.exposedEvents = _.uniq(this.exposedEvents);
   }
 
   // Other model functions should be present, but noops
@@ -38,20 +68,9 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.attributes = model.attributes;
   this.cid = model.cid;
 
-  if (options) {
+  if (options && options.collection) {
     // If passed a collection during construction, save a reference
-    if (options.collection) {
-      this.collection = options.collection;
-    }
-    // If passed an array of functions, publicly expose those
-    if (options.modelFunctions && options.modelFunctions.length) {
-      for (i = 0; i < options.modelFunctions.length; i++) {
-        fn = options.modelFunctions[i];
-        if (typeof model[fn] === 'function') {
-          this[fn] = _.bind(model[fn], model);
-        }
-      }
-    }
+    this.collection = options.collection;
   }
 
   // Ensure that destroying the model destroys the component
