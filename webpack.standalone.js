@@ -7,11 +7,11 @@ module.exports = webpackSettings({
     'backbone': path.join(__dirname, './adaptors/backbone'),
     'ampersand': path.join(__dirname, './adaptors/ampersand'),
     'core': path.join(__dirname, './tungsten'),
-    'template': [path.join(__dirname, './src/template/template.js')]
+    'template': [path.join(__dirname, './precompile/tungsten_template/template_helper.js')]
   },
   output: {
     filename: path.join(__dirname, './dist/tungsten.[name].js'),
-    libraryTarget: 'var',
+    libraryTarget: 'umd',
     library: ['tungsten', '[name]']
   },
   resolve: {
@@ -26,7 +26,6 @@ module.exports = webpackSettings({
   resolveLoader: {
     modulesDirectories: [path.join(__dirname, 'node_modules')]
   },
-  devtool: '#eval-source-map',
   module: {
     loaders: []
   },
