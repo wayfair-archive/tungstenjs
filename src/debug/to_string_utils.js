@@ -21,7 +21,8 @@ module.exports.NODE_TYPES = {
 
 
 var entityMap = {};
-_.each(require('html-tokenizer/entity-map'), function(charCode, name) {
+// entities is the package used by htmlparser2
+_.each(require('entities/maps/entities.json'), function(charCode, name) {
   // Ignore whitespace only characters
   if (!/\s/.test(charCode)) {
     entityMap[charCode.charCodeAt(0)] = '&' + name.toLowerCase() + ';';

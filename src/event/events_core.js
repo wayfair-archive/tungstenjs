@@ -184,8 +184,11 @@ var falseHandler = function(evt) {
 /**
  * Function bound to all global level events
  */
-var defaultEventHandler = function(nativeEvent) {
+var defaultEventHandler = function(nativeEvent, typeOverride) {
   var evt = eventWrapper(nativeEvent);
+  if (typeOverride !== undefined) {
+    evt.type = typeOverride;
+  }
   var activePath = [];
   var elem = evt.target;
   var events;
@@ -298,4 +301,14 @@ module.exports.bindEventType = function(elem, type, handler) {
     data.boundEvents[type] = true;
     bindDomEvent(type, handler || defaultEventHandler, elem);
   }
+};
+
+/**
+ * Triggers the default handler function with a given event, allowing for the event type to be overridden
+ * This allows for non-standard handlers to be silently mapped to their standard equivalent
+ * @param  {Object} evt          Event object to trigger with
+ * @param  {String} typeOverride Event type to trigger instead of evt.type
+ */
+module.exports.triggerEvent = function(evt, typeOverride) {
+  defaultEventHandler(evt, typeOverride);
 };

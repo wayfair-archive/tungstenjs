@@ -19,6 +19,9 @@
 <script src="js/ENV.js"></script>
 <script type="text/javascript">
   function redraw() {
+    if (window.timing) {
+      window.counter++;
+    }
     table.setDBs(getDatabases());
     setTimeout(redraw, ENV.timeout);
   }

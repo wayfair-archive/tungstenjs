@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var BackboneAdaptor = require('../../../adaptors/backbone');
 var BaseModel = BackboneAdaptor.Model;
 var BaseCollection = BackboneAdaptor.Collection;
