@@ -4,6 +4,41 @@ var htmlparser = require('htmlparser2');
 var types = require('../ractive_types');
 var stack = require('./stack');
 
+// Taken from https://github.com/fb55/htmlparser2/blob/master/lib/Parser.js#L59
+var voidElements = {
+  __proto__: null,
+  area: true,
+  base: true,
+  basefont: true,
+  br: true,
+  col: true,
+  command: true,
+  embed: true,
+  frame: true,
+  hr: true,
+  img: true,
+  input: true,
+  isindex: true,
+  keygen: true,
+  link: true,
+  meta: true,
+  param: true,
+  source: true,
+  track: true,
+  wbr: true,
+
+  //common self closing svg elements
+  path: true,
+  circle: true,
+  ellipse: true,
+  line: true,
+  rect: true,
+  use: true,
+  stop: true,
+  polyline: true,
+  polygon: true
+};
+
 /*
  * Since htmlparser2 doesn't expose its states, run some tests to grep them
  */
@@ -71,6 +106,44 @@ MustacheParser.prototype.onattribend = function() {
   stack.createObject({
     type: 'attributeend'
   });
+};
+
+MustacheParser.prototype.onopentagname = function(name){
+  if(this._lowerCaseTagNames){
+    name = name.toLowerCase();
+  }
+
+  this._tagname = name;
+
+  if(!(name in voidElements)){
+    this._stack.push(name);
+  }
+
+  if(this._cbs.onopentagname) this._cbs.onopentagname(name);
+  if(this._cbs.onopentag) this._attribs = {};
+};
+
+MustacheParser.prototype.onclosetag = function(name){
+  this._updatePosition(1);
+
+  if(this._lowerCaseTagNames){
+    name = name.toLowerCase();
+  }
+
+  if(this._stack.length && (!(name in voidElements) || this._options.xmlMode)){
+    var pos = this._stack.lastIndexOf(name);
+    if(pos === this._stack.length - 1){
+      var el = this._stack.pop();
+      if(this._cbs.onclosetag){
+        this._cbs.onclosetag(el);
+      }
+    } else {
+      var current = this._stack[this._stack.length - 1];
+      throw new Error('Closing ' + name + ' tag where a closing ' + current + ' should be.');
+    }
+  } else {
+    throw new Error('Closing ' + name + ' tag with no paired open');
+  }
 };
 
 /**

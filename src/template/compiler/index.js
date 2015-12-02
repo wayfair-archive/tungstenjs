@@ -109,8 +109,12 @@ var getTemplate = function(template) {
   var tokenTree = hogan.parse(hogan.scan(template.toString()));
   processHoganObject(tokenTree);
   var output = {};
-  parser.end();
 
+  if (stack.stack.length > 0) {
+    throw new Error('Not all tags were closed properly: ' + JSON.stringify(stack.stack));
+  }
+
+  parser.end();
   output.templateObj = stack.getOutput();
   output.template = new Template(output.templateObj);
   output.source = template;

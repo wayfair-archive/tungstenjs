@@ -29,90 +29,80 @@ var selfClosing = {
 };
 
 // If any of the values are opened within the parent, the parent should be implicitly closed
-var impliedClose = {
-  li: {
-    li: true
-  },
-  dt: {
-    dt: true,
-    dd: true
-  },
-  dd: {
-    dt: true,
-    dd: true
-  },
-  p: {
-    address: true,
-    article: true,
-    aside: true,
-    blockquote: true,
-    div: true,
-    dl: true,
-    fieldset: true,
-    footer: true,
-    form: true,
-    h1: true,
-    h2: true,
-    h3: true,
-    h4: true,
-    h5: true,
-    h6: true,
-    header: true,
-    hgroup: true,
-    hr: true,
-    main: true,
-    menu: true,
-    nav: true,
-    ol: true,
-    p: true,
-    pre: true,
-    section: true,
-    table: true,
-    ul: true
-  },
-  rt: {
-    rt: true,
-    rp: true
-  },
-  rp: {
-    rt: true,
-    rp: true
-  },
-  optgroup: {
-    optgroup: true
-  },
-  option: {
-    option: true,
-    optgroup: true
-  },
-  thead: {
-    tbody: true,
-    tfoot: true
-  },
-  tbody: {
-    tbody: true,
-    tfoot: true
-  },
-  tfoot: {
-    tbody: true
-  },
-  tr: {
-    tr: true,
-    tbody: true
-  },
-  td: {
-    td: true,
-    th: true,
-    tr: true
-  },
-  th: {
-    td: true,
-    th: true,
-    tr: true
-  }
+var formTags = {
+  input: true,
+  option: true,
+  optgroup: true,
+  select: true,
+  button: true,
+  datalist: true,
+  textarea: true
+};
+
+var openImpliesClose = {
+  tr      : { tr:true, th:true, td:true },
+  th      : { th:true },
+  td      : { thead:true, th:true, td:true },
+  body    : { head:true, link:true, script:true },
+  li      : { li:true },
+  p       : { p:true },
+  h1      : { p:true },
+  h2      : { p:true },
+  h3      : { p:true },
+  h4      : { p:true },
+  h5      : { p:true },
+  h6      : { p:true },
+  select  : formTags,
+  input   : formTags,
+  output  : formTags,
+  button  : formTags,
+  datalist: formTags,
+  textarea: formTags,
+  option  : { option:true },
+  optgroup: { optgroup:true }
 };
 
 var allowedParents = {
+  body: {
+    html: true
+  },
+  li: {
+    ol: true,
+    ul: true
+  },
+  dt: {
+    dl: true
+  },
+  dd: {
+    dl: true
+  },
+  figcaption: {
+    figure: true
+  },
+  rb: {
+    ruby: true
+  },
+  rt: {
+    ruby: true,
+    rtc: true
+  },
+  rtc: {
+    ruby: true
+  },
+  rp: {
+    ruby: true
+  },
+  param: {
+    object: true
+  },
+  source: {
+    audio: true,
+    video: true
+  },
+  track: {
+    audio: true,
+    video: true
+  },
   tr: {
     thead: true,
     tbody: true,
@@ -171,6 +161,23 @@ var allowedParents = {
   },
   th: {
     tr: true
+  },
+  optgroup: {
+    select: true
+  },
+  option: {
+    select: true,
+    datalist: true,
+    optgroup: true
+  },
+  legend: {
+    fieldset: function(parent) {
+      // captions must be the first element
+      if (parent.children.length === 0) {
+        return true;
+      }
+      return 'A legend tag must be the first child of its fieldset';
+    }
   }
 };
 
@@ -184,7 +191,7 @@ var allowedParents = {
  * @return {Boolean}     Whether the close tag would be implied
  */
 function impliedCloseTag(tag, next) {
-  return impliedClose[tag] && impliedClose[tag][next] || false;
+  return openImpliesClose[next] && openImpliesClose[next][tag] || false;
 }
 
 function isAllowedChild(parent, child) {

@@ -9,7 +9,7 @@ var template = `{{! w/test }}
   {{^test}}book{{/test}}
 </div>`;
 
-template = `<table><caption></caption><tbody><tr></tr></tbody></table>`;
+template = `<div>1<div>23</div></div>`;
 // template = fs.readFileSync('/Users/deeg/Projects/tungstenjs/examples/svg/templates/chart_view.mustache').toString();
 
 var compiler = require('./src/template/compiler');
