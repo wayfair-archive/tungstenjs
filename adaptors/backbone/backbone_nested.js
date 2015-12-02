@@ -369,6 +369,28 @@ exports.setNestedModel = function(Model) {
     return this;
   };
 
+  // Remove an attribute from the model, firing `"change"`. `unset` is a noop
+  // if the attribute doesn't exist.
+  Model.prototype.unset = function(attr, options) {
+    if (this.has(attr)) {
+      var val = this.get(attr);
+      if (ComponentWidget.isComponent(val)) {
+        if (val.model && val.model.exposedEvents) {
+          var events = val.model.exposedEvents;
+          if (events === true) {
+            val.model.parent = null;
+            val.model.parentProp = null;
+          } else if (events.length) {
+            for (var i = 0; i < events.length; i++) {
+              this.stopListening(val.model, events[i]);
+            }
+          }
+        }
+      }
+    }
+    return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+  };
+
   Model.prototype.toJSON = function() {
     var attrs = this.attributes;
     var relations = _.result(this, 'relations') || {};

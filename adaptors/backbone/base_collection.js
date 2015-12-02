@@ -27,16 +27,34 @@ var BaseCollection = Backbone.Collection.extend({
   },
 
   bindExposedEvent: function(event, childComponent) {
-    var self = this;
-    self.listenTo(childComponent.model, event, function() {
+    this.listenTo(childComponent.model, event, function() {
       var args = Array.prototype.slice.call(arguments);
-      self.trigger.apply(self, [event].concat(args));
+      this.trigger.apply(this, [event].concat(args));
       if (event.substr(0, 7) === 'change:') {
-        self.trigger('change', self);
+        this.trigger('change', this);
       }
     });
   },
 
+  /**
+   * Method for checking whether an object should be considered a model for
+   * the purposes of adding to the collection.
+   *
+   * Overriding to allow ComponentWidgets to be treated as models
+   *
+   * @param  {Object}  model Model to check
+   * @return {Boolean}
+   */
+  _isModel: function(model) {
+    return Backbone.Collection.prototype._isModel(model) || model instanceof ComponentWidget;
+  },
+
+  /**
+   * Binds events when a model is added to a collection
+   *
+   * @param {Object} model
+   * @param {Object} options
+   */
   _addReference: function(model, options) {
     Backbone.Collection.prototype._addReference.call(this, model, options);
     if (ComponentWidget.isComponent(model) && model.model && model.model.exposedEvents) {
@@ -49,6 +67,26 @@ var BaseCollection = Backbone.Collection.extend({
         }
       }
     }
+  },
+
+  /**
+   * Unbinds events when a model is removed from a collection
+   *
+   * @param {Object} model
+   * @param {Object} options
+   */
+  _removeReference: function(model, options) {
+    if (ComponentWidget.isComponent(model) && model.model && model.model.exposedEvents) {
+      var events = model.model.exposedEvents;
+      if (events === true) {
+        model.model.off('all', this._onModelEvent, this);
+      } else if (events.length) {
+        for (var i = 0; i < events.length; i++) {
+          this.stopListening(model.model, events[i]);
+        }
+      }
+    }
+    Backbone.Collection.prototype._removeReference.call(this, model, options);
   },
 
   /* develblock:start */
