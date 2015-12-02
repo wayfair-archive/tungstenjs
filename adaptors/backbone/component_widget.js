@@ -20,6 +20,7 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.key = key || _.uniqueId('w_component');
 
   var i, fn;
+  // Map generic model functions up to the component
   for (i = 0; i < modelFunctionsToMap.length; i++) {
     fn = modelFunctionsToMap[i];
     if (typeof model[fn] === 'function') {
@@ -27,18 +28,33 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
     }
   }
 
+  // Other model functions should be present, but noops
   for (i = 0; i < modelFunctionsToDummy.length; i++) {
     fn = modelFunctionsToDummy[i];
     this[fn] = _.noop;
   }
+  // Setting some values for Collection use
   this.idAttribute = 'key';
   this.attributes = model.attributes;
   this.cid = model.cid;
 
-  if (options && options.collection) {
-    this.collection = options.collection;
+  if (options) {
+    // If passed a collection during construction, save a reference
+    if (options.collection) {
+      this.collection = options.collection;
+    }
+    // If passed an array of functions, publicly expose those
+    if (options.modelFunctions && options.modelFunctions.length) {
+      for (i = 0; i < options.modelFunctions.length; i++) {
+        fn = options.modelFunctions[i];
+        if (typeof model[fn] === 'function') {
+          this[fn] = _.bind(model[fn], model);
+        }
+      }
+    }
   }
 
+  // Ensure that destroying the model destroys the component
   if (typeof this.model.destroy === 'function') {
     var self = this;
     var _destroy = _.bind(this.model.destroy, this.model);

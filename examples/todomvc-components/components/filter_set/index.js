@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var ComponentWidget = require('tungstenjs/adaptors/backbone').ComponentWidget;
 
 var Model = require('./model');
@@ -10,5 +11,8 @@ module.exports = function(data, options) {
   if (data && data.constructor === ComponentWidget) {
     return data;
   }
+  options = _.defaults({
+    modelFunctions: ['selectFilter']
+  }, options);
   return new ComponentWidget(View, new Model(data), template, options);
 };

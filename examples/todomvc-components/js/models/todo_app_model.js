@@ -25,7 +25,7 @@ var AppModel = Model.extend({
   },
   filter: function(filterBy) {
     this.get('todoItems').filterItems(filterBy);
-    this.get('filter_set').model.selectFilter(filterBy);
+    this.get('filter_set').selectFilter(filterBy);
   },
   derived: {
     hasTodos: {
