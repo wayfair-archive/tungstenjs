@@ -10,15 +10,15 @@ var templateKeys = {
   dynamicAttributes: 'dynamicAttributes' // m
 };
 // Ractive compatibility
-// templateKeys = {
-//   type: 't',
-//   value: 'r',
-//   commentValue: 'c',
-//   children: 'f',
-//   tagName: 'e',
-//   attributes: 'a',
-//   dynamicAttributes: 'm'
-// };
+templateKeys = {
+  type: 't',
+  value: 'r',
+  commentValue: 'c',
+  children: 'f',
+  tagName: 'e',
+  attributes: 'a',
+  dynamicAttributes: 'm'
+};
 
 var types = {
   INTERPOLATOR: 2, // {{ }}
@@ -64,6 +64,8 @@ TemplateStack.prototype.openElement = function(type, value) {
     elem.tagName = value;
     elem.attributes = [];
     elem.isOpen = true;
+  } else if (type === 'comment') {
+    elem.children.push(value);
   } else {
     elem.value = value;
   }
@@ -81,13 +83,26 @@ TemplateStack.prototype.processObject = function(obj) {
     case types.ELEMENT:
       processed[templateKeys.type] = types.ELEMENT;
       processed[templateKeys.tagName] = obj.tagName;
-      processed[templateKeys.attributes] = obj.attributes;
+      var attrs = processAttributeArray(obj.attributes);
+      if (Object.keys(attrs.static).length > 0) {
+        processed[templateKeys.attributes] = attrs.static;
+      }
+      if (attrs.dynamic.length > 0) {
+        processed[templateKeys.dynamicAttributes] = attrs.dynamic;
+      }
       if (obj.children && obj.children.length > 0) {
         processed[templateKeys.children] = obj.children;
       }
       break;
     case 'comment':
       processed[templateKeys.type] = types.COMMENT;
+      if (obj.children && obj.children.length) {
+        if (obj.children.length === 1) {
+          obj.text = obj.children[0];
+        } else {
+          obj.text = obj.children;
+        }
+      }
       processed[templateKeys.commentValue] = obj.text;
       break;
     case types.INTERPOLATOR:
@@ -104,8 +119,13 @@ TemplateStack.prototype.processObject = function(obj) {
       if (obj.children && obj.children.length > 0) {
         processed[templateKeys.children] = obj.children;
       }
+      if (obj.type === types.SECTION_UNLESS) {
+        processed[templateKeys.type] = types.SECTION;
+        processed.n = types.SECTION_UNLESS;
+      }
       break;
     case 'attributename':
+    case 'attributenameend':
     case 'attributevalue':
     case 'attributeend':
       processed = obj;
@@ -174,22 +194,14 @@ TemplateStack.prototype.closeElement = function(closingElem) {
   if (openElem) {
     var openID = openElem.id;
     if (openID !== id) {
-      logger.warn(tagName + ' tags improperly paired, closing ' + openID + ' with close tag from ' + id);
-      openElem = this.stack.pop();
-      while (openElem && openElem.tagName !== tagName) {
-        this._closeElem(openElem);
-        openElem = this.stack.pop();
-      }
+      throw new Error(tagName + ' tags improperly paired, closing ' + openID + ' with close tag from ' + id);
     } else {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
     }
-  } else if (tagName === 'p') {
-    // For some reason a </p> creates an empty tag
-    this.closeElement(this.openElement('p', {}));
   } else {
     // Something has gone terribly wrong
-    logger.warn('Closing element ' + id + ' when the stack was empty');
+    throw new Error('Closing element ' + id + ' when the stack was empty');
   }
 };
 
@@ -219,9 +231,96 @@ TemplateStack.prototype.clear = function() {
 
 module.exports = TemplateStack;
 
+function mergeStrings(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    while (typeof arr[i] === 'string' && typeof arr[i + 1] === 'string') {
+      arr[i] += arr[i + 1];
+      arr.splice(i + 1, 1);
+    }
+  }
+  return arr;
+}
+
+function flattenAttributeValues(attrObject) {
+  if (Array.isArray(attrObject)) {
+    return attrObject.map(flattenAttributeValues);
+  } else if (attrObject.children) {
+    attrObject.children = mergeStrings(attrObject.children.map(flattenAttributeValues));
+    attrObject = TemplateStack.prototype.processObject(attrObject);
+  } else if (attrObject.type === 'attributenameend') {
+    attrObject = '="';
+  } else if (attrObject.type === 'attributeend') {
+    attrObject = '" ';
+  } else if (attrObject.type === 'attributename' || attrObject.type === 'attributevalue') {
+    attrObject = attrObject.value;
+  } else {
+    attrObject = TemplateStack.prototype.processObject(attrObject);
+  }
+  return attrObject;
+}
+
 function processAttributeArray(attrArray) {
   var attrs = {
     'static': {},
     'dynamic': []
   };
+  var name = [];
+  var value = [];
+  var item;
+  var pushingTo = name;
+  for (var i = 0; i < attrArray.length; i++) {
+    item = attrArray[i];
+    if (item.type === 'attributenameend') {
+      pushingTo = value;
+    } else if (item.type === 'attributeend') {
+      for (var j = 0; j < name.length; j++) {
+        if (typeof name[j] !== 'string') {
+          throw new Error('Mustache token cannot be in attribute names', name[j]);
+        }
+      }
+
+      if (name.length === 1) {
+        if (value.length) {
+          if (value.length === 1 && typeof value[0] === 'string') {
+            value = value[0];
+          }
+        } else {
+          value = true;
+        }
+        attrs.static[name[0]] = flattenAttributeValues(value);
+      } else {
+        attrs.dynamic = attrs.dynamic.concat(name.map(flattenAttributeValues));
+        if (value.length) {
+          attrs.dynamic.push('="');
+          attrs.dynamic = attrs.dynamic.concat(value.map(flattenAttributeValues));
+          attrs.dynamic.push('"');
+        }
+      }
+      name = [];
+      value = [];
+      pushingTo = name;
+    } else if (item.type === 'attributename' || item.type === 'attributevalue') {
+      if (item.value !== '') {
+        pushingTo.push(item.value);
+      }
+    } else if (pushingTo === name) {
+      if (name.length === 0) {
+        if (item.type === types.INTERPOLATOR) {
+          throw new Error('Double curly interpolators cannot be in attributes', item);
+        } else if (item.type === types.SECTION) {
+          attrs.dynamic.push(flattenAttributeValues(item));
+          continue;
+        }
+      }
+      pushingTo.push(item);
+    } else {
+      pushingTo.push(item);
+    }
+  }
+
+  attrs.dynamic = attrs.dynamic.concat(name.map(flattenAttributeValues));
+  attrs.dynamic = attrs.dynamic.concat(value.map(flattenAttributeValues));
+  mergeStrings(attrs.dynamic);
+
+  return attrs;
 }

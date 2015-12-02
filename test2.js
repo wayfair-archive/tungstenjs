@@ -1,10 +1,17 @@
 'use strict';
-var fs = require('fs');
 var TemplateStack = require('./test_stack');
 var htmlparser = require('htmlparser2');
-var hogan = require('hogan-express/node_modules/hogan.js/lib/compiler');
-var template = '{{! w/test }}<div class="{{class}}" {{#a}}{{#b}}data-foo="bar"{{/b}} data-bar="{{foo}}"{{/a}} {{{test}}}> {{#test}}fa<span>ff</span>ce{{/test}} <!--{{break}}--> {{> partial }} {{^test}}book{{/test}}</div>';
-template = fs.readFileSync('./examples/todomvc/templates/todo_app_view.mustache');
+var hogan = require('hogan.js/lib/compiler');
+var template = `{{! w/test }}
+<div selected class="{{class}}" {{#a}}{{#b}}data-{{c}}-a="bar"{{/b}} data-bar="{{foo}}"{{/a}} {{{test}}}>
+  {{#test}}fa<span>ff</span>ce{{/test}}
+  <!-- t{{break}}t-->
+  {{> partial }}
+  {{^test}}book{{/test}}
+</div>
+</span>
+`;
+// template = fs.readFileSync('./examples/todomvc/templates/todo_app_view.mustache');
 
 var types = {
   INTERPOLATOR: 2, // {{ }}
@@ -35,6 +42,8 @@ testParser.write('" attr=\'');
 var IN_ATTRIBUTE_VALUE_SQ = testParser._tokenizer._state;
 testParser.write('\' attr=val');
 var IN_ATTRIBUTE_VALUE_NQ = testParser._tokenizer._state;
+testParser.write('><!-- ');
+var IN_COMMENT = testParser._tokenizer._state;
 
 var ATTRIBUTE_STATES = {};
 ATTRIBUTE_STATES[BEFORE_ATTRIBUTE_NAME] = true;
@@ -43,72 +52,67 @@ ATTRIBUTE_STATES[AFTER_ATTRIBUTE_NAME] = true;
 ATTRIBUTE_STATES[IN_ATTRIBUTE_VALUE_DQ] = true;
 ATTRIBUTE_STATES[IN_ATTRIBUTE_VALUE_SQ] = true;
 ATTRIBUTE_STATES[IN_ATTRIBUTE_VALUE_NQ] = true;
+ATTRIBUTE_STATES[IN_COMMENT] = true;
 
 var MustacheParser = function(cbs, opts) {
   htmlparser.Parser.call(this, cbs, opts);
   this._attribvalue = [];
+  this._dynamicAttributeDepth = 0;
 };
 MustacheParser.prototype = new htmlparser.Parser();
 MustacheParser.prototype.constructor = MustacheParser;
 
 MustacheParser.prototype.onattribname = function(name) {
-  if (this._lowerCaseAttributeNames) {
-    name = name.toLowerCase();
+  if (name) {
+    stack.createObject({
+      type: 'attributename',
+      value: name
+    });
   }
-  this._attribname = [name];
+  stack.createObject({
+    type: 'attributenameend'
+  });
 };
 
 MustacheParser.prototype.onattribdata = function(value) {
-  this._attribvalue += value;
+  stack.createObject({
+    type: 'attributevalue',
+    value: value
+  });
 };
 
 MustacheParser.prototype.onattribend = function() {
-  if (this._cbs.onattribute) {
-    this._cbs.onattribute(this._attribname, this._attribvalue);
-  }
-  if (
-    this._attribs &&
-    !Object.prototype.hasOwnProperty.call(this._attribs, this._attribname)
-  ) {
-    this._attribs[this._attribname] = this._attribvalue;
-  }
-  this._attribname = [];
-  this._attribvalue = [];
+  stack.createObject({
+    type: 'attributeend'
+  });
 };
 
 var stack = new TemplateStack();
 
 var parser = new MustacheParser({
-  onopentagname: function() {
+  onopentagname: function(name) {
     parser._tokenizer._dynamicAttributeDepth = 0;
     parser._tokenizer._dynamicAttributes = [];
+    parser._attribs = [];
+    parser._openTag = stack.openElement(types.ELEMENT, name);
   },
-  onopentag: function(name, attrs) {
-    delete attrs.__dyn__;
-    stack.openElement(name, attrs);
-    if (parser._tokenizer._dynamicAttributes.length) {
-      stack.setDynamicAttributes(parser._tokenizer._dynamicAttributes.join(''));
-    }
-  },
-  onattribute: function(name, value) {
-    if (parser._tokenizer._dynamicAttributeDepth > 0) {
-      parser._tokenizer._dynamicAttributes.push(' ' + name + '="' + value + '"');
-      parser._attribname = '__dyn__';
-    } else {
-      var parsedValue = value;
-      if (parsedValue.length === 1 && typeof parsedValue[0] === 'string') {
-        parsedValue = parsedValue[0];
-      }
-      parser._attribs[name] = parsedValue;
-    }
+  onopentag: function() {
+    var el = stack.peek();
+    el.isOpen = false;
   },
   oncomment: function(text) {
-    stack.createComment(text);
+    var el = stack.peek();
+    if (el.type === 'comment') {
+      stack.createObject(text);
+      stack.closeElement(el);
+    } else {
+      stack.createComment(text);
+    }
   },
   ontext: function(text) {
     stack.createObject(text);
   },
-  onclosetag: function() {
+  onclosetag: function(name) {
     var el = stack.peek();
     stack.closeElement(el);
   }
@@ -127,18 +131,32 @@ function processHoganObject(token) {
     return token;
   }
 
-  var pushTo = 'stack';
   if (token.tag !== '_t' && ATTRIBUTE_STATES[parser._tokenizer._state] === true) {
+    var runningName = parser._tokenizer._getSection();
     switch (parser._tokenizer._state) {
       case BEFORE_ATTRIBUTE_NAME:
       case IN_ATTRIBUTE_NAME:
       case AFTER_ATTRIBUTE_NAME:
-        pushTo = 'attribname';
+        if (runningName) {
+          parser._tokenizer._sectionStart = parser._tokenizer._index;
+          stack.createObject({
+            type: 'attributename',
+            value: runningName
+          });
+        }
+        break;
+      case IN_COMMENT:
+        stack.openElement('comment', runningName);
+        parser._tokenizer._sectionStart = parser._tokenizer._index;
         break;
       case IN_ATTRIBUTE_VALUE_DQ:
       case IN_ATTRIBUTE_VALUE_SQ:
       case IN_ATTRIBUTE_VALUE_NQ:
-        pushTo = 'attribvalue';
+        stack.createObject({
+          type: 'attributevalue',
+          value: runningName
+        });
+        parser._tokenizer._sectionStart = parser._tokenizer._index;
         break;
     }
   }
@@ -154,22 +172,14 @@ function processHoganObject(token) {
       }
       break;
     case '#':
-      obj = {};
-      obj.type = types.SECTION;
-      obj.value = token.n.toString();
-      obj.children = [];
-      stack.stack.push(obj);
+      obj = stack.openElement(types.SECTION, token.n.toString());
       processHoganObject(token.nodes || []);
-      stack._closeElem(obj);
+      stack.closeElement(obj);
       break;
     case '^':
-      obj = {};
-      obj.type = types.SECTION_UNLESS;
-      obj.value = token.n.toString();
-      obj.children = [];
-      stack.stack.push(obj);
+      obj = stack.openElement(types.SECTION_UNLESS, token.n.toString());
       processHoganObject(token.nodes || []);
-      stack._closeElem(obj);
+      stack.closeElement(obj);
       break;
     case '>':
       obj = {};
@@ -203,5 +213,5 @@ function processHoganObject(token) {
 var tokenTree = hogan.parse(hogan.scan(template.toString()));
 processHoganObject(tokenTree);
 parser.end();
-// console.log(JSON.stringify(stack.getOutput()));
-console.log(stack.getOutput());
+// console.log(JSON.stringify(stack.getOutput(), null, '  '));
+console.log(JSON.stringify(stack.getOutput()));
