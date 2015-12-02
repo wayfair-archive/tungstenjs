@@ -49,7 +49,7 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
     this.exposedEvents = true;
   } else {
     this.exposedEvents = [];
-    if (options.exposedEvents && _.isArray(options.exposedEvents)) {
+    if (options && options.exposedEvents && _.isArray(options.exposedEvents)) {
       this.exposedEvents = this.exposedEvents.concat(options.exposedEvents);
     }
     if (model.exposedEvents && _.isArray(model.exposedEvents)) {
