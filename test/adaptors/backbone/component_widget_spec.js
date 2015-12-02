@@ -126,11 +126,10 @@ describe('component_widget public api', function() {
 
       var elem = obj.init();
       expect(elem).to.equal(view.el);
-      expect(view.options).to.deep.equal({
-        template: template,
-        model: model,
-        dynamicInitialize: true
-      });
+      expect(view.options).to.include.keys(['template', 'model', 'dynamicInitialize']);
+      expect(view.options.template).to.equal(template);
+      expect(view.options.model).to.equal(model);
+      expect(view.options.dynamicInitialize).to.equal(true);
     });
   });
   describe('update', function() {

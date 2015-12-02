@@ -139,9 +139,10 @@ describe('base_collection.js constructed api', function() {
     });
     it('should return the collection\'s models', function() {
       var collection = {
-        models: {}
+        models: [{id: 1}, {id: 2}]
       };
-      expect(BaseCollection.prototype.getChildren.call(collection)).to.equal(collection.models);
+
+      expect(BaseCollection.prototype.getChildren.call(collection)).to.have.members(collection.models);
     });
   });
   describe('getFunctions', function() {
