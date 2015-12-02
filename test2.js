@@ -166,8 +166,8 @@ function processHoganObject(token) {
     case '!':
       if (token.n.indexOf('w/') > -1) {
         obj = {};
-        obj.type = types.REFERENCE;
-        obj.value = token.n;
+        obj.type = types.INTERPOLATOR;
+        obj.value = '!' + token.n;
         stack.createObject(obj);
       }
       break;
