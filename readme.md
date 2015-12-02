@@ -373,16 +373,21 @@ Model.extend({
 });
 ```
 
+Setting `exposedEvents` to `true` rather than an array will expose all events.
+
+Additional events can also be exposed by passing in an array of event names to `exposedEvents` on the component options object.
+
 ### Methods
 
-Custom methods on a component's model must be explicitly declared in an array on `modelFunctions` in component widget's options:
+Custom methods from a component's model must be explicitly declared in an array on the model's `exposedFunctions` hash:
 
 ```javascript
-options = _.defaults({
-  modelFunctions: ['selectFilter']
-}, options);
-return new ComponentWidget(View, new Model(data), template, options);
+Model.extend({
+  exposedFunctions: ['myMethod']
+});
 ```
+
+Additional functions can also be exposed by passing in an array of function names to `exposedFunctions` on the component options object.
 
 The `trigger`, `get`, `set`, and `has` methods are available by default on each component, and point to their corresponding model functions.
 
