@@ -335,7 +335,7 @@ exports.setNestedModel = function(Model) {
               val.model.parent = this;
               val.model.parentProp = attr;
             } else if (events.length) {
-              for (i = 0; i < events.length; i++) {
+              for (i = 0, l = events.length; i < l; i++) {
                 this.bindExposedEvent(events[i], attr, val);
               }
             }
@@ -381,7 +381,7 @@ exports.setNestedModel = function(Model) {
             val.model.parent = null;
             val.model.parentProp = null;
           } else if (events.length) {
-            for (var i = 0; i < events.length; i++) {
+            for (var i = 0, l = events.length; i < l; i++) {
               this.stopListening(val.model, events[i]);
             }
           }
