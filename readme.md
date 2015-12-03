@@ -46,9 +46,9 @@ For the latest, but unstable, version:
 
 ``` npm install git+http://github.com:wayfair/tungstenjs.git#master --save```
 
-### Bundler
+### Bundler (e.g., webpack)
 
-Using a module bundler such as [webpack](http://webpack.github.io/) is recommend.  Tungsten.js with the Backbone or Ampersand adaptor expects `jquery` to be shimmed, either with jQuery itself or with the jQuery-less shim [backbone.native](https://github.com/inkling/backbone.native).  With webpack, this looks like:
+The recommended method of adding Tungsten.js to your application is via a module bundler such as [webpack](http://webpack.github.io/).  Tungsten.js with the Backbone or Ampersand adaptor expects `jquery` to be shimmed, either with jQuery itself or with the jQuery-less shim [backbone.native](https://github.com/inkling/backbone.native).  With webpack, this looks like:
 
 ```javascript
 module.exports = {
@@ -62,6 +62,31 @@ module.exports = {
 ```
 
 See [examples](https://github.com/wayfair/tungstenjs/tree/master/examples) for more details.
+
+### UMD
+
+The UMD build is also available for including Tungsten.js in a project.  It assumes [underscore](http://underscorejs.org/) is included as `window._`.  Other dependencies are bundled in the build, including [backbone.native](https://github.com/inkling/backbone.native) as a shim for jQuery.
+
+```html
+<!-- Include underscore -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<!-- Core Tungsten.js -->
+<script src="./node_modules/tungstenjs/dist/tungsten.core.js"></script>
+<!-- Backbone.js Adaptor -->
+<script src="./node_modules/tungstenjs/dist/tungsten.backbone.js"></script>
+```
+
+For compiling templates, [ractive](http://www.ractivejs.org/) at `window.Ractive` is necessary, along with the Tungsten.js template compiler (ordinarily this would be done on the server):
+
+```html
+<!-- Compiler for parsed template objects -->
+<script src="./node_modules/tungstenjs/dist/tungsten.template.js"></script>
+<!-- Include Ractive for parsing templates -->
+<script src="//cdn.ractivejs.org/latest/ractive.js"></script>
+<!-- to compile templates, use tungsten.template.compileTemplates({myTemplate: 'Hello {{name}.'})` -->
+```
+
+An client-side only example of a Tungsten.js app using the UMD build is available in the [examples](https://github.com/wayfair/tungstenjs/tree/master/examples/browser-standalone).
 
 ### Requirements
 

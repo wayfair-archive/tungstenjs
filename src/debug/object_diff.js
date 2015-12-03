@@ -2,6 +2,15 @@
 
 var _ = require('underscore');
 
+/**
+ * Naive function to check if the input is a plain object
+ * @param  {Any}  obj Object to check
+ * @return {Boolean}  Whether it is a plain object
+ */
+function isPlainObject(obj) {
+  return obj && obj.constructor === Object;
+}
+
 function diffValues(diff, key, start, end) {
   if (start == null) {
     diff[key] = end;
@@ -20,7 +29,7 @@ function diffValues(diff, key, start, end) {
     if (isDifferent) {
       diff[key] = result;
     }
-  } else if (_.isObject(end) && _.isObject(start)) {
+  } else if (isPlainObject(end) && isPlainObject(start)) {
     diff[key] = objectDiff(start, end);
   } else if (end !== start) {
     diff[key] = end;
@@ -74,7 +83,7 @@ function applyPatch(obj, patch) {
         for (var j = 0, k = obj[key].length; j < k; j++) {
           obj[key][j] = applyPatch(obj[key][j], end[j]);
         }
-      } else if (_.isObject(start)) {
+      } else if (isPlainObject(start)) {
         obj[key] = applyPatch(start, end);
       } else {
         obj[key] = end;
@@ -89,7 +98,7 @@ function cloneDeep(obj) {
   _.each(r, function(val, key) {
     if (_.isArray(val)) {
       r[key] = _.map(val, cloneDeep);
-    } else if (_.isObject(val)) {
+    } else if (isPlainObject(val)) {
       r[key] = cloneDeep(val);
     }
   });
