@@ -196,7 +196,8 @@ templateStack._closeElem = function(obj) {
       pushingTo = top.attributes;
     } else {
       pushingTo = top.children;
-      if (obj.type === types.ELEMENT) {
+      // @TODO fix this
+      if (top && top.childTags && obj.type === types.ELEMENT) {
         top.childTags[obj.tagName] = true;
       }
     }

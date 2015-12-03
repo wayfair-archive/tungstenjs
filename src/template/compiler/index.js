@@ -80,6 +80,7 @@ function processHoganObject(token) {
       obj.value = token.n.toString();
       stack.createObject(obj);
       break;
+    case '&':
     case '{':
       obj = {};
       obj.type = types.TRIPLE;

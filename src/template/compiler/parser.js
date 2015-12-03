@@ -27,7 +27,7 @@ var voidElements = {
   track: true,
   wbr: true,
 
-  //common self closing svg elements
+  // common self closing svg elements
   path: true,
   circle: true,
   ellipse: true,
@@ -108,33 +108,37 @@ MustacheParser.prototype.onattribend = function() {
   });
 };
 
-MustacheParser.prototype.onopentagname = function(name){
-  if(this._lowerCaseTagNames){
+MustacheParser.prototype.onopentagname = function(name) {
+  if (this._lowerCaseTagNames) {
     name = name.toLowerCase();
   }
 
   this._tagname = name;
 
-  if(!(name in voidElements)){
+  if (!(name in voidElements)) {
     this._stack.push(name);
   }
 
-  if(this._cbs.onopentagname) this._cbs.onopentagname(name);
-  if(this._cbs.onopentag) this._attribs = {};
+  if (this._cbs.onopentagname) {
+    this._cbs.onopentagname(name);
+  }
+  if (this._cbs.onopentag) {
+    this._attribs = {};
+  }
 };
 
-MustacheParser.prototype.onclosetag = function(name){
+MustacheParser.prototype.onclosetag = function(name) {
   this._updatePosition(1);
 
-  if(this._lowerCaseTagNames){
+  if (this._lowerCaseTagNames) {
     name = name.toLowerCase();
   }
 
-  if(this._stack.length && (!(name in voidElements) || this._options.xmlMode)){
+  if (this._stack.length && (!(name in voidElements) || this._options.xmlMode)) {
     var pos = this._stack.lastIndexOf(name);
-    if(pos === this._stack.length - 1){
+    if (pos === this._stack.length - 1) {
       var el = this._stack.pop();
-      if(this._cbs.onclosetag){
+      if (this._cbs.onclosetag) {
         this._cbs.onclosetag(el);
       }
     } else {
