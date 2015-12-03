@@ -5,7 +5,7 @@ var BaseModel = TungstenBackboneBase.Model;
 
 module.exports = BaseModel.extend({
   defaults: {
-    content: ''
+    color: '#000'
   }
 }, {
   debugName: 'RowModel'

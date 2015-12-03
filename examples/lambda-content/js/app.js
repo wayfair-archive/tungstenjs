@@ -22,8 +22,14 @@ var AppView = BaseView.extend({
       },
       events: {
         'click': function() {console.log('foo', this.el)}
+      },
+      postRender: function() {
+        console.log('child rerender');
       }
     })
+  },
+  postRender: function() {
+    console.log('app rerender');
   }
 });
 
