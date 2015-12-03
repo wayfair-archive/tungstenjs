@@ -33,10 +33,32 @@ var AppView = BaseView.extend({
   }
 });
 
+var options = [{
+  name: 'a',
+  value: 'a'
+}, {
+  name: 'b',
+  value: 'b'
+}, {
+  name: 'c',
+  value: 'c'
+}, {
+  name: 'd',
+  value: 'd'
+}]
 var data = {
   prop: 'Parent',
   fancy: {
     prop: 'Component'
+  },
+  selected_value: options[1].value,
+  options: options,
+  selected: function(template, render) {
+    var thisID = template.toString();
+    var selectedID = this.get('selected_value').toString();
+    if (thisID === selectedID) {
+      render(' selected="selected" ');
+    }
   }
 };
 

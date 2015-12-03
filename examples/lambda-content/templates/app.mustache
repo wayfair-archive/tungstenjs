@@ -1,3 +1,4 @@
+<h4>Component</h4>
 Foo
 {{#fancy}}
   <div class="js-child">
@@ -6,3 +7,10 @@ Foo
   </div>
 {{/fancy}}
 Bar
+
+<h4>Function</h4>
+<select>
+  {{#options}}
+  <option value="{{value}}" {{#selected}}{{value}}{{/selected}}>{{name}}</option>
+  {{/options}}
+</select>
