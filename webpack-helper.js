@@ -51,11 +51,11 @@ module.exports = function(config, dev, test) {
   var args = processArgs();
   // If dev is not explicitly set to a boolean, check for the command line flag
   if (dev !== Boolean(dev)) {
-    dev = args.hasOwnProperty('dev');
+    dev = args.hasOwnProperty('--dev');
   }
   // If test is not explicitly set to a boolean, check for the command line flag
   if (test !== Boolean(test)) {
-    test = args.hasOwnProperty('test');
+    test = args.hasOwnProperty('--test');
   }
   config.plugins = config.plugins || [];
   config.plugins.push(new webpack.DefinePlugin({
