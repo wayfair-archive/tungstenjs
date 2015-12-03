@@ -115,6 +115,13 @@ templateStack.processObject = function(obj) {
       if (attrs.dynamic.length > 0) {
         processed[templateKeys.dynamicAttributes] = attrs.dynamic;
       }
+      if (obj.tagName.toLowerCase() === 'textarea') {
+        if (!processed[templateKeys.attributes]) {
+          processed[templateKeys.attributes] = {};
+        }
+        processed[templateKeys.attributes].value = obj.children;
+        obj.children = null;
+      }
       if (this.inSVG || obj.tagName.toLowerCase() === 'svg') {
         if (!processed[templateKeys.attributes]) {
           processed[templateKeys.attributes] = {};
@@ -251,7 +258,8 @@ templateStack.getOutput = function() {
   if (this.stack.length) {
     throw new Error('Template contains unclosed items:' + JSON.stringify(this.stack));
   }
-  return this.result.length === 1 ? this.result[0] : this.result;
+  // Always return the array
+  return this.result;
 };
 
 templateStack.clear = function() {
