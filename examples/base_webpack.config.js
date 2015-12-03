@@ -23,7 +23,6 @@ module.exports = function (root) {
     resolveLoader: {
       modulesDirectories: [path.join(root, 'node_modules')]
     },
-    devtool: '#eval-source-map',
     module: {
       loaders: []
     }
