@@ -67,13 +67,14 @@ function render(stack, template, context, partials, parentView) {
   var i, j, value, valueLength;
   if (typeof template === 'undefined') {
     return;
-  } else if (typeof template === 'string') {
+  } else if (typeof template === 'string' || template.type === 'Widget') {
     stack.createObject(template);
+    return;
   } else if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
       render(stack, template[i], context, partials, parentView);
     }
-  } else if (template.type === 'Widget') {
+  } else if (template.type === 'WidgetConstructor') {
     // Widgets are how we attach Views to subtrees
     // If we have a parentView, we're rendering Vdom, if not this is rendering to Dom or string, so ignore
     if (parentView) {
@@ -96,7 +97,7 @@ function render(stack, template, context, partials, parentView) {
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
     case ractiveTypes.TRIPLE:
-      value = context.lookup(Context.getInterpolatorKey(template), stack);
+      value = context.lookup(Context.getInterpolatorKey(template));
       if (value != null) {
         // If value is already a widget or vnode, add it wholesale
         if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
@@ -137,14 +138,20 @@ function render(stack, template, context, partials, parentView) {
         // Section tags can be lambdas with contents
         handleLambda = function(fn, ctx) {
           // Create a template from the section's children
-          var tmpl = new (require('./template'))(template.f);
+          var tmpl = new (require('./template'))(template.f, partials, parentView);
           tmpl.context = context;
-          return fn.call(ctx, tmpl, function(template) {
+          if (fn.type === 'Widget' && typeof fn.updateContent === 'function') {
             lambdaHandled = true;
-            // Allow for either the template object or a custom replacement to be passed
-            var tmpl = template && template.templateObj ? template.templateObj : template;
-            return render(stack, tmpl, context, partials, parentView);
-          });
+            fn.updateContent(tmpl);
+            return render(stack, fn, null, partials, parentView);
+          } else {
+            return fn.call(ctx, tmpl, function(template) {
+              lambdaHandled = true;
+              // Allow for either the template object or a custom replacement to be passed
+              var tmpl = template && template.templateObj ? template.templateObj : template;
+              return render(stack, tmpl, context, partials, parentView);
+            });
+          }
         };
       }
       value = context.lookup(Context.getInterpolatorKey(template), handleLambda);

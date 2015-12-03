@@ -18,10 +18,11 @@ var Context = require('./template_context');
  */
 var registeredPartials = {};
 
-var Template = function(templateObj, partials, view) {
+var Template = function(templateObj, partials, view, context) {
   this.templateObj = templateObj;
   this.partials = partials;
   this.view = view;
+  this.context = context;
 };
 
 Template.prototype.getPartials = function() {
@@ -92,13 +93,13 @@ Template.prototype.toVdom = function(data) {
  * @return {Object}         Wrapped template
  */
 Template.prototype.wrap = function(tagName) {
-  return new Template(ractiveAdaptor.wrap(this.templateObj, tagName), this.partials, this.view);
+  return new Template(ractiveAdaptor.wrap(this.templateObj, tagName), this.partials, this.view, this.context);
 };
 
 var widgetConstructor;
 function createChildView(view, template, partials) {
   return {
-    type: 'Widget',
+    type: 'WidgetConstructor',
     constructor: widgetConstructor,
     childView: view,
     template: new Template(template, partials)

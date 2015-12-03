@@ -168,6 +168,9 @@ Context.prototype.lookup = function(name, handleLambda) {
 
       // If a value was found, break out
       if (value != null) {
+        if (handleLambda && value && value.type === 'Widget') {
+          handleLambda(value, fnContext);
+        }
         if (typeof value === 'function') {
           if (handleLambda) {
             value = handleLambda(value, fnContext);
