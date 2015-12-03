@@ -1186,7 +1186,8 @@ module.exports = function(render) {
           'name': 'Standalone Without Previous Line',
           'data': {},
           // 'expected': '  >\n  >>',
-          'expected': render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt + render.entities.unescaped.gt + '', // @adjusted
+          // @TODO
+          'expected': '  ' + render.entities.unescaped.gt + '\n  ' + render.entities.unescaped.gt + render.entities.unescaped.gt + '', // @adjusted
           'template': '  {{>partial}}\n>',
           'desc': 'Standalone tags should not require a newline to precede them.',
           'partials': {
@@ -1196,7 +1197,8 @@ module.exports = function(render) {
           'name': 'Standalone Without Newline',
           'data': {},
           // 'expected': '>\n  >\n  >',
-          'expected': render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt, // @adjusted
+          // @TODO
+          'expected': render.entities.unescaped.gt + '\n  ' + render.entities.unescaped.gt + '\n  ' + render.entities.unescaped.gt, // @adjusted
           'template': '>\n  {{>partial}}',
           'desc': 'Standalone tags should not require a newline to follow them.',
           'partials': {
@@ -1208,7 +1210,8 @@ module.exports = function(render) {
             'content': '<\n->'
           },
           // 'expected': '\\\n |\n <\n->\n |\n/\n',
-          'expected': '\\\n|\n' + render.entities.unescaped.lt + '\n-' + render.entities.unescaped.gt + '\n|\n/\n', // @adjusted
+          // @TODO
+          'expected': '\\\n |\n ' + render.entities.unescaped.lt + '\n-' + render.entities.unescaped.gt + '\n |\n/\n', // @adjusted
           'template': '\\\n {{>partial}}\n/\n',
           'desc': 'Each line of the partial should be indented before rendering.',
           'partials': {
