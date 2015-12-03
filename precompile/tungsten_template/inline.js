@@ -36,7 +36,6 @@ if (require && require.extensions) {
 
 function compile(contents, partials) {
   var parsedTemplate = utils.compileTemplate(contents, module.src);
-  utils.handleDynamicComments(parsedTemplate);
   var template = new Template(parsedTemplate);
 
   if (_.size(partials) > 0) {

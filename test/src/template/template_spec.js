@@ -153,3 +153,44 @@ var specs = require('./get_template_spec_for_renderer');
 specs(toHtmlViaString);
 specs(toHtmlViaDom);
 specs(toHtmlViaVdom);
+
+describe('textarea value sets', function() {
+  var TEST_VALUE = 'testvalue';
+  var template = compiler('<textarea>{{value}}</textarea>');
+  it('should render to vdom with the value property', function() {
+    var output = template.toVdom({value: TEST_VALUE});
+    expect(output.children.length).to.equal(0);
+    expect(output.properties.value).to.equal(TEST_VALUE);
+  });
+  it('should render to dom with the value property', function() {
+    var output = template.toDom({value: TEST_VALUE});
+    expect(output.tagName.toLowerCase()).to.equal('textarea');
+    expect(output.childNodes.length).to.equal(0);
+    expect(output.value).to.equal(TEST_VALUE);
+  });
+  it('should render to string with a childNode', function() {
+    var output = template.toString({value: TEST_VALUE});
+    expect(output).to.equal('<textarea>' + TEST_VALUE + '</textarea>');
+  });
+});
+describe('wrap', function() {
+  it('should be able to access the ractive adaptor\'s wrap function', function() {
+    var template = getTemplate('<div>{{value}}</div>');
+    var divWrappedTemplate = template.wrap();
+    var pWrappedTemplate = template.wrap('p');
+    expect(divWrappedTemplate.templateObj.e).to.equal('div');
+    expect(pWrappedTemplate.templateObj.e).to.equal('p');
+  });
+});
+describe('attachView', function() {
+  var template = getTemplate('<div>{{value}}</div>');
+  var template2 = getTemplate('<div>{{value}}</div>');
+  template2.view = {el: {nodeName: 'div'}};
+  var fakeWidgetConstructor = function() {
+    return {};
+  };
+  it('should be able to access the ractive adaptor\'s attachView function', function() {
+    var output = template.attachView(template2.view, fakeWidgetConstructor);
+    expect(output.view).to.deep.equal(template2.view);
+  });
+});

@@ -83,8 +83,44 @@ module.exports.compileTemplate = function(contents, srcFile) {
     logger.error('Unable to parse ' + (srcFile || contents));
     throw new Error('Compilation error: ' + ex.message);
   }
+  module.exports.handleSvg(parsed.t);
+  module.exports.handleDynamicComments(parsed.t);
+  module.exports.handleTextareas(parsed.t);
 
   return parsed.t;
+};
+
+module.exports.handleTextareas = function(template) {
+  if (typeof template === 'string' || typeof template === 'undefined') {
+    // String or undefined means we've bottomed out
+    return;
+  } else if (template instanceof Array) {
+    // Arrays need mapping over
+    for (var i = 0; i < template.length; i++) {
+      module.exports.handleTextareas(template[i]);
+    }
+    return;
+  }
+
+  switch (template.t) {
+
+    case ractiveTypes.SECTION:
+      module.exports.handleTextareas(template.f);
+      break;
+    case ractiveTypes.ELEMENT:
+      if (template.e.toLowerCase() === 'textarea') {
+        if (!template.a) {
+          template.a = {};
+        }
+        template.a.value = template.f;
+        template.f = [];
+      } else {
+        module.exports.handleTextareas(template.f);
+      }
+      break;
+  }
+
+  return;
 };
 
 module.exports.handleSvg = function(template, inSVG) {

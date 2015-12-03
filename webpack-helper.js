@@ -15,29 +15,55 @@ function ensureLoader(loaders, test, loader) {
   });
 }
 
+function processArg(arg) {
+  var parts = arg.split('=');
+  var data = {
+    name: parts[0]
+  };
+  if (parts[1]) {
+    data.value = parts[1];
+  }
+  return data;
+}
+
+function processArgs() {
+  var argData = {};
+  var args = process.argv;
+  for (var i = 0; i < args.length; i++) {
+    // Only process flags
+    if (args[i] && args[i].substr(0, 1) === '-') {
+      var arg = processArg(args[i]);
+      argData[arg.name] = arg.value;
+    }
+  }
+  return argData;
+}
+
 /**
  * Extends an existing webpack config with necessary loaders for Tungsten
  *
  * @param  {Object}  config Base webpack config
  * @param  {Boolean} dev    Whether to render in Dev mode (debugger, improved errors, etc)
+ * @param  {Boolean} test   Whether to render in Test mode (additional exposed functionality for tests)
  *
  * @return {Object}         Updated webpack config object
  */
-module.exports = function(config, dev) {
-  // If dev is not explicitly set, check for the command line flag
-  if (dev === undefined) {
-    var args = process.argv;
-    for (var i = 0; i < args.length; i++) {
-      if (args[i] === '--dev') {
-        dev = true;
-        break;
-      }
-    }
+module.exports = function(config, dev, test) {
+  var args = processArgs();
+  // If dev is not explicitly set to a boolean, check for the command line flag
+  if (dev !== Boolean(dev)) {
+    dev = args.hasOwnProperty('dev');
+  }
+  // If test is not explicitly set to a boolean, check for the command line flag
+  if (test !== Boolean(test)) {
+    test = args.hasOwnProperty('test');
   }
   config.plugins = config.plugins || [];
   config.plugins.push(new webpack.DefinePlugin({
-    TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version)
+    TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version),
+    TUNGSTENJS_IS_TEST: test
   }));
+
   config.resolveLoader = config.resolveLoader || {};
   config.resolveLoader.modulesDirectories = config.resolveLoader.modulesDirectories || [];
 
