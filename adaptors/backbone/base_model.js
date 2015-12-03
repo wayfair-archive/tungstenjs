@@ -7,6 +7,7 @@ var Backbone = require('backbone');
 var backboneNested = require('./backbone_nested');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
+
 /**
  * BaseModel
  *
@@ -81,7 +82,12 @@ var BaseModel = Backbone.Model.extend({
     var self = this;
     _.each(this.relations, function(constructor, key) {
       if (self.has(key)) {
-        results.push(self.get(key));
+        var value = self.get(key);
+        // Pull out component models
+        if (value && value.type === 'Widget' && value.model) {
+          value = value.model;
+        }
+        results.push(value);
       }
     });
     return results;

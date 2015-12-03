@@ -11,6 +11,7 @@ var nativeFn = Array.isArray;
 var polyfillFn = function(object) { return ObjectToString.call(object) === '[object Array]'; };
 module.exports = nativeFn || polyfillFn;
 // only export polyfill if running in node for testing
-if (window && window.isTest) {
+/*global TUNGSTENJS_IS_TEST */
+if (typeof TUNGSTENJS_IS_TEST !== 'undefined' && TUNGSTENJS_IS_TEST) {
   module.exports.polyfill = polyfillFn;
 }

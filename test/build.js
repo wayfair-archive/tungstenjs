@@ -44,7 +44,7 @@ var debugConfig = webpackHelper({
       'jquery': 'backbone.native'
     }
   }
-}, true);
+}, true, true);
 
 var prodConfig = webpackHelper({
   entry: path.join(__dirname, '/test_target'),
@@ -65,7 +65,7 @@ var prodConfig = webpackHelper({
       'jquery': 'backbone.native'
     }
   }
-}, false);
+}, false, true);
 
 function getErrorString(err, stats) {
   var errStr = err;

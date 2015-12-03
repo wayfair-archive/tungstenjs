@@ -42,7 +42,7 @@ function registerView(view) {
   var name = view.getDebugName();
   var wrapped = new RegistryWrapper(view, 'views');
   flatRegistry.views[name] = wrapped;
-  if (!view.parentView) {
+  if (!view.parentView && !view.isComponentView) {
     nestedRegistry.views[name] = wrapped;
   }
   if (typeof view.destroy === 'function') {
