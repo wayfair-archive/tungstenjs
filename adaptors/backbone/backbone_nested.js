@@ -145,10 +145,17 @@ exports.setNestedModel = function(Model) {
           } else {
 
             relation.each(function(model, i) {
+              var idAttribute;
+              if (ComponentWidget.isComponent(model)) {
+                idAttribute = model.model.idAttribute || 'id';
+              } else {
+                idAttribute = model.idAttribute || 'id';
+              }
 
               // If the model does not have an 'id' skip logic to detect if it already
               // exists and simply add it to the collection
-              if (typeof model[id] === 'undefined') {
+              var id = model.get(idAttribute);
+              if (typeof id === 'undefined') {
                 return;
               }
 
@@ -156,7 +163,7 @@ exports.setNestedModel = function(Model) {
               // call set on that model. If it doesn't exist in the incoming array,
               // then add it to a list that will be removed.
               var rModel = _.find(val, function(_model) {
-                return _model[id] === model[id];
+                return _model[idAttribute] === id;
               });
 
               if (rModel) {
