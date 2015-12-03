@@ -19,6 +19,7 @@ module.exports = {
       'jquery': 'backbone.native'
     }
   },
+  devtool: '#source-map',
   resolveLoader: {
     modulesDirectories: ['node_modules', path.join(__dirname, 'precompile')]
   },
@@ -28,8 +29,15 @@ module.exports = {
     })
   ],
   module: {
+    preLoaders: [
+      {test: /\.js$/, loader: 'webpack-strip-block'}
+    ],
     loaders: [
-      {test: /\.js$/, loader: 'webpack-strip-block'},
+      {
+        test: /\.js$/,
+        loader: 'babel',
+        exclude: /node_modules/
+      },
       {test: /\.mustache$/, loader: 'tungsten_template'},
       {test: /\.json$/, loader: 'json-loader'}
     ]
