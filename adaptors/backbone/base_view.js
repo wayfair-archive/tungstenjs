@@ -31,7 +31,6 @@ var BaseView = Backbone.View.extend({
     if (!this.el) {
       return false;
     }
-    var self = this;
 
     this.options = options || {};
 
@@ -88,19 +87,19 @@ var BaseView = Backbone.View.extend({
 
       // If the deferRender option was set, it means a layout manager / a module will control when this view is rendered
       if (!this.options.deferRender) {
-        self.vtree = self.vtree || self.compiledTemplate.toVdom(dataItem);
-        self.initializeRenderListener(dataItem);
+        this.vtree = this.vtree || this.compiledTemplate.toVdom(dataItem);
+        this.initializeRenderListener(dataItem);
         if (this.options.dynamicInitialize || this.options.vtree) {
           // If certain options were set, render was already invoked, so childViews are attached
-          self.postInitialize();
+          this.postInitialize();
           if (!this.options.dynamicInitialize) {
-            self.validateVdom();
+            this.validateVdom();
           }
         } else {
-          setTimeout(function() {
-            self.attachChildViews();
-            self.postInitialize();
-            self.validateVdom();
+          setTimeout(() => {
+            this.attachChildViews();
+            this.postInitialize();
+            this.validateVdom();
           }, 1);
         }
       } else {
@@ -118,23 +117,22 @@ var BaseView = Backbone.View.extend({
     // If this has a model and is the top level view, set up the listener for rendering
     if (dataItem && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
       var runOnChange;
-      var self = this;
       if (!this.parentView) {
         runOnChange = function() {
           renderQueue(self, _.bind(self.render, self));
         };
       } else if (!dataItem.collection && !dataItem.parentProp && this.parentView.model !== dataItem) {
         // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
-        runOnChange = function() {
+        runOnChange = () => {
           // trigger event on parent to start a render
-          self.parentView.model.trigger('render');
+          this.parentView.model.trigger('render');
         };
       }
       if (runOnChange) {
-        this.listenTo(dataItem, 'all', function() {
+        this.listenTo(dataItem, 'all', () => {
           // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
-          clearTimeout(self.debouncer);
-          self.debouncer = setTimeout(runOnChange, 1);
+          clearTimeout(this.debouncer);
+          this.debouncer = setTimeout(runOnChange, 1);
         });
       }
     }
@@ -352,23 +350,22 @@ var BaseView = Backbone.View.extend({
     if (!(events || (events = _.result(this, 'events')))) {
       return;
     }
-    var self = this;
-    setTimeout(function() {
+    setTimeout(() => {
       // Unbind any current events
-      self.undelegateEvents();
+      this.undelegateEvents();
       // Get any options that may  have been set
-      var eventOptions = _.result(self, 'eventOptions');
+      var eventOptions = _.result(this, 'eventOptions');
       // Event / selector strings
       var keys = _.keys(events);
       var key;
       // Create an array to hold the information to detach events
-      self.eventsToRemove = new Array(keys.length);
+      this.eventsToRemove = new Array(keys.length);
       for (var i = keys.length; i--;) {
         key = keys[i];
         // Sanity check that value maps to a function
         var method = events[key];
         if (!_.isFunction(method)) {
-          method = self[events[key]];
+          method = this[events[key]];
         }
         if (!method) {
           throw new Error('Method "' + events[key] + '" does not exist');
@@ -376,10 +373,10 @@ var BaseView = Backbone.View.extend({
         var match = key.match(delegateEventSplitter);
         var eventName = match[1],
           selector = match[2];
-        method = _.bind(method, self);
+        method = _.bind(method, this);
 
         // throws an error if invalid
-        self.eventsToRemove[i] = tungsten.bindEvent(self.el, eventName, selector, method, eventOptions[key]);
+        this.eventsToRemove[i] = tungsten.bindEvent(this.el, eventName, selector, method, eventOptions[key]);
       }
     }, 1);
   },
