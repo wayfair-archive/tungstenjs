@@ -18,7 +18,7 @@ function queue(obj, fn) {
   }
   obj[OBJECT_QUEUED] = true;
   // If the queue is currently empty request an animation frame
-  if (!queue.length) {
+  if (!_queue.length) {
     animFrame.request(renderQueue);
   }
   _queue.push([obj, fn]);
