@@ -118,8 +118,9 @@ var BaseView = Backbone.View.extend({
     if (dataItem && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
       var runOnChange;
       if (!this.parentView) {
-        runOnChange = function() {
-          renderQueue(self, _.bind(self.render, self));
+        var boundRender =  _.bind(this.render, this);
+        runOnChange = () => {
+          renderQueue.queue(this, boundRender);
         };
       } else if (!dataItem.collection && !dataItem.parentProp && this.parentView.model !== dataItem) {
         // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
