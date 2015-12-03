@@ -36,7 +36,7 @@ var ChartView = TungstenBackboneBase.View.extend({
     var type = this.model.get('degreeType');
     var city = this.model.get('cities')[index];
     var active = this.model.get('getCity')(city.temperatures, type);
-    this.model.set(active);
+    this.model.set(active, {reset: true});
   },
   changeCity: function(evt) {
     this.model.set('selectedCityIndex', evt.currentTarget.selectedIndex);

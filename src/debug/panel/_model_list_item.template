@@ -1,17 +1,18 @@
 <%
-  var liClass = '';
-  if (w.model.selected) {
-    liClass = 'is-highlighted';
-  } else {
-    liClass = 'is-not-highlighted';
-  }
+  if (w.model) {
+    var liClass = '';
+      if (w.model.selected) {
+        liClass = 'is-highlighted';
+      } else {
+        liClass = 'is-not-highlighted';
+      }
 
-  var spanClass = '';
-  var modelIsParent = w.model.isParent();
-  if (modelIsParent) {
-    spanClass = 'js-toggle-model-children glyphicon-chevron-';
-    spanClass += w.model.collapsed ? 'right' : 'down';
-  }
+    var spanClass = '';
+    var modelIsParent = w.model.isParent();
+    if (modelIsParent) {
+      spanClass = 'js-toggle-model-children glyphicon-chevron-';
+      spanClass += w.model.collapsed ? 'right' : 'down';
+    }
 %>
 <li class="js-model-list-item tree-group-item <%= liClass %>" data-id="<%= w.model.debugName %>">
   <div class="tree-list-item-hover">
@@ -31,3 +32,6 @@
     <% } %>
   <% } %>
 </li>
+<% } else { %>
+  <li>Something's borked</li>
+<% } %>

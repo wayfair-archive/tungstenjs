@@ -29,6 +29,8 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 var logger = require('../../src/utils/logger');
 
+var ComponentWidget = require('./component_widget');
+
 var exports = {};
 var BackboneModel = Backbone.Model,
   BackboneCollection = Backbone.Collection;
@@ -143,10 +145,17 @@ exports.setNestedModel = function(Model) {
           } else {
 
             relation.each(function(model, i) {
+              var idAttribute;
+              if (ComponentWidget.isComponent(model)) {
+                idAttribute = model.model.idAttribute || 'id';
+              } else {
+                idAttribute = model.idAttribute || 'id';
+              }
 
               // If the model does not have an 'id' skip logic to detect if it already
               // exists and simply add it to the collection
-              if (typeof model[id] === 'undefined') {
+              var id = model.get(idAttribute);
+              if (typeof id === 'undefined') {
                 return;
               }
 
@@ -154,7 +163,7 @@ exports.setNestedModel = function(Model) {
               // call set on that model. If it doesn't exist in the incoming array,
               // then add it to a list that will be removed.
               var rModel = _.find(val, function(_model) {
-                return _model[id] === model[id];
+                return _model[idAttribute] === id;
               });
 
               if (rModel) {
@@ -235,6 +244,14 @@ exports.setNestedModel = function(Model) {
     this.set(attrs, opts);
   };
 
+  Model.prototype.bindExposedEvent = function(event, prop, childComponent) {
+    var self = this;
+    self.listenTo(childComponent.model, event, function() {
+      var args = Array.prototype.slice.call(arguments);
+      bubbleEvent(self, prop, [event].concat(args));
+    });
+  };
+
   Model.prototype.set = function(key, val, options) {
     var attr, attrs, unset, changes, silent, changing, prev, current;
     if (key == null) {
@@ -288,6 +305,8 @@ exports.setNestedModel = function(Model) {
       this.id = attrs[this.idAttribute];
     }
 
+    var i, l;
+
     // For each `set` attribute, update or delete the current value.
     for (attr in attrs) {
       if (attrs.hasOwnProperty(attr)) {
@@ -315,6 +334,20 @@ exports.setNestedModel = function(Model) {
         } else {
           current[attr] = val;
         }
+
+        if (ComponentWidget.isComponent(val)) {
+          if (val.exposedEvents) {
+            var events = val.exposedEvents;
+            if (events === true) {
+              val.model.parent = this;
+              val.model.parentProp = attr;
+            } else if (events.length) {
+              for (i = 0, l = events.length; i < l; i++) {
+                this.bindExposedEvent(events[i], attr, val);
+              }
+            }
+          }
+        }
       }
     }
 
@@ -323,7 +356,7 @@ exports.setNestedModel = function(Model) {
       if (changes.length) {
         this._pending = true;
       }
-      for (var i = 0, l = changes.length; i < l; i++) {
+      for (i = 0, l = changes.length; i < l; i++) {
         this.trigger('change:' + changes[i], this, current[changes[i]], options);
       }
     }
@@ -339,7 +372,30 @@ exports.setNestedModel = function(Model) {
     }
     this._pending = false;
     this._changing = false;
+
     return this;
+  };
+
+  // Remove an attribute from the model, firing `"change"`. `unset` is a noop
+  // if the attribute doesn't exist.
+  Model.prototype.unset = function(attr, options) {
+    if (this.has(attr)) {
+      var val = this.get(attr);
+      if (ComponentWidget.isComponent(val)) {
+        if (val.model && val.exposedEvents) {
+          var events = val.exposedEvents;
+          if (events === true) {
+            val.model.parent = null;
+            val.model.parentProp = null;
+          } else if (events.length) {
+            for (var i = 0, l = events.length; i < l; i++) {
+              this.stopListening(val.model, events[i]);
+            }
+          }
+        }
+      }
+    }
+    return this.set(attr, void 0, _.extend({}, options, {unset: true}));
   };
 
   Model.prototype.toJSON = function() {

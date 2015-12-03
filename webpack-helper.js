@@ -73,11 +73,19 @@ module.exports = function(config, dev, test) {
   config.module.loaders = config.module.loaders || [];
   config.module.preLoaders = config.module.preLoaders || [];
 
+  // Babel should be run on our code, but not node_modules
+  var folders = ['adaptors', 'examples', 'precompile', 'src', 'test'];
+  folders = folders.map(function(folder) {
+    var fullpath = path.join(__dirname, folder + '/').replace(/\\/g, '\\\\');
+    return fullpath + '.*\.js';
+  });
+  var babelRegexStr = '^(' + folders.join('|') + ')$';
+
   if (!dev) {
     ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
   }
   ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
-  ensureLoader(config.module.loaders, /tungstenjs[\\\/].*\.js$/, 'babel');
+  ensureLoader(config.module.loaders, new RegExp(babelRegexStr), 'babel');
   ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
 
   return config;
