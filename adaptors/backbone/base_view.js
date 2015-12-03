@@ -11,6 +11,8 @@ var logger = require('../../src/utils/logger');
 var ViewWidget = require('./backbone_view_widget');
 var ComponentWidget = require('./component_widget');
 
+var renderQueue = require('../shared/render_queue');
+
 // Cached regex to split keys for `delegate`.
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -118,7 +120,9 @@ var BaseView = Backbone.View.extend({
       var runOnChange;
       var self = this;
       if (!this.parentView) {
-        runOnChange = _.bind(this.render, this);
+        runOnChange = function() {
+          renderQueue(self, _.bind(self.render, self));
+        };
       } else if (!dataItem.collection && !dataItem.parentProp && this.parentView.model !== dataItem) {
         // If this model was not set up via relation, manually trigger an event on the parent's model to kick one off
         runOnChange = function() {
