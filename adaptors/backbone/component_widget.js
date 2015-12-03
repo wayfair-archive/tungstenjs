@@ -134,7 +134,7 @@ ComponentWidget.prototype.attach = function attach(elem) {
 ComponentWidget.prototype.updateContent = function updateContent(tmpl) {
   tmpl = tmpl.wrap('span');
   this.model.set('content', function() {
-    return tmpl.toVdom()
+    return tmpl.toVdom();
   });
 };
 
