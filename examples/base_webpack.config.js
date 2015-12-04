@@ -3,7 +3,7 @@ var webpackSettings = require('../webpack-helper');
 
 module.exports = function (root) {
   'use strict';
-  return webpackSettings.withBabel({
+  return webpackSettings.compileSource({
     entry: './js/app',
     output: {
       filename: './js/app.min.js',

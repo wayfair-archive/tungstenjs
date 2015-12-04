@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 var webpackSettings = require('./webpack-helper');
 
-module.exports = webpackSettings.withBabel({
+module.exports = webpackSettings.compileSource({
   entry: {
     'backbone': './adaptors/backbone',
     'ampersand': './adaptors/ampersand',
