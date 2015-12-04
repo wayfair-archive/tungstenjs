@@ -73,6 +73,17 @@ module.exports = function(config, dev, test) {
   config.module.loaders = config.module.loaders || [];
   config.module.preLoaders = config.module.preLoaders || [];
 
+  if (!dev) {
+    ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
+  }
+  ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
+  ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
+
+  return config;
+};
+
+module.exports.withBabel = function(config, dev, test) {
+  config = module.exports(config, dev, test);
   // Babel should be run on our code, but not node_modules
   var folders = ['adaptors', 'examples', 'precompile', 'src', 'test'];
   folders = folders.map(function(folder) {
@@ -80,13 +91,6 @@ module.exports = function(config, dev, test) {
     return fullpath + '.*\.js';
   });
   var babelRegexStr = '^(' + folders.join('|') + ')$';
-
-  if (!dev) {
-    ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
-  }
-  ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
   ensureLoader(config.module.loaders, new RegExp(babelRegexStr), 'babel');
-  ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
-
   return config;
 };
