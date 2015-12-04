@@ -47,7 +47,28 @@ function processArgs() {
  *
  * @return {Object}         Updated webpack config object
  */
-module.exports = function(config, dev, test) {
+module.exports = function(config) {
+  config.resolveLoader = config.resolveLoader || {};
+  config.resolveLoader.modulesDirectories = config.resolveLoader.modulesDirectories || [];
+
+  config.resolveLoader.modulesDirectories.push(path.join(__dirname, 'precompile'));
+
+  config.module = config.module || {};
+  config.module.loaders = config.module.loaders || [];
+  config.module.preLoaders = config.module.preLoaders || [];
+
+  ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
+  ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
+
+  return config;
+};
+
+module.exports.compileSource = function(config, dev, test) {
+  config = module.exports(config, dev, test);
+
+  config.resolveLoader = config.resolveLoader || {};
+  config.resolveLoader.modulesDirectories.push(path.join(__dirname, 'node_modules'));
+
   var args = processArgs();
   // If dev is not explicitly set to a boolean, check for the command line flag
   if (dev !== Boolean(dev)) {
@@ -63,16 +84,6 @@ module.exports = function(config, dev, test) {
     TUNGSTENJS_IS_TEST: test
   }));
 
-  config.resolveLoader = config.resolveLoader || {};
-  config.resolveLoader.modulesDirectories = config.resolveLoader.modulesDirectories || [];
-
-  config.resolveLoader.modulesDirectories.push(path.join(__dirname, 'precompile'));
-  config.resolveLoader.modulesDirectories.push(path.join(__dirname, 'node_modules'));
-
-  config.module = config.module || {};
-  config.module.loaders = config.module.loaders || [];
-  config.module.preLoaders = config.module.preLoaders || [];
-
   // Babel should be run on our code, but not node_modules
   var folders = ['adaptors', 'examples', 'precompile', 'src', 'test'];
   folders = folders.map(function(folder) {
@@ -80,13 +91,11 @@ module.exports = function(config, dev, test) {
     return fullpath + '.*\.js';
   });
   var babelRegexStr = '^(' + folders.join('|') + ')$';
+  ensureLoader(config.module.loaders, new RegExp(babelRegexStr), 'babel');
 
   if (!dev) {
     ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
   }
-  ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
-  ensureLoader(config.module.loaders, new RegExp(babelRegexStr), 'babel');
-  ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
 
   return config;
 };
