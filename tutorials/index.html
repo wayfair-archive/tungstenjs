@@ -3,18 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Tungsten.js Tutorials</title>
+    <link rel="stylesheet" charset="UTF-8" href="node_modules/todomvc-app-css/index.css">
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    <link rel="stylesheet" href="css/side-menu.css">
     <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="node_modules/codemirror/addon/fold/foldgutter.css">
     <style>
+        body { max-width: 100%; }
         * { box-sizing: border-box; }
-        .CodeMirror {
-            height: 100%;
+        .cm-mustache {
+            color: #0ca;
         }
-        .cm-mustache {color: #0ca;}
+        .CodeMirror {
+            height: 50vh;
+            padding: 1vh;
+        }
+        #result {
+            padding: 10px;
+        }
+        .description { padding: 20px; }
+        .footer {
+            box-sizing: content-box;
+        }
     </style>
 </head>
 <body>
-<div id="appwrapper" class="pure-g"></div>
+
+<div id="layout">
+    <div id="appwrapper"></div>
+</div>
+
+
 <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <!-- Core Tungsten.js -->
 <script src="../dist/tungsten.core.js"></script>
@@ -25,6 +44,12 @@
 <!-- Ractive.js for parsing templates -->
 <script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
 <script src="node_modules/codemirror/lib/codemirror.js"></script>
+<script src="node_modules/codemirror/addon/fold/foldcode.js"></script>
+<script src="node_modules/codemirror/addon/fold/foldgutter.js"></script>
+<script src="node_modules/codemirror/addon/fold/brace-fold.js"></script>
+<script src="node_modules/codemirror/addon/fold/comment-fold.js"></script>
+<script src="node_modules/codemirror/addon/fold/xml-fold.js"></script>
+<script src="node_modules/codemirror/addon/fold/indent-fold.js"></script>
 <script src="node_modules/codemirror/addon/mode/overlay.js"></script>
 <script src="node_modules/codemirror/mode/xml/xml.js"></script>
 <script src="node_modules/codemirror/mode/javascript/javascript.js"></script>
