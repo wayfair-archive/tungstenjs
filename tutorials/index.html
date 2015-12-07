@@ -14,230 +14,7 @@
     </style>
 </head>
 <body>
-<div id="appwrapper" class="pure-g">
-    <div class="pure-u-1-2 page-section">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab animi assumenda debitis distinctio dolores facilis impedit iste modi numquam, officia perspiciatis quae, quasi quibusdam suscipit tempora ullam unde vel voluptate?</p>
-        <button class="pure-button" id="run">Run</button>
-    </div>
-    <div class="pure-u-1-2 page-section"><textarea class="editor html" cols="30" rows="25"
-                                id="template">&lt;div class="todoapp"&gt;
-  &lt;header class="header"&gt;
-    &lt;h1&gt;todos&lt;/h1&gt;
-    &lt;!-- todoapp --&gt;
-    &lt;input placeholder="What needs to be done?" type="text" autofocus="true" class="new-todo js-new-todo"&gt;
-  &lt;/header&gt;
-  &lt;section class="main"&gt;
-    &lt;input class="toggle-all js-toggle-all" type="checkbox" {{#allCompleted}}checked="checked"{{/allCompleted}}&gt;
-    &lt;label for="toggle-all"&gt;Mark all as complete&lt;/label&gt;
-    &lt;ul class="todo-list js-todo-list"&gt;
-    {{#todoItems}}
-    {{^hidden}}
-      &lt;li class="js-todo-item {{#completed}} completed {{/completed}} {{#editing}} editing {{/editing}}"&gt;
-      &lt;!-- {{title}} --&gt;
-      {{^editing}}
-        &lt;div class="view"&gt;
-          &lt;input class="toggle js-toggle" type="checkbox" {{#completed}}checked="checked"{{/completed}}&gt;
-          &lt;label class="js-todo-title"&gt;{{title}}&lt;/label&gt;
-          &lt;button class="destroy js-destroy"&gt;&lt;/button&gt;
-        &lt;/div&gt;
-      {{/editing}}
-      {{#editing}}
-      &lt;input class="edit js-todo-edit" value="{{title}}"&gt;
-      {{/editing}}
-    &lt;/li&gt;
-  {{/hidden}}
-
-        {{/todoItems}}
-  &lt;/ul&gt;
-  &lt;/section&gt;
-  {{#hasTodos}}
-  &lt;footer class="footer"&gt;
-  &lt;span class="js-todo-count todo-count"&gt;&lt;strong&gt;{{todoCount}}&lt;/strong&gt; item{{#todoCountPlural}}s{{/todoCountPlural}} left&lt;/span&gt;
-  {{#hasCompleted}}
-  &lt;button class="clear-completed js-clear-completed"&gt;Clear completed&lt;/button&gt;
-  {{/hasCompleted}}
-  &lt;/footer&gt;
-  {{/hasTodos}}
-&lt;/div&gt;</textarea></div>
-    <div class="pure-u-1-2 page-section">
-        <div id="result">
-            <div id="app"></div>
-        </div>
-    </div>
-    <div class="pure-u-1-2 page-section"><textarea class="editor" id="tungsten" cols="30" rows="25">var View = tungsten.backbone.View, Model = tungsten.backbone.Model, Collection = tungsten.backbone.Collection;
-var ENTER_KEY = 13;
-var ESC_KEY = 27;
-var TodoItemView = View.extend({
-  events: {
-    'blur .js-todo-edit': 'handleBlurTodoEdit',
-    'click .js-toggle': 'handleClickToggle',
-    'click .js-destroy': 'handleClickDestroy',
-    'dblclick .js-todo-title': 'handleDblClickTodoTitle',
-    'keydown .js-todo-edit': 'handleKeyDownTodoEdit',
-    'keypress .js-todo-edit': 'handleKeyPressTodoEdit'
-  },
-  handleBlurTodoEdit: function(e) {
-    if (!this.model.get('editing')) {
-      return;
-    }
-    this.clear(e.currentTarget);
-  },
-  handleClickDestroy: function() {
-    this.model.destroy();
-  },
-  handleClickToggle: function() {
-        console.log(this.model);
-    this.model.toggle();
-  },
-  handleDblClickTodoTitle: function(e) {
-    this.model.set('editing', true);
-    e.currentTarget.focus();
-  },
-  handleKeyDownTodoEdit: function(e) {
-    if (e.which === ESC_KEY) {
-      this.model.set('editing', false);
-      this.model.set('title', this.model.get('title'));
-    }
-  },
-  handleKeyPressTodoEdit: function(e) {
-    if (e.which === ENTER_KEY) {
-      this.clear(e.currentTarget);
-    }
-  },
-  clear: function(input) {
-    var value = input.value;
-
-    var trimmedValue = value.trim();
-
-    if (trimmedValue) {
-      this.model.set({ title: trimmedValue });
-      input.value = '';
-      this.model.set('editing', false);
-      if (value !== trimmedValue) {
-        this.model.trigger('change');
-      }
-    } else {
-      this.handleClickDestroy();
-    }
-  }
-}, {
-  debugName: 'TodoItemView'
-});
-
-var NewItemView = View.extend({
-  events: {
-    'keyup': 'handleKeyup'
-  },
-  handleKeyup: function(e) {
-    if (e.which === ENTER_KEY && e.currentTarget.value !== '') {
-      this.model.trigger('addItem', e.currentTarget.value.trim());
-      this.el.value = '';
-    }
-  }
-}, {
-  debugName: 'NewTodoItemView'
-});
-
-var AppView = View.extend({
-  childViews: {
-    'js-new-todo': NewItemView,
-    'js-todo-item': TodoItemView
-  },
-  events: {
-    'click .js-toggle-all': 'handleClickToggleAll',
-    'click .js-clear-completed': 'handleClickClearCompleted'
-  },
-  handleClickClearCompleted: function() {
-    _.invoke(this.model.get('todoItems').where({completed: true}), 'destroy');
-    return false;
-  },
-  handleClickToggleAll: function(e) {
-    var completed = e.currentTarget.checked;
-    this.model.get('todoItems').each(function(item) {
-      item.set('completed', completed);
-    });
-  }
-}, {
-  debugName: 'TodoAppView'
-});
-var ItemModel = Model.extend({
-  toggle: function() {
-    this.set({
-      completed: !this.get('completed')
-    });
-  }
-});
-var ItemCollection = Collection.extend({
-  model: ItemModel
-});
-var AppModel = Model.extend({
-  relations: {
-    todoItems: ItemCollection
-  },
-  defaults: {
-    todoItems: [],
-  },
-  postInitialize: function() {
-    this.listenTo(this, 'addItem', function(title) {
-      // @todo add code to clear toggle-all button
-      this.get('todoItems').add({title: title});
-    });
-  },
-  derived: {
-    hasTodos: {
-      deps: ['todoItems'],
-      fn: function() {
-        return this.get('todoItems').length > 0;
-      }
-    },
-    incompletedItems: {
-      deps: ['todoItems'],
-      fn: function() {
-        return this.get('todoItems').filter(function(item) {
-          return !item.get('completed');
-        });
-      }
-    },
-    allCompleted: {
-      deps: ['todoItems'],
-      fn: function() {
-        if (this.get('todoItems').length) {
-          return this.get('todoItems').every(function(item) {
-            return item.get('completed');
-          });
-        }
-      }
-    },
-    todoCount: {
-      deps: ['incompletedItems'],
-      fn: function() {
-        return this.get('incompletedItems').length;
-      }
-    },
-    todoCountPlural: {
-      deps: ['todoCount'],
-      fn: function() {
-        return this.get('todoCount') !== 1;
-      }
-    },
-    hasCompleted: {
-      deps: ['todoItems'],
-      fn: function() {
-        return this.get('todoItems').length - this.get('incompletedItems').length > 0;
-      }
-    }
-  }
-});
-
-new AppView({
-    el: '#app',
-    template: compiledTemplates.app_view,
-    model: new AppModel(),
-    dynamicInitialize: true
-});</textarea></div>
-
-
-</div>
+<div id="appwrapper" class="pure-g"></div>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <!-- Core Tungsten.js -->
 <script src="../dist/tungsten.core.js"></script>
@@ -251,6 +28,27 @@ new AppView({
 <script src="node_modules/codemirror/addon/mode/overlay.js"></script>
 <script src="node_modules/codemirror/mode/xml/xml.js"></script>
 <script src="node_modules/codemirror/mode/javascript/javascript.js"></script>
+<script>
+    CodeMirror.defineMode('mustache', function(config, parserConfig) {
+        var mustacheOverlay = {
+            token: function(stream) {
+                var ch;
+                if (stream.match('{{')) {
+                    while ((ch = stream.next()) != null)
+                        if (ch == '}' && stream.next() == '}') {
+                            stream.eat('}');
+                            return 'mustache';
+                        }
+                }
+                while (stream.next() != null && !stream.match('{{', false)) {
+                }
+                return null;
+            }
+        };
+        return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || 'text/html'), mustacheOverlay);
+    });
+</script>
+<script src="js/data.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
