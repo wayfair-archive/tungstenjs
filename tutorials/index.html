@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tungsten.js Tutorials</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+    <style>
+        * { box-sizing: border-box; }
+    </style>
+</head>
+<body>
+<div id="appwrapper" class="pure-g">
+    <div class="pure-u-1-2 page-section">
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab animi assumenda debitis distinctio dolores facilis impedit iste modi numquam, officia perspiciatis quae, quasi quibusdam suscipit tempora ullam unde vel voluptate?</p>
+        <button class="pure-button" id="run">Run</button>
+    </div>
+    <div class="pure-u-1-2 page-section"><textarea class="editor html" cols="30" rows="10"
+                                      id="template">&lt;div&gt;Hi, {{name}}.&lt;/div&gt;</textarea></div>
+    <div class="pure-u-1-2 page-section">
+        <div id="result">
+            <div id="app"></div>
+        </div>
+    </div>
+    <div class="pure-u-1-2 page-section"><textarea class="editor" id="tungsten" cols="30" rows="10">var View = tungsten.backbone.View, Model = tungsten.backbone.Model;
+new View({
+    el: '#app',
+    template: compiledTemplates.app_view,
+    model: new Model({name: 'world'}),
+    dynamicInitialize: true
+});</textarea></div>
+
+
+</div>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<!-- Core Tungsten.js -->
+<script src="../dist/tungsten.core.js"></script>
+<!-- Backbone.js Adaptor -->
+<script src="../dist/tungsten.backbone.js"></script>
+<!-- Compiler for parsed template objects -->
+<script src="../dist/tungsten.template.js"></script>
+<!-- Ractive.js for parsing templates -->
+<script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
+<script src="node_modules/codemirror/lib/codemirror.js"></script>
+<script src="node_modules/codemirror/mode/xml/xml.js"></script>
+<script src="node_modules/codemirror/mode/javascript/javascript.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
