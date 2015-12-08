@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="node_modules/codemirror/addon/fold/foldgutter.css">
     <style>
-        body { max-width: 100%; }
+        body { max-width: 100%;     font-family: FreeSans,Arimo,"Droid Sans",Helvetica,Arial,sans-serif;  }
         * { box-sizing: border-box; }
         .cm-mustache {
             color: #0ca;
         }
         .CodeMirror {
-            height: 50vh;
+            height: 49vh;
             padding: 1vh;
         }
         #result {
@@ -26,23 +26,25 @@
             box-sizing: content-box;
         }
         .step {
-            position: relative;
             display: inline-block;
-            border: 1px solid #eee;
             background-color: #8d4377;
             border-radius: 50%;
-            margin: 0 .6em 0 0;
             text-align: center;
-            width: 1.8em;
-            height: 1.8em;
-            font-size: 1.2em;
+            width: 1.6em;
+            height: 1.6em;
+            font-size: 1em;
             line-height: 1.8;
             color: #fff;
             cursor: pointer;
         }
+        .steps {
+            padding: 0;
+            margin: 0;
+        }
         .styled-background {
             background-color: #ff7;
         }
+        .description { font-size: 1.2em; color: black; }
     </style>
 </head>
 <body>
