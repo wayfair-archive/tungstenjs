@@ -47,7 +47,7 @@ var codeOptions = {
   },
   foldGutter: true,
   gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
-}
+};
 var AppView = View.extend({
   events: {
     'click .js-run': 'run',
@@ -104,7 +104,7 @@ var AppView = View.extend({
           editor.remove();
         });
         if (document.querySelector('#app')) {
-          document.querySelector('#app').innerHTML = '<div id="app"></div>';
+          document.querySelector('#app').innerHTML = '';
         }
         window.setTimeout(function() {
           tungstenCode = CodeMirror.fromTextArea(document.getElementById('tungsten'), _.extend({
