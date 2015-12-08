@@ -1,5 +1,5 @@
 var rawTemplates = {
-  app: '<div id="menu"><div class="pure-menu"><a class="pure-menu-heading" href="#">Tungsten.js</a><ul class="pure-menu-list">{{#tutorials}} <li class="pure-menu-item"><a href="#" class="pure-menu-link js-tutorial-select">{{name}}</a></li>{{/tutorials}} </ul></div></div><div class="pure-g js-main">{{#tutorial}}<div class="pure-u-1-2 page-section description"><p>{{description}}</p><button class="pure-button js-run" id="run">Run</button></div><div class="pure-u-1-2 page-section"><textarea class="js-editor editor html" cols="30" rows="25" id="template" value="{{template}}">{{template}}</textarea></div><div class="pure-u-1-2 page-section"><div id="result"><div id="app"></div></div></div><div class="pure-u-1-2 page-section"><textarea class="js-editor editor" id="tungsten" cols="30" rows="25" value="{{js}}">{{js}}</textarea></div>{{/tutorial}}</div>'
+  app: '<div id="menu"> <div class="pure-menu"><a class="pure-menu-heading" href="#">Tungsten.js</a> <ul class="pure-menu-list">{{#tutorials}} <li class="pure-menu-item"><a href="#" class="pure-menu-link js-tutorial-select">{{name}}</a></li> {{/tutorials}} </ul> </div> </div> <div class="pure-g js-main"> {{#tutorial}} <div class="pure-u-1-2 page-section description"> <ol> {{#steps}} <li class="js-step-select"><a href="#">{{name}}</a></li> {{/steps}} </ol> {{#step}} <p>{{description}}</p> <button class="pure-button js-run" id="run">Run</button> {{/step}} </div> {{#step}} <div class="pure-u-1-2 page-section"><textarea class="js-editor editor html" cols="30" rows="25" id="template" value="{{template}}">{{template}}</textarea></div> <div class="pure-u-1-2 page-section"> <div id="result"> <div id="app"></div> </div> </div> <div class="pure-u-1-2 page-section"><textarea class="js-editor editor" id="tungsten" cols="30" rows="25" value="{{js}}">{{js}}</textarea>{ </div> {{/step}} {{/tutorial}} </div>'
 };
 
 var tungstenCode;
@@ -13,14 +13,39 @@ var View = tungsten.backbone.View, Model = tungsten.backbone.Model, Collection =
 var TutorialSelectView = View.extend({
   events: {
     'click': function() {
-      this.model.trigger('select', this.model);
+      this.model.trigger('selectTutorial', this.model);
+    }
+  }
+});
+var StepSelectView = View.extend({
+  events: {
+    click: function() {
+      this.model.trigger('selectStep', this.model);
     }
   }
 });
 var codeOptions = {
   lineNumbers: true,
   lineWrapping: true,
-  extraKeys: {'Ctrl-Alt-Q': function(cm) { cm.foldCode(cm.getCursor()); }, 'Ctrl-Alt-F': function(cm) { cm.operation(function() { for (var l = cm.firstLine(); l <= cm.lastLine(); ++l) cm.foldCode({line: l, ch: 0}, null, 'fold'); });}, 'Ctrl-Alt-U' : function(cm) { cm.operation(function() { for (var l = cm.firstLine(); l <= cm.lastLine(); ++l) cm.foldCode({line: l, ch: 0}, null, 'unfold'); });} },
+  extraKeys: {
+    'Ctrl-Alt-Q': function(cm) { cm.foldCode(cm.getCursor()); },
+    'Ctrl-Alt-F': function(cm) {
+      cm.operation(function() {
+        for (var l = cm.firstLine(); l <= cm.lastLine(); ++l) cm.foldCode({
+          line: l,
+          ch: 0
+        }, null, 'fold');
+      });
+    },
+    'Ctrl-Alt-U': function(cm) {
+      cm.operation(function() {
+        for (var l = cm.firstLine(); l <= cm.lastLine(); ++l) cm.foldCode({
+          line: l,
+          ch: 0
+        }, null, 'unfold');
+      });
+    }
+  },
   foldGutter: true,
   gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
 }
@@ -53,43 +78,62 @@ var AppView = View.extend({
   postInitialize: function() {
     var self = this;
     var debouncedRun = _.debounce(this.run, 200);
-    this.listenTo(this.model.get('tutorials'), 'select', function(tutorial) {
+
+    this.listenTo(this.model.get('tutorials'), 'selectTutorial', function(tutorial) {
       if (tungstenCode && self.model.get('runOnKeyup')) {
         tungstenCode.off('change', debouncedRun);
         templateCode.off('change', debouncedRun);
       }
+      self.model.unset('step');
+      self.model.unset('tutorial');
       self.model.set('tutorial', tutorial.toJSON());
-      _.each(document.querySelectorAll('.CodeMirror'), function(editor) {
-        editor.remove();
-      });
-      if (document.querySelector('#app')) {
-        document.querySelector('#app').innerHTML = '<div id="app"></div>';
-      }
-      window.setTimeout(function() {
-        tungstenCode = CodeMirror.fromTextArea(document.getElementById('tungsten'), _.extend({
-          mode: 'javascript'
-        }, codeOptions));
-        templateCode = CodeMirror.fromTextArea(document.getElementById('template'), _.extend({
-          mode: 'mustache'
-        }, codeOptions));
-
-        tungstenCode.getDoc().markText({line: 0, ch: 0}, {line: 1, ch: 0}, {readOnly: true});
-        self.run();
-        if (self.model.get('runOnKeyup')) {
-          tungstenCode.on('change', debouncedRun);
-          templateCode.on('change', debouncedRun);
+      self.listenTo(self.model.get('tutorial').get('steps'), 'selectStep', function(s) {
+        self.model.get('tutorial').set('step', s);
+        _.each(document.querySelectorAll('.CodeMirror'), function(editor) {
+          editor.remove();
+        });
+        if (document.querySelector('#app')) {
+          document.querySelector('#app').innerHTML = '<div id="app"></div>';
         }
-      }, 200);
+        window.setTimeout(function() {
+          tungstenCode = CodeMirror.fromTextArea(document.getElementById('tungsten'), _.extend({
+            mode: 'javascript'
+          }, codeOptions));
+          templateCode = CodeMirror.fromTextArea(document.getElementById('template'), _.extend({
+            mode: 'mustache'
+          }, codeOptions));
+
+          tungstenCode.getDoc().markText({line: 0, ch: 0}, {line: 1, ch: 0}, {readOnly: true});
+          self.run();
+          if (self.model.get('runOnKeyup')) {
+            tungstenCode.on('change', debouncedRun);
+            templateCode.on('change', debouncedRun);
+          }
+        }, 200);
+      });
+      if(self.model.get('tutorial').get('steps')) {
+        self.model.get('tutorial').get('steps').trigger('selectStep', self.model.get('tutorial').get('steps').at(0));
+      } else {
+         console.log('tutorial has no steps set');
+      }
+
     });
-  }
-  ,
+  },
   childViews: {
-    'js-tutorial-select': TutorialSelectView
+    'js-tutorial-select': TutorialSelectView,
+    'js-step-select': StepSelectView
   }
 });
-
+var TutorialModel = Model.extend({
+  relations: {
+    steps: Collection
+  }
+});
+var TutorialCollection = Collection.extend({
+  model: TutorialModel
+});
 var AppModel = Model.extend({
-  relations: {tutorials: Collection, tutorial: Model},
+  relations: {tutorials: TutorialCollection, tutorial:TutorialModel}
 });
 
 new AppView({
