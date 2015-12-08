@@ -1,5 +1,5 @@
 var rawTemplates = {
-  app: '<div id="menu"> <div class="pure-menu"><a class="pure-menu-heading" href="#">Tungsten.js</a> <ul class="pure-menu-list">{{#tutorials}} <li class="pure-menu-item"><a href="#" class="pure-menu-link js-tutorial-select">{{name}}</a></li> {{/tutorials}} </ul> </div> </div> <div class="pure-g js-main"> {{#tutorial}} <div class="pure-u-1-2 page-section description"> <ol> {{#steps}} <li class="js-step-select"><a href="#">{{name}}</a></li> {{/steps}} </ol> {{#step}} <p>{{description}}</p> <button class="pure-button js-run" id="run">Run</button> {{/step}} </div> {{#step}} <div class="pure-u-1-2 page-section"><textarea class="js-editor editor html" cols="30" rows="25" id="template" value="{{template}}">{{template}}</textarea></div> <div class="pure-u-1-2 page-section"> <div id="result"> <div id="app"></div> </div> </div> <div class="pure-u-1-2 page-section"><textarea class="js-editor editor" id="tungsten" cols="30" rows="25" value="{{js}}">{{js}}</textarea>{ </div> {{/step}} {{/tutorial}} </div>'
+  app: '<div id="menu"> <div class="pure-menu"><a class="pure-menu-heading" href="#">Tungsten.js</a> <ul class="pure-menu-list">{{#tutorials}} <li class="pure-menu-item"><a href="#" class="pure-menu-link js-tutorial-select">{{name}}</a></li> {{/tutorials}} </ul> </div> </div> <div class="pure-g js-main"> {{#tutorial}} <div class="pure-u-1-2 page-section description"> <ol> {{#steps}} <li class="js-step-select step">{{index}}</li> {{/steps}} </ol> {{#step}} <p>{{description}}</p> <button class="pure-button js-run" id="run">Run</button> {{/step}} </div> {{#step}} <div class="pure-u-1-2 page-section"><textarea class="js-editor editor html" cols="30" rows="25" id="template" value="{{template}}">{{template}}</textarea></div> <div class="pure-u-1-2 page-section"> <div id="result"> <div id="app"></div> </div> </div> <div class="pure-u-1-2 page-section"><textarea class="js-editor editor" id="tungsten" cols="30" rows="25" value="{{js}}">{{js}}</textarea>{ </div> {{/step}} {{/tutorial}} </div>'
 };
 
 var tungstenCode;
@@ -104,6 +104,16 @@ var AppView = View.extend({
           }, codeOptions));
 
           tungstenCode.getDoc().markText({line: 0, ch: 0}, {line: 1, ch: 0}, {readOnly: true});
+          if(self.model.get('tutorial').get('step').get('template_highlights')) {
+            _.each(self.model.get('tutorial').get('step').get('template_highlights'), function(highlight) {
+              templateCode.markText(highlight.start, highlight.end, {className: 'styled-background', clearOnEnter: true});
+            });
+          }
+          if(self.model.get('tutorial').get('step').get('js_highlights')) {
+            _.each(self.model.get('tutorial').get('step').get('js_highlights'), function(highlight) {
+              tungstenCode.markText(highlight.start, highlight.end, {className: 'styled-background', clearOnEnter: true});
+            });
+          }
           self.run();
           if (self.model.get('runOnKeyup')) {
             tungstenCode.on('change', debouncedRun);
