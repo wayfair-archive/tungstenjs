@@ -2,6 +2,11 @@
 
 Inspired by Ractive's [learn.ractivejs.org](http://learn.ractivejs.org/hello-world/1/).
 
+## Install
+
+    npm install
+    # open index.html
+
 ## Licenses
 
 Uses [Pure](http://purecss.io/) styles (BSD licensed, Copyright 2014 Yahoo! Inc.).
