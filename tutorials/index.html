@@ -8,83 +8,7 @@
     <link rel="stylesheet" href="css/side-menu.css">
     <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="node_modules/codemirror/addon/fold/foldgutter.css">
-    <style>
-        body {
-            max-width: 100%;
-            font-family: FreeSans, Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        .cm-mustache {
-            color: #0ca;
-        }
-
-        .CodeMirror {
-            height: 49vh;
-            padding: 1vh;
-        }
-
-        #result {
-            padding: 10px;
-        }
-
-        .description {
-            padding: 20px;
-        }
-
-        .footer {
-            box-sizing: content-box;
-        }
-
-        .steps {
-            padding: 0;
-            margin: 0;
-        }
-
-        .page-section.description {
-            border-top: 1vh solid white;
-            border-left: 1vh solid white;
-        }
-
-        .step {
-            display: inline-block;
-            background-color: #8d4377;
-            border-radius: 50%;
-            text-align: center;
-            width: 1.6em;
-            height: 1.6em;
-            font-size: 1em;
-            line-height: 1.8;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        .styled-background {
-            background-color: #ff7;
-        }
-
-        #result {
-            border-top: 1vh solid white;
-            border-left: 1vh solid white;
-            border-bottom: 1vh solid white;
-            height: 50vh;
-        }
-
-        .last-editor-section {
-            border-bottom: 1vh solid white;
-
-        }
-
-        .step_description {
-            font-size: 1.2em;
-            color: black;
-            margin: 30px 0;
-        }
-        .step_name { margin: 10px 0; font-size: 120%; }
-    </style>
+    <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
@@ -92,7 +16,7 @@
     <div id="appwrapper"></div>
 </div>
 
-
+<!-- Underscore -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <!-- Core Tungsten.js -->
 <script src="../dist/tungsten.core.js"></script>
@@ -102,6 +26,7 @@
 <script src="../dist/tungsten.template.js"></script>
 <!-- Ractive.js for parsing templates -->
 <script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
+<!-- Code Mirror -->
 <script src="node_modules/codemirror/lib/codemirror.js"></script>
 <script src="node_modules/codemirror/addon/fold/foldcode.js"></script>
 <script src="node_modules/codemirror/addon/fold/foldgutter.js"></script>
@@ -112,27 +37,9 @@
 <script src="node_modules/codemirror/addon/mode/overlay.js"></script>
 <script src="node_modules/codemirror/mode/xml/xml.js"></script>
 <script src="node_modules/codemirror/mode/javascript/javascript.js"></script>
-<script>
-    CodeMirror.defineMode('mustache', function(config, parserConfig) {
-        var mustacheOverlay = {
-            token: function(stream) {
-                var ch;
-                if (stream.match('{{')) {
-                    while ((ch = stream.next()) != null)
-                        if (ch == '}' && stream.next() == '}') {
-                            stream.eat('}');
-                            return 'mustache';
-                        }
-                }
-                while (stream.next() != null && !stream.match('{{', false)) {
-                }
-                return null;
-            }
-        };
-        return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || 'text/html'), mustacheOverlay);
-    });
-</script>
+<!-- Data -->
 <script src="js/data.js"></script>
+<!-- App -->
 <script src="js/app.js"></script>
 </body>
 </html>
