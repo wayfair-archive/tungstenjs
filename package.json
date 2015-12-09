@@ -51,7 +51,7 @@
     "chai": "^2.2.0",
     "coveralls": "^2.11.4",
     "entities": "^1.1.1",
-    "eslint": "1.0.0-rc-1",
+    "eslint": "^1.2.1",
     "express": "^4.13.3",
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",
