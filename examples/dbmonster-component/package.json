@@ -1,0 +1,14 @@
+{
+  "name": "tungstenjs-dbmonster",
+  "version": "0.2.0",
+  "private": true,
+  "main": "js/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "node ../examples_server.js --example=dbmonster"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.4"
+  }
+}
