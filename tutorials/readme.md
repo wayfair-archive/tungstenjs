@@ -4,6 +4,7 @@ Inspired by Ractive's [learn.ractivejs.org](http://learn.ractivejs.org/hello-wor
 
 ## Install
 
+    # Run `npm install` on the main tungstenjs directory
     npm install
     # open index.html
 
