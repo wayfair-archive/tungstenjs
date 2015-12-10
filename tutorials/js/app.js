@@ -85,6 +85,11 @@
         this.run();
         return false;
       }
+      // meta + s
+      if (e.metaKey && e.which === 83) {
+        this.run();
+        return false;
+      }
     },
     run: function() {
       var newLines = /\n/g;
