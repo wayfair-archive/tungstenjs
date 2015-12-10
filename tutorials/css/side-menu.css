@@ -187,3 +187,49 @@ small screens.
 .menu-link span:after {
   margin-top: 0.6em;
 }
+
+
+/* -- Responsive Styles (Media Queries) ------------------------------------- */
+
+/*
+Hides the menu at `48em`, but modify this based on your app's needs.
+*/
+@media (min-width: 48em) {
+
+  .header,
+  .content {
+    padding-left: 2em;
+    padding-right: 2em;
+  }
+
+  #layout {
+    padding-left: 150px; /* left col width "#menu" */
+    left: 0;
+  }
+  #menu {
+    left: 150px;
+  }
+
+  .menu-link {
+    position: fixed;
+    left: 150px;
+    display: none;
+  }
+
+  #layout.active .menu-link {
+    left: 150px;
+  }
+}
+
+@media (max-width: 48em) {
+  /* Only apply this when the window is small. Otherwise, the following
+  case results in extra padding on the left:
+      * Make the window small.
+      * Tap the menu to trigger the active state.
+      * Make the window large again.
+  */
+  #layout.active {
+    position: relative;
+    left: 150px;
+  }
+}
