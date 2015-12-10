@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "codemirror": "5.9.0",
+    "purecss": "^0.6.0",
     "todomvc-app-css": "^2.0.1"
   }
 }

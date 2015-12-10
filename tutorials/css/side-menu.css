@@ -129,9 +129,13 @@ This styles a link within a selected menu item `<li>`.
 This styles the menu heading.
 */
 #menu .pure-menu-heading {
-  font-size: 110%;
   color: #fff;
-  margin: 0;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: #fff;
+  margin-top: 0;
+  padding: 0.5em 0.8em;
+  text-transform: uppercase;
 }
 
 /* -- Dynamic Button For Responsive Menu -------------------------------------*/
