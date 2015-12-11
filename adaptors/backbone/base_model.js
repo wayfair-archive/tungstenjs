@@ -7,7 +7,6 @@ var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
 var ComponentWidget = require('./component_widget');
-var BaseCollection = require('./base_collection');
 var eventTrigger = require('./event_trigger');
 /**
  * BaseModel
