@@ -225,8 +225,7 @@ BaseCollection.prototype.resetRelations = function(options) {
 
 BaseCollection.prototype.trigger = eventTrigger.newTrigger;
 
-BaseCollection.prototype.reset = function(models, options) {
-  options = options || {};
+BaseCollection.prototype.reset = function(models, options = {}) {
   var i, l;
   /* develblock:start */
   if (!this.initialData) {
