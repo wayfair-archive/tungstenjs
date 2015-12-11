@@ -10,6 +10,7 @@ var logger = require('../../src/utils/logger');
 
 var eventTrigger = require('./event_trigger');
 var ComponentWidget = require('./component_widget');
+var BaseModel = require('./base_model');
 
 /**
  * BaseCollection
@@ -211,8 +212,7 @@ var BaseCollection = Backbone.Collection.extend({
  *    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *    THE SOFTWARE.
  */
-
-BaseCollection.prototype.model = Backbone.Model;
+BaseCollection.prototype.model = BaseModel;
 BaseCollection.prototype.resetRelations = function(options) {
   _.each(this.models, function(model) {
     _.each(model.relations, function(rel, key) {

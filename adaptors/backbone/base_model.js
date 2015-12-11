@@ -237,7 +237,6 @@ var BaseModel = Backbone.Model.extend({
  *    THE SOFTWARE.
  */
 
-BaseCollection.prototype.model = BaseModel;
 BaseModel.prototype.getDeep = function(attr) {
   var modelData = this;
   var properties = attr.split(':');
