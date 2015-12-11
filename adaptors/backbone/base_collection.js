@@ -62,7 +62,7 @@ var BaseCollection = Backbone.Collection.extend({
       if (events === true) {
         model.model.on('all', this._onModelEvent, this);
       } else if (events.length) {
-        for (var i = 0; i < events.length; i++) {
+        for (let i = 0; i < events.length; i++) {
           this.bindExposedEvent(events[i], model);
         }
       }
@@ -81,7 +81,7 @@ var BaseCollection = Backbone.Collection.extend({
       if (events === true) {
         model.model.off('all', this._onModelEvent, this);
       } else if (events.length) {
-        for (var i = 0; i < events.length; i++) {
+        for (let i = 0; i < events.length; i++) {
           this.stopListening(model.model, events[i]);
         }
       }
@@ -169,7 +169,7 @@ var BaseCollection = Backbone.Collection.extend({
         second.apply(this, arguments);
       };
     }
-    for (var i = 0; i < methods.length; i++) {
+    for (let i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Collection.' + methods[i] + ' may not be overridden';
         if (staticProps && staticProps.debugName) {

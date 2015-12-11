@@ -1,7 +1,7 @@
 var Backbone = require('backbone');
 
 // List of Backbone's native events that shouldn't bubble wholesale
-var builtInEvents = {
+const builtInEvents = {
   add: true,
   remove: true,
   update: true,
@@ -19,7 +19,7 @@ var bubbleEvent = function(parent, parentProp, args) {
   if (name.indexOf(' ') > -1) {
     // If a multiple events are passed in, split them up and recurse individually
     var names = name.split(/\s+/);
-    for (var i = 0; i < names.length; i++) {
+    for (let i = 0; i < names.length; i++) {
       var otherArgs = args.slice(1);
       bubbleEvent(parent, parentProp, [names[i]].concat(otherArgs));
     }

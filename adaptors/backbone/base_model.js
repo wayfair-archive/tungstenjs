@@ -24,24 +24,23 @@ var BaseModel = Backbone.Model.extend({
     var derived = _.result(this, 'derived');
     var relations = _.result(this, 'relations') || {};
     if (derived) {
-      var self = this;
-      _.each(derived, function(props, name) {
+      _.each(derived, (props, name) => {
         // Check if a collection relation is declared
         var isCollection = false;
         if (relations[name] && relations[name].tungstenCollection) {
           isCollection = true;
         }
         if (props.fn && props.deps) {
-          var fn = _.bind(props.fn, self);
-          var update = isCollection ? function() {
-            self.getDeep(name).reset(fn());
-          } : function() {
-            self.set(name, fn());
+          var fn = _.bind(props.fn, this);
+          var update = isCollection ? () => {
+            this.getDeep(name).reset(fn());
+          } : () => {
+            this.set(name, fn());
           };
-          _.each(props.deps, function(dep) {
-            self.listenTo(self, 'change:' + dep, update);
-            self.listenTo(self, 'update:' + dep, update);
-            self.listenTo(self, 'reset:' + dep, update);
+          _.each(props.deps, (dep) => {
+            this.listenTo(this, 'change:' + dep, update);
+            this.listenTo(this, 'update:' + dep, update);
+            this.listenTo(this, 'reset:' + dep, update);
           });
           // Sets default value
           update();
@@ -80,10 +79,9 @@ var BaseModel = Backbone.Model.extend({
    */
   getChildren: function() {
     var results = [];
-    var self = this;
-    _.each(this.relations, function(constructor, key) {
-      if (self.has(key)) {
-        var value = self.get(key);
+    _.each(this.relations, (constructor, key) => {
+      if (this.has(key)) {
+        var value = this.get(key);
         // Pull out component models
         if (value && value.type === 'Widget' && value.model) {
           value = value.model;
@@ -196,7 +194,7 @@ var BaseModel = Backbone.Model.extend({
         second.apply(this, arguments);
       };
     }
-    for (var i = 0; i < methods.length; i++) {
+    for (let i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Model.' + methods[i] + ' may not be overridden';
         if (staticProps && staticProps.debugName) {
@@ -244,7 +242,7 @@ BaseModel.prototype.getDeep = function(attr) {
   var modelData = this;
   var properties = attr.split(':');
   var prop;
-  for (var i = 0; i < properties.length; i++) {
+  for (let i = 0; i < properties.length; i++) {
     prop = properties[i];
     modelData = modelData.get && modelData.has(prop) ? modelData.get(prop) : modelData[prop];
     if (modelData == null) {
@@ -370,7 +368,7 @@ BaseModel.prototype.reset = function(attrs, options) {
   var relations = _.result(this, 'relations') || {};
   var derived = _.result(this, 'derived') || {};
   var key;
-  for (var i = 0; i < currentKeys.length; i++) {
+  for (let i = 0; i < currentKeys.length; i++) {
     key = currentKeys[i];
     if (_.has(relations, key)) {
       this.attributes[key].reset(attrs[key], opts);
@@ -383,10 +381,9 @@ BaseModel.prototype.reset = function(attrs, options) {
 };
 
 BaseModel.prototype.bindExposedEvent = function(event, prop, childComponent) {
-  var self = this;
-  self.listenTo(childComponent.model, event, function() {
+  this.listenTo(childComponent.model, event, () => {
     var args = Array.prototype.slice.call(arguments);
-    eventTrigger.bubbleEvent(self, prop, [event].concat(args));
+    eventTrigger.bubbleEvent(this, prop, [event].concat(args));
   });
 };
 
@@ -526,14 +523,16 @@ BaseModel.prototype.unset = function(attr, options) {
           val.model.parent = null;
           val.model.parentProp = null;
         } else if (events.length) {
-          for (var i = 0, l = events.length; i < l; i++) {
+          for (let i = 0, l = events.length; i < l; i++) {
             this.stopListening(val.model, events[i]);
           }
         }
       }
     }
   }
-  return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+  return this.set(attr, void 0, _.extend({}, options, {
+    unset: true
+  }));
 };
 
 BaseModel.prototype.toJSON = function() {

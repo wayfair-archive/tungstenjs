@@ -118,7 +118,7 @@ var BaseView = Backbone.View.extend({
     if (dataItem && (dataItem.tungstenModel || dataItem.tungstenCollection)) {
       var runOnChange;
       if (!this.parentView) {
-        var boundRender =  _.bind(this.render, this);
+        var boundRender = _.bind(this.render, this);
         runOnChange = () => {
           renderQueue.queue(this, boundRender);
         };
