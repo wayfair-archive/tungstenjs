@@ -30,6 +30,7 @@
     "ampersand-model": "^5.0.3",
     "ampersand-view": "^7.3.0",
     "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
+    "babel-plugin-transform-es2015-shorthand-properties": "^6.3.13",
     "backbone": "^1.1.2",
     "backbone.native": "~1.0.0",
     "data-set": "^4.0.0",

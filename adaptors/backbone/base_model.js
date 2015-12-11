@@ -4,10 +4,11 @@
 'use strict';
 var _ = require('underscore');
 var Backbone = require('backbone');
-var backboneNested = require('./backbone_nested');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
-
+var ComponentWidget = require('./component_widget');
+var BaseCollection = require('./base_collection');
+var eventTrigger = require('./event_trigger');
 /**
  * BaseModel
  *
@@ -212,9 +213,359 @@ var BaseModel = Backbone.Model.extend({
   }
 });
 
-// Add nested collection/model support with backbone_nested.
-// To use, set a hash of relations on a model.
-// See backbone_nested_spec for examples.
-backboneNested.setNestedModel(BaseModel);
+/**
+ * Backbone Nested - Functions to add nested model and collection support. *
+ * Forked from backbone-nested-models@0.5.1 by Bret Little
+ *
+ *    @source https://github.com/blittle/backbone-nested-models
+ *    (MIT LICENSE)
+ *    Copyright (c) 2012 Bret Little
+ *    Permission is hereby granted, free of charge, to any person obtaining a copy
+ *    of this software and associated documentation files (the 'Software'), to deal
+ *    in the Software without restriction, including without limitation the rights
+ *    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *    copies of the Software, and to permit persons to whom the Software is
+ *    furnished to do so, subject to the following conditions:
+ *
+ *    The above copyright notice and this permission notice shall be included in
+ *    all copies or substantial portions of the Software.
+ *
+ *    THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *    THE SOFTWARE.
+ */
+
+BaseCollection.prototype.model = BaseModel;
+BaseModel.prototype.getDeep = function(attr) {
+  var modelData = this;
+  var properties = attr.split(':');
+  var prop;
+  for (var i = 0; i < properties.length; i++) {
+    prop = properties[i];
+    modelData = modelData.get && modelData.has(prop) ? modelData.get(prop) : modelData[prop];
+    if (modelData == null) {
+      break;
+    }
+  }
+
+  return modelData;
+};
+BaseModel.prototype.setRelation = function(attr, val, options) {
+  var relation = this.attributes[attr],
+    id = this.idAttribute || 'id',
+    modelsToAdd = [],
+    modelsToRemove = [];
+
+  if (options.unset && relation) {
+    delete relation.parent;
+  }
+
+
+  if (this.relations && _.has(this.relations, attr)) {
+
+    // If the relation already exists, we don't want to replace it, rather
+    // update the data within it whether it is a collection or model
+    if (relation && relation instanceof Backbone.Collection) {
+
+      // If the val that is being set is already a collection, use the models
+      // within the collection.
+      if (val instanceof Backbone.Collection || val instanceof Array) {
+        val = val.models || val;
+        modelsToAdd = _.clone(val);
+
+        if (options.reset) {
+          // Adding option to reset nested collections via Model.set
+          relation.reset(modelsToAdd);
+        } else {
+
+          relation.each(function(model, i) {
+            var idAttribute;
+            if (ComponentWidget.isComponent(model)) {
+              idAttribute = model.model.idAttribute || 'id';
+            } else {
+              idAttribute = model.idAttribute || 'id';
+            }
+
+            // If the model does not have an 'id' skip logic to detect if it already
+            // exists and simply add it to the collection
+            var id = model.get(idAttribute);
+            if (typeof id === 'undefined') {
+              return;
+            }
+
+            // If the incoming model also exists within the existing collection,
+            // call set on that model. If it doesn't exist in the incoming array,
+            // then add it to a list that will be removed.
+            var rModel = _.find(val, function(_model) {
+              return _model[idAttribute] === id;
+            });
+
+            if (rModel) {
+              model.set(rModel.toJSON ? rModel.toJSON() : rModel);
+
+              // Remove the model from the incoming list because all remaining models
+              // will be added to the relation
+              modelsToAdd.splice(i, 1);
+            } else {
+              modelsToRemove.push(model);
+            }
+
+          });
+
+          _.each(modelsToRemove, function(model) {
+            relation.remove(model);
+          });
+
+          relation.add(modelsToAdd);
+        }
+
+      } else {
+
+        // The incoming val that is being set is not an array or collection, then it represents
+        // a single model.  Go through each of the models in the existing relation and remove
+        // all models that aren't the same as this one (by id). If it is the same, call set on that
+        // model.
+
+        relation.each(function(model) {
+          if (val && val[id] === model[id]) {
+            model.set(val);
+          } else {
+            relation.remove(model);
+          }
+        });
+      }
+
+      return relation;
+    }
+
+    if (relation && relation instanceof Backbone.Model) {
+      relation.set(val);
+      return relation;
+    }
+
+    options._parent = this;
+    // Since this is a relation for a model, unset any collection option that might be passed through
+    if (options.collection) {
+      options.collection = null;
+    }
+    val = new this.relations[attr](val, options);
+    val.parent = this;
+    val.parentProp = attr;
+  }
+
+  return val;
+};
+
+BaseModel.prototype.trigger = eventTrigger.newTrigger;
+
+BaseModel.prototype.reset = function(attrs, options) {
+  var opts = _.extend({
+    reset: true
+  }, options);
+  var currentKeys = _.keys(this.attributes);
+  var relations = _.result(this, 'relations') || {};
+  var derived = _.result(this, 'derived') || {};
+  var key;
+  for (var i = 0; i < currentKeys.length; i++) {
+    key = currentKeys[i];
+    if (_.has(relations, key)) {
+      this.attributes[key].reset(attrs[key], opts);
+      delete attrs[key];
+    } else if (!_.has(attrs, key) && !_.has(derived, key)) {
+      this.unset(key);
+    }
+  }
+  this.set(attrs, opts);
+};
+
+BaseModel.prototype.bindExposedEvent = function(event, prop, childComponent) {
+  var self = this;
+  self.listenTo(childComponent.model, event, function() {
+    var args = Array.prototype.slice.call(arguments);
+    eventTrigger.bubbleEvent(self, prop, [event].concat(args));
+  });
+};
+
+BaseModel.prototype.set = function(key, val, options) {
+  var attr, attrs, unset, changes, silent, changing, prev, current;
+  if (key == null) {
+    return this;
+  }
+
+  // Handle both `'key', value` and `{key: value}` -style arguments.
+  if (typeof key === 'object') {
+    attrs = key;
+    options = val;
+  } else {
+    (attrs = {})[key] = val;
+  }
+
+  options = options || {};
+
+  /* develblock:start */
+  // In order to compare server vs. client data, save off the initial data
+  if (!this.initialData) {
+    // Using JSON to get a deep clone to avoid any overlapping object references
+    var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
+    delete options.initialData;
+    this.initialData = JSON.parse(initialStr);
+    if (!_.isObject(this.initialData) || _.isArray(this.initialData)) {
+      logger.warn('Model expected object of attributes but got: ' + initialStr);
+    }
+  }
+  /* develblock:end */
+
+  // Run validation.
+  if (!this._validate(attrs, options)) {
+    return false;
+  }
+
+  // Extract attributes and options.
+  unset = options.unset;
+  silent = options.silent;
+  changes = [];
+  changing = this._changing;
+  this._changing = true;
+
+  if (!changing) {
+    this._previousAttributes = _.clone(this.attributes);
+    this.changed = {};
+  }
+  current = this.attributes;
+  prev = this._previousAttributes;
+
+  // Check for changes of `id`.
+  if (this.idAttribute in attrs) {
+    this.id = attrs[this.idAttribute];
+  }
+
+  var i, l;
+
+  // For each `set` attribute, update or delete the current value.
+  for (attr in attrs) {
+    if (attrs.hasOwnProperty(attr)) {
+      val = attrs[attr];
+
+      // Inject in the relational lookup
+      var opts = options;
+      /* develblock:start */
+      opts = _.extend({
+        initialData: val
+      }, options);
+      /* develblock:end */
+      val = this.setRelation(attr, val, opts);
+
+      if (!_.isEqual(current[attr], val)) {
+        changes.push(attr);
+      }
+      if (!_.isEqual(prev[attr], val)) {
+        this.changed[attr] = val;
+      } else {
+        delete this.changed[attr];
+      }
+      if (unset) {
+        delete current[attr];
+      } else {
+        current[attr] = val;
+      }
+
+      if (ComponentWidget.isComponent(val)) {
+        if (val.exposedEvents) {
+          var events = val.exposedEvents;
+          if (events === true) {
+            val.model.parent = this;
+            val.model.parentProp = attr;
+          } else if (events.length) {
+            for (i = 0, l = events.length; i < l; i++) {
+              this.bindExposedEvent(events[i], attr, val);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Trigger all relevant attribute changes.
+  if (!silent) {
+    if (changes.length) {
+      this._pending = true;
+    }
+    for (i = 0, l = changes.length; i < l; i++) {
+      this.trigger('change:' + changes[i], this, current[changes[i]], options);
+    }
+  }
+
+  if (changing) {
+    return this;
+  }
+  if (!silent) {
+    while (this._pending) {
+      this._pending = false;
+      this.trigger('change', this, options);
+    }
+  }
+  this._pending = false;
+  this._changing = false;
+
+  return this;
+};
+
+// Remove an attribute from the model, firing `"change"`. `unset` is a noop
+// if the attribute doesn't exist.
+BaseModel.prototype.unset = function(attr, options) {
+  if (this.has(attr)) {
+    var val = this.get(attr);
+    if (ComponentWidget.isComponent(val)) {
+      if (val.model && val.exposedEvents) {
+        var events = val.exposedEvents;
+        if (events === true) {
+          val.model.parent = null;
+          val.model.parentProp = null;
+        } else if (events.length) {
+          for (var i = 0, l = events.length; i < l; i++) {
+            this.stopListening(val.model, events[i]);
+          }
+        }
+      }
+    }
+  }
+  return this.set(attr, void 0, _.extend({}, options, {unset: true}));
+};
+
+BaseModel.prototype.toJSON = function() {
+  var attrs = this.attributes;
+  var relations = _.result(this, 'relations') || {};
+  var derived = _.result(this, 'derived') || {};
+  var session = _.invert(_.result(this, 'session') || []);
+
+  var data = {};
+  _.each(attrs, function(val, key) {
+    // Skip any derived or session properties
+    if (!derived[key] && !session[key]) {
+      // Recursively serialize any set relations
+      if (relations[key] && typeof val.doSerialize === 'function') {
+        data[key] = val.doSerialize();
+      } else {
+        data[key] = val;
+      }
+    }
+  });
+  return data;
+};
+
+BaseModel.prototype.doSerialize = function() {
+  return this.serialize(this.toJSON());
+};
+
+BaseModel.prototype.serialize = _.identity;
+
+BaseModel.prototype.clone = function() {
+  return new this.constructor(this.toJSON());
+};
+
 
 module.exports = BaseModel;
