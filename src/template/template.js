@@ -119,4 +119,8 @@ Template.prototype.attachView = function(view, widgetWrapper) {
   return new Template(templateObj, this.partials, view);
 };
 
+Template.prototype.toSource = function() {
+  return ractiveAdaptor.toSource(this.templateObj);
+};
+
 module.exports = Template;

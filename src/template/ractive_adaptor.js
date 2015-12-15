@@ -306,8 +306,108 @@ function attach(templateObj, view, createWidget, partials) {
   return attachView(view, templateObj, createWidget, partials);
 }
 
+/*****************************************************************************/
+
+var HtmlString = require('./stacks/html_string');
+function reverseAttributeString(templates, join) {
+  if (typeof templates === 'string') {
+    return templates;
+  }
+  var output = [];
+  var toString = new ToString();
+  for (var i = 0; i < templates.length; i++) {
+    toString.clear();
+    _toSource(toString, templates[i]);
+    output.push(toString.getOutput());
+  }
+  return output.join(join);
+}
+
+function toSource(template) {
+  var stack = new HtmlString();
+  _toSource(stack, template);
+  return stack.getOutput();
+}
+module.exports = toSource;
+
+function _toSource(stack, template) {
+  var i;
+  if (typeof template === 'undefined') {
+    return;
+  } else if (typeof template === 'string') {
+    stack.createObject(template);
+  } else if (Context.isArray(template)) {
+    for (i = 0; i < template.length; i++) {
+      _toSource(stack, template[i]);
+    }
+  } else if (template.type === 'Widget') {
+    _toSource(stack, template.template.templateObj);
+    return;
+  }
+
+  switch (template.t) {
+    // <!-- comment -->
+    case ractiveTypes.COMMENT:
+      var htmlString = new HtmlString();
+      _toSource(htmlString, template.c);
+      stack.createComment(htmlString.getOutput());
+      return;
+    // {{value}} or {{{value}}} or {{& value}}
+    case ractiveTypes.INTERPOLATOR:
+      stack.createObject('{{' + Context.getInterpolatorKey(template) + '}}');
+      return;
+    case ractiveTypes.TRIPLE:
+      stack.createObject('{{{' + Context.getInterpolatorKey(template) + '}}}');
+      break;
+
+    // {{> partial}}
+    case ractiveTypes.PARTIAL:
+      stack.createObject('{{>' + Context.getInterpolatorKey(template) + '}}');
+      break;
+
+    // {{# section}} or {{^ unless}}
+    case ractiveTypes.SECTION:
+      var name = Context.getInterpolatorKey(template);
+      if (template.n === ractiveTypes.SECTION_UNLESS) {
+        stack.createObject('{{^' + name + '}}');
+      } else {
+        stack.createObject('{{#' + name + '}}');
+      }
+      _toSource(stack, template.f);
+      stack.createObject('{{/' + name + '}}');
+      break;
+
+    // DOM node
+    case ractiveTypes.ELEMENT:
+      var properties = {};
+      var attributeHandler = function(values, attr) {
+        properties[attr] = reverseAttributeString(values, '');
+      };
+
+      // Parse static attribute values
+      _.each(template.a, attributeHandler);
+
+      // Handle dynamic values if need be
+      if (template.m) {
+        var attrs = reverseAttributeString(template.m, ' ');
+        properties[attrs] = false;
+      }
+
+      // openElement gives back a unique ID so it can validate pairs when closing
+      var elem = stack.openElement(template.e, properties);
+
+      // Recuse into the elements' children
+      if (template.f) {
+        _toSource(stack, template.f);
+      }
+
+      stack.closeElement(elem);
+  }
+}
+
 module.exports = {
   render: render,
   attach: attach,
-  wrap: wrap
+  wrap: wrap,
+  toSource: toSource
 };

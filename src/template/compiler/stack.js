@@ -167,6 +167,9 @@ templateStack.processObject = function(obj) {
     case 'attributevalue':
     case 'attributeend':
       processed = obj;
+      break;
+    default:
+      processed = obj;
   }
   return processed;
 };
@@ -346,7 +349,7 @@ var processAttributeArray = function(attrArray) {
         if (item.type === types.INTERPOLATOR) {
           throw new Error('Double curly interpolators cannot be in attributes', item);
         } else if (item.type === types.SECTION) {
-          attrs.dynamic.push(flattenAttributeValues(item));
+          attrs.dynamic.push(templateStack.processObject(item));
           continue;
         }
       }

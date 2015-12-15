@@ -46,10 +46,13 @@ HtmlStringStack.prototype.processObject = function(obj) {
       obj.properties.attributes.value = null;
     }
     _.each(obj.properties.attributes, function(value, name) {
-      if (value != null) {
+      if (value === false) {
+        htmlStr += ' ' + name;
+      } else if (value != null) {
         htmlStr += ' ' + name + '="' + value + '"';
       }
     });
+
     if (obj.children.length) {
       htmlStr += '>';
       htmlStr += obj.children.join('');

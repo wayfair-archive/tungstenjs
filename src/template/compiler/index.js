@@ -37,13 +37,13 @@ function processBuffer() {
   }
 }
 
-function processHoganObject(token) {
+function processHoganObject(token, inDynamicAttribute) {
   if (!token) {
     return;
   }
   if (Array.isArray(token)) {
     for (var i = 0; i < token.length; i++) {
-      processHoganObject(token[i]);
+      processHoganObject(token[i], inDynamicAttribute);
     }
     return;
   }
@@ -64,13 +64,13 @@ function processHoganObject(token) {
       break;
     case '#':
       obj = stack.openElement(types.SECTION, token.n.toString());
-      processHoganObject(token.nodes);
+      processHoganObject(token.nodes, parser.inAttributeName());
       processBuffer();
       stack.closeElement(obj);
       break;
     case '^':
       obj = stack.openElement(types.SECTION_UNLESS, token.n.toString());
-      processHoganObject(token.nodes);
+      processHoganObject(token.nodes, parser.inAttributeName());
       processBuffer();
       stack.closeElement(obj);
       break;
@@ -94,10 +94,16 @@ function processHoganObject(token) {
       stack.createObject(obj);
       break;
     case '_t':
-      parser.write(token.text.toString());
+      if (inDynamicAttribute) {
+        stack.createObject(token.text.toString());
+      } else {
+        parser.write(token.text.toString());
+      }
       break;
     case '\n':
-      parser.write('\n');
+      if (!inDynamicAttribute) {
+        parser.write('\n');
+      }
       break;
     default:
       throw new Error('Unhandled type: ' + JSON.stringify(token.tag));
