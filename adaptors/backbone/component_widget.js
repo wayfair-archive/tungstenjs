@@ -131,6 +131,10 @@ ComponentWidget.prototype.attach = function attach(elem) {
   });
 };
 
+/**
+ * Handle for component lambdas to be updated less-expensively but less-flexibly
+ * @param  {Template} tmpl Template to use as content
+ */
 ComponentWidget.prototype.updateContent = function updateContent(tmpl) {
   this.model.set('content', function() {
     var arr = tmpl.toVdom();

@@ -126,6 +126,11 @@ Template.prototype.attachView = function(view, widgetWrapper) {
   return new Template(templateObj, this.partials, view);
 };
 
+/**
+ * Returns the parsed template object into an equivalent Mustache string
+ * Used for lambdas to allow source transforms before rendering
+ * @return {String}
+ */
 Template.prototype.toSource = function() {
   return ractiveAdaptor.toSource(this.templateObj);
 };

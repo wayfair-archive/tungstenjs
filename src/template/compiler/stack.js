@@ -4,6 +4,7 @@ var _ = require('underscore');
 var types = require('../ractive_types');
 var htmlHelpers = require('../html_helpers');
 
+// Keys to use for the outputted array
 var templateKeys = {
   type: 'type', // t
   typeExtra: 'typeExtra', // n
@@ -14,7 +15,7 @@ var templateKeys = {
   attributes: 'attributes', // a
   dynamicAttributes: 'dynamicAttributes' // m
 };
-// Ractive compatibility
+// Keys for Ractive adaptor compatibility
 templateKeys = {
   type: 't',
   typeExtra: 'n',
@@ -300,6 +301,11 @@ var flattenAttributeValues = function(attrObject) {
   return attrObject;
 };
 
+/**
+ * Processes attributes into static and dynamic values
+ * @param  {Array<Object>} attrArray Attribute array built during parsing
+ * @return {Object}
+ */
 var processAttributeArray = function(attrArray) {
   var attrs = {
     'static': {},
@@ -314,6 +320,7 @@ var processAttributeArray = function(attrArray) {
     if (item.type === 'attributenameend') {
       pushingTo = value;
     } else if (item.type === 'attributeend') {
+      // Ensure there are no tokens in a non-dynamic attribute name
       for (var j = 0; j < name.length; j++) {
         if (typeof name[j] !== 'string') {
           throw new Error('Mustache token cannot be in attribute names', name[j]);

@@ -107,6 +107,7 @@ DefaultStack.prototype._closeElem = function(obj) {
   if (this.stack.length > 0) {
     pushingTo = this.stack[this.stack.length - 1].children;
   } else {
+    // If pushing to result, it isn't the child of any element and should be processed
     obj = this.processObject(obj);
     pushingTo = this.result;
   }

@@ -159,10 +159,14 @@ Context.prototype.lookup = function(name, handleLambda) {
 
       // If a value was found, break out
       if (value != null) {
+        // When invoking handleLambda return immediately to avoid caching
         if (handleLambda && value && value.type === 'Widget') {
           handleLambda(value, fnContext);
+          return;
         }
         if (typeof value === 'function') {
+          // Check that the found function takes in at least one argument
+          // Used to avoid conflicts with computed properties until those can be deprecated
           if (handleLambda && value.length >= 1) {
             handleLambda(value, fnContext);
             return;

@@ -7,6 +7,10 @@ var types = require('../ractive_types');
 var parser = require('./parser');
 var stack = require('./stack');
 
+/**
+ * Gets the current buffer from htmlparser and processes it
+ * Used to handle section tags inside attribute values
+ */
 function processBuffer() {
   if (!parser.inRelevantState()) {
     return;
@@ -36,6 +40,11 @@ function processBuffer() {
   }
 }
 
+/**
+ * [processHoganObject description]
+ * @param  {Object}  token              Nested mustache tree object
+ * @param  {booelan} inDynamicAttribute Whether we are in a dynamic attribute
+ */
 function processHoganObject(token, inDynamicAttribute) {
   if (!token) {
     return;
@@ -47,6 +56,7 @@ function processHoganObject(token, inDynamicAttribute) {
     return;
   }
 
+  // Any time we hit a mustache node, check the buffer
   if (token.tag !== '_t') {
     processBuffer();
   }
@@ -54,6 +64,7 @@ function processHoganObject(token, inDynamicAttribute) {
   var obj;
   switch (token.tag) {
     case '!':
+      // Leave control comments in as interpolators
       if (token.n.indexOf('w/') > -1) {
         obj = {};
         obj.type = types.INTERPOLATOR;
@@ -109,6 +120,12 @@ function processHoganObject(token, inDynamicAttribute) {
   }
 }
 
+/**
+ * Processes a template string into a Template
+ *
+ * @param  {string} template Mustache template string
+ * @return {Object}          Processed template object
+ */
 var getTemplate = function(template) {
   stack.clear();
   parser.reset();

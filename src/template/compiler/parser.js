@@ -83,6 +83,7 @@ var MustacheParser = function(cbs) {
 MustacheParser.prototype = new htmlparser.Parser();
 MustacheParser.prototype.constructor = MustacheParser;
 
+// Runs when the '=' after an attribute name is encountered
 MustacheParser.prototype.onattribname = function(name) {
   if (name) {
     stack.createObject({
@@ -95,6 +96,7 @@ MustacheParser.prototype.onattribname = function(name) {
   });
 };
 
+// Runs when attribute value data has been encountered
 MustacheParser.prototype.onattribdata = function(value) {
   stack.createObject({
     type: 'attributevalue',
@@ -102,12 +104,14 @@ MustacheParser.prototype.onattribdata = function(value) {
   });
 };
 
+// Runs when a whitespace character is encountered after a attribute name or the closing quote of a value
 MustacheParser.prototype.onattribend = function() {
   stack.createObject({
     type: 'attributeend'
   });
 };
 
+// When an HTML tag is opened
 MustacheParser.prototype.onopentagname = function(name) {
   if (this._lowerCaseTagNames) {
     name = name.toLowerCase();
@@ -127,6 +131,7 @@ MustacheParser.prototype.onopentagname = function(name) {
   }
 };
 
+// When an HTML tag is closed
 MustacheParser.prototype.onclosetag = function(name) {
   this._updatePosition(1);
 
@@ -226,6 +231,9 @@ var parser = new MustacheParser({
     // Marks the element as no longer opening so we stop pushing to attributes
     el.isOpen = false;
   },
+  /**
+   * Runs when an close tag is encountered
+   */
   onclosetag: function() {
     var el = stack.peek();
     stack.closeElement(el);
