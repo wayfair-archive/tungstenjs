@@ -8,7 +8,7 @@ describe('html_helpers.js public API', function() {
       expect(htmlHelpers.validation.isValidChild).to.be.a('function');
     });
     it('should check for a valid child', function() {
-      expect(htmlHelpers.validation.isValidChild('li', 'li')).to.equal(false);
+      expect(htmlHelpers.validation.isValidChild('li', 'li')).to.be.a('string');
     });
     it('should check for an invalid child', function() {
       expect(htmlHelpers.validation.isValidChild('li', 'ul')).to.equal(true);

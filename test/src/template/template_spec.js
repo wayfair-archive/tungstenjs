@@ -179,10 +179,10 @@ toHtmlViaDom.compile = compileOnly;
 toHtmlViaVdom.compile = compileOnly;
 
 var specs = require('./get_template_spec_for_renderer');
-// specs(toHtmlViaString);
-// specs(toHtmlViaDom);
-// specs(toHtmlViaVdom);
-specs(toHtmlViaHogan);
+specs(toHtmlViaString);
+specs(toHtmlViaDom);
+specs(toHtmlViaVdom);
+// specs(toHtmlViaHogan);
 
 describe('textarea value sets', function() {
   var TEST_VALUE = 'testvalue';
