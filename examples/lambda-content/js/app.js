@@ -8,6 +8,10 @@ var BaseModel = TungstenBackboneBase.Model;
 var AppModel = BaseModel.extend({
   relations: {
     fancy: BorderedComponent
+  },
+  lambda: function(text, render) {
+    var content = render(text);
+    return content.replace('js-not-child', 'js-child');
   }
 });
 
