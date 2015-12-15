@@ -163,7 +163,7 @@ Context.prototype.lookup = function(name, handleLambda) {
           handleLambda(value, fnContext);
         }
         if (typeof value === 'function') {
-          if (handleLambda && value.length === 2) {
+          if (handleLambda && value.length >= 1) {
             handleLambda(value, fnContext);
             return;
           } else {

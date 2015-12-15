@@ -114,7 +114,9 @@ function createChildView(view, template, partials) {
  */
 Template.prototype.attachView = function(view, widgetWrapper) {
   // @TODO assign this via adaptor?
-  widgetConstructor = widgetWrapper;
+  if (widgetWrapper !== undefined) {
+    widgetConstructor = widgetWrapper;
+  }
   var templateObj = ractiveAdaptor.attach(
     _.clone(this.templateObj),
     view,
