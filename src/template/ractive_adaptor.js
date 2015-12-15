@@ -155,9 +155,17 @@ function render(stack, template, context, partials, parentView) {
               return templateData.template.toString(context);
             });
             if (lambdaValue) {
-              if (typeof lambdaValue === 'string' && lambdaValue.indexOf('{') > -1) {
-                var lambdaTemplateData = compiler(lambdaValue);
-                lambdaValue = lambdaTemplateData.templateObj;
+              if (typeof lambdaValue === 'string') {
+                if (lambdaValue.indexOf('{') > -1) {
+                  var lambdaTemplateData = compiler(lambdaValue);
+                  lambdaValue = lambdaTemplateData.templateObj;
+                } else {
+                  stack.createObject(lambdaValue, {
+                    parse: true,
+                    escape: false
+                  });
+                  return;
+                }
               }
               render(stack, lambdaValue, context, partials, parentView);
             }
@@ -169,7 +177,7 @@ function render(stack, template, context, partials, parentView) {
       if (lambdaHandled) {
         break;
       }
-      value = Context.parseValue(context.lookup(Context.getInterpolatorKey(template), stack));
+      value = Context.parseValue(value);
       if (template.n === ractiveTypes.SECTION_UNLESS) {
         if (!value.isTruthy) {
           render(stack, template.f, context, partials, parentView);
