@@ -6,9 +6,6 @@
 'use strict';
 
 var _ = require('underscore');
-var ToVdom = require('./stacks/vdom');
-var ToDom = require('./stacks/dom');
-var ToHtmlString = require('./stacks/html_string');
 var ractiveAdaptor = require('./ractive_adaptor');
 var Context = require('./template_context');
 
@@ -62,6 +59,7 @@ Template.prototype._render = function(template, data, view, partials, stack) {
  */
 Template.prototype.toString = function(data) {
   var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
+  var ToHtmlString = require('./stacks/html_string');
   return this._render(templateToRender, data, null, this.partials, new ToHtmlString());
 };
 /**
@@ -71,6 +69,7 @@ Template.prototype.toString = function(data) {
  */
 Template.prototype.toDom = function(data) {
   var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
+  var ToDom = require('./stacks/dom');
   return this._render(templateToRender, data, null, this.partials, new ToDom());
 };
 /**
@@ -79,6 +78,7 @@ Template.prototype.toDom = function(data) {
  * @return {Object}       VirtualTree representing the template
  */
 Template.prototype.toVdom = function(data) {
+  var ToVdom = require('./stacks/vdom');
   return this._render(this.templateObj, data, this.view, this.partials, new ToVdom());
 };
 
