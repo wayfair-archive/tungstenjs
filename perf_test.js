@@ -36,7 +36,7 @@ function getTemplate(templateStr, partials) {
 // Dynamic attribute
 // Escaped text
 // Unescaped text with HTML
-var template = getTemplate('<select>\r\n{{#options}}  {{> option}}{{/option}}</select>', {
+var template = getTemplate('<select>\r\n{{#options}}  {{> option}}{{/options}}</select>', {
   option: '<option value="{{index}}" {{#even}}class="even"{{/even}} {{^even}}class="odd "{{/even}}>{{text}} {{nothing}} {{{raw_html}}} {{{raw_text}}}</option>\r\n'
 });
 var data = {
