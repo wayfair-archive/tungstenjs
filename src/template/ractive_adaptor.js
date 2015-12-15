@@ -156,7 +156,7 @@ function render(stack, template, context, partials, parentView) {
             });
             if (lambdaValue) {
               if (typeof lambdaValue === 'string') {
-                if (lambdaValue.indexOf('<') > -1) {
+                if (lambdaValue.indexOf(' class="') > -1 && parentView.childViews) {
                   var lambdaTemplateData = compiler(lambdaValue);
                   lambdaTemplateData.template = lambdaTemplateData.template.attachView(parentView);
                   lambdaValue = lambdaTemplateData.template.templateObj;
