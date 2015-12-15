@@ -351,11 +351,12 @@ function _toSource(stack, template) {
       var htmlString = new HtmlString();
       _toSource(htmlString, template.c);
       stack.createComment(htmlString.getOutput());
-      return;
+      break;
+
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
       stack.createObject('{{' + Context.getInterpolatorKey(template) + '}}');
-      return;
+      break;
     case ractiveTypes.TRIPLE:
       stack.createObject('{{{' + Context.getInterpolatorKey(template) + '}}}');
       break;
