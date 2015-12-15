@@ -3,7 +3,7 @@ var webpackSettings = require('../webpack-helper');
 
 module.exports = function (root) {
   'use strict';
-  return webpackSettings({
+  return webpackSettings.compileSource({
     entry: './js/app',
     output: {
       filename: './js/app.min.js',
@@ -23,7 +23,6 @@ module.exports = function (root) {
     resolveLoader: {
       modulesDirectories: [path.join(root, 'node_modules')]
     },
-    devtool: '#eval-source-map',
     module: {
       loaders: []
     }

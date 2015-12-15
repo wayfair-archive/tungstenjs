@@ -9,6 +9,8 @@ var backboneNested = require('./backbone_nested');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
 
+var ComponentWidget = require('./component_widget');
+
 /**
  * BaseCollection
  *
@@ -22,6 +24,69 @@ var BaseCollection = Backbone.Collection.extend({
     this.initDebug();
     /* develblock:end */
     this.postInitialize();
+  },
+
+  bindExposedEvent: function(event, childComponent) {
+    this.listenTo(childComponent.model, event, function() {
+      var args = Array.prototype.slice.call(arguments);
+      this.trigger.apply(this, [event].concat(args));
+      if (event.substr(0, 7) === 'change:') {
+        this.trigger('change', this);
+      }
+    });
+  },
+
+  /**
+   * Method for checking whether an object should be considered a model for
+   * the purposes of adding to the collection.
+   *
+   * Overriding to allow ComponentWidgets to be treated as models
+   *
+   * @param  {Object}  model Model to check
+   * @return {Boolean}
+   */
+  _isModel: function(model) {
+    return Backbone.Collection.prototype._isModel(model) || model instanceof ComponentWidget;
+  },
+
+  /**
+   * Binds events when a model is added to a collection
+   *
+   * @param {Object} model
+   * @param {Object} options
+   */
+  _addReference: function(model, options) {
+    Backbone.Collection.prototype._addReference.call(this, model, options);
+    if (ComponentWidget.isComponent(model) && model.exposedEvents) {
+      var events = model.exposedEvents;
+      if (events === true) {
+        model.model.on('all', this._onModelEvent, this);
+      } else if (events.length) {
+        for (var i = 0; i < events.length; i++) {
+          this.bindExposedEvent(events[i], model);
+        }
+      }
+    }
+  },
+
+  /**
+   * Unbinds events when a model is removed from a collection
+   *
+   * @param {Object} model
+   * @param {Object} options
+   */
+  _removeReference: function(model, options) {
+    if (ComponentWidget.isComponent(model) && model.model && model.exposedEvents) {
+      var events = model.exposedEvents;
+      if (events === true) {
+        model.model.off('all', this._onModelEvent, this);
+      } else if (events.length) {
+        for (var i = 0; i < events.length; i++) {
+          this.stopListening(model.model, events[i]);
+        }
+      }
+    }
+    Backbone.Collection.prototype._removeReference.call(this, model, options);
   },
 
   /* develblock:start */
@@ -52,7 +117,14 @@ var BaseCollection = Backbone.Collection.extend({
    * @return {Array} Whether this object has children
    */
   getChildren: function() {
-    return this.models;
+    return _.map(this.models, function(model) {
+      // Pull out component models
+      if (model.type === 'Widget' && model.model) {
+        return model.model;
+      } else {
+        return model;
+      }
+    });
   },
 
   /**

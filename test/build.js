@@ -25,7 +25,7 @@ function getLoader(extension) {
   }
 }
 
-var debugConfig = webpackHelper({
+var debugConfig = webpackHelper.compileSource({
   entry: path.join(__dirname, '/test_target'),
   output: {
     filename: path.join(__dirname, '/testbuild.debug.js'),
@@ -46,7 +46,7 @@ var debugConfig = webpackHelper({
   }
 }, true, true);
 
-var prodConfig = webpackHelper({
+var prodConfig = webpackHelper.compileSource({
   entry: path.join(__dirname, '/test_target'),
   output: {
     filename: path.join(__dirname, '/testbuild.prod.js'),

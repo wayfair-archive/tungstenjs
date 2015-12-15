@@ -96,6 +96,10 @@ describe('base_view.js constructed api', function() {
       expect(BaseView.prototype.initializeRenderListener).to.have.length(1);
     });
     it('should bind to render for top level views', function(done) {
+      var renderQueue = require('../../../adaptors/shared/render_queue');
+      spyOn(renderQueue, 'queue').and.callFake(function(obj, fn) {
+        fn();
+      });
       spyOn(_, 'bind').and.callFake(function(fn) {
         return fn;
       });
@@ -115,6 +119,7 @@ describe('base_view.js constructed api', function() {
       // Invoke listened to function
       args[2]();
       setTimeout(function() {
+        jasmineExpect(renderQueue.queue).toHaveBeenCalledWith(ctx, ctx.render);
         jasmineExpect(ctx.render).toHaveBeenCalled();
         done();
       }, 100);

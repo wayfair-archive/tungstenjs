@@ -5,3 +5,4 @@ test/
 *.iml
 .idea/
 .DS_Store
+tutorials/

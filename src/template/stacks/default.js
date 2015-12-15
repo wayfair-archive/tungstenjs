@@ -108,7 +108,6 @@ DefaultStack.prototype._closeElem = function(obj) {
     pushingTo = this.stack[this.stack.length - 1].children;
   } else {
     pushingTo = this.result;
-    obj = this.processObject(obj);
   }
 
   // Combine adjacent strings
