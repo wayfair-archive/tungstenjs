@@ -24,8 +24,11 @@ function toString(vtree, escaped) {
       if (virtualDomImplementation.isHook(val)) {
         return;
       }
-      if (key === 'attributes') {
+      if (key === 'attributes' || key === 'namespace') {
         return;
+      }
+      if (key.toLowerCase() === 'style') {
+        val = val.cssText;
       }
       if (key.toLowerCase() === 'contenteditable' && val.toLowerCase() === 'inherit') {
         return;
