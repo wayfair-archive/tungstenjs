@@ -12,7 +12,6 @@
 
 var path = require('path');
 var _ = require('underscore');
-var utils = require('./shared_utils');
 var compiler = require('../../src/template/compiler');
 
 /**
