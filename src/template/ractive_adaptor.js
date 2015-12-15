@@ -8,6 +8,7 @@ var ractiveTypes = require('./ractive_types');
 var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var isVNode = virtualDomImplementation.isVNode;
+var compiler = require('./compiler');
 
 var htmlParser = require('./html_parser');
 
@@ -73,7 +74,7 @@ function render(stack, template, context, partials, parentView) {
     for (i = 0; i < template.length; i++) {
       render(stack, template[i], context, partials, parentView);
     }
-  } else if (template.type === 'Widget') {
+  } else if (template.type === 'WidgetConstructor') {
     // Widgets are how we attach Views to subtrees
     // If we have a parentView, we're rendering Vdom, if not this is rendering to Dom or string, so ignore
     if (parentView) {
@@ -101,6 +102,10 @@ function render(stack, template, context, partials, parentView) {
         // If value is already a widget or vnode, add it wholesale
         if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
           stack.createObject(value);
+        } else if (Context.isArray(value) && template.t === ractiveTypes.TRIPLE && value.vdomArray === true) {
+          for (i = 0; i < value.length; i++) {
+            stack.createObject(value[i]);
+          }
         } else {
           stack.createObject(value.toString(), {
             // TRIPLE is unescaped content, so it may need parsing
@@ -131,6 +136,39 @@ function render(stack, template, context, partials, parentView) {
 
     // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
+      var handleLambda = null;
+      var lambdaHandled = false;
+      if (template.n !== ractiveTypes.SECTION_UNLESS) {
+        // Section tags can be lambdas with contents
+        handleLambda = function(fn, ctx) {
+          // Create a template from the section's children
+          lambdaHandled = true;
+          if (fn.type === 'Widget' && typeof fn.updateContent === 'function') {
+            var tmpl = new (require('./template'))(template.f, partials, parentView);
+            tmpl.context = context;
+            fn.updateContent(tmpl);
+            stack.createObject(fn);
+          } else {
+            var templateString = toSource(template.f);
+            var lambdaValue = fn.call(ctx, templateString, function(template) {
+              var templateData = compiler(template);
+              return templateData.template.toString(context);
+            });
+            if (lambdaValue) {
+              if (typeof lambdaValue === 'string' && lambdaValue.indexOf('{') > -1) {
+                var lambdaTemplateData = compiler(lambdaValue);
+                lambdaValue = lambdaTemplateData.templateObj;
+              }
+              render(stack, lambdaValue, context, partials, parentView);
+            }
+          }
+        };
+      }
+      value = context.lookup(Context.getInterpolatorKey(template), handleLambda);
+      // if the render function passed into the lambda handler was invoked, don't process further
+      if (lambdaHandled) {
+        break;
+      }
       value = Context.parseValue(context.lookup(Context.getInterpolatorKey(template), stack));
       if (template.n === ractiveTypes.SECTION_UNLESS) {
         if (!value.isTruthy) {

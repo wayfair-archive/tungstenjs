@@ -131,6 +131,14 @@ ComponentWidget.prototype.attach = function attach(elem) {
   });
 };
 
+ComponentWidget.prototype.updateContent = function updateContent(tmpl) {
+  this.model.set('content', function() {
+    var arr = tmpl.toVdom();
+    arr.vdomArray = true;
+    return arr;
+  });
+};
+
 /**
  * Updates an existing childView;  should not be possible with
  * components since they're standalone

@@ -3,7 +3,6 @@
 var _ = require('underscore');
 var hogan = require('hogan.js/lib/compiler');
 var types = require('../ractive_types');
-var Template = require('../template');
 
 var parser = require('./parser');
 var stack = require('./stack');
@@ -123,6 +122,7 @@ var getTemplate = function(template) {
 
   parser.end();
   output.templateObj = stack.getOutput();
+  var Template = require('../template');
   output.template = new Template(output.templateObj);
   output.source = template;
   output.partials = _.keys(stack.partials);
