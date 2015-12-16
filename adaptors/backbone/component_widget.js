@@ -135,11 +135,14 @@ ComponentWidget.prototype.attach = function attach(elem) {
  * Handle for component lambdas to be updated less-expensively but less-flexibly
  * @param  {Template} tmpl Template to use as content
  */
-ComponentWidget.prototype.updateContent = function updateContent(tmpl, context) {
-  if (!this.isWrapper) {
-    tmpl.context = context;
-  }
-  this.model.set('contents', tmpl);
+ComponentWidget.prototype.updateContent = function updateContent(template) {
+  var thisView = this.view || new this.ViewConstructor();
+  var contentTemplate = template.attachView(thisView);
+
+  this.model.set({
+    'content': contentTemplate,
+    'yield': template
+  });
 };
 
 /**

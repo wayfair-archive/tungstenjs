@@ -149,8 +149,8 @@ function render(stack, template, context, partials, parentView) {
           // Create a template from the section's children
           lambdaHandled = true;
           if (fn.type === 'Widget' && typeof fn.updateContent === 'function') {
-            var tmpl = new (require('./template'))(template.f, partials, parentView);
-            fn.updateContent(tmpl, context);
+            var contentTemplate = new (require('./template'))(template.f, partials, parentView, context);
+            fn.updateContent(contentTemplate);
             stack.createObject(fn);
           } else {
             var templateString = toSource(template.f);
@@ -263,6 +263,11 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
   // String is a dead-end
   if (typeof template === 'string') {
     return template;
+  }
+
+  // If this template has been attached to before, disregard any widget points
+  if (template.type === 'WidgetConstructor') {
+    return attachView(view, template.template.templateObj, createWidget, partials, childClasses);
   }
 
   // Arrays need iterating over
