@@ -105,7 +105,8 @@ function render(stack, template, context, partials, parentView) {
         if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
           stack.createObject(value);
         } else if (template.t === ractiveTypes.TRIPLE && value.type === 'Template') {
-          render(stack, value.templateObj, context, partials, parentView);
+          var ctx = value.context || context;
+          render(stack, value.templateObj, ctx, partials, parentView);
         } else if (Context.isArray(value) && template.t === ractiveTypes.TRIPLE && value.vdomArray === true) {
           for (i = 0; i < value.length; i++) {
             stack.createObject(value[i]);
@@ -148,8 +149,8 @@ function render(stack, template, context, partials, parentView) {
           // Create a template from the section's children
           lambdaHandled = true;
           if (fn.type === 'Widget' && typeof fn.updateContent === 'function') {
-            var tmpl = new (require('./template'))(template.f, partials, parentView, context);
-            fn.updateContent(tmpl);
+            var tmpl = new (require('./template'))(template.f, partials, parentView);
+            fn.updateContent(tmpl, context);
             stack.createObject(fn);
           } else {
             var templateString = toSource(template.f);
