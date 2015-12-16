@@ -5,11 +5,12 @@
 'use strict';
 var _ = require('underscore');
 var Backbone = require('backbone');
-var backboneNested = require('./backbone_nested');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
 
+var eventTrigger = require('./event_trigger');
 var ComponentWidget = require('./component_widget');
+var BaseModel = require('./base_model');
 
 /**
  * BaseCollection
@@ -62,7 +63,7 @@ var BaseCollection = Backbone.Collection.extend({
       if (events === true) {
         model.model.on('all', this._onModelEvent, this);
       } else if (events.length) {
-        for (var i = 0; i < events.length; i++) {
+        for (let i = 0; i < events.length; i++) {
           this.bindExposedEvent(events[i], model);
         }
       }
@@ -81,7 +82,7 @@ var BaseCollection = Backbone.Collection.extend({
       if (events === true) {
         model.model.off('all', this._onModelEvent, this);
       } else if (events.length) {
-        for (var i = 0; i < events.length; i++) {
+        for (let i = 0; i < events.length; i++) {
           this.stopListening(model.model, events[i]);
         }
       }
@@ -169,7 +170,7 @@ var BaseCollection = Backbone.Collection.extend({
         second.apply(this, arguments);
       };
     }
-    for (var i = 0; i < methods.length; i++) {
+    for (let i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Collection.' + methods[i] + ' may not be overridden';
         if (staticProps && staticProps.debugName) {
@@ -186,8 +187,85 @@ var BaseCollection = Backbone.Collection.extend({
   }
 });
 
-// Add nested collection support to models that implement backbone_nested.
-// See backbone_nested_spec for examples.
-backboneNested.setNestedCollection(BaseCollection);
+/**
+ * Backbone Nested - Functions to add nested model and collection support. *
+ * Forked from backbone-nested-models@0.5.1 by Bret Little
+ *
+ *    @source https://github.com/blittle/backbone-nested-models
+ *    (MIT LICENSE)
+ *    Copyright (c) 2012 Bret Little
+ *    Permission is hereby granted, free of charge, to any person obtaining a copy
+ *    of this software and associated documentation files (the 'Software'), to deal
+ *    in the Software without restriction, including without limitation the rights
+ *    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *    copies of the Software, and to permit persons to whom the Software is
+ *    furnished to do so, subject to the following conditions:
+ *
+ *    The above copyright notice and this permission notice shall be included in
+ *    all copies or substantial portions of the Software.
+ *
+ *    THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *    THE SOFTWARE.
+ */
+BaseCollection.prototype.model = BaseModel;
+BaseCollection.prototype.resetRelations = function(options) {
+  _.each(this.models, function(model) {
+    _.each(model.relations, function(rel, key) {
+      if (model.get(key) instanceof Backbone.Collection) {
+        model.get(key).trigger('reset', model, options);
+      }
+    });
+  });
+};
+
+BaseCollection.prototype.trigger = eventTrigger.newTrigger;
+
+BaseCollection.prototype.reset = function(models, options = {}) {
+  var i, l;
+  /* develblock:start */
+  if (!this.initialData) {
+    // Using JSON to get a deep clone to avoid any overlapping object references
+    var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : models);
+    delete options.initialData;
+    this.initialData = JSON.parse(initialStr);
+    var allObjects = true;
+    for (i = 0; i < models.length; i++) {
+      if (!_.isObject(models[i]) || _.isArray(models[i])) {
+        allObjects = false;
+        break;
+      }
+    }
+    if (!allObjects || !_.isArray(this.initialData)) {
+      logger.warn('Collection expected array of objects but got: ' + initialStr);
+    }
+  }
+  /* develblock:end */
+  for (i = 0, l = this.models.length; i < l; i++) {
+    this._removeReference(this.models[i]);
+  }
+  options.previousModels = this.models;
+  this._reset();
+  this.add(models, _.extend({
+    silent: true
+  }, options));
+  if (!options.silent) {
+    this.trigger('reset', this, options);
+    this.resetRelations(options);
+  }
+  return this;
+};
+
+BaseCollection.prototype.serialize = _.identity;
+
+BaseCollection.prototype.doSerialize = function() {
+  return this.serialize(this.map(function(model) {
+    return model.doSerialize();
+  }));
+};
 
 module.exports = BaseCollection;

@@ -87,7 +87,7 @@ describe('base_collection.js constructed api', function() {
   describe('reset', function() {
     it('should be a function', function() {
       expect(BaseCollection.prototype.reset).to.be.a('function');
-      expect(BaseCollection.prototype.reset).to.have.length(2);
+      expect(BaseCollection.prototype.reset).to.have.length(1);
     });
   });
   describe('serialize', function() {

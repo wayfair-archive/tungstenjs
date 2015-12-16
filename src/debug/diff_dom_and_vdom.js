@@ -31,7 +31,7 @@ function diffElements(vNode, elem) {
   // Check declared property values vs DOM values
   // This bypasses properties that are not managed by VirtualNode
   _.each(vNode.properties, function(value, key) {
-    if (key === 'attributes') {
+    if (key === 'attributes' || key === 'namespace') {
       return;
     }
     if (key.toLowerCase() === 'contenteditable' && value.toLowerCase() === 'inherit') {
@@ -49,9 +49,16 @@ function diffElements(vNode, elem) {
     var propName = utils.propertiesToTransform[key] ? utils.propertiesToTransform[key] : key;
 
     var domValue = elem[key];
+    if (_.isObject(domValue)) {
+      domValue = elem.getAttribute(key);
+    }
     if (propName === 'href') {
       // the href property displays the fully resolved URL when read, so fall back to attribute value
       domValue = elem.getAttribute('href');
+    } else if (propName === 'style') {
+      // Style attributes are tricky because they can validly contain whitespace and be out of order
+      propValue = _.filter(propValue.cssText.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
+      domValue = _.filter(domValue.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
     }
 
     var vAttr = ' ' + propName + '=' + chars.quote + propValue + chars.quote;
@@ -66,9 +73,17 @@ function diffElements(vNode, elem) {
     if (key.toLowerCase() === 'contenteditable' && value.toLowerCase() === 'inherit') {
       return;
     }
+    if (key === 'namespace') {
+      return;
+    }
     var propValue = value;
     if (isHook(propValue)) {
-      propValue = propValue.value;
+      if (propValue.value) {
+        propValue = propValue.value;
+      } else {
+        // If this is a hook with no value, ignore as it's functional
+        return;
+      }
     }
     var vAttr = ' ' + key + '=' + chars.quote + propValue + chars.quote;
     var eAttr = ' ' + key + '=' + chars.quote + elem.getAttribute(key) + chars.quote;
