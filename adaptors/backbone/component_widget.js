@@ -136,11 +136,15 @@ ComponentWidget.prototype.attach = function attach(elem) {
  * @param  {Template} tmpl Template to use as content
  */
 ComponentWidget.prototype.updateContent = function updateContent(tmpl) {
-  this.model.set('content', function() {
-    var arr = tmpl.toVdom();
-    arr.vdomArray = true;
-    return arr;
-  });
+  if (this.isWrapper) {
+    this.model.set('contents', tmpl);
+  } else {
+    this.model.set('contents', function() {
+      var arr = tmpl.toVdom();
+      arr.vdomArray = true;
+      return arr;
+    });
+  }
 };
 
 /**

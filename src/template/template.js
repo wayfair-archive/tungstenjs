@@ -22,6 +22,8 @@ var Template = function(templateObj, partials, view, context) {
   this.context = context;
 };
 
+Template.prototype.type = 'Template';
+
 Template.prototype.getPartials = function() {
   return this.partials || registeredPartials;
 };

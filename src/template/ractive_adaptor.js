@@ -74,6 +74,8 @@ function render(stack, template, context, partials, parentView) {
     for (i = 0; i < template.length; i++) {
       render(stack, template[i], context, partials, parentView);
     }
+  } else if (template.type === 'Template') {
+    render(stack, template.templateObj, context, partials, parentView);
   } else if (template.type === 'WidgetConstructor') {
     // Widgets are how we attach Views to subtrees
     // If we have a parentView, we're rendering Vdom, if not this is rendering to Dom or string, so ignore
@@ -102,6 +104,8 @@ function render(stack, template, context, partials, parentView) {
         // If value is already a widget or vnode, add it wholesale
         if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
           stack.createObject(value);
+        } else if (template.t === ractiveTypes.TRIPLE && value.type === 'Template') {
+          render(stack, value.templateObj, context, partials, parentView);
         } else if (Context.isArray(value) && template.t === ractiveTypes.TRIPLE && value.vdomArray === true) {
           for (i = 0; i < value.length; i++) {
             stack.createObject(value[i]);
@@ -144,8 +148,7 @@ function render(stack, template, context, partials, parentView) {
           // Create a template from the section's children
           lambdaHandled = true;
           if (fn.type === 'Widget' && typeof fn.updateContent === 'function') {
-            var tmpl = new (require('./template'))(template.f, partials, parentView);
-            tmpl.context = context;
+            var tmpl = new (require('./template'))(template.f, partials, parentView, context);
             fn.updateContent(tmpl);
             stack.createObject(fn);
           } else {
@@ -156,9 +159,13 @@ function render(stack, template, context, partials, parentView) {
             });
             if (lambdaValue) {
               if (typeof lambdaValue === 'string') {
-                if (lambdaValue.indexOf(' class="') > -1 && parentView.childViews) {
+                var resultHasClass = lambdaValue.indexOf(' class="') > -1 && parentView.childViews;
+                var resultHasMustache = lambdaValue.indexOf('{{');
+                if (resultHasMustache || resultHasClass) {
                   var lambdaTemplateData = compiler(lambdaValue);
-                  lambdaTemplateData.template = lambdaTemplateData.template.attachView(parentView);
+                  if (resultHasClass) {
+                    lambdaTemplateData.template = lambdaTemplateData.template.attachView(parentView);
+                  }
                   lambdaValue = lambdaTemplateData.template.templateObj;
                 } else {
                   stack.createObject(lambdaValue, {
