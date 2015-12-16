@@ -99,7 +99,7 @@ function render(stack, template, context, partials, parentView) {
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
     case ractiveTypes.TRIPLE:
-      value = context.lookup(Context.getInterpolatorKey(template), stack);
+      value = context.lookup(Context.getInterpolatorKey(template));
       if (value != null) {
         // If value is already a widget or vnode, add it wholesale
         if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
