@@ -337,6 +337,9 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
 };
 
 function wrap(templateObj, tagName) {
+  if (tagName === false) {
+    return templateObj;
+  }
   var objectToWrap = null;
 
   if (templateObj.t === ractiveTypes.ELEMENT) {
@@ -362,7 +365,7 @@ function wrap(templateObj, tagName) {
 }
 
 function attach(templateObj, view, createWidget, partials) {
-  templateObj = wrap(templateObj, view.el.nodeName);
+  templateObj = wrap(templateObj, view.el && view.el.nodeName);
   return attachView(view, templateObj, createWidget, partials);
 }
 

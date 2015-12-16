@@ -136,7 +136,11 @@ ComponentWidget.prototype.attach = function attach(elem) {
  * @param  {Template} tmpl Template to use as content
  */
 ComponentWidget.prototype.updateContent = function updateContent(template) {
-  var thisView = this.view || new this.ViewConstructor();
+  // Attach to a fake view to avoid template wrapping or unnecessary construction
+  var thisView = {
+    childViews: this.ViewConstructor.prototype.childViews,
+    el: false
+  };
   var contentTemplate = template.attachView(thisView);
 
   this.model.set({
