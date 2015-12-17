@@ -24,6 +24,7 @@ var BaseView = Backbone.View.extend({
    * Default to an empty hash
    */
   eventOptions: {},
+  renderEvents: 'all',
   /**
    * Shared init logic
    */
@@ -130,7 +131,7 @@ var BaseView = Backbone.View.extend({
         };
       }
       if (runOnChange) {
-        this.listenTo(dataItem, 'all', () => {
+        this.listenTo(dataItem, this.renderEvents, () => {
           // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
           clearTimeout(this.debouncer);
           this.debouncer = setTimeout(runOnChange, 1);
