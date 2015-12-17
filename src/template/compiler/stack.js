@@ -269,6 +269,9 @@ templateStack.getOutput = function() {
 templateStack.clear = function() {
   this.result = [];
   this.stack = [];
+  this.partials = {};
+  this.startID = '';
+  this.inSVG = false;
 };
 
 var mergeStrings = function(arr) {
