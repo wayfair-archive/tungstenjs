@@ -52,9 +52,9 @@ function diffElements(vNode, elem) {
     if (_.isObject(domValue)) {
       domValue = elem.getAttribute(key);
     }
-    if (propName === 'href') {
+    if (propName === 'href' || propName === 'src') {
       // the href property displays the fully resolved URL when read, so fall back to attribute value
-      domValue = elem.getAttribute('href');
+      domValue = elem.getAttribute(propName);
     } else if (propName === 'style') {
       // Style attributes are tricky because they can validly contain whitespace and be out of order
       propValue = _.filter(propValue.cssText.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
