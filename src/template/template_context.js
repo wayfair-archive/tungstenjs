@@ -59,7 +59,7 @@ Context.prototype._lookupValue = function(view, name) {
  * @return {Boolean}        Whether the given object is a Tungsten Model
  */
 Context.prototype.isModel = function(object) {
-  return object && object.tungstenModel;
+  return object && (object.tungstenModel || object.isComponent);
 };
 
 /* develblock:start */

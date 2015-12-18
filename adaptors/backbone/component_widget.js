@@ -95,6 +95,12 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
 ComponentWidget.prototype.type = 'Widget';
 
 /**
+ * Type indicator for Lookups
+ * @type {String}
+ */
+ComponentWidget.prototype.isComponent = true;
+
+/**
  * Render the view's template to DOM nodes and attach a view to it
  * @return {Element} DOM node with the child view attached
  */
