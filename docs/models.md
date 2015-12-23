@@ -21,7 +21,7 @@ BaseModel.extend({
 
 ## Special Properties
 
-Included with the Backbone adaptor are several special model property types which were inspired by [ampersand-state](http://ampersandjs.com/docs#ampersand-state).
+Included with the Backbone adaptor are special model property types which were inspired by [ampersand-state](http://ampersandjs.com/docs#ampersand-state).
 
 **Derived Properties**: Derived properties are properties which are computed based on the value of another property.  They can be added with the `derived` hash in Backbone models, with the key being the property name and the value being an options object.  The object should include an array at key `deps` of properties that the derived property relies on, as well as a function at key `fn` which should return the derived value.  Derived properties will not be serialized with `toJSON`.
 
