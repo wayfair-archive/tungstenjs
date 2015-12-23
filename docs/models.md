@@ -41,7 +41,7 @@ BaseModel.extend({
 });
 ```
 
-**Computed Properties**: Properties which are computed, but not reliant on any other properties, can be added simply by adding a method with the desired property name on the model.  These will be read by templates during rendering, though they will not be accessible via `model.get()` or serialized with `toJSON`.
+**Computed Properties**: Properties which are computed, but not reliant on any other properties, can be added simply by adding a method with the desired property name on the model.  These will be read by templates during rendering, though they will not be accessible via `model.get()` or serialized with `toJSON`.  _Computed properties are now deprecated and will be removed in a future version of Tungsten.js.  Use derived properties instead._
 
 **Session Properties**: Transient properties that shouldn't be serialized when saving the model can be excluded from `toJSON` by adding a `session` property to the model:
 
