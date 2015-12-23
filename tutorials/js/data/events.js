@@ -6,10 +6,10 @@ window.data.tutorials.push({
     {
       name: 'Event Handling',
       index: 1,
-      description_html: '<p>Events are defined with the standard <a href=""><code>events</code> hash</a> API when using the Backbone or Ampersand adaptor. If a selector is passed in the event key, however, it can only use a <code>js-</code> prefixed class selector. This optimizes performance when delegating events because under the hood, unlike Backbone or Ampersand, Tungsten.js provides its own event delegation system. By default, all events are delegated from the document. Special events can also be handled by an <a href="">event handler plugin</a>.</p>'
+      description_html: '<p>Events are defined with the standard <a href=""><code>events</code> hash</a> API when using the Backbone or Ampersand adaptor. If a selector is passed in the event key, however, it can only use a <code>js-</code> prefixed class selector. This optimizes performance when delegating events because under the hood, unlike Backbone or Ampersand, Tungsten.js provides its own event delegation system. By default, all events are delegated from the document. Special events can also be handled by an <a href="">event handler plugin</a>.</p><p>All common event types are supported as well as the special cases outlined in the examples in the following sections:</p><ul><li>Directional Swipe Events</li><li>Intent Events</li><li>Document Bindings</li><li>Window Bindings</li><li>Outside Events</li><li>Submit Data</li></ul>'
     },
     {
-      name: 'Directional Swipe Event',
+      name: 'Directional Swipe Events',
       index: 2,
       // template_highlights: [{start: {line: 0, ch: 6}, end: {line: 0, ch: 12}}],
       template: '<p>Test events in the colored area below.</p>\n<div class="js-event-area pure-u-1" style="height:300px; background-color:#71A3AF;"></div>\n<div>captured: {{message}}</div>',
