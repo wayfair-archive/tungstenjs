@@ -1,6 +1,6 @@
 'use strict';
 
-var htmlparser = require('htmlparser2');
+var Parser = require('htmlparser2/lib/Parser');
 var types = require('../ractive_types');
 var stack = require('./stack');
 
@@ -42,7 +42,7 @@ var voidElements = {
 /*
  * Since htmlparser2 doesn't expose its states, run some tests to grep them
  */
-var testParser = new htmlparser.Parser({});
+var testParser = new Parser({});
 testParser.write('<div ');
 var BEFORE_ATTRIBUTE_NAME = testParser._tokenizer._state;
 testParser.write('at');
@@ -69,18 +69,18 @@ ATTRIBUTE_STATES[IN_ATTRIBUTE_VALUE_NQ] = true;
 ATTRIBUTE_STATES[IN_COMMENT] = true;
 
 /**
- * Extend htmlparser.Parser to override some built-ins
+ * Extend Parser to override some built-ins
  *
  * @param {[type]} cbs  [description]
  * @param {[type]} opts [description]
  */
 var MustacheParser = function(cbs) {
-  htmlparser.Parser.call(this, cbs, {
+  Parser.call(this, cbs, {
     decodeEntities: true,
     recognizeSelfClosing: true
   });
 };
-MustacheParser.prototype = new htmlparser.Parser();
+MustacheParser.prototype = new Parser();
 MustacheParser.prototype.constructor = MustacheParser;
 
 // Runs when the '=' after an attribute name is encountered
