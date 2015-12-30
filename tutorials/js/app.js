@@ -1,8 +1,13 @@
-(function() {
+(function(Ractive, CodeMirror, _, tungsten) {
   'use strict';
+
   Ractive.DEBUG = false;
 
-  var View = tungsten.backbone.View, Model = tungsten.backbone.Model, Collection = tungsten.backbone.Collection, tungstenCode, templateCode;
+  var View = tungsten.backbone.View;
+  var Model = tungsten.backbone.Model;
+  var Collection = tungsten.backbone.Collection;
+  var tungstenCode;
+  var templateCode;
 
   // Code Mirror Extensions and options
   CodeMirror.defineMode('mustache', function(config, parserConfig) {
@@ -213,4 +218,4 @@
     model: new AppModel(window.data),
     dynamicInitialize: true
   });
-}());
+})(Ractive, CodeMirror, _, tungsten);

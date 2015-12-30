@@ -10,6 +10,7 @@
     "codemirror": "5.9.0",
     "purecss": "^0.6.0",
     "ractive": "^0.7.3",
-    "todomvc-app-css": "^2.0.1"
+    "todomvc-app-css": "^2.0.1",
+    "underscore": "^1.8.3"
   }
 }
