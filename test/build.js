@@ -41,7 +41,7 @@ var debugConfig = webpackHelper.compileSource({
   },
   resolve: {
     alias: {
-      'jquery': 'backbone.native'
+      'jquery': path.join(__dirname, '../src/polyfill/jquery')
     }
   }
 }, true, true);
@@ -62,7 +62,7 @@ var prodConfig = webpackHelper.compileSource({
   },
   resolve: {
     alias: {
-      'jquery': 'backbone.native'
+      'jquery': path.join(__dirname, '../src/polyfill/jquery')
     }
   }
 }, false, true);

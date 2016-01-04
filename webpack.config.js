@@ -16,7 +16,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'jquery': 'backbone.native'
+      'jquery': path.join(__dirname, './src/polyfill/jquery')
     }
   },
   devtool: '#source-map',

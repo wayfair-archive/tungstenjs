@@ -15,7 +15,7 @@ module.exports = webpackSettings.compileSource({
   },
   resolve: {
     alias: {
-      jquery: 'backbone.native'
+      jquery: path.join(__dirname, './src/polyfill/jquery')
     }
   },
   externals: [
