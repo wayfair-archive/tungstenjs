@@ -12,7 +12,6 @@
     "punch": "^0.5.46",
     "purecss": "^0.6.0",
     "todomvc-app-css": "^2.0.3",
-    "uglify-js": "^2.6.1",
-    "uglify-js2": "^2.1.11"
+    "uglify-js": "^2.6.1"
   }
 }

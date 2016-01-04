@@ -7,7 +7,7 @@
   },
   "plugins": {
     "minifiers": {
-      ".js": "./noop_minifier.js"
+      ".js": "./uglify_minifier.js"
     }
   },
   "bundles": {
