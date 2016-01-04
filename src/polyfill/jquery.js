@@ -24,7 +24,19 @@ function $(element) {
 }
 
 $.prototype = {
-  attr: _.noop
+  attr: function(attrs) {
+    _.each(attrs, function(value, attr) {
+      switch (attr) {
+        case 'class':
+          this[0].className = value;
+          break;
+        default:
+          this[0].setAttribute(attr, value);
+          break;
+      }
+    }, this);
+    return this;
+  }
 };
 
 $.ajax = require('backbone.nativeajax');
