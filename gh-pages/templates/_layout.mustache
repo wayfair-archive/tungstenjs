@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{site-title}}</title>
+  {{#stylesheet_bundle}}/css/all.css{{/stylesheet_bundle}}
+
+</head>
+<body>
+<div id="layout">
+    <div id="appwrapper">
+        <div id="menu">
+            <div class="pure-menu">
+                <a class="pure-menu-heading" href="https://github.com/wayfair/tungstenjs">Tungsten.js</a>
+                <ul class="pure-menu-list">
+                    <li><a href="index.html" class="pure-menu-link pure-menu-section">Docs</a>
+                        <ul class="pure-menu-list">
+                              <li class="pure-menu-item"><a href="views.html" class="pure-menu-link"
+                                                            {{#selected_views}}style="background: #333;"{{/selected_views}}>Views</a>
+                              </li>
+                            <li class="pure-menu-item"><a href="templates.html" class="pure-menu-link"
+                                                          {{#selected_templates}}style="background: #333;"{{/selected_templates}}>Templates</a>
+                            </li>
+                            <li class="pure-menu-item"><a href="models.html" class="pure-menu-link"
+                                                          {{#selected_models}}style="background: #333;"{{/selected_models}}>Models</a>
+                            </li>
+                            <li class="pure-menu-item"><a href="components.html" class="pure-menu-link"
+                                                          {{#selected_components}}style="background: #333;"{{/selected_components}}>Components</a>
+                            </li>
+                            <li class="pure-menu-item"><a href="debugger.html" class="pure-menu-link"
+                                                          {{#selected_debugger}}style="background: #333;"{{/selected_debugger}}>Debugger</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li><a href="tutorials.html" class="pure-menu-link pure-menu-section">Tutorials</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="main">
+            <div class="header">
+                <h1></h1>
+
+                <h2></h2>
+            </div>
+            <div class="content">
+              {{{content}}}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+
+</html>

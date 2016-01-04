@@ -13,8 +13,17 @@ body {
 }
 
 .CodeMirror {
-  height: 49vh;
-  padding: 1vh;
+  padding: 1em 0;
+}
+.CodeMirror:after {
+  clear: both;
+}
+
+.toggle-all:before {
+  content: '\00276F';
+}
+.todo-list li .destroy:after {
+  content: '\0000D7';
 }
 
 #result {
@@ -44,8 +53,14 @@ body {
 }
 
 .page-section.description {
-  border-top: 1vh solid white;
-  border-left: 1vh solid white;
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  max-height: 49vh;
+  overflow-y: auto;
+}
+
+.page-section {
+  padding-left: 1%;
 }
 
 .styled-background {
@@ -53,15 +68,14 @@ body {
 }
 
 #result {
-  border-top: 1vh solid white;
-  border-left: 1vh solid white;
-  border-bottom: 1vh solid white;
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  border-bottom: 1px solid white;
   height: 50vh;
 }
 
 .last-editor-section {
-  border-bottom: 1vh solid white;
-
+  border-bottom: 1px solid white;
 }
 
 .step_description {
@@ -74,3 +88,17 @@ body {
 .todoapp h1 {
   top: -175px;
 }
+
+.pure-menu-list .pure-menu-list .pure-menu-item a {
+  padding-left: 1.5em !important;
+}
+
+.pure-menu-section {
+  color: #dddddd;
+}
+
+.pure-menu-section:hover {
+  background: none;
+}
+
+.pure-menu-list { border: 0 !important; }

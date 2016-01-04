@@ -1,0 +1,51 @@
+{
+  "template_dir": "templates",
+  "content_dir": "contents",
+  "output_dir": "output",
+  "server": {
+    "port": 9009
+  },
+  "plugins": {
+    "minifiers": {
+      ".js": "./noop_minifier.js"
+    }
+  },
+  "bundles": {
+    "/css/all.css": [
+      "../node_modules/purecss/build/pure-min.css",
+      "../../tutorials/css/side-menu.css",
+      "../node_modules/codemirror/lib/codemirror.css",
+      "../node_modules/todomvc-app-css/index.css",
+      "../../tutorials/css/app.css"
+    ],
+    "/css/tutorials.css": [
+      "../node_modules/purecss/build/pure-min.css",
+      "../../tutorials/css/side-menu.css",
+      "../node_modules/codemirror/lib/codemirror.css",
+      "../node_modules/todomvc-app-css/index.css",
+      "../../tutorials/css/app.css"
+    ],
+    "/js/tutorials.js": [
+      "../../tutorials/node_modules/underscore/underscore-min.js",
+      "../../dist/tungsten.core.js",
+      "../../dist/tungsten.backbone.js",
+      "../../dist/tungsten.template.js",
+      "../../tutorials/node_modules/ractive/ractive.min.js",
+      "../../tutorials/node_modules/codemirror/lib/codemirror.js",
+      "../../tutorials/node_modules/codemirror/addon/fold/foldcode.js",
+      "../../tutorials/node_modules/codemirror/addon/fold/foldgutter.js",
+      "../../tutorials/node_modules/codemirror/addon/fold/brace-fold.js",
+      "../../tutorials/node_modules/codemirror/addon/fold/comment-fold.js",
+      "../../tutorials/node_modules/codemirror/addon/fold/xml-fold.js",
+      "../../tutorials/node_modules/codemirror/addon/fold/indent-fold.js",
+      "../../tutorials/node_modules/codemirror/addon/mode/overlay.js",
+      "../../tutorials/node_modules/codemirror/mode/xml/xml.js",
+      "../../tutorials/node_modules/codemirror/mode/javascript/javascript.js",
+      "../../tutorials/js/data/hello.js",
+      "../../tutorials/js/data/views.js",
+      "../../tutorials/js/data/todo.js",
+      "../../tutorials/js/data/derived.js",
+      "../../tutorials/js/app.js"
+    ]
+  }
+}
