@@ -33,6 +33,7 @@ This is the parent `<div>` that contains the menu and the content area.
   position: relative;
   padding-left: 0;
 }
+
 #layout.active #menu {
   left: 150px;
   width: 150px;
@@ -41,6 +42,7 @@ This is the parent `<div>` that contains the menu and the content area.
 #layout.active .menu-link {
   left: 150px;
 }
+
 /*
 The content `<div>` is where all your content goes.
 */
@@ -52,14 +54,11 @@ The content `<div>` is where all your content goes.
   line-height: 1.6em;
 }
 
-
 .content-subhead {
   margin: 50px 0 20px 0;
   font-weight: 300;
   color: #888;
 }
-
-
 
 /*
 The `#menu` `<div>` is the parent `<div>` that contains the `.pure-menu` that
@@ -78,6 +77,7 @@ appears on the left side of the page.
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+
 /*
 All anchors inside the menu should be styled like this.
 */
@@ -103,6 +103,7 @@ Add that light border to separate items into groups.
 #menu .pure-menu .menu-item-divided {
   border-top: 1px solid #333;
 }
+
 /*
 Change color of the anchor links on hover/focus.
 */
@@ -118,6 +119,7 @@ This styles the selected menu item `<li>`.
 #menu .pure-menu-heading {
   background: #8d4377;
 }
+
 /*
 This styles a link within a selected menu item `<li>`.
 */
@@ -155,7 +157,7 @@ small screens.
   top: 0;
   left: 0; /* "#menu width" */
   background: #000;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   font-size: 10px; /* change this value to increase/decrease button size */
   z-index: 10;
   width: 2em;
@@ -192,48 +194,44 @@ small screens.
   margin-top: 0.6em;
 }
 
-
 /* -- Responsive Styles (Media Queries) ------------------------------------- */
 
 /*
 Hides the menu at `48em`, but modify this based on your app's needs.
 */
-@media (min-width: 48em) {
 
-  .header,
-  .content {
-    padding-left: 2em;
-    padding-right: 2em;
-  }
-
-  #layout {
-    padding-left: 150px; /* left col width "#menu" */
-    left: 0;
-  }
-  #menu {
-    left: 150px;
-  }
-
-  .menu-link {
-    position: fixed;
-    left: 150px;
-    display: none;
-  }
-
-  #layout.active .menu-link {
-    left: 150px;
-  }
+.header,
+.content {
+  padding-left: 2em;
+  padding-right: 2em;
 }
 
-@media (max-width: 48em) {
-  /* Only apply this when the window is small. Otherwise, the following
-  case results in extra padding on the left:
-      * Make the window small.
-      * Tap the menu to trigger the active state.
-      * Make the window large again.
-  */
-  #layout.active {
-    position: relative;
-    left: 150px;
-  }
+#layout {
+  padding-left: 150px; /* left col width "#menu" */
+  left: 0;
+}
+
+#menu {
+  left: 150px;
+}
+
+.menu-link {
+  position: fixed;
+  left: 150px;
+  display: none;
+}
+
+#layout.active .menu-link {
+  left: 150px;
+}
+
+/* Only apply this when the window is small. Otherwise, the following
+case results in extra padding on the left:
+    * Make the window small.
+    * Tap the menu to trigger the active state.
+    * Make the window large again.
+*/
+#layout.active {
+  position: relative;
+  left: 150px;
 }
