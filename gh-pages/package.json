@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run move-docs && node ./node_modules/punch/bin/punch g",
     "move-docs": "cp ../readme.md contents/_index/content.markdown && cp ../docs/views.md contents/_views/content.markdown && cp ../docs/models.md contents/_models/content.markdown && cp ../docs/templates.md contents/_templates/content.markdown && cp ../docs/components.md contents/_components/content.markdown && cp ../docs/debugger.md contents/_debugger/content.markdown"
   },
   "dependencies": {

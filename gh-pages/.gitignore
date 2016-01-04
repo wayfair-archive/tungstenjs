@@ -6,9 +6,9 @@ output
 
 # Ignore npm package dependencies
 node_modules
-contents/_index
-contents/_views
-contents/_templates
-contents/_models
-contents/_components
-contents/_debugger
+contents/_index/content.markdown
+contents/_views/content.markdown
+contents/_templates/content.markdown
+contents/_models/content.markdown
+contents/_components/content.markdown
+contents/_debugger/content.markdown
