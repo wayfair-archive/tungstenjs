@@ -26,7 +26,7 @@ In Tungsten.js, the initial page loaded is rendered with [Mustache](http://musta
 
 An adaptor layer is used to connect with Tungsten.js with a preferred modular client-side framework to handle data and view management.  The default adaptor is a thin layer on top of [Backbone.js](https://github.com/jashkenas/backbone) with a `childViews` hash to define relationships between views and a `compiledTemplate` property to define the root pre-compiled template function.  There is also a similar Ampersand.js adaptor available.  The preferred adaptor can be included via CommonJS or ES6 Modules at `tungstenjs/adaptors/backbone/index.js` or `tungstenjs/adaptors/ampersand/index.js` and exposes base modules for Backbone or Ampersand (as well as a direct reference to Backbone or Ampersand itself).
 
-Tungsten.js has no hard dependency on [jQuery](https://github.com/jquery/jquery), and the default build uses the jQuery-less [backbone.native](https://github.com/inkling/backbone.native) in its Backbone adaptor.  For IE8 support, jQuery 1.x should be used instead.
+Tungsten.js has no dependency on [jQuery](https://github.com/jquery/jquery).
 
 ## Setup
 
@@ -40,7 +40,7 @@ For the latest, but unstable, version:
 
 ### UMD
 
-The UMD build is also available for including Tungsten.js in a project.  It assumes [underscore](http://underscorejs.org/) is included as `window._`.  Other dependencies are bundled in the build, including [backbone.native](https://github.com/inkling/backbone.native) as a shim for jQuery.
+The UMD build is also available for including Tungsten.js in a project.  It assumes [underscore](http://underscorejs.org/) is included as `window._`.  Other dependencies are bundled in the build.
 
 ```html
 <!-- Include underscore -->
@@ -65,14 +65,14 @@ An client-side only example of a Tungsten.js app using the UMD build is availabl
 
 ### Bundler (e.g., webpack)
 
-The recommended method of adding Tungsten.js to your application is via a module bundler such as [webpack](http://webpack.github.io/).  Tungsten.js with the Backbone or Ampersand adaptor expects `jquery` to be shimmed, either with jQuery itself (jQuery 1.x is required for IE8 support) or with the jQuery-less shim [backbone.native](https://github.com/inkling/backbone.native).  With webpack, this looks like:
+The recommended method of adding Tungsten.js to your application is via a module bundler such as [webpack](http://webpack.github.io/).  Because Backbone expects `jQuery` to be present, Tungsten.js includes a jQuery-less shim, `src/polyfill/jquery`, which is included in the webpack build:
 
 ```javascript
 module.exports = {
   // [...]
   resolve: {
     alias: {
-      'jquery': 'backbone.native'
+      'jquery': path.join(__dirname, '../src/polyfill/jquery')
     }
   }
 };
