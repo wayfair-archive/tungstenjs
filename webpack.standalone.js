@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var webpackSettings = require('./webpack-helper');
+var path = require('path');
 
 module.exports = webpackSettings.compileSource({
   entry: {
