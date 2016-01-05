@@ -5,6 +5,5 @@ test/
 *.iml
 .idea/
 .DS_Store
-tutorials/
 output/
 gh_pages/
