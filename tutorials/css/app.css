@@ -57,12 +57,14 @@ body {
 .page-section.description {
   border-top: 1px solid white;
   border-left: 1px solid white;
-  max-height: 49vh;
+  max-height: 48vh;
   overflow-y: auto;
 }
 
 .page-section {
   padding-left: 1%;
+  max-height: 48vh;
+
 }
 
 .styled-background {
@@ -117,6 +119,10 @@ body {
   width: 100%;
 }
 
-.CodeMirror {
-  height: auto;
+.tutorials_page .CodeMirror {
+  height: 48vh;
+}
+
+a, a:visited {
+  color: inherit;
 }
