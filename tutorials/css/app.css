@@ -1,6 +1,7 @@
 body {
   max-width: 100%;
-  font: 100% FreeSans, Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
+  font: 100% sans-serif;
+  font-weight: 300;
   background: none;
 }
 
@@ -15,6 +16,7 @@ body {
 .CodeMirror {
   padding: 1em 0;
 }
+
 .CodeMirror:after {
   clear: both;
 }
@@ -22,6 +24,7 @@ body {
 .toggle-all:before {
   content: '\00276F';
 }
+
 .todo-list li .destroy:after {
   content: '\0000D7';
 }
@@ -44,7 +47,6 @@ body {
   display: inline-block;
   width: 75%;
 }
-
 
 .run {
   display: inline-block;
@@ -83,7 +85,11 @@ body {
   color: black;
   margin: 30px 0;
 }
-.step_name { margin: 10px 0; font-size: 120%; }
+
+.step_name {
+  margin: 10px 0;
+  font-size: 120%;
+}
 
 .todoapp h1 {
   top: -175px;
@@ -101,4 +107,12 @@ body {
   background: none;
 }
 
-.pure-menu-list { border: 0 !important; }
+.pure-menu-list {
+  border: 0 !important;
+}
+
+.bottom-menu {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}

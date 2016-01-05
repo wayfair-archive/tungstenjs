@@ -7,17 +7,24 @@
 </head>
 <body>
 <div id="layout">
-    <div id="appwrapper">
         <div id="menu">
             <div class="pure-menu">
                 <a class="pure-menu-heading" href="https://github.com/wayfair/tungstenjs">Tungsten.js</a>
                 <ul class="pure-menu-list">
                     <li><a href="index.html" class="pure-menu-link pure-menu-section">Docs</a></li>
-                    <li><a href="tutorials.html" class="pure-menu-link pure-menu-section">Tutorials</a></li>
+                    <li><a href="tutorials.html" class="pure-menu-link pure-menu-section">Tutorials</a>
+                        <ul class="pure-menu-list">{{#tutorials}} <li class="pure-menu-item"><a href="#{{url_name}}" class="pure-menu-link js-tutorial-select" {{#selected}}style="background: #333;"{{/selected}}>{{name}}</a></li> {{/tutorials}}</ul>
+                    </li>
+                </ul>
+                <ul class="pure-menu-list bottom-menu">
+                    <li class="pure-menu-item"><a target="_blank" href="https://www.npmjs.com/package/tungstenjs" class="pure-menu-link">npm</a></li>
+                    <li class="pure-menu-item"><a target="_blank" href="https://github.com/wayfair/tungstenjs" class="pure-menu-link">GitHub</a></li>
+                    <li class="pure-menu-item"><a target="_blank" href="https://github.com/wayfair/tungstenjs/issues" class="pure-menu-link">Issues</a></li>
+                    <li class="pure-menu-item"><a target="_blank" href="http://engineering.wayfair.com/" class="pure-menu-link">Wayfair Eng Blog</a></li>
                 </ul>
             </div>
         </div>
-        <div class="main">
+        <div class="main" id="appwrapper">
             <div class="header">
                 <h1></h1>
 
@@ -27,8 +34,6 @@
               {{{content}}}
             </div>
         </div>
-
-    </div>
 </div>
 
 {{#javascript_bundle}}/js/tutorials.js{{/javascript_bundle}}

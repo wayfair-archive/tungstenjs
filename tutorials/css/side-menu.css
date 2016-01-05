@@ -136,7 +136,7 @@ This styles the menu heading.
   letter-spacing: 0.1em;
   color: #fff;
   margin-top: 0;
-  padding: 0.5em 0.8em;
+  /* padding: 0.5em 0.8em; */
   text-transform: uppercase;
 }
 

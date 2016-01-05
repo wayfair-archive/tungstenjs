@@ -56,16 +56,9 @@
   };
   // Views and Template
   var rawTemplates = {
-    app: '<div id="menu"> <div class="pure-menu"><a class="pure-menu-heading" href="https://github.com/wayfair/tungstenjs">Tungsten.js</a><ul class="pure-menu-list"><li><a href="index.html" class="pure-menu-link">Docs</a></li><li><a href="tutorials.html" class="pure-menu-link pure-menu-section">Tutorials</a><ul class="pure-menu-list">{{#tutorials}} <li class="pure-menu-item"><a href="#" class="pure-menu-link js-tutorial-select" {{#selected}}style="background: #333;"{{/selected}}>{{name}}</a></li> {{/tutorials}}</ul></li> </ul> </div> </div> <div class="pure-g js-main"> {{#tutorial}} <div class="pure-u-1-2 page-section description"> <ol class="steps"> {{#steps}} <li class="js-step-select pure-button {{#selected}}pure-button-active{{/selected}}">{{index}}</li> {{/steps}} </ol> <button class="pure-button js-run run" id="run">Run</button>{{#step}} <hr/><h4 class="step_name">{{name}}</h4><div class="step_description">{{{description_html}}}</div> {{/step}} </div> {{#step}} <div class="pure-u-1-2 page-section"><textarea class="js-editor editor html" cols="30" rows="25" id="template" value="{{template}}">{{template}}</textarea></div> <div class="pure-u-1-2 page-section"> <div id="result"> <div id="app"></div> </div> </div> <div class="last-editor-section pure-u-1-2 page-section"><textarea class="js-editor editor" id="tungsten" cols="30" rows="25" value="{{js}}">{{js}}</textarea></div> {{/step}} {{/tutorial}} </div>'
+    app: '<div class="pure-g js-main"> {{#tutorial}} <div class="pure-u-1-2 page-section description"> <ol class="steps"> {{#steps}} <li class="js-step-select pure-button {{#selected}}pure-button-active{{/selected}}">{{index}}</li> {{/steps}} </ol> <button class="pure-button js-run run" id="run">Run</button>{{#step}} <hr/><h4 class="step_name">{{name}}</h4><div class="step_description">{{{description_html}}}</div> {{/step}} </div> {{#step}} <div class="pure-u-1-2 page-section"><textarea class="js-editor editor html" cols="30" rows="25" id="template" value="{{template}}">{{template}}</textarea></div> <div class="pure-u-1-2 page-section"> <div id="result"> <div id="app"></div> </div> </div> <div class="last-editor-section pure-u-1-2 page-section"><textarea class="js-editor editor" id="tungsten" cols="30" rows="25" value="{{js}}">{{js}}</textarea></div> {{/step}} {{/tutorial}} </div>'
   };
   var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);
-  var TutorialSelectView = View.extend({
-    events: {
-      'click': function() {
-        this.model.trigger('selectTutorial', this.model);
-      }
-    }
-  });
   var StepSelectView = View.extend({
     events: {
       click: function() {
@@ -113,8 +106,8 @@
     postInitialize: function() {
       var self = this;
       var debouncedRun = _.debounce(this.run, 200);
-
-      this.listenTo(this.model.get('tutorials'), 'selectTutorial', function(tutorial) {
+      this.listenTo(this.model.get('tutorials'), 'selectTutorial', _.debounce(function(tutorialName) {
+        var tutorial = self.model.get('tutorials').where({name: tutorialName})[0];
         if (tungstenCode && self.model.get('runOnKeyup')) {
           tungstenCode.off('change', debouncedRun);
           templateCode.off('change', debouncedRun);
@@ -181,18 +174,25 @@
           console.log('tutorial has no steps set');
         }
 
-      });
+      }, 0));
       // Start with the first tutorial open
-      this.model.get('tutorials').trigger('selectTutorial', this.model.get('tutorials').at(0));
+      this.model.get('tutorials').trigger('selectTutorial', this.model.get('tutorials').at(0).get('name'));
     },
     childViews: {
-      'js-tutorial-select': TutorialSelectView,
       'js-step-select': StepSelectView
     }
   });
 
   // Models and Collections
   var TutorialModel = Model.extend({
+    derived: {
+      url_name: {
+        deps: ['name'],
+        fn: function() {
+          return encodeURI(this.get('name'));
+        }
+      }
+    },
     relations: {
       steps: Collection.extend({
         model: Model.extend({
@@ -209,12 +209,31 @@
   var AppModel = Model.extend({
     relations: {tutorials: TutorialCollection, tutorial: TutorialModel}
   });
+  var appModel = new AppModel(window.data);
+
 
   // Start app
-  new AppView({
+  var app = new AppView({
     el: '#appwrapper',
     template: compiledTemplates.app,
-    model: new AppModel(window.data),
+    model: appModel,
     dynamicInitialize: true
   });
+
+  if (!tungsten.backbone.Backbone.history.started) {
+    var router = tungsten.backbone.Backbone.Router.extend({
+      routes: {
+        '*tutorialName': 'selectTutorial'
+      },
+      selectTutorial: function(tutorialName) {
+        if (tutorialName) {
+          appModel.get('tutorials').trigger('selectTutorial', tutorialName);
+        }
+      }
+    });
+    new router();
+    tungsten.backbone.Backbone.history.start();
+  }
+
+
 })(Ractive, CodeMirror, _, tungsten);

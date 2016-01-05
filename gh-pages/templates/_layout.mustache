@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>{{site-title}}</title>
-  {{#stylesheet_bundle}}/css/all.css{{/stylesheet_bundle}}
+    {{#stylesheet_bundle}}/css/all.css{{/stylesheet_bundle}}
 
 </head>
 <body>
 <div id="layout">
-    <div id="appwrapper">
         <div id="menu">
             <div class="pure-menu">
-                <a class="pure-menu-heading" href="https://github.com/wayfair/tungstenjs">Tungsten.js</a>
+                <a class="pure-menu-heading" href="index.html">Tungsten.js</a>
                 <ul class="pure-menu-list">
                     <li><a href="index.html" class="pure-menu-link pure-menu-section">Docs</a>
                         <ul class="pure-menu-list">
-                              <li class="pure-menu-item"><a href="views.html" class="pure-menu-link"
-                                                            {{#selected_views}}style="background: #333;"{{/selected_views}}>Views</a>
-                              </li>
+                            <li class="pure-menu-item"><a href="views.html" class="pure-menu-link"
+                                                          {{#selected_views}}style="background: #333;"{{/selected_views}}>Views</a>
+                            </li>
                             <li class="pure-menu-item"><a href="templates.html" class="pure-menu-link"
                                                           {{#selected_templates}}style="background: #333;"{{/selected_templates}}>Templates</a>
                             </li>
@@ -35,6 +34,12 @@
 
                     <li><a href="tutorials.html" class="pure-menu-link pure-menu-section">Tutorials</a></li>
                 </ul>
+                <ul class="pure-menu-list bottom-menu">
+                    <li class="pure-menu-item"><a target="_blank" href="https://www.npmjs.com/package/tungstenjs" class="pure-menu-link">npm</a></li>
+                    <li class="pure-menu-item"><a target="_blank" href="https://github.com/wayfair/tungstenjs" class="pure-menu-link">GitHub</a></li>
+                    <li class="pure-menu-item"><a target="_blank" href="https://github.com/wayfair/tungstenjs/issues" class="pure-menu-link">Issues</a></li>
+                    <li class="pure-menu-item"><a target="_blank" href="http://engineering.wayfair.com/" class="pure-menu-link">Wayfair Eng Blog</a></li>
+                </ul>
             </div>
         </div>
         <div class="main">
@@ -44,11 +49,10 @@
                 <h2></h2>
             </div>
             <div class="content">
-              {{{content}}}
+                {{{content}}}
             </div>
         </div>
 
-    </div>
 </div>
 
 
