@@ -25,6 +25,14 @@
       "../node_modules/todomvc-app-css/index.css",
       "../../tutorials/css/app.css"
     ],
+    "/js/all.js": [
+      "../../tutorials/node_modules/underscore/underscore-min.js",
+      "../../tutorials/node_modules/codemirror/lib/codemirror.js",
+      "../../tutorials/node_modules/codemirror/addon/mode/overlay.js",
+      "../../tutorials/node_modules/codemirror/mode/javascript/javascript.js",
+      "../../tutorials/node_modules/codemirror/addon/runmode/runmode.js",
+      "../docs.js"
+    ],
     "/js/tutorials.js": [
       "../../tutorials/node_modules/underscore/underscore-min.js",
       "../../dist/tungsten.core.js",
