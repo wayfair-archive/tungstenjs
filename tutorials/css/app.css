@@ -119,6 +119,10 @@ body {
   width: 100%;
 }
 
+.CodeMirror {
+  height: auto;
+}
+
 .tutorials_page .CodeMirror {
   height: 48vh;
 }
