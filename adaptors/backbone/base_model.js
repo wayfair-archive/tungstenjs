@@ -444,6 +444,9 @@ BaseModel.prototype.set = function(key, val, options) {
   for (attr in attrs) {
     if (attrs.hasOwnProperty(attr)) {
       val = attrs[attr];
+      if (val === null) {
+        continue;
+      }
 
       // Inject in the relational lookup
       var opts = options;
