@@ -6,3 +6,5 @@ test/
 .idea/
 .DS_Store
 tutorials/
+output/
+gh-pages/

@@ -1,5 +1,5 @@
 {
-  "name": "gh-pages",
+  "name": "tungstenjs-gh-pages",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,6 +13,8 @@
     "punch": "^0.5.46",
     "purecss": "^0.6.0",
     "todomvc-app-css": "^2.0.3",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.1",
+    "ractive": "^0.7.3",
+    "underscore": "^1.8.3"
   }
 }
