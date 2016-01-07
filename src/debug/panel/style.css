@@ -131,6 +131,15 @@ body, .pure-g [class *="pure-u"] {
 .TemplateString ins, .TemplateString del {
   background-color: #F1CEFF
 }
+.TemplateString_tag {
+  color: #B54B95;
+}
+.TemplateString_attrName {
+  color: #9B4500;
+}
+.TemplateString_attrValue {
+  color: #180BA9;
+}
 
 /*******************
  * Tree structure
