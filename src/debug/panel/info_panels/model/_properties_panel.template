@@ -10,10 +10,14 @@
         var clickableClassName = ''
         if (prop.data.isEditable) {
           clickableClassName = 'u-clickable u-underlined';
-          wrapperClassName += 'js-model-property';
+          wrapperClassName += ' js-model-property';
+        }
+        if (prop.data.isDerived) {
+          clickableClassName = 'u-clickable';
+          wrapperClassName += ' js-derived-property';
         }
         %>
-        <div class="AttributeSection_data <%= wrapperClassName %>" data-key="<%= prop.key %>">
+        <div class="AttributeSection_data<%= wrapperClassName %>" data-key="<%= prop.key %>">
           <span class="name"><%= prop.key %></span>
           <span>:</span>
           <% if (prop.data.isRelation) { %>

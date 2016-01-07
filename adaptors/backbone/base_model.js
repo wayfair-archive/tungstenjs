@@ -161,7 +161,7 @@ var BaseModel = Backbone.Model.extend({
         properties.derived.push({
           key: key,
           data: {
-            isDerived: true,
+            isDerived: derived[key],
             value: value,
             displayValue: isEditable(value) ? JSON.stringify(value) : Object.prototype.toString.call(value)
           }

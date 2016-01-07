@@ -35,12 +35,21 @@ module.exports = function() {
     var model = getClosestModel(e.target).obj;
     logger.log(model);
   });
+  utils.addEvent('js-derived-property', 'click', function(e) {
+    var key = utils.closest(e.currentTarget, 'js-derived-property').getAttribute('data-key');
+    var selectedProperty = _.findWhere(appData.selectedModel.modelProperties.derived, {
+      key: key
+    });
+    if (selectedProperty) {
+      logger.log(key, selectedProperty.data.isDerived.deps, selectedProperty.data.isDerived.fn);
+    }
+  });
   utils.addEvent('js-model-property', 'click', function(e) {
     var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
     var selectedProperty = _.findWhere(appData.selectedModel.modelProperties.normal, {
       key: key
     });
-    if (selectedProperty && !selectedProperty.data.isRelation && !selectedProperty.data.isEditing) {
+    if (selectedProperty && !selectedProperty.data.isEditing) {
       selectedProperty.data.isEditing = true;
       utils.render();
       utils.selectElements('js-model-property-value')[0].focus();
@@ -50,7 +59,7 @@ module.exports = function() {
     var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
     try {
       var value = JSON.parse(e.currentTarget.value);
-      var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {
+      var selectedProperty = _.findWhere(appData.selectedModel.modelProperties.normal, {
         key: key
       });
       selectedProperty.data.isEditing = false;
