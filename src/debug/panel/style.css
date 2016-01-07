@@ -213,48 +213,9 @@ body, .pure-g [class *="pure-u"] {
   margin-left: 1.5em;
 }
 
-
 /*******************
- * Sidebar panel
+ * Loading overlay
  *******************/
-.SidebarPane_title_label {
-  float: right;
-  font-size: 0.8em;
-}
-.SidebarPane_title {
-  border-top: 1px solid #666;
-  border-bottom: 1px solid #666;
-  padding: 0.1em 0.5em;
-  background: #5A2249;
-  color: #fff;
-}
-.SidebarPane_data {
-  cursor: default;
-  padding: 10px;
-  font-size: 0.9em;
-  line-height: 1.5;
-}
-.SidebarPane_data .value {
-  color: #B54A94;
-}
-
-.u-clickable {
-  cursor: pointer;
-}
-.u-underlined {
-  border-bottom: 1px dotted currentColor;
-}
-textarea {
-  resize: none;
-  height: 6em;
-  border: 1px dotted #DCDCDC;
-  width: 100%;
-}
-textarea:focus {
-  outline: none;
-  border: 1px solid #5A2249;
-}
-
 .LoadingOverlay {
   position: fixed;
   width: 100%;
@@ -276,4 +237,50 @@ textarea:focus {
   left: 25%;
   word-break: normal;
   text-align: center;
+}
+
+/*******************
+ * Sidebar panel
+ *******************/
+.SidebarPane_title_label {
+  float: right;
+  font-size: 0.8em;
+}
+.SidebarPane_title {
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #666;
+  padding: 0.1em 0.5em;
+  background: #5A2249;
+  color: #fff;
+  cursor: pointer;
+}
+.SidebarPane_data {
+  cursor: default;
+  padding: 10px;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+.SidebarPane_data .value {
+  color: #B54A94;
+}
+
+/*******************
+ * Utility and misc
+ *******************/
+.u-clickable {
+  cursor: pointer;
+}
+.u-underlined {
+  border-bottom: 1px dotted currentColor;
+}
+textarea {
+  resize: none;
+  height: 6em;
+  border: 1px solid #E6E6E6;
+  width: 100%;
+  margin-bottom: 5px;
+}
+textarea:focus {
+  outline: none;
+  border: 1px solid #5A2249;
 }
