@@ -130,15 +130,37 @@ var BaseModel = AmpersandModel.extend({
    * @return {Array<Object>} List of attribute key/values
    */
   getPropertiesArray: function() {
-    var properties = {normal:[],relational:[],derived:[]};
+    var properties = {normal:[], relational:[], derived:[]};
+
+    var isEditable = function(value) {
+      if (!_.isObject(value)) {
+        return true;
+      } else if (_.isArray(value)) {
+        var result = true;
+        _.each(value, function(i) {
+          result = result && isEditable(i);
+        });
+        return result;
+      } else {
+        try {
+          JSON.stringify(value);
+          return true;
+        } catch (ex) {
+          return false;
+        }
+      }
+    };
     _.each(this.attributes, function(value, key) {
-      properties.normal.push({
+      var prop = {
         key: key,
         data: {
+          isEditable: isEditable(value),
           isEditing: false,
           value: value
         }
-      });
+      };
+      prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
+      properties.normal.push(prop);
     });
 
     var self = this;

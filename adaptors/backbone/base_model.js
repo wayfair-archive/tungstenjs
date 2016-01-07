@@ -124,7 +124,7 @@ var BaseModel = Backbone.Model.extend({
    * @return {Array<Object>} List of attribute key/values
    */
   getPropertiesArray: function() {
-    var properties = {normal:[],relational:[],derived:[]};
+    var properties = {normal:[], relational:[], derived:[]};
     var relations = _.result(this, 'relations') || {};
     var derived = _.result(this, 'derived') || {};
 

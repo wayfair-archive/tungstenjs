@@ -228,7 +228,7 @@ describe('base_model.js constructed api', function() {
       spyOn(model.cl1, 'getDebugName').and.returnValue('CollectionName');
 
       var properties = model.getPropertiesArray();
-      var expectedProperties = [{
+      var expectedRelations = [{
         key: 'ch1',
         data: {
           isRelation: true,
@@ -240,19 +240,20 @@ describe('base_model.js constructed api', function() {
           isRelation: true,
           name: 'CollectionName'
         }
-      }, {
+      }];
+
+      var expectedProperties = [{
         key: 'prop',
         data: {
+          isEditable: true,
           isEditing: false,
-          value: 'test'
+          value: 'test',
+          displayValue: '"test"'
         }
       }];
 
-      // Sort both arrays by key to allow deep equality check
-      properties = _.sortBy(properties, 'key');
-      expectedProperties = _.sortBy(expectedProperties, 'key');
-
-      expect(properties).to.eql(expectedProperties);
+      expect(properties.normal).to.eql(expectedProperties);
+      expect(properties.relational).to.eql(expectedRelations);
     });
   });
   /* develblock:end */
