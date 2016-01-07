@@ -14,8 +14,8 @@
       spanClass += w.model.collapsed ? 'right' : 'down';
     }
 %>
-<li class="js-model-list-item tree-item <%= liClass %>" data-id="<%= w.model.debugName %>">
-  <div class="tree-item-hover">
+<li class="js-model-list-item tree_item <%= liClass %>" data-id="<%= w.model.debugName %>">
+  <div class="tree_item_hover">
     <span class="toggle-caret glyphicon <%= spanClass %>"></span>
     <a class="js-more-model-info" href="#"><%= w.model.debugName %></a>
   </div>

@@ -8,8 +8,8 @@
         <textarea class="js-model-data"><%= panel.model.outputData %></textarea>
       </div>
       <div class="section expanded">
-        <button class="js-get-model-data">Get Current Snapshot</button>
-        <button class="js-set-model-data">Set App to Snapshot</button>
+        <button class="pure-button js-get-model-data">Get Current Snapshot</button>
+        <button class="pure-button js-set-model-data">Set App to Snapshot</button>
       </div>
     </div>
   <% } %>

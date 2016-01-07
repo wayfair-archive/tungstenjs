@@ -11,7 +11,10 @@ body, .pure-g [class *="pure-u"] {
   box-sizing: border-box;
 }
 
-.app-header {
+/*******************
+ * Header
+ *******************/
+.app_header {
   background-color: #5A2249;
   padding: 0.5em 0;
   color: #FFF;
@@ -23,58 +26,48 @@ body, .pure-g [class *="pure-u"] {
   color: #FFF;
 }
 
-.app-header .pure-menu-item {
+.app_header .pure-menu-item {
   line-height: 1.5em;
 }
 
-.app-header a {
+.app_header a {
   text-decoration: none;
   color: #FFF;
   cursor: pointer;
 }
-.app-header a:hover {
+.app_header a:hover {
   color: #CEBDC9;
 }
 
-.app-header .pure-menu-item + .pure-menu-item {
+.app_header .pure-menu-item + .pure-menu-item {
   margin-left: 5px;
   padding-left: 5px;
   border-left: 1px solid #DDD;
 }
 
-.app-body {
+.app_body {
   margin-top: 3.25em;
 }
 
-.app-body--panel {
+.app_body--panel {
   height: calc(100vh - 3.25em);
   overflow: auto;
 }
-.app-body--panel-info {
+.app_body--panel-info {
   border-left: 1px solid #5A2249;
 }
 
-li hr {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-.model_data textarea {
-  width: 100%;
-  resize: none;
-  height: 100px;
-  border: 1px dotted #DCDCDC;
-  width: 100%;
-}
-
-.time_travel_track {
+/*******************
+ * Time Travel
+ *******************/
+.time_travel--track {
   width: 80%;
   position: relative;
   float: left;
   height: 1.5em;
   margin-bottom: 10px;
 }
-.time_travel_track:before {
+.time_travel--track:before {
   position: absolute;
   display: block;
   content: '';
@@ -85,7 +78,7 @@ li hr {
   left: 0;
 }
 
-.time_travel_item {
+.time_travel--item {
   position: absolute;
   cursor: pointer;
   width: 2px;
@@ -93,7 +86,7 @@ li hr {
   top: 0;
   margin-left: -1px;
 }
-.time_travel_item:before {
+.time_travel--item:before {
   display: block;
   content: '';
   position: absolute;
@@ -103,51 +96,52 @@ li hr {
   left: 0;
   top: 2.5%;
 }
-.time_travel_item.selected:before {
+.time_travel--item.selected:before {
   background-color: #5A2249;
 }
-
-.time_travel_button {
+.time_travel--button {
   float: left;
   width: 5%;
   border: none;
   background-color: #F9F9F9;
   font-weight: bold;
 }
-.time_travel_button:hover {
+.time_travel--button:hover {
   color: #881391;
   background-color: #F3D7F5;
 }
-.time_travel_button[disabled], .time_travel_button[disabled]:hover {
+.time_travel--button[disabled], .time_travel--button[disabled]:hover {
   color: #ccc;
   background-color: initial;
 }
 
-.template-string .clickable {
+/*******************
+ * Template String
+ *******************/
+.template_string .clickable {
   color: #B54B95;
 }
-.template-string ins, .template-string del {
+.template_string ins, .template_string del {
   background-color: #F1CEFF
 }
 
+/*******************
+ * Tree structure
+ *******************/
 .tree {
   background-color: #fff;
   list-style: none;
   margin: 0;
   padding: 0;
-  min-width: 200px; }
-
+  min-width: 200px;
+}
 .tree .tree {
   border: 1px solid #ddd;
   border-left: 3px solid #7C7C6B;
   border-right: 0;
   padding-left: 1em;
 }
-
-.is-collapsed > .tree {
-  display: none; }
-
-.tree-item {
+.tree_item {
   text-align: left;
   margin-left: 2px;
   list-style: none;
@@ -155,39 +149,44 @@ li hr {
   border-top: 1px solid #ddd;
   cursor: pointer;
   margin-top: -1px;
-  position: relative; }
-.tree-item:last-child {
+  position: relative;
+}
+.tree_item:last-child {
   margin-bottom: -1px;
 }
-.tree-item .glyphicon {
-  color: #888;
-  padding-right: 5px;
-  padding-left: 24px;
-  width: 43px; }
-.tree-item .glyphicon:hover {
-  color: #FFF;
-  cursor: pointer; }
-.tree-item a {
+.tree_item a {
   color: #333;
   text-decoration: none;
 }
-.tree-item-hover:hover {
+.tree_item .glyphicon {
+  color: #888;
+  padding-right: 5px;
+  padding-left: 24px;
+  width: 43px;
+}
+.tree_item .glyphicon:hover {
+  color: #FFF;
+  cursor: pointer;
+}
+.tree_item_hover:hover {
   background-color: #DEADCF;
 }
-
-.tree-item.is-highlighted > .tree-item-hover {
+.tree_item.is_highlighted > .tree_item_hover {
   background: #B54B95;
   font-weight: bold;
 }
-.is-highlighted > .tree-item-hover .glyphicon,
-.is-highlighted > .tree-item-hover a {
+.tree_item.is_highlighted > .tree_item_hover .glyphicon,
+.tree_item.is_highlighted > .tree_item_hover a {
   color: #FFF
 }
-.is-highlighted > .tree-item-hover .glyphicon:hover {
+.tree_item.is_highlighted > .tree_item_hover .glyphicon:hover {
   color: #DDD
 }
 
 
+/*******************
+ * Sidebar panel
+ *******************/
 .sidebar-pane-title label{
   float: right;
   font-size: 0.8em;
@@ -207,7 +206,17 @@ li hr {
 .sidebar-pane .value {
   color: #B54A94;
 }
-
 .clickable {
   cursor: pointer;
+}
+textarea {
+  width: 100%;
+  resize: none;
+  height: 100px;
+  border: 1px dotted #DCDCDC;
+  width: 100%;
+}
+textarea:focus {
+  outline: none;
+  border: 1px solid #5A2249;
 }

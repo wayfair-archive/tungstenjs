@@ -3,7 +3,7 @@
 </style>
 
 <div class="js-app">
-  <nav class="app-header pure-menu pure-menu-horizontal pure-menu-fixed">
+  <nav class="app_header pure-menu pure-menu-horizontal pure-menu-fixed">
     <div class="pure-menu-heading">
       <div class="tungsten_version">Tungsten.js <%= w.tungstenVersion %></div>
     </div>
@@ -18,7 +18,7 @@
       <% }); %>
     </ul>
   </nav>
-  <div class="app-body js-tab-content">
+  <div class="app_body js-tab-content">
     <%
       if (w.tabs.selected.showViewTab) {
         print(w.partials['_view_info_pane'](w, {variable: w}));

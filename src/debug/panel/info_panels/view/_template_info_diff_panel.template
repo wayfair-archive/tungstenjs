@@ -4,7 +4,7 @@
   </div>
   <% if (!panel.collapsed && panel.view) { %>
     <div class="sidebar-pane visible">
-      <pre class="template-string"><code class="monospace-lg"><%= panel.view.templateDiff %></code></pre>
+      <pre class="template_string"><code class="monospace-lg"><%= panel.view.templateDiff %></code></pre>
     </div>
   <% } %>
 </div>

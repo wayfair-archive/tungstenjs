@@ -1,5 +1,5 @@
 <div class="js-model-pane pure-g">
-  <div class="app-body--panel pure-u-2-5">
+  <div class="app_body--panel pure-u-2-5">
     <ul data-view="tree-view" data-cid="-1" class="tree is-expanded js-view-tree-list">
       <% for (var i = 0; i < w.activeModels.length; i++) {
         print(w.partials['_model_list_item']({
@@ -9,7 +9,7 @@
       } %>
     </ul>
   </div>
-  <div class="app-body--panel app-body--panel-info pure-u-3-5">
+  <div class="app_body--panel app-body--panel-info pure-u-3-5">
     <%
       function renderPanel(partial, tabName) {
         print(w.partials[partial]({

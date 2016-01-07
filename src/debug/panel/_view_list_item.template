@@ -1,9 +1,7 @@
 <%
   var liClass = '';
   if (w.view.selected) {
-    liClass = 'is-highlighted';
-  } else {
-    liClass = 'is-not-highlighted';
+    liClass = 'is_highlighted';
   }
 
   var viewIsParent = w.view.isParent();
@@ -19,8 +17,8 @@
     styles += 'background-color:' + w.getCollectionColor(collectionKey);
   }
 %>
-<li class="js-view-list-item tree-item <%= liClass %>" data-id="<%= w.view.debugName %>" style="<%= styles %>">
-  <div class="tree-item-hover">
+<li class="js-view-list-item tree_item <%= liClass %>" data-id="<%= w.view.debugName %>" style="<%= styles %>">
+  <div class="tree_item_hover">
     <span class="toggle-caret glyphicon <%= spanClass %>"></span>
     <a class="js-more-view-info" href="#"><%= w.view.debugName %></a>
   </div>
