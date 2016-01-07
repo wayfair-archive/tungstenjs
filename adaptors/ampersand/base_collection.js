@@ -16,13 +16,13 @@ var _ = require('underscore');
  * @class BaseCollection
  */
 var BaseCollection = AmpersandCollection.extend({
+  model: require('./base_model'),
   tungstenCollection: true,
   initialize: function() {
     /* develblock:start */
     this.initDebug();
     /* develblock:end */
     this.postInitialize();
-
   },
   /* develblock:start */
 

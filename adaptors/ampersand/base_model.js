@@ -56,8 +56,7 @@ var BaseModel = AmpersandModel.extend({
   },
   /* develblock:start */
 
-  /** @type {string} Override cidPrefix to avoid confusion with Collections */
-  cidPrefix: 'model',
+  debugName: 'FooBar',
 
   /**
    * Bootstraps all debug functionality
@@ -73,7 +72,7 @@ var BaseModel = AmpersandModel.extend({
    * @return {string} Debug name
    */
   getDebugName: function() {
-    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('model', '') : this.cid;
+    return this.debugName ? this.debugName + this.cid.replace('state', '') : this.cid;
   },
 
   /**
@@ -118,7 +117,8 @@ var BaseModel = AmpersandModel.extend({
       getVdomTemplate: true,
       isParent: true,
       getChildren: true,
-      getDebugName: true
+      getDebugName: true,
+      getPropertiesArray: true
     };
     var getFunctions = require('../shared/get_functions');
     return getFunctions(trackedFunctions, getTrackableFunction, this, BaseModel.prototype, blacklist);
@@ -150,7 +150,9 @@ var BaseModel = AmpersandModel.extend({
         }
       }
     };
-    _.each(this.attributes, function(value, key) {
+
+    for (var key in this._definition) {
+      var value = this[key];
       var prop = {
         key: key,
         data: {
@@ -161,7 +163,7 @@ var BaseModel = AmpersandModel.extend({
       };
       prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
       properties.normal.push(prop);
-    });
+    }
 
     var self = this;
     _.each(this._children, function(constructor, key) {
