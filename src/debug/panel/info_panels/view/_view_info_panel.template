@@ -4,35 +4,35 @@
   </div>
   <% if (!panel.collapsed && panel.view) { %>
     <div class="sidebar-pane visible">
-      <div class="body">
-        <div class="section expanded">
-          <%
-            var obj = panel.view.obj;
-          %>
-          <ol data-property-key="" class="properties properties-tree monospace">
-            <li data-property-name="cid">
-              <span class="name">cid</span><span class="separator">: </span>
-              <span class="value console-formatted-undefined"> <%= obj.cid %> </span>
-            </li>
-            <li data-property-name="collection">
-              <span class="name">debugName</span><span class="separator">: </span>
-              <span class="value console-formatted-undefined"> <%= panel.view.debugName %> </span>
-            </li>
-            <li data-property-name="tagName">
-              <span class="name">tagName</span><span class="separator">: </span>
-              <span class="value console-formatted-undefined"> <%= obj.el.tagName %> </span>
-            </li>
-            <li data-property-name="className">
-              <span class="name">className</span><span class="separator">: </span>
-              <span class="value console-formatted-undefined"> <%= obj.el.className %> </span>
-            </li>
-            <li data-property-name="el" data-dom-element="" class="js-view-element">
-              <span class="name">el</span><span class="separator">: </span>
-              <span class="js-view-el value console-formatted-undefined clickable-property" patchedmarionette=""> <span class="source-code" style="-webkit-user-select: none;"><%= panel.view.elString %></span> </span>
-            </li>
-          </ol>
-        </div>
+      <%
+        var obj = panel.view.obj;
+        var output = [{
+            'name': 'cid',
+            'value': obj.cid
+          }, {
+            'name': 'debugName',
+            'value': panel.view.debugName
+          }, {
+            'name': 'tagName',
+            'value': obj.el.tagName
+          }, {
+            'name': 'className',
+            'value': obj.el.className
+          }, {
+            'name': 'el',
+            'value': panel.view.elString,
+            'className': 'js-view-element clickable-value'
+          }, ];
+        _.each(output, function(pane) {
+      %>
+      <div class="<%= pane.className %>">
+        <span class="name"><%= pane.name %></span>
+        <span>:</span>
+        <span class="value"><%= pane.value %></span>
       </div>
+      <%
+          });
+      %>
     </div>
   <% } %>
 </div>

@@ -4,11 +4,7 @@
   </div>
   <% if (!panel.collapsed && panel.view) { %>
     <div class="sidebar-pane visible">
-      <div class="body">
-        <div class="section expanded text-left">
-          <pre class="template-string"><code class="monospace-lg"><%= panel.view.vdomTemplate %></code></pre>
-        </div>
-      </div>
+      <pre class="template-string"><code class="monospace-lg"><%= panel.view.vdomTemplate %></code></pre>
     </div>
   <% } %>
 </div>

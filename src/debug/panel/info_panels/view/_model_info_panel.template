@@ -1,37 +1,35 @@
 <div class="model_info_panel">
-    <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
-        Model
-    </div>
-    <% if (!panel.collapsed && panel.view && panel.view.obj && panel.view.obj.model) { %>
-      <div class="sidebar-pane visible">
-          <div class="body">
-              <div class="section expanded">
-                  <ol data-property-key="" class="properties properties-tree monospace">
-                      <% var model = panel.view.obj.model; %>
-                      <li data-property-name="debugName">
-                          <span class="name">debugName</span><span class="separator">: </span>
-                          <span class="js-model-tab js-model-list-item value console-formatted-undefined clickable-property" data-id="<%= model.getDebugName() %>"> <%= model.getDebugName() %> </span>
-                      </li>
-                      <% if (model.collection) { %>
-                      <li data-property-name="collection">
-                          <span class="name">collectionCid</span><span class="separator">: </span>
-                          <span class="js-model-tab js-model-list-item value console-formatted-undefined clickable-property" data-id="<%= model.collection.getDebugName() %>"> <%= model.collection.getDebugName() %> </span>
-                      </li>
-                        <% if (model.collection.parentProp) { %>
-                        <li data-property-name="parentProp">
-                            <span class="name">parentProp</span><span class="separator">: </span>
-                            <span class="value console-formatted-undefined"> <%= model.collection.parentProp %> </span>
-                        </li>
-                        <% } %>
-                      <% } else if (model.parentProp) { %>
-                        <li data-property-name="parentProp">
-                            <span class="name">parentProp</span><span class="separator">: </span>
-                            <span class="value console-formatted-undefined"> <%= model.parentProp %> </span>
-                        </li>
-                      <% } %>
-                  </ol>
-              </div>
-          </div>
+  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+      Model
+  </div>
+  <% if (!panel.collapsed && panel.view && panel.view.obj && panel.view.obj.model) { %>
+    <div class="sidebar-pane visible">
+      <% var model = panel.view.obj.model; %>
+      <div data-property-name="debugName" class="clickable-value">
+        <span class="name">debugName</span>
+        <span>:</span>
+        <span class="js-model-tab js-model-list-item value" data-id="<%= model.getDebugName() %>"> <%= model.getDebugName() %> </span>
       </div>
-    <% } %>
+      <% if (model.collection) { %>
+      <div data-property-name="collection" class="clickable-value">
+        <span class="name">collectionCid</span>
+        <span>:</span>
+        <span class="js-model-tab js-model-list-item value" data-id="<%= model.collection.getDebugName() %>"> <%= model.collection.getDebugName() %> </span>
+      </div>
+        <% if (model.collection.parentProp) { %>
+        <div data-property-name="parentProp">
+          <span class="name">parentProp</span>
+          <span>:</span>
+          <span class="value"> <%= model.collection.parentProp %> </span>
+        </div>
+        <% } %>
+      <% } else if (model.parentProp) { %>
+        <div data-property-name="parentProp">
+          <span class="name">parentProp</span>
+          <span>:</span>
+          <span class="value"> <%= model.parentProp %> </span>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
 </div>

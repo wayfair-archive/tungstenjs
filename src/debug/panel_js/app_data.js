@@ -18,9 +18,11 @@ var appData = window.appData = module.exports = {
   tungstenVersion: typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null,
   tabs: {
     tabs: [{
-      name: 'View <span class="glyphicon glyphicon-search js-find-view tab-action"></span>',
+      name: 'View',
       isActive: true,
-      activeTabName: 'showViewTab'
+      activeTabName: 'showViewTab',
+      action: true,
+      actionClass: 'glyphicon-search js-find-view'
     }, {
       name: 'Data',
       isActive: false,

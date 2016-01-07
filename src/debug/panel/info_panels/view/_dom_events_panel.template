@@ -4,18 +4,13 @@
   </div>
   <% if (!panel.collapsed && panel.view && panel.view.objectEvents) { %>
   <div class="sidebar-pane visible">
-    <div class="body">
-      <div class="section expanded">
-        <ol class="properties properties-tree monospace">
-          <% _.each(panel.view.objectEvents, function(event) { %>
-          <li data-property-name="model" class="js-view-event" data-event-selector="<%= event.selector %>">
-            <span class="name"><%= event.selector %></span><span class="separator">: </span>
-            <span class="value clickable-property console-formatted-undefined"><%= event.name %></span>
-          </li>
-          <% }) %>
-        </ol>
-      </div>
+    <% _.each(panel.view.objectEvents, function(event) { %>
+    <div data-property-name="model" class="js-view-event clickable-value" data-event-selector="<%= event.selector %>">
+      <span class="name"><%= event.selector %></span>
+      <span>:</span>
+      <span class="value"><%= event.name %></span>
     </div>
+    <% }) %>
   </div>
   <% } %>
 </div>

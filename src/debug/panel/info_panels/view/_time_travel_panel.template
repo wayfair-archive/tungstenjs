@@ -4,28 +4,24 @@
   </div>
   <% if (!panel.collapsed && panel.view) { %>
     <div class="sidebar-pane visible">
-      <div class="body">
-        <div class="section expanded">
-          <%
-            var state = panel.view.getState();
-            var slider = state.slider;
-            var prevState = slider.prevEnabled ? '' : 'disabled';
-            var nextState = slider.nextEnabled ? '' : 'disabled';
-           %>
-          <button class="time_travel_button time_travel_button_first js-time-travel-button-first" <%= prevState %>>&laquo;</button>
-          <button class="time_travel_button time_travel_button_prev js-time-travel-button-prev" <%= prevState %>>&lsaquo;</button>
-          <div class="time_travel_track">
-            <% _.each(slider.items, function(item) { %>
-              <span style="left:<%= item.left %>%" title="<%= item.label %>" data-index="<%= item.index %>" class="time_travel_item js-time-travel-item <%= item.active ? 'selected' : '' %>"></span>
-            <% }) %>
-          </div>
-          <button class="time_travel_button time_travel_button_next js-time-travel-button-next" <%= nextState %>>&rsaquo;</button>
-          <button class="time_travel_button time_travel_button_last js-time-travel-button-last" <%= nextState %>>&raquo;</button>
-          <div class="c"></div>
-          <div><%= slider.currentLabel %> - <%= slider.currentIndex %> / <%= slider.maxIndex %></div>
-          <button class="time_travel_button_clear js-time-travel-button-clear">Clear History</button>
-        </div>
+      <%
+        var state = panel.view.getState();
+        var slider = state.slider;
+        var prevState = slider.prevEnabled ? '' : 'disabled';
+        var nextState = slider.nextEnabled ? '' : 'disabled';
+       %>
+      <button class="time_travel_button time_travel_button_first js-time-travel-button-first" <%= prevState %>>&laquo;</button>
+      <button class="time_travel_button time_travel_button_prev js-time-travel-button-prev" <%= prevState %>>&lsaquo;</button>
+      <div class="time_travel_track">
+        <% _.each(slider.items, function(item) { %>
+          <span style="left:<%= item.left %>%" title="<%= item.label %>" data-index="<%= item.index %>" class="time_travel_item js-time-travel-item <%= item.active ? 'selected' : '' %>"></span>
+        <% }) %>
       </div>
+      <button class="time_travel_button time_travel_button_next js-time-travel-button-next" <%= nextState %>>&rsaquo;</button>
+      <button class="time_travel_button time_travel_button_last js-time-travel-button-last" <%= nextState %>>&raquo;</button>
+      <div class="c"></div>
+      <div><%= slider.currentLabel %> - <%= slider.currentIndex %> / <%= slider.maxIndex %></div>
+      <button class="time_travel_button_clear js-time-travel-button-clear">Clear History</button>
     </div>
   <% } %>
 </div>

@@ -11,6 +11,9 @@
       <% _.each(w.tabs.tabs, function(tab) { %>
       <li data-route="<%= tab.activeTabName %>" class="js-tab <%= tab.isActive ? 'active' : '' %> pure-menu-item">
         <a href="#"><%= tab.name %></a>
+        <% if (tab.action) { %>
+          <a class="glyphicon <%= tab.actionClass %>"></a>
+        <% } %>
       </li>
       <% }); %>
     </ul>
