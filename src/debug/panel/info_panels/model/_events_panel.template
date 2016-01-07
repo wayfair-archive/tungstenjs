@@ -7,7 +7,6 @@
     <% _.each(panel.model.customEvents, function(evt) { %>
     <div class="js-tracked-event" data-key="<%= evt.name %>">
       <span class="name"><%= evt.name %></span>
-      <span>:</span>
       <span class="js-untrack-event u-clickable u-underlined">-</span>
     </div>
     <% }) %>

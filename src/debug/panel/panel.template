@@ -35,7 +35,7 @@
   </div>
 </div>
 <% if (w.loading) { %>
-<div id="loading_overlay">
-  <div id="loading_overlay_message">Parent window lost, attempting reconnection. <span id="loading_message_count"><%= w.loading %></span> attempts remaining</div>
+<div class="LoadingOverlay">
+  <div class="LoadingOverlay_message">Parent window lost, attempting reconnection. <span id="loading_message_count"><%= w.loading %></span> attempts remaining</div>
 </div>
 <% } %>

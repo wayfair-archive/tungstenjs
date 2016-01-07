@@ -5,20 +5,15 @@
   </div>
   <% if (!panel.collapsed && panel.model) { %>
     <div class="SidebarPane_data">
-      <% _.each(panel.model.modelProperties, function(prop) {
+      <% var propRow = function(prop) {
         var wrapperClassName = '';
         var clickableClassName = ''
-        var isEditable = prop.data.isEditable && !prop.data.isDerived;
-        if (isEditable) {
+        if (prop.data.isEditable) {
           clickableClassName = 'u-clickable u-underlined';
           wrapperClassName += 'js-model-property';
         }
-
-        if (prop.data.isDerived) {
-          wrapperClassName += ' derived_property';
-        }
         %>
-        <div class="<%= wrapperClassName %>" data-key="<%= prop.key %>">
+        <div class="AttributeSection_data <%= wrapperClassName %>" data-key="<%= prop.key %>">
           <span class="name"><%= prop.key %></span>
           <span>:</span>
           <% if (prop.data.isRelation) { %>
@@ -33,7 +28,23 @@
           </span>
           <% } %>
         </div>
-      <% }) %>
+      <% };
+
+      var props = panel.model.modelProperties;
+      if (props.normal.length) {
+        %><h4 class="AttributeSection_header">Properties</h4><%
+        _.each(props.normal, propRow);
+      }
+      if (props.derived.length) {
+        %><h4 class="AttributeSection_header">Derived</h4><%
+        _.each(props.derived, propRow);
+      }
+      if (props.relational.length) {
+        %><h4 class="AttributeSection_header">Relations</h4><%
+        _.each(props.relational, propRow);
+      }
+
+      %>
     </div>
     <% } %>
   </div>

@@ -124,7 +124,7 @@ var BaseModel = Backbone.Model.extend({
    * @return {Array<Object>} List of attribute key/values
    */
   getPropertiesArray: function() {
-    var properties = [];
+    var properties = {normal:[],relational:[],derived:[]};
     var relations = _.result(this, 'relations') || {};
     var derived = _.result(this, 'derived') || {};
 
@@ -150,18 +150,26 @@ var BaseModel = Backbone.Model.extend({
     _.each(this.attributes, function(value, key) {
       var prop;
       if (relations && relations[key]) {
-        prop = {
+        properties.relational.push({
           key: key,
           data: {
             isRelation: true,
             name: value.getDebugName()
           }
-        };
+        });
+      } else if (derived && derived[key]) {
+        properties.derived.push({
+          key: key,
+          data: {
+            isDerived: true,
+            value: value,
+            displayValue: isEditable(value) ? JSON.stringify(value) : Object.prototype.toString.call(value)
+          }
+        });
       } else {
         prop = {
           key: key,
           data: {
-            isDerived: !!derived[key],
             isEditable: isEditable(value),
             isEditing: false,
             value: value
@@ -169,11 +177,13 @@ var BaseModel = Backbone.Model.extend({
         };
 
         prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
+        properties.normal.push(prop);
       }
-      properties.push(prop);
     });
 
-    properties = _.sortBy(properties, 'key');
+    properties.normal = _.sortBy(properties.normal, 'key');
+    properties.relational = _.sortBy(properties.relational, 'key');
+    properties.derived = _.sortBy(properties.derived, 'key');
 
     return properties;
   },

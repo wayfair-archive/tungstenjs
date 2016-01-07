@@ -37,7 +37,7 @@ module.exports = function() {
   });
   utils.addEvent('js-model-property', 'click', function(e) {
     var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
-    var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {
+    var selectedProperty = _.findWhere(appData.selectedModel.modelProperties.normal, {
       key: key
     });
     if (selectedProperty && !selectedProperty.data.isRelation && !selectedProperty.data.isEditing) {

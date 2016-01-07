@@ -130,9 +130,9 @@ var BaseModel = AmpersandModel.extend({
    * @return {Array<Object>} List of attribute key/values
    */
   getPropertiesArray: function() {
-    var properties = [];
+    var properties = {normal:[],relational:[],derived:[]};
     _.each(this.attributes, function(value, key) {
-      properties.push({
+      properties.normal.push({
         key: key,
         data: {
           isEditing: false,
@@ -144,7 +144,7 @@ var BaseModel = AmpersandModel.extend({
     var self = this;
     _.each(this._children, function(constructor, key) {
       var value = self.get(key);
-      properties.push({
+      properties.relational.push({
         key: key,
         data: {
           isRelation: true,
@@ -154,7 +154,7 @@ var BaseModel = AmpersandModel.extend({
     });
     _.each(this._collections, function(constructor, key) {
       var value = self.get(key);
-      properties.push({
+      properties.relational.push({
         key: key,
         data: {
           isRelation: true,

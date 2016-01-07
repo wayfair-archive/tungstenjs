@@ -202,6 +202,17 @@ body, .pure-g [class *="pure-u"] {
   color: #DDD
 }
 
+/*******************
+ * Model Attributes
+ *******************/
+.AttributeSection_header {
+  margin: 0;
+  text-decoration: underline;
+}
+.AttributeSection_data {
+  margin-left: 1.5em;
+}
+
 
 /*******************
  * Sidebar panel
@@ -242,4 +253,27 @@ textarea {
 textarea:focus {
   outline: none;
   border: 1px solid #5A2249;
+}
+
+.LoadingOverlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(203, 159, 210, 0.48);
+  left: 0;
+  top: 0;
+  z-index: 999999999;
+}
+
+.LoadingOverlay_message {
+  font-size: 42px;
+  font-weight: bold;
+  color: #995CA3;
+  position: absolute;
+  width: 50%;
+  height: 40%;
+  top: 30%;
+  left: 25%;
+  word-break: normal;
+  text-align: center;
 }
