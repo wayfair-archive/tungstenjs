@@ -5,16 +5,16 @@
   <% if (!panel.collapsed && panel.view && panel.view.obj && panel.view.obj.model) { %>
     <div class="sidebar-pane visible">
       <% var model = panel.view.obj.model; %>
-      <div data-property-name="debugName" class="clickable-value">
+      <div data-property-name="debugName">
         <span class="name">debugName</span>
         <span>:</span>
-        <span class="js-model-tab js-model-list-item value" data-id="<%= model.getDebugName() %>"> <%= model.getDebugName() %> </span>
+        <span class="js-model-tab js-model-list-item value clickable" data-id="<%= model.getDebugName() %>"> <%= model.getDebugName() %> </span>
       </div>
       <% if (model.collection) { %>
-      <div data-property-name="collection" class="clickable-value">
+      <div data-property-name="collection">
         <span class="name">collectionCid</span>
         <span>:</span>
-        <span class="js-model-tab js-model-list-item value" data-id="<%= model.collection.getDebugName() %>"> <%= model.collection.getDebugName() %> </span>
+        <span class="js-model-tab js-model-list-item value clickable" data-id="<%= model.collection.getDebugName() %>"> <%= model.collection.getDebugName() %> </span>
       </div>
         <% if (model.collection.parentProp) { %>
         <div data-property-name="parentProp">

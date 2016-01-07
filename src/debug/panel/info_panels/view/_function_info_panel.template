@@ -10,10 +10,10 @@
     <div class="sidebar-pane visible">
         <%
         function fnRow(fn) { %>
-          <div data-fn="<%= fn.name %>" class="js-track-function clickable-value">
+          <div data-fn="<%= fn.name %>" class="js-track-function">
             <span class="name"><%= fn.name %></span>
             <span>:</span>
-            <span class="value" data-id="<%= fn.name %>"><%= fn.tracked ? 'Tracked' : 'Untracked' %></span>
+            <span class="value clickable" data-id="<%= fn.name %>"><%= fn.tracked ? 'Tracked' : 'Untracked' %></span>
           </div>
         <% } %>
         <%

@@ -6,33 +6,32 @@
     <div class="sidebar-pane visible">
       <%
         var obj = panel.view.obj;
-        var output = [{
-            'name': 'cid',
-            'value': obj.cid
-          }, {
-            'name': 'debugName',
-            'value': panel.view.debugName
-          }, {
-            'name': 'tagName',
-            'value': obj.el.tagName
-          }, {
-            'name': 'className',
-            'value': obj.el.className
-          }, {
-            'name': 'el',
-            'value': panel.view.elString,
-            'className': 'js-view-element clickable-value'
-          }, ];
-        _.each(output, function(pane) {
       %>
-      <div class="<%= pane.className %>">
-        <span class="name"><%= pane.name %></span>
+      <div>
+        <span class="name">cid</span>
         <span>:</span>
-        <span class="value"><%= pane.value %></span>
+        <span class="value"><%= obj.cid %></span>
       </div>
-      <%
-          });
-      %>
+      <div>
+        <span class="name">debugName</span>
+        <span>:</span>
+        <span class="value"><%= panel.view.debugName %></span>
+      </div>
+      <div>
+        <span class="name">tagName</span>
+        <span>:</span>
+        <span class="value"><%= obj.el.tagName %></span>
+      </div>
+      <div>
+        <span class="name">className</span>
+        <span>:</span>
+        <span class="value"><%= obj.el.className %></span>
+      </div>
+      <div>
+        <span class="name">el</span>
+        <span>:</span>
+        <span class="js-view-element value clickable"><%= panel.view.elString %></span>
+      </div>
     </div>
   <% } %>
 </div>

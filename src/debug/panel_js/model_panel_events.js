@@ -56,7 +56,7 @@ module.exports = function() {
       selectedProperty.data.isEditing = false;
       selectedProperty.data.value = value;
       appData.selectedModel.obj.set(key, value);
-      utils.render();
+      appData.updateSelectedModel();
     } catch (ex) {
       var message = 'Unable to parse "' + e.currentTarget.value + '" to a valid value. Input must match JSON format';
       utils.alert(message);
@@ -127,10 +127,10 @@ module.exports = function() {
     var textbox = utils.selectElements('js-model-data')[0];
     appData.selectedModel.outputData = '';
     appData.selectedModel.obj.reset(JSON.parse(textbox.value));
-    utils.render();
+    appData.updateSelectedModel();
   });
   utils.addEvent('js-reset-data', 'click', function() {
     appData.selectedModel.obj.reset(appData.selectedModel.obj.initialData);
-    utils.render();
+    appData.updateSelectedModel();
   });
 };

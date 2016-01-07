@@ -1,18 +1,16 @@
 <div class="model_import_export">
-    <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
-        Import / Export Snapshots
-    </div>
+  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+      Import / Export Snapshots
+  </div>
   <% if (!panel.collapsed && panel.model) { %>
-      <div class="sidebar-pane visible">
-          <div class="body model_data">
-              <div class="section expanded">
-                  <textarea class="js-model-data"><%= panel.model.outputData %></textarea>
-              </div>
-              <div class="section expanded">
-                  <button class="js-get-model-data">Get Current Snapshot</button>
-                  <button class="js-set-model-data">Set App to Snapshot</button>
-              </div>
-          </div>
+    <div class="sidebar-pane visible">
+      <div class="section expanded">
+        <textarea class="js-model-data"><%= panel.model.outputData %></textarea>
       </div>
-    <% } %>
+      <div class="section expanded">
+        <button class="js-get-model-data">Get Current Snapshot</button>
+        <button class="js-set-model-data">Set App to Snapshot</button>
+      </div>
+    </div>
+  <% } %>
 </div>

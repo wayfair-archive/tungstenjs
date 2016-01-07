@@ -5,10 +5,10 @@
  <% if (!panel.collapsed && panel.view) { %>
  <div class="sidebar-pane visible">
   <% _.each(panel.view.customEvents, function(evt) { %>
-  <div class="js-tracked-event clickable-value" data-key="<%= evt.name %>">
+  <div class="js-tracked-event" data-key="<%= evt.name %>">
     <span class="name"><%= evt.name %></span>
     <span>:</span>
-    <span class="js-untrack-event value">-</span>
+    <span class="js-untrack-event value clickable">-</span>
   </div>
   <% }) %>
   <div>
