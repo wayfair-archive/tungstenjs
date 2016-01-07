@@ -153,7 +153,7 @@ BackboneViewWidget.prototype.templateToString = function() {
     return;
   }
   var name = this.view.getDebugName();
-  return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
+  return '<span class="js-view-list-item clickable" data-id="' + name + '">[' + name + ']</span>';
 };
 /* develblock:end */
 
