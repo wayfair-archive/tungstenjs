@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('underscore');
 var AmpersandAdaptor = require('../../../adaptors/ampersand');
 var BaseModel = AmpersandAdaptor.Model;
 var BaseCollection = AmpersandAdaptor.Collection;
@@ -156,17 +155,15 @@ describe('base_model.js constructed api', function() {
     });
     it('should return the cid if debugName is not available', function() {
       var result = BaseModel.prototype.getDebugName.call({
-        cid: 'model1'
+        cid: 'state1'
       });
 
-      expect(result).to.equal('model1');
+      expect(result).to.equal('state1');
     });
     it('should return the debugName', function() {
       var result = BaseModel.prototype.getDebugName.call({
-        cid: 'model1',
-        constructor: {
-          debugName: 'FOOBAR'
-        }
+        cid: 'state1',
+        debugName: 'FOOBAR'
       });
 
       expect(result).to.equal('FOOBAR1');

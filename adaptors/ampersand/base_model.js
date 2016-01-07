@@ -56,8 +56,6 @@ var BaseModel = AmpersandModel.extend({
   },
   /* develblock:start */
 
-  debugName: 'FooBar',
-
   /**
    * Bootstraps all debug functionality
    */
@@ -151,9 +149,10 @@ var BaseModel = AmpersandModel.extend({
       }
     };
 
-    for (var key in this._definition) {
-      var value = this[key];
-      var prop = {
+    var key, value, prop;
+    for (key in this._definition) {
+      value = this[key];
+      prop = {
         key: key,
         data: {
           isEditable: isEditable(value),
@@ -163,6 +162,18 @@ var BaseModel = AmpersandModel.extend({
       };
       prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
       properties.normal.push(prop);
+    }
+
+    for (key in this._derived) {
+      value = this[key];
+      properties.derived.push({
+        key: key,
+        data: {
+          isDerived: this._derived[key],
+          value: value,
+          displayValue: isEditable(value) ? JSON.stringify(value) : Object.prototype.toString.call(value)
+        }
+      });
     }
 
     var self = this;
