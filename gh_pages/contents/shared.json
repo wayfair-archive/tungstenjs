@@ -4,6 +4,7 @@
     {"name": "Hello World", "url_name": "Hello%20World"},
     {"name": "Derived Props", "url_name": "Derived%20Props"},
     {"name": "TodoMVC", "url_name": "TodoMVC"},
-    {"name": "Views & Context", "url_name": "Views%20&%20Context"}
+    {"name": "Views & Context", "url_name": "Views%20&%20Context"},
+    {"name": "Events", "url_name": "Events"}
   ]
 }

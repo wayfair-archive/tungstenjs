@@ -91,8 +91,9 @@
     run: function() {
       var newLines = /\n/g;
       var boilerplate = 'var rawTemplates = { app_view: \'<div id=\"app\">' + templateCode.getValue().replace(newLines, '') + '</div>\' };var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);';
+      var evalNoContext = eval.bind(null);
       try {
-        eval(boilerplate + '\n;' + tungstenCode.getValue());
+        evalNoContext(boilerplate + '\n;' + tungstenCode.getValue());
       } catch (e) {
         document.querySelector('#app').innerHTML = '<br><span style="color: red;">ERROR: ' + e.toString() + '</span>';
       }
