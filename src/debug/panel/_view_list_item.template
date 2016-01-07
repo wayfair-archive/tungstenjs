@@ -1,7 +1,7 @@
 <%
   var liClass = '';
   if (w.view.selected) {
-    liClass = 'is_highlighted';
+    liClass = 'is-highlighted';
   }
 
   var viewIsParent = w.view.isParent();
@@ -17,14 +17,14 @@
     styles += 'background-color:' + w.getCollectionColor(collectionKey);
   }
 %>
-<li class="js-view-list-item tree_item <%= liClass %>" data-id="<%= w.view.debugName %>" style="<%= styles %>">
-  <div class="tree_item_hover">
+<li class="js-view-list-item Tree_item <%= liClass %>" data-id="<%= w.view.debugName %>" style="<%= styles %>">
+  <div class="Tree_item_hover">
     <span class="toggle-caret glyphicon <%= spanClass %>"></span>
     <a class="js-more-view-info" href="#"><%= w.view.debugName %></a>
   </div>
   <% if (!w.view.collapsed) { %>
     <% if (viewIsParent) { %>
-      <ul class="tree">
+      <ul class="Tree">
         <% _.each(w.view.getChildren(), function(child) {
           // RECURSIVE BE CAREFUL
           print(w.partials['_view_list_item']({

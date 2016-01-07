@@ -14,60 +14,67 @@ body, .pure-g [class *="pure-u"] {
 /*******************
  * Header
  *******************/
-.app_header {
+.AppHeader {
   background-color: #5A2249;
   padding: 0.5em 0;
   color: #FFF;
   cursor: default;
 }
 
-.tungsten_version {
+.AppHeader .pure-menu-item {
+  line-height: 1.5em;
+}
+
+.AppHeader_tungstenVersion {
   font-size: 13px;
   color: #FFF;
 }
 
-.app_header .pure-menu-item {
-  line-height: 1.5em;
-}
-
-.app_header a {
+.TabBar_link {
   text-decoration: none;
   color: #FFF;
-  cursor: pointer;
+  padding: 5px;
 }
-.app_header a:hover {
-  color: #CEBDC9;
+.TabBar_link.is-active {
+  text-decoration: underline;
 }
-
-.app_header .pure-menu-item + .pure-menu-item {
+.TabBar_link:hover {
+  color: #EAD8E5;
+  background-color: rgba(0,0,0,0.25);
+}
+.TabBar_link.glyphicon {
+  top: -2px;
+  margin-left: -10px;
+}
+.TabBar_item-bordered {
   margin-left: 5px;
   padding-left: 5px;
   border-left: 1px solid #DDD;
 }
 
-.app_body {
+.AppBody {
   margin-top: 3.25em;
 }
 
-.app_body--panel {
+.AppBody_panel {
   height: calc(100vh - 3.25em);
   overflow: auto;
 }
-.app_body--panel-info {
+.AppBody_panelInfo {
   border-left: 1px solid #5A2249;
 }
 
 /*******************
  * Time Travel
  *******************/
-.time_travel--track {
+.TimeTravel_track {
   width: 80%;
   position: relative;
   float: left;
   height: 1.5em;
   margin-bottom: 10px;
 }
-.time_travel--track:before {
+.TimeTravel_track:before {
   position: absolute;
   display: block;
   content: '';
@@ -78,7 +85,7 @@ body, .pure-g [class *="pure-u"] {
   left: 0;
 }
 
-.time_travel--item {
+.TimeTravel_item {
   position: absolute;
   cursor: pointer;
   width: 2px;
@@ -86,7 +93,7 @@ body, .pure-g [class *="pure-u"] {
   top: 0;
   margin-left: -1px;
 }
-.time_travel--item:before {
+.TimeTravel_item:before {
   display: block;
   content: '';
   position: absolute;
@@ -96,21 +103,21 @@ body, .pure-g [class *="pure-u"] {
   left: 0;
   top: 2.5%;
 }
-.time_travel--item.selected:before {
+.TimeTravel_item.is-selected:before {
   background-color: #5A2249;
 }
-.time_travel--button {
+.TimeTravel_button {
   float: left;
   width: 5%;
   border: none;
   background-color: #F9F9F9;
   font-weight: bold;
 }
-.time_travel--button:hover {
+.TimeTravel_button:hover {
   color: #881391;
   background-color: #F3D7F5;
 }
-.time_travel--button[disabled], .time_travel--button[disabled]:hover {
+.TimeTravel_button[disabled], .TimeTravel_button[disabled]:hover {
   color: #ccc;
   background-color: initial;
 }
@@ -118,30 +125,30 @@ body, .pure-g [class *="pure-u"] {
 /*******************
  * Template String
  *******************/
-.template_string .clickable {
+.TemplateString .u-clickable {
   color: #B54B95;
 }
-.template_string ins, .template_string del {
+.TemplateString ins, .TemplateString del {
   background-color: #F1CEFF
 }
 
 /*******************
  * Tree structure
  *******************/
-.tree {
+.Tree {
   background-color: #fff;
   list-style: none;
   margin: 0;
   padding: 0;
   min-width: 200px;
 }
-.tree .tree {
+.Tree .Tree {
   border: 1px solid #ddd;
   border-left: 3px solid #7C7C6B;
   border-right: 0;
   padding-left: 1em;
 }
-.tree_item {
+.Tree_item {
   text-align: left;
   margin-left: 2px;
   list-style: none;
@@ -151,35 +158,35 @@ body, .pure-g [class *="pure-u"] {
   margin-top: -1px;
   position: relative;
 }
-.tree_item:last-child {
+.Tree_item:last-child {
   margin-bottom: -1px;
 }
-.tree_item a {
+.Tree_item a {
   color: #333;
   text-decoration: none;
 }
-.tree_item .glyphicon {
+.Tree_item .glyphicon {
   color: #888;
   padding-right: 5px;
   padding-left: 24px;
   width: 43px;
 }
-.tree_item .glyphicon:hover {
+.Tree_item .glyphicon:hover {
   color: #FFF;
   cursor: pointer;
 }
-.tree_item_hover:hover {
+.Tree_item_hover:hover {
   background-color: #DEADCF;
 }
-.tree_item.is_highlighted > .tree_item_hover {
+.Tree_item.is-highlighted > .Tree_item_hover {
   background: #B54B95;
   font-weight: bold;
 }
-.tree_item.is_highlighted > .tree_item_hover .glyphicon,
-.tree_item.is_highlighted > .tree_item_hover a {
+.Tree_item.is-highlighted > .Tree_item_hover .glyphicon,
+.Tree_item.is-highlighted > .Tree_item_hover a {
   color: #FFF
 }
-.tree_item.is_highlighted > .tree_item_hover .glyphicon:hover {
+.Tree_item.is-highlighted > .Tree_item_hover .glyphicon:hover {
   color: #DDD
 }
 
@@ -187,26 +194,27 @@ body, .pure-g [class *="pure-u"] {
 /*******************
  * Sidebar panel
  *******************/
-.sidebar-pane-title label{
+.SidebarPane_title label{
   float: right;
   font-size: 0.8em;
 }
-.sidebar-pane-title {
+.SidebarPane_title {
   border-top: 1px solid #666;
   border-bottom: 1px solid #666;
   padding: 0.1em 0.5em;
   background: #5A2249;
   color: #fff;
 }
-.sidebar-pane {
+.SidebarPane_data {
   cursor: default;
   padding: 10px;
   font-size: 0.9em;
 }
-.sidebar-pane .value {
+.SidebarPane_data .value {
   color: #B54A94;
 }
-.clickable {
+
+.u-clickable {
   cursor: pointer;
 }
 textarea {

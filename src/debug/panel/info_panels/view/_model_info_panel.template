@@ -1,20 +1,20 @@
 <div class="model_info_panel">
-  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
       Model
   </div>
   <% if (!panel.collapsed && panel.view && panel.view.obj && panel.view.obj.model) { %>
-    <div class="sidebar-pane visible">
+    <div class="SidebarPane_data visible">
       <% var model = panel.view.obj.model; %>
       <div data-property-name="debugName">
         <span class="name">debugName</span>
         <span>:</span>
-        <span class="js-model-tab js-model-list-item value clickable" data-id="<%= model.getDebugName() %>"> <%= model.getDebugName() %> </span>
+        <span class="js-model-tab js-model-list-item value u-clickable" data-id="<%= model.getDebugName() %>"> <%= model.getDebugName() %> </span>
       </div>
       <% if (model.collection) { %>
       <div data-property-name="collection">
         <span class="name">collectionCid</span>
         <span>:</span>
-        <span class="js-model-tab js-model-list-item value clickable" data-id="<%= model.collection.getDebugName() %>"> <%= model.collection.getDebugName() %> </span>
+        <span class="js-model-tab js-model-list-item value u-clickable" data-id="<%= model.collection.getDebugName() %>"> <%= model.collection.getDebugName() %> </span>
       </div>
         <% if (model.collection.parentProp) { %>
         <div data-property-name="parentProp">

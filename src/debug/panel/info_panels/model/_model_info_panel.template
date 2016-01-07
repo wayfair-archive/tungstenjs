@@ -1,9 +1,9 @@
 <div class="model_info_panel">
-  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
     Model
   </div>
   <% if (!panel.collapsed && panel.model) { %>
-    <div class="sidebar-pane visible">
+    <div class="SidebarPane_data visible">
       <div>
         <span class="name">debugName</span>
         <span>:</span>

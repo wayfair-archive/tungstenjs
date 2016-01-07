@@ -1,9 +1,9 @@
 <div class="view_info_panel">
-  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
     View
   </div>
   <% if (!panel.collapsed && panel.view) { %>
-    <div class="sidebar-pane visible">
+    <div class="SidebarPane_data visible">
       <%
         var obj = panel.view.obj;
       %>
@@ -30,7 +30,7 @@
       <div>
         <span class="name">el</span>
         <span>:</span>
-        <span class="js-view-element value clickable"><%= panel.view.elString %></span>
+        <span class="js-view-element value u-clickable"><%= panel.view.elString %></span>
       </div>
     </div>
   <% } %>

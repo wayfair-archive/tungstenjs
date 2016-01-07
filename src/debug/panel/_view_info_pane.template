@@ -1,6 +1,6 @@
 <div class="js-view-pane pure-g">
-  <div class="app_body--panel pure-u-2-5">
-    <ul class="tree is-expanded js-view-tree-list">
+  <div class="AppBody_panel pure-u-2-5">
+    <ul class="Tree js-view-tree-list">
       <% for (var i = 0; i < w.activeViews.length; i++) {
         print(w.partials['_view_list_item']({
           view: w.activeViews[i],
@@ -10,7 +10,7 @@
       } %>
     </ul>
   </div>
-  <div class="app_body--panel app-body--panel-info pure-u-3-5">
+  <div class="AppBody_panel AppBody_panelInfo pure-u-3-5">
     <%
       function renderPanel(partial, tabName) {
         print(w.partials[partial]({

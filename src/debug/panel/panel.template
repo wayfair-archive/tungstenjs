@@ -3,22 +3,27 @@
 </style>
 
 <div class="js-app">
-  <nav class="app_header pure-menu pure-menu-horizontal pure-menu-fixed">
+  <nav class="AppHeader pure-menu pure-menu-horizontal pure-menu-fixed">
     <div class="pure-menu-heading">
-      <div class="tungsten_version">Tungsten.js <%= w.tungstenVersion %></div>
+      <div class="AppHeader_tungstenVersion">Tungsten.js <%= w.tungstenVersion %></div>
     </div>
-    <ul class="pure-menu-list js-tabs-bar">
-      <% _.each(w.tabs.tabs, function(tab) { %>
-      <li data-route="<%= tab.activeTabName %>" class="js-tab <%= tab.isActive ? 'active' : '' %> pure-menu-item">
-        <a href="#"><%= tab.name %></a>
+    <ul class="pure-menu-list js-tabs-bar TabBar">
+      <% _.each(w.tabs.tabs, function(tab, i) {
+        var activeClass = tab.isActive ? 'is-active' : '';
+        var indexClass = i > 0 ? 'TabBar_item-bordered': '';
+        %>
+        <li class="TabBar_item <%= indexClass %> pure-menu-item">
+          <a class="pure-menu-link TabBar_link u-clickable js-tab <%= activeClass %>" data-route="<%= tab.activeTabName %>"><%= tab.name %></a>
+        </li>
         <% if (tab.action) { %>
-          <a class="glyphicon <%= tab.actionClass %>"></a>
+        <li class="TabBar_item pure-menu-item">
+          <a class="glyphicon pure-menu-link TabBar_link u-clickable <%= tab.actionClass %>"></a>
+        </li>
         <% } %>
-      </li>
       <% }); %>
     </ul>
   </nav>
-  <div class="app_body js-tab-content">
+  <div class="AppBody js-tab-content">
     <%
       if (w.tabs.selected.showViewTab) {
         print(w.partials['_view_info_pane'](w, {variable: w}));

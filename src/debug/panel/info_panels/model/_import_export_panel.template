@@ -1,9 +1,9 @@
 <div class="model_import_export">
-  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
       Import / Export Snapshots
   </div>
   <% if (!panel.collapsed && panel.model) { %>
-    <div class="sidebar-pane visible">
+    <div class="SidebarPane_data visible">
       <div class="section expanded">
         <textarea class="js-model-data"><%= panel.model.outputData %></textarea>
       </div>

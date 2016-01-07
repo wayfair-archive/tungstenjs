@@ -1,14 +1,14 @@
 <div class="model_events_panel">
-  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
    View Events
  </div>
  <% if (!panel.collapsed && panel.view) { %>
- <div class="sidebar-pane visible">
+ <div class="SidebarPane_data visible">
   <% _.each(panel.view.customEvents, function(evt) { %>
   <div class="js-tracked-event" data-key="<%= evt.name %>">
     <span class="name"><%= evt.name %></span>
     <span>:</span>
-    <span class="js-untrack-event value clickable">-</span>
+    <span class="js-untrack-event value u-clickable">-</span>
   </div>
   <% }) %>
   <div>
