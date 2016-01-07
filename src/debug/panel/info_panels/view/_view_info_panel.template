@@ -1,5 +1,5 @@
 <div class="view_info_panel">
-  <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-sidebar-pane-title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
     View
   </div>
   <% if (!panel.collapsed && panel.view) { %>

@@ -1,5 +1,5 @@
 <div class="TimeTravel">
-  <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-sidebar-pane-title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
     Time Travel
   </div>
   <% if (!panel.collapsed && panel.view) { %>

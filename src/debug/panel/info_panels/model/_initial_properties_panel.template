@@ -1,6 +1,6 @@
 <% if (panel.model && panel.model.obj && panel.model.obj.tungstenModel) { %>
 <div class="properties_panel">
-  <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-sidebar-pane-title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
     Initial Attributes
   </div>
   <% if (!panel.collapsed && panel.model) { %>

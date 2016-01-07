@@ -67,7 +67,7 @@ function renderDebugPanel() {
   if (debugWindow) {
     var debugDoc = debugWindow.document;
     // Save scroll positions for post-render
-    var toolPanelScrolls = _.map(utils.selectElements('tool-panel'), function(el) {
+    var toolPanelScrolls = _.map(utils.selectElements('AppBody_panel'), function(el) {
       return el.scrollTop;
     });
     debugWindow.render = renderDebugPanel;
@@ -79,7 +79,7 @@ function renderDebugPanel() {
       logger.log(ex);
     }
     // Reset scroll positions
-    var toolPanels = utils.selectElements('tool-panel');
+    var toolPanels = utils.selectElements('AppBody_panel');
     for (var i = 0; i < toolPanelScrolls.length; i++) {
       toolPanels[i].scrollTop = toolPanelScrolls[i];
     }
