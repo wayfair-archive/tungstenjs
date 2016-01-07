@@ -226,7 +226,7 @@ function render(stack, template, context, partials, parentView) {
       }
 
       // openElement gives back a unique ID so it can validate pairs when closing
-      var elem = stack.openElement(template.e, properties);
+      var elem = stack.openElement(template.e.toLowerCase(), properties);
 
       // Recuse into the elements' children
       if (template.f) {
