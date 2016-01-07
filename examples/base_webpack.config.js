@@ -13,7 +13,7 @@ module.exports = function (root) {
       alias: {
         // Tungsten.js doesn't need jQuery, but backbone needs a subset of jQuery APIs.  Backbone.native
         // implements tha minimum subset of required functionality
-        'jquery': 'backbone.native',
+        'jquery': path.join(__dirname, '../src/polyfill/jquery'),
         //  Aliases for the current version of tungstenjs above the ./examples directory.  If
         //  examples dir is run outside of main tungstenjs repo, remove these aliases
         //  and use via normal modules directories (e.g., via NPM)

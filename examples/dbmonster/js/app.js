@@ -29,7 +29,7 @@ var TableView = BaseView.extend({
   debugName: 'tableView'
 });
 window.table = new TableView({
-  el: '#appwrapper',
+  el: document.getElementById('appwrapper'),
   template: template,
   model: new TableModel({}),
   dynamicInitialize: true
