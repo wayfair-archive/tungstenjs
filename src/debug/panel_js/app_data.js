@@ -2,7 +2,11 @@
 /*global TUNGSTENJS_VERSION */
 var isNode = require('../is_node');
 var _ = require('underscore');
-var styles = isNode ? '' : require('!!tungsten_debug?static!../panel/style.css');
+var styles = isNode ? '' : (
+  require('!!tungsten_debug?static!../panel/pure.css') +
+  require('!!tungsten_debug?static!../panel/glyphicons.css') +
+  require('!!tungsten_debug?static!../panel/style.css')
+);
 
 var bgData = {
   counter: 0,

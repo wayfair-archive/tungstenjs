@@ -1,40 +1,38 @@
-<div data-region="tool" class="app-tool-region js-view-pane">
-  <div view="ui-layout" class="app-tool ui-tool clearfix">
-    <div data-region="view-tree" class="tool-panel list-panel">
-      <ul data-view="tree-view" data-cid="-1" class="tree-group is-expanded js-view-tree-list">
-        <% for (var i = 0; i < w.activeViews.length; i++) {
-          print(w.partials['_view_list_item']({
-            view: w.activeViews[i],
-            getCollectionColor: w.getCollectionColor,
-            partials: w.partials
-          }));
-        } %>
-      </ul>
-    </div>
-    <div data-region="view-more-info" class="tool-panel info-panel">
-      <div class="sidebar-panel">
-        <div class="sidebar-pane-stack flex-auto visible">
-          <%
-            function renderPanel(partial, tabName) {
-              print(w.partials[partial]({
-                tabName: tabName,
-                collapsed: w.hiddenPanels[tabName],
-                settings: w.settings,
-                view: w.selectedView
-              }));
-            }
-            if (w.selectedView) {
-              renderPanel('info_panels/view/_view_info_panel', 'viewInfo');
-              renderPanel('info_panels/view/_function_info_panel', 'viewMethods');
-              renderPanel('info_panels/view/_dom_events_panel', 'viewDomEvents');
-              renderPanel('info_panels/view/_events_panel', 'viewEvents');
-              renderPanel('info_panels/view/_time_travel_panel', 'viewTimeTravel');
-              renderPanel('info_panels/view/_model_info_panel', 'viewModel');
-              renderPanel('info_panels/view/_template_info_panel', 'viewVDOM');
-              renderPanel('info_panels/view/_template_info_diff_panel', 'viewDiff');
-            }
-          %>
-        </div>
+<div class="js-view-pane pure-g">
+  <div class="tool-panel list-panel pure-u-2-5">
+    <ul class="tree-group is-expanded js-view-tree-list">
+      <% for (var i = 0; i < w.activeViews.length; i++) {
+        print(w.partials['_view_list_item']({
+          view: w.activeViews[i],
+          getCollectionColor: w.getCollectionColor,
+          partials: w.partials
+        }));
+      } %>
+    </ul>
+  </div>
+  <div class="tool-panel info-panel pure-u-3-5">
+    <div class="sidebar-panel">
+      <div class="sidebar-pane-stack flex-auto visible">
+        <%
+          function renderPanel(partial, tabName) {
+            print(w.partials[partial]({
+              tabName: tabName,
+              collapsed: w.hiddenPanels[tabName],
+              settings: w.settings,
+              view: w.selectedView
+            }));
+          }
+          if (w.selectedView) {
+            renderPanel('info_panels/view/_view_info_panel', 'viewInfo');
+            renderPanel('info_panels/view/_function_info_panel', 'viewMethods');
+            renderPanel('info_panels/view/_dom_events_panel', 'viewDomEvents');
+            renderPanel('info_panels/view/_events_panel', 'viewEvents');
+            renderPanel('info_panels/view/_time_travel_panel', 'viewTimeTravel');
+            renderPanel('info_panels/view/_model_info_panel', 'viewModel');
+            renderPanel('info_panels/view/_template_info_panel', 'viewVDOM');
+            renderPanel('info_panels/view/_template_info_diff_panel', 'viewDiff');
+          }
+        %>
       </div>
     </div>
   </div>

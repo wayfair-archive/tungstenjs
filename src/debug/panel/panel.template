@@ -2,34 +2,28 @@
   <%= w.styles %>
 </style>
 
-<div class="app js-app">
-  <div class="app-layout">
-    <div class="app-layout-body">
-      <nav class="app-header navbar navbar-default navbar-fixed-top">
-        <div class="navbar-header">
-          <div class="tungsten_version">Tungsten.js <%= w.tungstenVersion %></div>
-        </div>
-        <ul class="nav navbar-nav js-tabs-bar">
-          <% _.each(w.tabs.tabs, function(tab) { %>
-          <li data-route="<%= tab.activeTabName %>" class="js-tab <%= tab.isActive ? 'active' : '' %>">
-            <a href="#"><%= tab.name %></a>
-          </li>
-          <% }); %>
-        </ul>
-      </nav>
-      <ul>
-        <li class="js-tab-content">
-          <%
-            if (w.tabs.selected.showViewTab) {
-              print(w.partials['_view_info_pane'](w, {variable: w}));
-            }
-            if (w.tabs.selected.showModelTab) {
-              print(w.partials['_model_info_pane'](w, {variable: w}));
-            }
-          %>
-        </li>
-      </ul>
+<div class="js-app">
+  <nav class="app-header pure-menu pure-menu-horizontal pure-menu-fixed">
+    <div class="pure-menu-heading">
+      <div class="tungsten_version">Tungsten.js <%= w.tungstenVersion %></div>
     </div>
+    <ul class="pure-menu-list js-tabs-bar">
+      <% _.each(w.tabs.tabs, function(tab) { %>
+      <li data-route="<%= tab.activeTabName %>" class="js-tab <%= tab.isActive ? 'active' : '' %> pure-menu-item">
+        <a href="#"><%= tab.name %></a>
+      </li>
+      <% }); %>
+    </ul>
+  </nav>
+  <div class="app-body js-tab-content">
+    <%
+      if (w.tabs.selected.showViewTab) {
+        print(w.partials['_view_info_pane'](w, {variable: w}));
+      }
+      if (w.tabs.selected.showModelTab) {
+        print(w.partials['_model_info_pane'](w, {variable: w}));
+      }
+    %>
   </div>
 </div>
 <% if (w.loading) { %>
