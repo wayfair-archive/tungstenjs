@@ -33,6 +33,7 @@ var AppModel = Model.extend({
             return item.completed;
           });
         }
+        return false;
       }
     },
     incompletedItems: {

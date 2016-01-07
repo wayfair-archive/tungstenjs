@@ -50,6 +50,7 @@ var AppModel = Model.extend({
             return item.get('completed');
           });
         }
+        return false;
       }
     },
     todoCount: {
