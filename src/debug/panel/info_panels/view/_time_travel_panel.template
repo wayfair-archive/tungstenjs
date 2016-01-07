@@ -3,7 +3,7 @@
     Time Travel
   </div>
   <% if (!panel.collapsed && panel.view) { %>
-    <div class="SidebarPane_data visible">
+    <div class="SidebarPane_data">
       <%
         var state = panel.view.getState();
         var slider = state.slider;

@@ -3,7 +3,7 @@
     View
   </div>
   <% if (!panel.collapsed && panel.view) { %>
-    <div class="SidebarPane_data visible">
+    <div class="SidebarPane_data">
       <%
         var obj = panel.view.obj;
       %>
@@ -30,7 +30,7 @@
       <div>
         <span class="name">el</span>
         <span>:</span>
-        <span class="js-view-element value u-clickable"><%= panel.view.elString %></span>
+        <span class="js-view-element value u-clickable u-underlined"><%= panel.view.elString %></span>
       </div>
     </div>
   <% } %>

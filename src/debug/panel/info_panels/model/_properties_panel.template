@@ -4,13 +4,13 @@
     Attributes
   </div>
   <% if (!panel.collapsed && panel.model) { %>
-    <div class="SidebarPane_data visible">
+    <div class="SidebarPane_data">
       <% _.each(panel.model.modelProperties, function(prop) {
         var wrapperClassName = '';
         var clickableClassName = ''
         var isEditable = prop.data.isEditable && !prop.data.isDerived;
         if (isEditable) {
-          clickableClassName = 'u-clickable';
+          clickableClassName = 'u-clickable u-underlined';
           wrapperClassName += 'js-model-property';
         }
 
@@ -22,7 +22,7 @@
           <span class="name"><%= prop.key %></span>
           <span>:</span>
           <% if (prop.data.isRelation) { %>
-            <span class="value u-clickable js-model-list-item" data-id="<%= prop.data.name %>"> <%= prop.data.name %> </span>
+            <span class="value u-clickable u-underlined js-model-list-item" data-id="<%= prop.data.name %>"> <%= prop.data.name %> </span>
           <% } else { %>
             <span class="value <%= clickableClassName %>">
             <% if (prop.data.isEditing) { %>

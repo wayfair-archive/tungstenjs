@@ -3,7 +3,7 @@
     Model
   </div>
   <% if (!panel.collapsed && panel.model) { %>
-    <div class="SidebarPane_data visible">
+    <div class="SidebarPane_data">
       <div>
         <span class="name">debugName</span>
         <span>:</span>

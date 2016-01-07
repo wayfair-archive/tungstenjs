@@ -4,11 +4,11 @@
     Initial Attributes
   </div>
   <% if (!panel.collapsed && panel.model) { %>
-    <div class="SidebarPane_data visible">
+    <div class="SidebarPane_data">
       <% _.each(panel.model.obj.initialData, function(value, name) { %>
       <div>
         <span class="name"><%= name %></span><span class="separator">: </span>
-        <span class="value u-clickable">
+        <span class="value u-clickable u-underlined">
           <span><%= JSON.stringify(value) %></span>
         </span>
       </div>

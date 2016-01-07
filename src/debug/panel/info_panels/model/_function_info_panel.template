@@ -1,19 +1,19 @@
 <div class="function_info_panel">
   <div class="js-SidebarPane_title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
     Methods
-    <label class="group_label monospace">
+    <label class="SidebarPane_title_label">
       Show inherited methods
       <input type="checkbox" class="js-show-inherited" <% if (panel.settings.showInheritedMethods) { print('checked') } %>>
     </label>
   </div>
   <% if (!panel.collapsed && panel.model) { %>
-    <div class="SidebarPane_data visible">
+    <div class="SidebarPane_data">
       <%
       function fnRow(fn) { %>
         <div data-fn="<%= fn.name %>" class="js-track-function">
           <span class="name"><%= fn.name %></span>
           <span>:</span>
-          <span class="value u-clickable" data-id="<%= fn.name %>"><%= fn.tracked ? 'Tracked' : 'Untracked' %></span>
+          <span class="value u-clickable u-underlined" data-id="<%= fn.name %>"><%= fn.tracked ? 'Tracked' : 'Untracked' %></span>
         </div>
       <% } %>
       <%
@@ -22,14 +22,16 @@
           fnRow(fn);
         }
       });
-      %>
-      <hr>
-      <%
-      _.each(panel.model.objectFunctions, function(fn) {
-        if (fn.inherited && (panel.settings.showInheritedMethods || fn.tracked)) {
-          fnRow(fn);
-        }
-      });
+      if (panel.settings.showInheritedMethods) {
+        %>
+        <hr>
+        <%
+        _.each(panel.model.objectFunctions, function(fn) {
+          if (fn.inherited && (panel.settings.showInheritedMethods || fn.tracked)) {
+            fnRow(fn);
+          }
+        });
+      }
       %>
     </div>
   <% } %>

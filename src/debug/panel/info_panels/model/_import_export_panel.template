@@ -3,7 +3,7 @@
       Import / Export Snapshots
   </div>
   <% if (!panel.collapsed && panel.model) { %>
-    <div class="SidebarPane_data visible">
+    <div class="SidebarPane_data">
       <div class="section expanded">
         <textarea class="js-model-data"><%= panel.model.outputData %></textarea>
       </div>

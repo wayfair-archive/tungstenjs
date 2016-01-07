@@ -3,17 +3,15 @@
    View Events
  </div>
  <% if (!panel.collapsed && panel.view) { %>
- <div class="SidebarPane_data visible">
+ <div class="SidebarPane_data pure-form">
   <% _.each(panel.view.customEvents, function(evt) { %>
   <div class="js-tracked-event" data-key="<%= evt.name %>">
     <span class="name"><%= evt.name %></span>
     <span>:</span>
-    <span class="js-untrack-event value u-clickable">-</span>
+    <span class="js-untrack-event value u-clickable u-underlined">-</span>
   </div>
   <% }) %>
-  <div>
-    <input type="text" class="js-add-new-event">
-  </div>
+  <input type="text" class="js-add-new-event">
 </div>
 <% } %>
 </div>

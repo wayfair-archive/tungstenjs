@@ -161,7 +161,7 @@ body, .pure-g [class *="pure-u"] {
 .Tree_item:last-child {
   margin-bottom: -1px;
 }
-.Tree_item a {
+.Tree_item_link {
   color: #333;
   text-decoration: none;
 }
@@ -183,7 +183,7 @@ body, .pure-g [class *="pure-u"] {
   font-weight: bold;
 }
 .Tree_item.is-highlighted > .Tree_item_hover .glyphicon,
-.Tree_item.is-highlighted > .Tree_item_hover a {
+.Tree_item.is-highlighted > .Tree_item_hover .Tree_item_link {
   color: #FFF
 }
 .Tree_item.is-highlighted > .Tree_item_hover .glyphicon:hover {
@@ -194,7 +194,7 @@ body, .pure-g [class *="pure-u"] {
 /*******************
  * Sidebar panel
  *******************/
-.SidebarPane_title label{
+.SidebarPane_title_label {
   float: right;
   font-size: 0.8em;
 }
@@ -209,6 +209,7 @@ body, .pure-g [class *="pure-u"] {
   cursor: default;
   padding: 10px;
   font-size: 0.9em;
+  line-height: 1.5;
 }
 .SidebarPane_data .value {
   color: #B54A94;
@@ -217,10 +218,12 @@ body, .pure-g [class *="pure-u"] {
 .u-clickable {
   cursor: pointer;
 }
+.u-underlined {
+  border-bottom: 1px dotted currentColor;
+}
 textarea {
-  width: 100%;
   resize: none;
-  height: 100px;
+  height: 6em;
   border: 1px dotted #DCDCDC;
   width: 100%;
 }

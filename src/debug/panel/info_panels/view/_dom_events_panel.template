@@ -3,12 +3,12 @@
     Events
   </div>
   <% if (!panel.collapsed && panel.view && panel.view.objectEvents) { %>
-  <div class="SidebarPane_data visible">
+  <div class="SidebarPane_data">
     <% _.each(panel.view.objectEvents, function(event) { %>
     <div data-property-name="model" class="js-view-event" data-event-selector="<%= event.selector %>">
       <span class="name"><%= event.selector %></span>
       <span>:</span>
-      <span class="value u-clickable"><%= event.name %></span>
+      <span class="value u-clickable u-underlined"><%= event.name %></span>
     </div>
     <% }) %>
   </div>
