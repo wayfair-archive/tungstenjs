@@ -2351,7 +2351,7 @@ module.exports = function(render) {
             'partial': '*{{text}}*'
           }
         }, {
-        // @adjusted chokes hard on the matching bracket syntax
+          // @adjusted chokes hard on the matching bracket syntax
           'name': 'Recursion',
           'data': {
             'content': 'X',
@@ -2440,6 +2440,18 @@ module.exports = function(render) {
           'partials': {
             'partial': '[]'
           }
+        }, {
+          'name': 'Quotes should be encoded with {{ }}',
+          'data': {foo: '"bar"'},
+          'expected': '<span test="&quot;bar&quot;"></span>',
+          'template': '<span test="{{foo}}"></span>',
+          'desc': 'Quotes should be encoded with {{ }}'
+        }, {
+          'name': 'Quotes should be encoded with {{ }} within a {{#section}}{{/section}}',
+          'data': {foo: '"bar"', bool: true},
+          'expected': '<span test="&quot;bar&quot;"></span>',
+          'template': '<span {{#bool}}test="{{foo}}"{{/bool}}></span>',
+          'desc': 'Quotes should be encoded with {{ }} within a {{#section}}{{/section}}'
         }]
       });
     });
