@@ -20,7 +20,7 @@ var whitespaceOnlyRegex = /^\s*$/;
  */
 function parseStringAttrs(templates, context) {
   var stringAttrs = '';
-  var toString = new ToString();
+  var toString = new ToString(true, true);
   for (var i = 0; i < templates.length; i++) {
     toString.clear();
     render(toString, templates[i], context);
