@@ -5,30 +5,13 @@ var DefaultStack = require('./default');
 var virtualDomImplementation = require('../../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var htmlHelpers = require('../html_helpers');
+var escapeString = require('./utils/escape_string');
 
 function HtmlStringStack(attributesOnly, debugMode) {
   DefaultStack.call(this, true, debugMode);
 }
 HtmlStringStack.prototype = new DefaultStack();
 HtmlStringStack.prototype.constructor = HtmlStringStack;
-
-var charsToEscape = /[&<>\"\']/;
-var escapeCharacters = [
-  [/&/g, '&amp;'],
-  [/</g, '&lt;'],
-  [/>/g, '&gt;'],
-  [/\"/g, '&quot;']
-];
-// closing syntax highlighting from quote "
-
-function escapeString(str) {
-  if (charsToEscape.test(str)) {
-    for (var i = 0; i < escapeCharacters.length; i++) {
-      str = str.replace(escapeCharacters[i][0], escapeCharacters[i][1]);
-    }
-  }
-  return str;
-}
 
 /**
  * When an element is resolved, push it to the result or the parent item on the stack
@@ -47,7 +30,7 @@ HtmlStringStack.prototype.processObject = function(obj) {
     }
     _.each(obj.properties.attributes, function(value, name) {
       if (value != null) {
-        htmlStr += ' ' + name + '="' + value + '"';
+        htmlStr += ' ' + name + '="' + escapeString(value) + '"';
       }
     });
     if (obj.children.length) {

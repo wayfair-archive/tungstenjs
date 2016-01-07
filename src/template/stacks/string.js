@@ -2,16 +2,20 @@
 
 var DefaultStack = require('./default');
 var htmlParser = require('../html_parser');
+var escapeString = require('./utils/escape_string');
 
-function StringStack(attributesOnly, noParse) {
+function StringStack(attributesOnly, asHTML) {
   DefaultStack.call(this, attributesOnly);
-  this.noParse = noParse;
+  this.asHTML = asHTML;
 }
 StringStack.prototype = new DefaultStack();
 StringStack.prototype.constructor = StringStack;
 
 StringStack.prototype.createObject = function(obj, options) {
-  if (!this.noParse && typeof obj === 'string' && options && options.parse) {
+  var isString = typeof obj === 'string';
+  if (this.asHTML && isString && options && options.escape) {
+    this._closeElem(escapeString(obj));
+  } else if (!this.asHTML && isString && options && options.parse) {
     // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
     if (obj.indexOf('<') > -1 || obj.indexOf('&') > -1) {
       htmlParser(obj, this);
