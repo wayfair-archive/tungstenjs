@@ -140,6 +140,9 @@ body, .pure-g [class *="pure-u"] {
 .TemplateString_attrValue {
   color: #180BA9;
 }
+.TemplateString_comment {
+  color: #1F6F20;
+}
 
 /*******************
  * Tree structure
