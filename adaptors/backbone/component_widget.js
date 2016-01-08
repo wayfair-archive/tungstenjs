@@ -6,6 +6,10 @@ var logger = require('../../src/utils/logger');
 var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize'];
 var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
 
+/* develblock:start */
+modelFunctionsToMap.push('getDebugName');
+/* develblock:end */
+
 /**
  * Similar to BackboneViewWidget, but more simplistic
  * @param {Function} ViewConstructor Constructor function for the view
@@ -19,6 +23,10 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.model = model;
   this.template = template;
   this.key = key || _.uniqueId('w_component');
+  this.model.session = (this.model.session || []).concat(['content', 'yield']);
+  /* develblock:start */
+  this.model._private = {content:true, yield:true};
+  /* develblock:end */
 
   // Start with generic model functions
   var methodsToExpose = modelFunctionsToMap;

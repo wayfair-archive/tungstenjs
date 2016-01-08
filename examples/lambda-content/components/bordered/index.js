@@ -16,3 +16,4 @@ module.exports = function(data, options) {
 module.exports.prototype = {
   idAttribute: Model.prototype.idAttribute
 };
+

@@ -125,6 +125,7 @@ var BaseModel = Backbone.Model.extend({
    */
   getPropertiesArray: function() {
     var properties = [];
+    var privateProps = this._private || {};
     var relations = _.result(this, 'relations') || {};
     var derived = _.result(this, 'derived') || {};
 
@@ -148,6 +149,9 @@ var BaseModel = Backbone.Model.extend({
     };
 
     _.each(this.attributes, function(value, key) {
+      if (privateProps[key]) {
+        return;
+      }
       var prop;
       if (relations && relations[key]) {
         prop = {

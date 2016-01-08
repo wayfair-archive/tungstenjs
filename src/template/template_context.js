@@ -167,7 +167,14 @@ Context.prototype.lookup = function(name, handleLambda) {
         if (typeof value === 'function') {
           // Check that the found function takes in at least one argument
           // Used to avoid conflicts with computed properties until those can be deprecated
-          if (handleLambda && value.length >= 1) {
+          var arity = value.length;
+          /* develblock:start */
+          // Trackable functions can be wrapped, so check orignal's arity
+          if (value.original) {
+            arity = value.original.length;
+          }
+          /* develblock:end */
+          if (handleLambda && arity >= 1) {
             handleLambda(value, fnContext);
             return;
           } else {
