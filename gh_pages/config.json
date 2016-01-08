@@ -1,0 +1,60 @@
+{
+  "template_dir": "templates",
+  "content_dir": "contents",
+  "output_dir": "../output",
+  "server": {
+    "port": 9009
+  },
+  "plugins": {
+    "minifiers": {
+      ".js": "./uglify_minifier.js"
+    }
+  },
+  "bundles": {
+    "/css/all.css": [
+      "../node_modules/purecss/build/pure-min.css",
+      "css/side-menu.css",
+      "../node_modules/codemirror/lib/codemirror.css",
+      "../node_modules/todomvc-app-css/index.css",
+      "css/app.css"
+    ],
+    "/css/tutorials.css": [
+      "../node_modules/purecss/build/pure-min.css",
+      "css/side-menu.css",
+      "../node_modules/codemirror/lib/codemirror.css",
+      "../node_modules/todomvc-app-css/index.css",
+      "css/app.css"
+    ],
+    "/js/all.js": [
+      "../node_modules/underscore/underscore-min.js",
+      "../node_modules/codemirror/lib/codemirror.js",
+      "../node_modules/codemirror/addon/mode/overlay.js",
+      "../node_modules/codemirror/mode/javascript/javascript.js",
+      "../node_modules/codemirror/addon/runmode/runmode.js",
+      "js/docs.js"
+    ],
+    "/js/tutorials.js": [
+      "../node_modules/underscore/underscore-min.js",
+      "../../dist/tungsten.core.js",
+      "../../dist/tungsten.backbone.js",
+      "../../dist/tungsten.template.js",
+      "../node_modules/ractive/ractive.min.js",
+      "../node_modules/codemirror/lib/codemirror.js",
+      "../node_modules/codemirror/addon/fold/foldcode.js",
+      "../node_modules/codemirror/addon/fold/foldgutter.js",
+      "../node_modules/codemirror/addon/fold/brace-fold.js",
+      "../node_modules/codemirror/addon/fold/comment-fold.js",
+      "../node_modules/codemirror/addon/fold/xml-fold.js",
+      "../node_modules/codemirror/addon/fold/indent-fold.js",
+      "../node_modules/codemirror/addon/mode/overlay.js",
+      "../node_modules/codemirror/mode/xml/xml.js",
+      "../node_modules/codemirror/mode/javascript/javascript.js",
+      "js/tutorials/hello.js",
+      "js/tutorials/views.js",
+      "js/tutorials/todo.js",
+      "js/tutorials/derived.js",
+      "js/tutorials/events.js",
+      "js/tutorials_app.js"
+    ]
+  }
+}

@@ -1,0 +1,132 @@
+body {
+  max-width: 100%;
+  font: 100% sans-serif;
+  font-weight: 300;
+  background: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.cm-mustache {
+  color: #0ca;
+}
+
+.CodeMirror {
+  padding: 1em 0;
+}
+
+.CodeMirror:after {
+  clear: both;
+}
+
+.toggle-all:before {
+  content: '\00276F';
+}
+
+.todo-list li .destroy:after {
+  content: '\0000D7';
+}
+
+#result {
+  padding: 10px;
+}
+
+.description {
+  padding: 20px;
+}
+
+.footer {
+  box-sizing: content-box;
+}
+
+.steps {
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  width: 75%;
+}
+
+.run {
+  display: inline-block;
+  float: right;
+  width: 20%;
+}
+
+.page-section.description {
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  max-height: 48vh;
+  overflow-y: auto;
+}
+
+.page-section {
+  padding-left: 1%;
+  max-height: 48vh;
+
+}
+
+.styled-background {
+  background-color: #ff7;
+}
+
+#result {
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  border-bottom: 1px solid white;
+  height: 50vh;
+}
+
+.last-editor-section {
+  border-bottom: 1px solid white;
+}
+
+.step_description {
+  font-size: 1.2em;
+  color: black;
+  margin: 30px 0;
+}
+
+.step_name {
+  margin: 10px 0;
+  font-size: 120%;
+}
+
+.todoapp h1 {
+  top: -175px;
+}
+
+.pure-menu-list .pure-menu-list .pure-menu-item a {
+  padding-left: 1.5em !important;
+}
+
+.pure-menu-section {
+  color: #dddddd;
+}
+
+.pure-menu-section:hover {
+  background: none;
+}
+
+.pure-menu-list {
+  border: 0 !important;
+}
+
+.bottom-menu {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+
+.CodeMirror {
+  height: auto;
+}
+
+.tutorials_page .CodeMirror {
+  height: 48vh;
+}
+
+a, a:visited {
+  color: inherit;
+}

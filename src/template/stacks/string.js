@@ -3,14 +3,15 @@
 var DefaultStack = require('./default');
 var htmlParser = require('../html_parser');
 
-function StringStack(attributesOnly, debugMode) {
-  DefaultStack.call(this, attributesOnly, debugMode);
+function StringStack(attributesOnly, noParse) {
+  DefaultStack.call(this, attributesOnly);
+  this.noParse = noParse;
 }
 StringStack.prototype = new DefaultStack();
 StringStack.prototype.constructor = StringStack;
 
 StringStack.prototype.createObject = function(obj, options) {
-  if (typeof obj === 'string' && options && options.parse) {
+  if (!this.noParse && typeof obj === 'string' && options && options.parse) {
     // Naive check to avoid parsing if value contains nothing HTML-ish or HTML-entity-ish
     if (obj.indexOf('<') > -1 || obj.indexOf('&') > -1) {
       htmlParser(obj, this);

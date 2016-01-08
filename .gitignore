@@ -7,3 +7,4 @@ test/coverage/
 examples/**/*.js.map
 examples/**/*.min.js
 .DS_Store
+output/
