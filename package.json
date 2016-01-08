@@ -48,8 +48,8 @@
     "x-is-array": "^0.1.0"
   },
   "devDependencies": {
-    "babel-core": "6.1.19",
-    "babel-loader": "6.0.1",
+    "babel-core": "6.3.26",
+    "babel-loader": "6.2.1",
     "babel-plugin-transform-es2015-block-scoping": "^6.1.18",
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "chai": "^2.2.0",
