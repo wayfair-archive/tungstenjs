@@ -99,7 +99,7 @@ function render(stack, template, context, partials, parentView) {
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
     case ractiveTypes.TRIPLE:
-      value = context.lookup(Context.getInterpolatorKey(template));
+      value = context.lookup(template.r);
       if (value != null) {
         // If value is already a widget or vnode, add it wholesale
         if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
@@ -124,7 +124,7 @@ function render(stack, template, context, partials, parentView) {
 
     // {{> partial}}
     case ractiveTypes.PARTIAL:
-      var partialName = Context.getInterpolatorKey(template);
+      var partialName = template.r;
       if (partials[partialName]) {
         var partialTemplate = partials[partialName];
         if (partialTemplate._iterate) {
@@ -181,7 +181,7 @@ function render(stack, template, context, partials, parentView) {
           }
         };
       }
-      value = context.lookup(Context.getInterpolatorKey(template), handleLambda);
+      value = context.lookup(template.r, handleLambda);
       // if the render function passed into the lambda handler was invoked, don't process further
       if (lambdaHandled) {
         break;
@@ -314,7 +314,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
 
   // If this is a partial, lookup and recurse
   if (template.t === ractiveTypes.PARTIAL) {
-    var partialName = Context.getInterpolatorKey(template);
+    var partialName = template.r;
     if (!partials[partialName]) {
       logger.warn('Warning: no partial registered with the name ' + partialName);
       return null;
@@ -418,20 +418,20 @@ function _toSource(stack, template) {
 
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
-      stack.createObject('{{' + Context.getInterpolatorKey(template) + '}}');
+      stack.createObject('{{' + template.r + '}}');
       break;
     case ractiveTypes.TRIPLE:
-      stack.createObject('{{{' + Context.getInterpolatorKey(template) + '}}}');
+      stack.createObject('{{{' + template.r + '}}}');
       break;
 
     // {{> partial}}
     case ractiveTypes.PARTIAL:
-      stack.createObject('{{>' + Context.getInterpolatorKey(template) + '}}');
+      stack.createObject('{{>' + template.r + '}}');
       break;
 
     // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
-      var name = Context.getInterpolatorKey(template);
+      var name = template.r;
       if (template.n === ractiveTypes.SECTION_UNLESS) {
         stack.createObject('{{^' + name + '}}');
       } else {

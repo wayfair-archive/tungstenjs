@@ -213,25 +213,6 @@ Context.parseValue = function(value) {
 };
 
 /**
- * Takes a template with a string or template key and parses it
- * @param  {Object} template template object to parse
- * @return {String}          String key to get from context
- */
-Context.getInterpolatorKey = function(template) {
-  var key = '';
-  if (template.x) {
-    key = template.x.s;
-    var values = template.x.r;
-    for (var i = values.length; i--;) {
-      key = key.replace('_' + i, values[i]);
-    }
-  } else if (template.r) {
-    key = template.r;
-  }
-  return key;
-};
-
-/**
  * Sets lookup
  * @param {Object} adaptor Adaptor functions to set
  */
