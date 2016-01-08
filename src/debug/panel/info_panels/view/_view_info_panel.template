@@ -10,27 +10,27 @@
       <div>
         <span class="name">cid</span>
         <span>:</span>
-        <span class="value"><%= obj.cid %></span>
+        <span class="value u-mono"><%= obj.cid %></span>
       </div>
       <div>
         <span class="name">debugName</span>
         <span>:</span>
-        <span class="value"><%= panel.view.debugName %></span>
+        <span class="value u-mono"><%= panel.view.debugName %></span>
       </div>
       <div>
         <span class="name">tagName</span>
         <span>:</span>
-        <span class="value"><%= obj.el.tagName %></span>
+        <span class="value u-mono"><%= obj.el.tagName %></span>
       </div>
       <div>
         <span class="name">className</span>
         <span>:</span>
-        <span class="value"><%= obj.el.className %></span>
+        <span class="value u-mono"><%= obj.el.className %></span>
       </div>
       <div>
         <span class="name">el</span>
         <span>:</span>
-        <span class="js-view-element value u-clickable u-underlined"><%= panel.view.elString %></span>
+        <span class="js-view-element value u-clickable u-underlined u-mono"><%= panel.view.elString %></span>
       </div>
     </div>
   <% } %>

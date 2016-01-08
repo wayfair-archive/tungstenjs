@@ -8,7 +8,7 @@
   <div class="js-tracked-event" data-key="<%= evt.name %>">
     <span class="name"><%= evt.name %></span>
     <span>:</span>
-    <span class="js-untrack-event value u-clickable u-underlined">-</span>
+    <span class="js-untrack-event value u-clickable u-underlined u-mono">-</span>
   </div>
   <% }) %>
   <input type="text" class="js-add-new-event">

@@ -8,26 +8,26 @@
       <div data-property-name="debugName">
         <span class="name">debugName</span>
         <span>:</span>
-        <span class="js-model-tab js-model-list-item value u-clickable u-underlined" data-id="<%= model.getDebugName() %>"> <%= model.getDebugName() %> </span>
+        <span class="js-model-tab js-model-list-item value u-clickable u-underlined u-mono" data-id="<%= model.getDebugName() %>"> <%= model.getDebugName() %> </span>
       </div>
       <% if (model.collection) { %>
       <div data-property-name="collection">
         <span class="name">collectionCid</span>
         <span>:</span>
-        <span class="js-model-tab js-model-list-item value u-clickable u-underlined" data-id="<%= model.collection.getDebugName() %>"> <%= model.collection.getDebugName() %> </span>
+        <span class="js-model-tab js-model-list-item value u-clickable u-underlined u-mono" data-id="<%= model.collection.getDebugName() %>"> <%= model.collection.getDebugName() %> </span>
       </div>
         <% if (model.collection.parentProp) { %>
         <div data-property-name="parentProp">
           <span class="name">parentProp</span>
           <span>:</span>
-          <span class="value"> <%= model.collection.parentProp %> </span>
+          <span class="value u-mono"> <%= model.collection.parentProp %> </span>
         </div>
         <% } %>
       <% } else if (model.parentProp) { %>
         <div data-property-name="parentProp">
           <span class="name">parentProp</span>
           <span>:</span>
-          <span class="value"> <%= model.parentProp %> </span>
+          <span class="value u-mono"> <%= model.parentProp %> </span>
         </div>
       <% } %>
     </div>

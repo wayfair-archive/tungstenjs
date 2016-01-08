@@ -10,16 +10,16 @@
         var prevState = slider.prevEnabled ? '' : 'disabled';
         var nextState = slider.nextEnabled ? '' : 'disabled';
        %>
-      <button class="TimeTravel_button js-time-travel-button-first" <%= prevState %>>&laquo;</button>
-      <button class="TimeTravel_button js-time-travel-button-prev" <%= prevState %>>&lsaquo;</button>
+      <button class="TimeTravel_button js-time-travel-button-first u-mono" <%= prevState %>>&laquo;</button>
+      <button class="TimeTravel_button js-time-travel-button-prev u-mono" <%= prevState %>>&lsaquo;</button>
       <div class="TimeTravel_track">
         <% _.each(slider.items, function(item) { %>
           <span style="left:<%= item.left %>%" title="<%= item.label %>" data-index="<%= item.index %>" class="TimeTravel_item js-time-travel-item <%= item.active ? 'is-selected' : '' %>"></span>
         <% }) %>
       </div>
-      <button class="TimeTravel_button js-time-travel-button-next" <%= nextState %>>&rsaquo;</button>
-      <button class="TimeTravel_button js-time-travel-button-last" <%= nextState %>>&raquo;</button>
-      <div class="c"></div>
+      <button class="TimeTravel_button js-time-travel-button-next u-mono" <%= nextState %>>&rsaquo;</button>
+      <button class="TimeTravel_button js-time-travel-button-last u-mono" <%= nextState %>>&raquo;</button>
+      <div class="u-clear"></div>
       <div><%= slider.currentLabel %> - <%= slider.currentIndex %> / <%= slider.maxIndex %></div>
       <button class="pure-button js-time-travel-button-clear">Clear History</button>
     </div>

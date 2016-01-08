@@ -21,11 +21,11 @@
           <span class="name"><%= prop.key %></span>
           <span>:</span>
           <% if (prop.data.isRelation) { %>
-            <span class="value u-clickable u-underlined js-model-list-item" data-id="<%= prop.data.name %>"> <%= prop.data.name %> </span>
+            <span class="value u-mono u-clickable u-underlined js-model-list-item" data-id="<%= prop.data.name %>"> <%= prop.data.name %> </span>
           <% } else { %>
-            <span class="value <%= clickableClassName %>">
+            <span class="value u-mono <%= clickableClassName %>">
             <% if (prop.data.isEditing) { %>
-              <input type="text" value="<%- prop.data.displayValue %>" autofocus="true" class="js-model-property-value">
+              <input type="text" value="<%- prop.data.displayValue %>" autofocus="true" class="js-model-property-value u-mono">
             <% } else { %>
               <span><%- prop.data.displayValue %></span>
             <% } %>

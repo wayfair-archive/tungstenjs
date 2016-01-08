@@ -7,13 +7,13 @@
       <div>
         <span class="name">debugName</span>
         <span>:</span>
-        <span class="value"> <%= panel.model.debugName %> </span>
+        <span class="value u-mono"> <%= panel.model.debugName %> </span>
       </div>
       <% if (panel.model.obj.parentProp) { %>
       <div>
         <span class="name">parentProp</span>
         <span>:</span>
-        <span class="value"> <%= panel.model.obj.parentProp %> </span>
+        <span class="value u-mono"> <%= panel.model.obj.parentProp %> </span>
       </div>
       <% } %>
     </div>

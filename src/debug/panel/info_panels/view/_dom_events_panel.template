@@ -8,7 +8,7 @@
     <div data-property-name="model" class="js-view-event" data-event-selector="<%= event.selector %>">
       <span class="name"><%= event.selector %></span>
       <span>:</span>
-      <span class="value u-clickable u-underlined"><%= event.name %></span>
+      <span class="value u-clickable u-underlined u-mono"><%= event.name %></span>
     </div>
     <% }) %>
   </div>

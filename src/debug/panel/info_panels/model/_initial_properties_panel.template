@@ -8,7 +8,7 @@
       <% _.each(panel.model.obj.initialData, function(value, name) { %>
       <div>
         <span class="name"><%= name %></span><span class="separator">: </span>
-        <span class="value">
+        <span class="value u-mono">
           <span><%= JSON.stringify(value) %></span>
         </span>
       </div>
