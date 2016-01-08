@@ -212,10 +212,9 @@
   });
   var appModel = new AppModel(window.data);
 
-
   // Start app
   var app = new AppView({
-    el: '#appwrapper',
+    el: document.getElementById('appwrapper'),
     template: compiledTemplates.app,
     model: appModel,
     dynamicInitialize: true
