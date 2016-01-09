@@ -169,15 +169,15 @@ var allowedParents = {
     select: true,
     datalist: true,
     optgroup: true
-  },
-  legend: {
-    fieldset: function(parent) {
-      // captions must be the first element
-      if (parent.children.length === 0) {
-        return true;
-      }
-      return 'A legend tag must be the first child of its fieldset';
-    }
+  // },
+  // legend: {
+  //   fieldset: function(parent) {
+  //     // captions must be the first element
+  //     if (parent.children.length === 0) {
+  //       return true;
+  //     }
+  //     return 'A legend tag must be the first child of its fieldset';
+  //   }
   }
 };
 

@@ -41,12 +41,12 @@ HtmlStringStack.prototype.processObject = function(obj) {
     // For HTML strings, a textarea's value is defined by it's childNode
     // For everything else, it uses the value property
     // Since .toString is used least by far, add the expense here
-    if (obj.tagName.toLowerCase() === 'textarea' && obj.properties.attributes && obj.properties.attributes.value) {
+    if (obj.tagName.toLowerCase() === 'textarea' && obj.properties.attributes && obj.properties.attributes.value != null) {
       obj.children = [obj.properties.attributes.value];
       obj.properties.attributes.value = null;
     }
     _.each(obj.properties.attributes, function(value, name) {
-      if (value === false) {
+      if (typeof value === 'boolean') {
         htmlStr += ' ' + name;
       } else if (value != null) {
         htmlStr += ' ' + name + '="' + value + '"';

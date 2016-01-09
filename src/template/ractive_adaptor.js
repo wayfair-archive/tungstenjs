@@ -373,7 +373,7 @@ function attach(templateObj, view, createWidget, partials) {
 
 var HtmlString = require('./stacks/html_string');
 function reverseAttributeString(templates, join) {
-  if (typeof templates === 'string') {
+  if (typeof templates === 'string' || typeof templates === 'boolean') {
     return templates;
   }
   var output = [];
@@ -393,12 +393,24 @@ function toSource(template) {
 }
 module.exports = toSource;
 
+var entities = require('entities');
+function encodeEntities(str) {
+  return entities.encodeHTML(str)
+    .replace(/&lowbar;/, '_')
+    .replace(/&NewLine;/, '\n')
+    .replace(/&quest;/, '?')
+    .replace(/&equals;/, '=')
+    .replace(/&#(x.*?);/g, function(match, capture) {
+      return '&#' + parseInt(capture.substr(1), 16) + ';';
+    });
+}
+
 function _toSource(stack, template) {
   var i;
   if (typeof template === 'undefined') {
     return;
   } else if (typeof template === 'string') {
-    stack.createObject(template);
+    stack.createObject(encodeEntities(template));
   } else if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
       _toSource(stack, template[i]);

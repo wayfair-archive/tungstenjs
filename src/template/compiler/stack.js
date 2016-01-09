@@ -292,6 +292,9 @@ var flattenAttributeValues = function(attrObject) {
   } else if (attrObject.children) {
     attrObject.children = mergeStrings(flattenAttributeValues(attrObject.children));
     attrObject = templateStack.processObject(attrObject);
+  } else if (attrObject[templateKeys.children]) {
+    attrObject[templateKeys.children] = mergeStrings(flattenAttributeValues(attrObject[templateKeys.children]));
+    attrObject = templateStack.processObject(attrObject);
   } else if (attrObject.type === 'attributenameend') {
     attrObject = '="';
   } else if (attrObject.type === 'attributeend') {
@@ -351,13 +354,11 @@ var processAttributeArray = function(attrArray) {
       value = [];
       pushingTo = name;
     } else if (item.type === 'attributename' || item.type === 'attributevalue') {
-      if (item.value !== '') {
-        pushingTo.push(item.value);
-      }
+      pushingTo.push(item.value);
     } else if (pushingTo === name) {
       if (name.length === 0) {
         if (item.type === types.INTERPOLATOR) {
-          throw new Error('Double curly interpolators cannot be in attributes', item);
+          throw new Error('Double curly interpolators cannot be in attributes: ' + JSON.stringify(item.value));
         } else if (item.type === types.SECTION) {
           attrs.dynamic.push(templateStack.processObject(item));
           continue;

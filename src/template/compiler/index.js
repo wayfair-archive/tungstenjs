@@ -24,6 +24,8 @@ function processBuffer() {
         value: runningName
       });
     }
+  } else if (parser.afterAttributeName()) {
+    parser.endAttribute();
   } else if (parser.inAttributeValue()) {
     parser.clearBuffer();
     stack.createObject({
@@ -129,7 +131,11 @@ function processHoganObject(token, inDynamicAttribute) {
 var getTemplate = function(template) {
   stack.clear();
   parser.reset();
-  var tokenTree = hogan.parse(hogan.scan(template.toString()));
+  var templateStr = template.toString();
+  templateStr = templateStr.replace(/\{\{\s+([#^\/])(\S*?)\s*\}\}/g, function(match, symbol, key) {
+    return '{{' + symbol + key + '}}';
+  });
+  var tokenTree = hogan.parse(hogan.scan(templateStr));
   processHoganObject(tokenTree);
   var output = {};
 

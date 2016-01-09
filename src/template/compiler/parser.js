@@ -111,6 +111,10 @@ MustacheParser.prototype.onattribend = function() {
   });
 };
 
+MustacheParser.prototype.endAttribute = function() {
+  this._tokenizer._state = BEFORE_ATTRIBUTE_NAME;
+};
+
 // When an HTML tag is opened
 MustacheParser.prototype.onopentagname = function(name) {
   if (this._lowerCaseTagNames) {
@@ -191,8 +195,16 @@ MustacheParser.prototype.inRelevantState = function() {
 MustacheParser.prototype.inAttributeName = function() {
   var state = this._tokenizer._state;
   return state === BEFORE_ATTRIBUTE_NAME ||
-    state === IN_ATTRIBUTE_NAME ||
-    state === AFTER_ATTRIBUTE_NAME;
+    state === IN_ATTRIBUTE_NAME;
+};
+
+/**
+ * Whether the tokenizer's state is after attribute name
+ * @return {boolean}
+ */
+MustacheParser.prototype.afterAttributeName = function() {
+  var state = this._tokenizer._state;
+  return state === AFTER_ATTRIBUTE_NAME;
 };
 
 /**
@@ -244,7 +256,7 @@ var parser = new MustacheParser({
    */
   oncomment: function(text) {
     var el = stack.peek();
-    if (el.type === types.COMMENT) {
+    if (el && el.type === types.COMMENT) {
       stack.createObject(text);
       stack.closeElement(el);
     } else {
