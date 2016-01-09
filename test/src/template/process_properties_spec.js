@@ -1,7 +1,6 @@
 'use strict';
 
 var processProperties = require('../../../src/template/process_properties');
-var Autofocus = require('../../../src/template/hooks/autofocus');
 
 describe('process_properties.js public API', function() {
   describe('processProperties', function() {
@@ -15,8 +14,18 @@ describe('process_properties.js public API', function() {
       expect(result.attributes).to.deep.equal({namespace: undefined, label: 'label', class: 'js-test'});
     });
     it('should use hooks when enabled', function() {
-      var result = processProperties({Autofocus: true}, {useHooks: true});
-      expect(result.attributes.Autofocus).to.deep.equal(new Autofocus());
+      var hook = {};
+      var value = {};
+      var autofocusSpy = jasmine.createSpy('autofocusHook').and.returnValue(hook);
+      var result = processProperties({
+        Autofocus: value
+      }, {
+        useHooks: {
+          autofocus: autofocusSpy
+        }
+      });
+      jasmineExpect(autofocusSpy).toHaveBeenCalledWith(value);
+      expect(result.attributes.Autofocus).to.equal(hook);
     });
     it('should transform attribute names to property names when appropriate', function() {
       var result = processProperties({class: 'js-test'});

@@ -7,6 +7,10 @@ var logger = require('../../utils/logger');
 // This sets a flag so that templates don't create them either
 var whitespaceOnlyRegex = /^\s*$/;
 var supportsWhitespaceTextNodes = (function() {
+  // if document isn't defined, we're running in node. so use whitespace nodes
+  if (typeof document === 'undefined') {
+    return true;
+  }
   var d = document.createElement('div');
   d.innerHTML = ' ';
   return d.childNodes.length === 1;
@@ -90,6 +94,9 @@ DefaultStack.prototype._closeElem = function(obj) {
     if (obj.children.length === 1 && obj.children[0] === '') {
       obj.children.length = 0;
     }
+  }
+
+  if (obj.children && obj.children.length) {
     // Process child nodes
     for (i = obj.children.length; i--;) {
       obj.children[i] = this.processObject(obj.children[i]);
@@ -100,6 +107,8 @@ DefaultStack.prototype._closeElem = function(obj) {
   if (this.stack.length > 0) {
     pushingTo = this.stack[this.stack.length - 1].children;
   } else {
+    // If pushing to result, it isn't the child of any element and should be processed
+    obj = this.processObject(obj);
     pushingTo = this.result;
   }
 
@@ -164,9 +173,6 @@ DefaultStack.prototype.processArrayOutput = function(output) {
 DefaultStack.prototype.getOutput = function() {
   while (this.stack.length) {
     this.closeElement(this.peek());
-  }
-  for (var i = this.result.length; i--;) {
-    this.result[i] = this.processObject(this.result[i]);
   }
   // If there is only one result, it's already been processed
   // For multiple results, allow Stacks to process array

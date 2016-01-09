@@ -12,7 +12,7 @@
 
 var path = require('path');
 var _ = require('underscore');
-var utils = require('./shared_utils');
+var compiler = require('../../src/template/compiler');
 
 /**
  * Compiles given templates
@@ -20,19 +20,17 @@ var utils = require('./shared_utils');
  */
 module.exports = function(contents) {
   this.cacheable();
-  var parsedTemplate = utils.compileTemplate(contents, module.src);
-  var partials = utils.findPartials(parsedTemplate);
-  var template = JSON.stringify(parsedTemplate);
+  var templateData = compiler(contents);
 
   var templatePath = path.relative(path.dirname(module.dest), __dirname + '/template');
   templatePath = templatePath.replace(/\\/g, '/');
 
   var output = 'var Template=require("tungstenjs/src/template/template");';
-  output += 'var template=new Template(' + template + ');';
+  output += 'var template=new Template(' + JSON.stringify(templateData.templateObj) + ');';
   output += 'module.exports=template;';
-  if (partials.length > 0) {
+  if (templateData.partials.length > 0) {
     output += 'template.setPartials({';
-    output += _.map(partials, function(partial) {
+    output += _.map(templateData.partials, function(partial) {
       return '"' + partial + '":require("./' + partial + '.mustache")';
     }).join(',');
     output += '});';

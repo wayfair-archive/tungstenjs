@@ -59,7 +59,7 @@ Context.prototype._lookupValue = function(view, name) {
  * @return {Boolean}        Whether the given object is a Tungsten Model
  */
 Context.prototype.isModel = function(object) {
-  return object && object.tungstenModel;
+  return object && (object.tungstenModel || object.isComponent);
 };
 
 /* develblock:start */
@@ -107,7 +107,7 @@ Context.prototype.partial = function() {
  * Returns the value of the given name in this context, traversing
  * up the context hierarchy if the value is absent in this context's view.
  */
-Context.prototype.lookup = function(name, stack) {
+Context.prototype.lookup = function(name, handleLambda) {
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
@@ -134,7 +134,7 @@ Context.prototype.lookup = function(name, stack) {
     value = cache[name];
   } else {
     var context = this;
-    var names, index;
+    var names, index, fnContext;
 
     while (context) {
       // If this is a nested lookup, upward lookups can't occur mid-lookup
@@ -144,16 +144,44 @@ Context.prototype.lookup = function(name, stack) {
         index = 0;
 
         while (value != null && index < names.length) {
-          value = this._lookupValue(value, names[index], stack);
+          fnContext = value;
+          value = this._lookupValue(value, names[index]);
           index += 1;
+          if (typeof value === 'function' && index < names.length) {
+            value = value.call(fnContext);
+          }
         }
       } else {
+        fnContext = context.view;
         // if it isn't a nested lookup, just grab it
-        value = this._lookupValue(context.view, name, stack);
+        value = this._lookupValue(context.view, name);
       }
 
       // If a value was found, break out
       if (value != null) {
+        // When invoking handleLambda return immediately to avoid caching
+        if (handleLambda && value && value.type === 'Widget') {
+          handleLambda(value, fnContext);
+          return;
+        }
+        if (typeof value === 'function') {
+          // Check that the found function takes in at least one argument
+          // Used to avoid conflicts with computed properties until those can be deprecated
+          var arity = value.length;
+          /* develblock:start */
+          // Trackable functions can be wrapped, so check orignal's arity
+          if (value.original) {
+            arity = value.original.length;
+          }
+          /* develblock:end */
+          if (handleLambda && arity >= 1) {
+            handleLambda(value, fnContext);
+            return;
+          } else {
+            value = value.call(fnContext);
+          }
+        }
+
         break;
       }
 
@@ -189,25 +217,6 @@ Context.parseValue = function(value) {
     isArray: valueIsArray,
     isTruthy: valueIsTruthy
   };
-};
-
-/**
- * Takes a template with a string or template key and parses it
- * @param  {Object} template template object to parse
- * @return {String}          String key to get from context
- */
-Context.getInterpolatorKey = function(template) {
-  var key = '';
-  if (template.x) {
-    key = template.x.s;
-    var values = template.x.r;
-    for (var i = values.length; i--;) {
-      key = key.replace('_' + i, values[i]);
-    }
-  } else if (template.r) {
-    key = template.r;
-  }
-  return key;
 };
 
 /**
