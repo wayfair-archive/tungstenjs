@@ -39,6 +39,7 @@ import { relations, defaults, derived } from '../decorators.js';
           return item.get('completed');
         });
       }
+      return false;
     }
   },
   todoCount: {

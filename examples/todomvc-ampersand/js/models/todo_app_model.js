@@ -4,6 +4,7 @@
 'use strict';
 
 var TungstenAmpersandBase = require('tungstenjs/adaptors/ampersand');
+var _ = require('underscore');
 
 var Model = TungstenAmpersandBase.Model;
 var TodoItemCollection = require('../collections/todo_item_collection.js');
@@ -33,6 +34,7 @@ var AppModel = Model.extend({
             return item.completed;
           });
         }
+        return false;
       }
     },
     incompletedItems: {

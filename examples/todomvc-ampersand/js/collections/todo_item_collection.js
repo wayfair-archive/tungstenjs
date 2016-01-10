@@ -16,6 +16,7 @@ var Model = require('../models/todo_item_model.js');
 var Collection = require('tungstenjs/adaptors/ampersand').Collection;
 var ItemCollection = Collection.extend({
   model: Model,
+  debugName: 'TodoItemCollection',
   filterItems: function(filterBy) {
     for (var i = this.length; i--;) {
       var model = this.at(i);

@@ -25,6 +25,7 @@ function diffElements(vNode, elem) {
   var output = '';
   // Diff tagnames and save for closing
   var tagDiff = textDiff(vNode.tagName.toLowerCase(), elem.tagName.toLowerCase());
+  tagDiff = '<span class="TemplateString_tag">' + tagDiff + '</span>';
   output += chars.open;
   output += tagDiff;
 
@@ -61,8 +62,8 @@ function diffElements(vNode, elem) {
       domValue = _.filter(domValue.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
     }
 
-    var vAttr = ' ' + propName + '=' + chars.quote + propValue + chars.quote;
-    var eAttr = ' ' + propName + '=' + chars.quote + domValue + chars.quote;
+    var vAttr = ' <span class="TemplateString_attrName">' + propName + '</span>=<span class="TemplateString_attrValue">' + chars.quote + propValue + chars.quote + '</span>';
+    var eAttr = ' <span class="TemplateString_attrName">' + propName + '</span>=<span class="TemplateString_attrValue">' + chars.quote + domValue + chars.quote + '</span>';
     // If the property is a boolean, any non-"false" value of the template is fine
     output += elem[key] === true && propValue.toString() !== 'false' ? vAttr : textDiff(vAttr, eAttr);
   });
@@ -85,8 +86,8 @@ function diffElements(vNode, elem) {
         return;
       }
     }
-    var vAttr = ' ' + key + '=' + chars.quote + propValue + chars.quote;
-    var eAttr = ' ' + key + '=' + chars.quote + elem.getAttribute(key) + chars.quote;
+    var vAttr = ' <span class="TemplateString_attrName">' + key + '</span>=<span class="TemplateString_attrValue">' + chars.quote + propValue + chars.quote + '</span>';
+    var eAttr = ' <span class="TemplateString_attrName">' + key + '</span>=<span class="TemplateString_attrValue">' + chars.quote + elem.getAttribute(key) + chars.quote + '</span>';
     output += textDiff(vAttr, eAttr);
   });
   output += chars.close;

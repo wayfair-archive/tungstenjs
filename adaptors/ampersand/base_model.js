@@ -56,9 +56,6 @@ var BaseModel = AmpersandModel.extend({
   },
   /* develblock:start */
 
-  /** @type {string} Override cidPrefix to avoid confusion with Collections */
-  cidPrefix: 'model',
-
   /**
    * Bootstraps all debug functionality
    */
@@ -73,7 +70,7 @@ var BaseModel = AmpersandModel.extend({
    * @return {string} Debug name
    */
   getDebugName: function() {
-    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('model', '') : this.cid;
+    return this.debugName ? this.debugName + this.cid.replace('state', '') : this.cid;
   },
 
   /**
@@ -118,7 +115,8 @@ var BaseModel = AmpersandModel.extend({
       getVdomTemplate: true,
       isParent: true,
       getChildren: true,
-      getDebugName: true
+      getDebugName: true,
+      getPropertiesArray: true
     };
     var getFunctions = require('../shared/get_functions');
     return getFunctions(trackedFunctions, getTrackableFunction, this, BaseModel.prototype, blacklist);
@@ -130,21 +128,58 @@ var BaseModel = AmpersandModel.extend({
    * @return {Array<Object>} List of attribute key/values
    */
   getPropertiesArray: function() {
-    var properties = [];
-    _.each(this.attributes, function(value, key) {
-      properties.push({
+    var properties = {normal:[], relational:[], derived:[]};
+
+    var isEditable = function(value) {
+      if (!_.isObject(value)) {
+        return true;
+      } else if (_.isArray(value)) {
+        var result = true;
+        _.each(value, function(i) {
+          result = result && isEditable(i);
+        });
+        return result;
+      } else {
+        try {
+          JSON.stringify(value);
+          return true;
+        } catch (ex) {
+          return false;
+        }
+      }
+    };
+
+    var key, value, prop;
+    for (key in this._definition) {
+      value = this[key];
+      prop = {
         key: key,
         data: {
+          isEditable: isEditable(value),
           isEditing: false,
           value: value
         }
+      };
+      prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
+      properties.normal.push(prop);
+    }
+
+    for (key in this._derived) {
+      value = this[key];
+      properties.derived.push({
+        key: key,
+        data: {
+          isDerived: this._derived[key],
+          value: value,
+          displayValue: isEditable(value) ? JSON.stringify(value) : Object.prototype.toString.call(value)
+        }
       });
-    });
+    }
 
     var self = this;
     _.each(this._children, function(constructor, key) {
       var value = self.get(key);
-      properties.push({
+      properties.relational.push({
         key: key,
         data: {
           isRelation: true,
@@ -154,7 +189,7 @@ var BaseModel = AmpersandModel.extend({
     });
     _.each(this._collections, function(constructor, key) {
       var value = self.get(key);
-      properties.push({
+      properties.relational.push({
         key: key,
         data: {
           isRelation: true,

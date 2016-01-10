@@ -1,25 +1,21 @@
 <div class="model_info_panel">
-    <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
-        Model
-    </div>
-    <% if (!panel.collapsed && panel.model) { %>
-      <div class="sidebar-pane visible">
-          <div class="body">
-              <div class="section expanded">
-                  <ol data-property-key="" class="properties properties-tree monospace">
-                      <li data-property-name="debugName">
-                          <span class="name">debugName</span><span class="separator">: </span>
-                          <span class="value console-formatted-undefined"> <%= panel.model.debugName %> </span>
-                      </li>
-                      <% if (panel.model.obj.parentProp) { %>
-                        <li data-property-name="parentProp">
-                            <span class="name">parentProp</span><span class="separator">: </span>
-                            <span class="value console-formatted-undefined"> <%= panel.model.obj.parentProp %> </span>
-                        </li>
-                      <% } %>
-                  </ol>
-              </div>
-          </div>
+  <div class="js-sidebar-pane-title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+    Model
+  </div>
+  <% if (!panel.collapsed && panel.model) { %>
+    <div class="SidebarPane_data">
+      <div>
+        <span class="name">debugName</span>
+        <span>:</span>
+        <span class="value u-mono"> <%= panel.model.debugName %> </span>
       </div>
-    <% } %>
+      <% if (panel.model.obj.parentProp) { %>
+      <div>
+        <span class="name">parentProp</span>
+        <span>:</span>
+        <span class="value u-mono"> <%= panel.model.obj.parentProp %> </span>
+      </div>
+      <% } %>
+    </div>
+  <% } %>
 </div>

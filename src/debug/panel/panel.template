@@ -2,38 +2,40 @@
   <%= w.styles %>
 </style>
 
-<div class="app js-app">
-  <div class="app-layout">
-    <div class="app-layout-body">
-      <nav class="app-header navbar navbar-default navbar-fixed-top">
-        <div class="navbar-header">
-          <div class="tungsten_version">Tungsten.js <%= w.tungstenVersion %></div>
-        </div>
-        <ul class="nav navbar-nav js-tabs-bar">
-          <% _.each(w.tabs.tabs, function(tab) { %>
-          <li data-route="<%= tab.activeTabName %>" class="js-tab <%= tab.isActive ? 'active' : '' %>">
-            <a href="#"><%= tab.name %></a>
-          </li>
-          <% }); %>
-        </ul>
-      </nav>
-      <ul>
-        <li class="js-tab-content">
-          <%
-            if (w.tabs.selected.showViewTab) {
-              print(w.partials['_view_info_pane'](w, {variable: w}));
-            }
-            if (w.tabs.selected.showModelTab) {
-              print(w.partials['_model_info_pane'](w, {variable: w}));
-            }
-          %>
-        </li>
-      </ul>
+<div class="js-app">
+  <nav class="AppHeader pure-menu pure-menu-horizontal pure-menu-fixed">
+    <div class="pure-menu-heading">
+      <div class="AppHeader_tungstenVersion">Tungsten.js <%= w.tungstenVersion %></div>
     </div>
+    <ul class="pure-menu-list js-tabs-bar TabBar">
+      <% _.each(w.tabs.tabs, function(tab, i) {
+        var activeClass = tab.isActive ? 'is-active' : '';
+        var indexClass = i > 0 ? 'TabBar_item-bordered': '';
+        %>
+        <li class="TabBar_item <%= indexClass %> pure-menu-item">
+          <a class="pure-menu-link TabBar_link u-clickable js-tab <%= activeClass %>" data-route="<%= tab.activeTabName %>"><%= tab.name %></a>
+        </li>
+        <% if (tab.action) { %>
+        <li class="TabBar_item pure-menu-item">
+          <a class="glyphicon pure-menu-link TabBar_link u-clickable <%= tab.actionClass %>"></a>
+        </li>
+        <% } %>
+      <% }); %>
+    </ul>
+  </nav>
+  <div class="AppBody js-tab-content">
+    <%
+      if (w.tabs.selected.showViewTab) {
+        print(w.partials['_view_info_pane'](w, {variable: w}));
+      }
+      if (w.tabs.selected.showModelTab) {
+        print(w.partials['_model_info_pane'](w, {variable: w}));
+      }
+    %>
   </div>
 </div>
 <% if (w.loading) { %>
-<div id="loading_overlay">
-  <div id="loading_overlay_message">Parent window lost, attempting reconnection. <span id="loading_message_count"><%= w.loading %></span> attempts remaining</div>
+<div class="LoadingOverlay">
+  <div class="LoadingOverlay_message">Parent window lost, attempting reconnection. <span id="loading_message_count"><%= w.loading %></span> attempts remaining</div>
 </div>
 <% } %>
