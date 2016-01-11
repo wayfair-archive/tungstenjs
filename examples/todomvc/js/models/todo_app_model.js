@@ -21,6 +21,7 @@ var AppModel = Model.extend({
     this.listenTo(this, 'addItem', function(title) {
       // @todo add code to clear toggle-all button
       this.get('todoItems').add({title: title});
+      this.set({newValue: ''});
     });
   },
   filter: function(filterBy) {
