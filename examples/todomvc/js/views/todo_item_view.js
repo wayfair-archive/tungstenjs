@@ -51,11 +51,7 @@ var TodoItemView = View.extend({
 
     if (trimmedValue) {
       this.model.set({ title: trimmedValue });
-      input.value = '';
       this.model.set('editing', false);
-      if (value !== trimmedValue) {
-        this.model.trigger('change');
-      }
     } else {
       this.handleClickDestroy();
     }
