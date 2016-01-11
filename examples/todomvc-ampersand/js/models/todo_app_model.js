@@ -68,6 +68,9 @@ var AppModel = Model.extend({
     todoItems: [],
     filters: []
   },
+  props: {
+    newValue: 'string'
+  },
   postInitialize: function() {
     this.listenTo(this.todoItems, 'add remove reset', function() {
       this.todoItems.trigger('change:length');
@@ -75,6 +78,7 @@ var AppModel = Model.extend({
     this.listenTo(this, 'addItem', function(itemLabel) {
       // @todo add code to clear toggle-all button
       this.todoItems.add({title: itemLabel});
+      this.newValue = '';
     });
   }
 });
