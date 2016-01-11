@@ -43,7 +43,7 @@ app.use(webpackDevMiddleware(compiler, {
 app.use('/', express.static(exampleRoot + 'index.html'));
 app.use('/js', express.static(exampleRoot + '/js'));
 app.use('/node_modules', express.static(exampleRoot + '/node_modules'));
-app.use('/bower_components', express.static(exampleRoot + '/bower_components'));
+app.use('/vendor', express.static(exampleRoot + '/vendor'));
 
 app.use('/css', express.static(exampleRoot + '/css'));
 
