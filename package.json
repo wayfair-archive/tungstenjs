@@ -15,15 +15,15 @@
     "pretest": "npm run eslint && npm run jscs",
     "test": "npm run tests",
     "tests": "node ./test/build.js && npm run jasmine",
-    "build-bb-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/backbone ./dist/tungsten.backbone.js -d",
-    "build-bb-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p",
-    "build-ampersand-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.js -d",
-    "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p",
+    "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev",
+    "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
+    "build-ampersand-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=ampersand --dev",
+    "build-ampersand-dist": "webpack --config ./webpack.standalone.js --adaptor=ampersand",
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
-    "prepublish": "webpack --config ./webpack.standalone.js"
+    "prepublish": "npm run build-bb-dist && npm run build-ampersand-dist"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
