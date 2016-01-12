@@ -45,20 +45,16 @@ The UMD build is also available for including Tungsten.js in a project.  It assu
 ```html
 <!-- Include underscore -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-<!-- Core Tungsten.js -->
-<script src="./node_modules/tungstenjs/dist/tungsten.core.js"></script>
 <!-- Backbone.js Adaptor -->
 <script src="./node_modules/tungstenjs/dist/tungsten.backbone.js"></script>
 ```
 
-For compiling templates, [ractive](http://www.ractivejs.org/) at `window.Ractive` is necessary, along with the Tungsten.js template compiler (ordinarily this would be done on the server):
+For compiling templates, [ractive](http://www.ractivejs.org/) at `window.Ractive` is necessary.  The template compiler is bundled in the build (ordinarily precompiling templates would be done on the server):
 
 ```html
-<!-- Compiler for parsed template objects -->
-<script src="./node_modules/tungstenjs/dist/tungsten.template.js"></script>
 <!-- Include Ractive for parsing templates -->
 <script src="//cdn.ractivejs.org/latest/ractive.js"></script>
-<!-- to compile templates, use tungsten.template.compileTemplates({myTemplate: 'Hello {{name}.'})` -->
+<!-- to compile templates, use tungsten._template.compileTemplates({myTemplate: 'Hello {{name}.'})` -->
 ```
 
 An client-side only example of a Tungsten.js app using the UMD build is available in the [examples](https://github.com/wayfair/tungstenjs/tree/master/examples/browser-standalone).
