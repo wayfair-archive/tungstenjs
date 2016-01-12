@@ -23,7 +23,8 @@ var AppView = View.extend({
   handleKeyup: function(e) {
     if (e.which === ENTER_KEY && e.currentTarget.value !== '') {
       this.model.trigger('addItem', e.currentTarget.value.trim());
-      e.currentTarget.value = '';
+    } else {
+      this.model.set('newValue', e.currentTarget.value);
     }
   },
   handleClickClearCompleted: function() {
