@@ -3,9 +3,9 @@
 
   Ractive.DEBUG = false;
 
-  var View = tungsten.backbone.View;
-  var Model = tungsten.backbone.Model;
-  var Collection = tungsten.backbone.Collection;
+  var View = tungsten.View;
+  var Model = tungsten.Model;
+  var Collection = tungsten.Collection;
   var tungstenCode;
   var templateCode;
 
@@ -58,7 +58,7 @@
   var rawTemplates = {
     app: '<div class="pure-g js-main"> {{#tutorial}} <div class="pure-u-1-2 page-section description"> <ol class="steps"> {{#steps}} <li class="js-step-select pure-button {{#selected}}pure-button-active{{/selected}}">{{{index}}}</li> {{/steps}} </ol> <button class="pure-button js-run run" id="run">Run</button>{{#step}} <hr/><h4 class="step_name">{{name}}</h4><div class="step_description">{{{description_html}}}</div> {{/step}} </div> {{#step}} <div class="pure-u-1-2 page-section"><textarea class="js-editor editor html" cols="30" rows="25" id="template" value="{{template}}">{{template}}</textarea></div> <div class="pure-u-1-2 page-section"> <div id="result"> <div id="app"></div> </div> </div> <div class="last-editor-section pure-u-1-2 page-section"><textarea class="js-editor editor" id="tungsten" cols="30" rows="25" value="{{js}}">{{js}}</textarea></div> {{/step}} {{/tutorial}} </div>'
   };
-  var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);
+  var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);
   var StepSelectView = View.extend({
     events: {
       click: function() {
@@ -90,7 +90,7 @@
     },
     run: function() {
       var newLines = /\n/g;
-      var boilerplate = 'var rawTemplates = { app_view: \'<div id=\"app\">' + templateCode.getValue().replace(newLines, '') + '</div>\' };var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);';
+      var boilerplate = 'var rawTemplates = { app_view: \'<div id=\"app\">' + templateCode.getValue().replace(newLines, '') + '</div>\' };var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);';
       var evalNoContext = eval.bind(null);
       try {
         evalNoContext(boilerplate + '\n;' + tungstenCode.getValue());
@@ -220,8 +220,8 @@
     dynamicInitialize: true
   });
 
-  if (!tungsten.backbone.Backbone.history.started) {
-    var router = tungsten.backbone.Backbone.Router.extend({
+  if (!tungsten.Backbone.history.started) {
+    var router = tungsten.Backbone.Router.extend({
       routes: {
         '*tutorialName': 'selectTutorial'
       },
@@ -232,7 +232,7 @@
       }
     });
     new router();
-    tungsten.backbone.Backbone.history.start();
+    tungsten.Backbone.history.start();
   }
 
 
