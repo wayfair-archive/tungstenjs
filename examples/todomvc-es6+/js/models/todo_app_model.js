@@ -66,6 +66,7 @@ export class AppModel extends Model {
     this.listenTo(this, 'addItem', function(title) {
       // @todo add code to clear toggle-all button
       this.get('todoItems').add({title});
+      this.set({newValue: ''});
     });
   }
   filter(filterBy) {
