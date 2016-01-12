@@ -23,6 +23,7 @@ module.exports = {
   ViewWidget: require('./backbone_view_widget'),
   Backbone: require('backbone'),
   ComponentWidget: require('./component_widget'),
+  Template: require('../../src/template/template.js'),
   _core: require('../../src/tungsten.js'),
   _template: require('../../precompile/tungsten_template/template_helper')
 };

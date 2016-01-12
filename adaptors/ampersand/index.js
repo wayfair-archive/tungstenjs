@@ -26,6 +26,7 @@ module.exports = {
     Model: require('ampersand-model'),
     View: require('ampersand-view')
   },
+  Template: require('../../src/template/template.js'),
   _core: require('../../src/tungsten.js'),
   _template: require('../../precompile/tungsten_template/template_helper')
 };
