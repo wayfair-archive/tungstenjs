@@ -2,17 +2,40 @@ var webpack = require('webpack');
 var webpackSettings = require('./webpack-helper');
 var path = require('path');
 
+function processArg(arg) {
+  var parts = arg.split('=');
+  var data = {
+    name: parts[0]
+  };
+  if (parts[1]) {
+    data.value = parts[1];
+  }
+  return data;
+}
+function processArgs() {
+  var argData = {};
+  var args = process.argv;
+  for (var i = 0; i < args.length; i++) {
+    // Only process flags
+    if (args[i] && args[i].substr(0, 1) === '-') {
+      var arg = processArg(args[i]);
+      argData[arg.name] = arg.value;
+    }
+  }
+  return argData;
+}
+var args = processArgs();
+
+// set adaptor with --adaptor=adaptor_name
+// default is backbone
+var adaptor = args['--adaptor'] || 'backbone';
+
 module.exports = webpackSettings.compileSource({
-  entry: {
-    'backbone': './adaptors/backbone',
-    'ampersand': './adaptors/ampersand',
-    'core': './tungsten',
-    'template': ['./precompile/tungsten_template/template_helper.js']
-  },
+  entry: './adaptors/' + adaptor,
   output: {
-    filename: './dist/tungsten.[name].js',
+    filename: './dist/tungsten.' + adaptor + '.js',
     libraryTarget: 'umd',
-    library: ['tungsten', '[name]']
+    library: 'tungsten'
   },
   resolve: {
     alias: {
@@ -28,8 +51,5 @@ module.exports = webpackSettings.compileSource({
   },
   module: {
     loaders: []
-  },
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin('./dist/tungsten.core.js')
-  ]
+  }
 });

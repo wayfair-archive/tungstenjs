@@ -59,7 +59,7 @@ describe('html_comment.js public API', function() {
         expect(comment.templateToString).to.equal(HTMLCommentWidget.prototype.templateToString);
       });
       it('should be able to create an escaped string', function() {
-        expect(comment.templateToString(true)).to.equal('&lt;!-- ' + text + ' --&gt;');
+        expect(comment.templateToString(true)).to.equal('<span class="TemplateString_comment">&lt;!-- ' + text + ' --&gt;</span>');
       });
       it('should be able to create an unescaped string', function() {
         expect(comment.templateToString(false)).to.equal('<!-- ' + text + ' -->');

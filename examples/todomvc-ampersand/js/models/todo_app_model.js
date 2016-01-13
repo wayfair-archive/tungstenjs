@@ -4,6 +4,7 @@
 'use strict';
 
 var TungstenAmpersandBase = require('tungstenjs/adaptors/ampersand');
+var _ = require('underscore');
 
 var Model = TungstenAmpersandBase.Model;
 var TodoItemCollection = require('../collections/todo_item_collection.js');
@@ -33,6 +34,7 @@ var AppModel = Model.extend({
             return item.completed;
           });
         }
+        return false;
       }
     },
     incompletedItems: {
@@ -66,6 +68,9 @@ var AppModel = Model.extend({
     todoItems: [],
     filters: []
   },
+  props: {
+    newValue: 'string'
+  },
   postInitialize: function() {
     this.listenTo(this.todoItems, 'add remove reset', function() {
       this.todoItems.trigger('change:length');
@@ -73,6 +78,7 @@ var AppModel = Model.extend({
     this.listenTo(this, 'addItem', function(itemLabel) {
       // @todo add code to clear toggle-all button
       this.todoItems.add({title: itemLabel});
+      this.newValue = '';
     });
   }
 });

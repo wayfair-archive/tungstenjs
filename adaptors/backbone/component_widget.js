@@ -188,7 +188,7 @@ ComponentWidget.prototype.templateToString = function() {
     return;
   }
   var name = this.view.getDebugName();
-  return '<span class="js-view-list-item clickable-property" data-id="' + name + '">[' + name + ']</span>';
+  return '<span class="js-view-list-item u-clickable u-underlined" data-id="' + name + '">[' + name + ']</span>';
 };
 /* develblock:end */
 

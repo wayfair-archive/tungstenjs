@@ -18,7 +18,7 @@ function toString(vtree, escaped) {
   var output = '';
   var i;
   if (virtualDomImplementation.isVNode(vtree)) {
-    var tagName = vtree.tagName.toLowerCase();
+    var tagName = '<span class="TemplateString_tag">' + vtree.tagName.toLowerCase() + '</span>';
     output += chars.open + tagName;
     var addAttributes = function(val, key) {
       if (virtualDomImplementation.isHook(val)) {
@@ -34,9 +34,9 @@ function toString(vtree, escaped) {
         return;
       }
       if (utils.propertiesToTransform[key]) {
-        output += ' ' + utils.propertiesToTransform[key] + '=' + chars.quote + val + chars.quote;
+        output += ' <span class="TemplateString_attrName">' + utils.propertiesToTransform[key] + '</span>=<span class="TemplateString_attrValue">' + chars.quote + val + chars.quote + '</span>';
       } else {
-        output += ' ' + key + '=' + chars.quote + val + chars.quote;
+        output += ' <span class="TemplateString_attrName">' + key + '</span>=<span class="TemplateString_attrValue">' + chars.quote + val + chars.quote + '</span>';
       }
     };
     _.each(vtree.properties, addAttributes);

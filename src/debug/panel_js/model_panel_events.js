@@ -35,12 +35,21 @@ module.exports = function() {
     var model = getClosestModel(e.target).obj;
     logger.log(model);
   });
-  utils.addEvent('js-model-property', 'click', function(e) {
-    var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
-    var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {
+  utils.addEvent('js-derived-property', 'click', function(e) {
+    var key = utils.closest(e.currentTarget, 'js-derived-property').getAttribute('data-key');
+    var selectedProperty = _.findWhere(appData.selectedModel.modelProperties.derived, {
       key: key
     });
-    if (selectedProperty && !selectedProperty.data.isRelation && !selectedProperty.data.isEditing) {
+    if (selectedProperty) {
+      logger.log(key, selectedProperty.data.isDerived.deps, selectedProperty.data.isDerived.fn);
+    }
+  });
+  utils.addEvent('js-model-property', 'click', function(e) {
+    var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
+    var selectedProperty = _.findWhere(appData.selectedModel.modelProperties.normal, {
+      key: key
+    });
+    if (selectedProperty && !selectedProperty.data.isEditing) {
       selectedProperty.data.isEditing = true;
       utils.render();
       utils.selectElements('js-model-property-value')[0].focus();
@@ -50,13 +59,13 @@ module.exports = function() {
     var key = utils.closest(e.currentTarget, 'js-model-property').getAttribute('data-key');
     try {
       var value = JSON.parse(e.currentTarget.value);
-      var selectedProperty = _.findWhere(appData.selectedModel.modelProperties, {
+      var selectedProperty = _.findWhere(appData.selectedModel.modelProperties.normal, {
         key: key
       });
       selectedProperty.data.isEditing = false;
       selectedProperty.data.value = value;
       appData.selectedModel.obj.set(key, value);
-      utils.render();
+      appData.updateSelectedModel();
     } catch (ex) {
       var message = 'Unable to parse "' + e.currentTarget.value + '" to a valid value. Input must match JSON format';
       utils.alert(message);
@@ -127,10 +136,10 @@ module.exports = function() {
     var textbox = utils.selectElements('js-model-data')[0];
     appData.selectedModel.outputData = '';
     appData.selectedModel.obj.reset(JSON.parse(textbox.value));
-    utils.render();
+    appData.updateSelectedModel();
   });
   utils.addEvent('js-reset-data', 'click', function() {
     appData.selectedModel.obj.reset(appData.selectedModel.obj.initialData);
-    utils.render();
+    appData.updateSelectedModel();
   });
 };

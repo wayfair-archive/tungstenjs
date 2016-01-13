@@ -1,37 +1,36 @@
 <div class="view_info_panel">
-  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-sidebar-pane-title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
     View
   </div>
   <% if (!panel.collapsed && panel.view) { %>
-    <div class="sidebar-pane visible">
-      <div class="body">
-        <div class="section expanded">
-          <%
-            var obj = panel.view.obj;
-          %>
-          <ol data-property-key="" class="properties properties-tree monospace">
-            <li data-property-name="cid">
-              <span class="name">cid</span><span class="separator">: </span>
-              <span class="value console-formatted-undefined"> <%= obj.cid %> </span>
-            </li>
-            <li data-property-name="collection">
-              <span class="name">debugName</span><span class="separator">: </span>
-              <span class="value console-formatted-undefined"> <%= panel.view.debugName %> </span>
-            </li>
-            <li data-property-name="tagName">
-              <span class="name">tagName</span><span class="separator">: </span>
-              <span class="value console-formatted-undefined"> <%= obj.el.tagName %> </span>
-            </li>
-            <li data-property-name="className">
-              <span class="name">className</span><span class="separator">: </span>
-              <span class="value console-formatted-undefined"> <%= obj.el.className %> </span>
-            </li>
-            <li data-property-name="el" data-dom-element="" class="js-view-element">
-              <span class="name">el</span><span class="separator">: </span>
-              <span class="js-view-el value console-formatted-undefined clickable-property" patchedmarionette=""> <span class="source-code" style="-webkit-user-select: none;"><%= panel.view.elString %></span> </span>
-            </li>
-          </ol>
-        </div>
+    <div class="SidebarPane_data">
+      <%
+        var obj = panel.view.obj;
+      %>
+      <div>
+        <span class="name">cid</span>
+        <span>:</span>
+        <span class="value u-mono"><%= obj.cid %></span>
+      </div>
+      <div>
+        <span class="name">debugName</span>
+        <span>:</span>
+        <span class="value u-mono"><%= panel.view.debugName %></span>
+      </div>
+      <div>
+        <span class="name">tagName</span>
+        <span>:</span>
+        <span class="value u-mono"><%= obj.el.tagName %></span>
+      </div>
+      <div>
+        <span class="name">className</span>
+        <span>:</span>
+        <span class="value u-mono"><%= obj.el.className %></span>
+      </div>
+      <div>
+        <span class="name">el</span>
+        <span>:</span>
+        <span class="js-view-element value u-clickable u-underlined u-mono"><%= panel.view.elString %></span>
       </div>
     </div>
   <% } %>

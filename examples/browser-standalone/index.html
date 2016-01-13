@@ -9,12 +9,7 @@
 <div id="appwrapper"></div>
 
 <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-<!-- Core Tungsten.js -->
-<script src="../../dist/tungsten.core.js"></script>
-<!-- Backbone.js Adaptor -->
 <script src="../../dist/tungsten.backbone.js"></script>
-<!-- Compiler for parsed template objects -->
-<script src="../../dist/tungsten.template.js"></script>
 <!-- Ractive.js for parsing templates -->
 <script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
 <!-- Application code -->
@@ -28,12 +23,11 @@
         };
 
         // Compile templates; usually this is done at build time.
-        var compiledTemplates = tungsten.template.compileTemplates(rawTemplates);
+        var compiledTemplates = window.ct = tungsten._template.compileTemplates(rawTemplates);
 
-        var View = tungsten.backbone.View, Model = tungsten.backbone.Model;
-
+        var View = tungsten.View, Model = tungsten.Model;
         new View({
-            el: '#appwrapper',
+            el: document.getElementById('appwrapper'),
             template: compiledTemplates.app_view,
             model: new Model({name: 'world'}),
             dynamicInitialize: true

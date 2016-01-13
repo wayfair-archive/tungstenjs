@@ -46,7 +46,7 @@ HTMLCommentWidget.prototype.update = function update(prev, elem) {
 /* develblock:start */
 HTMLCommentWidget.prototype.templateToString = function(escaped) {
   if (escaped) {
-    return '&lt;!-- ' + this.text + ' --&gt;';
+    return '<span class="TemplateString_comment">&lt;!-- ' + this.text + ' --&gt;</span>';
   } else {
     return '<!-- ' + this.text + ' -->';
   }

@@ -2,7 +2,11 @@
 /*global TUNGSTENJS_VERSION */
 var isNode = require('../is_node');
 var _ = require('underscore');
-var styles = isNode ? '' : require('!!tungsten_debug?static!../panel/style.css');
+var styles = isNode ? '' : (
+  require('!!tungsten_debug?static!purecss') +
+  require('!!tungsten_debug?static!../panel/glyphicons.css') +
+  require('!!tungsten_debug?static!../panel/style.css')
+);
 
 var bgData = {
   counter: 0,
@@ -14,9 +18,11 @@ var appData = window.appData = module.exports = {
   tungstenVersion: typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null,
   tabs: {
     tabs: [{
-      name: 'View <span class="glyphicon glyphicon-search js-find-view tab-action"></span>',
+      name: 'View',
       isActive: true,
-      activeTabName: 'showViewTab'
+      activeTabName: 'showViewTab',
+      action: true,
+      actionClass: 'glyphicon-search js-find-view'
     }, {
       name: 'Data',
       isActive: false,

@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -15,15 +15,15 @@
     "pretest": "npm run eslint && npm run jscs",
     "test": "npm run tests",
     "tests": "node ./test/build.js && npm run jasmine",
-    "build-bb-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/backbone ./dist/tungsten.backbone.js -d",
-    "build-bb-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/backbone ./dist/tungsten.backbone.min.js -p",
-    "build-ampersand-dist-dev": "webpack  ./src/tungsten ./dist/tungsten.js -d && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.js -d",
-    "build-ampersand-dist": "webpack  ./src/tungsten ./dist/tungsten.min.js -p && webpack  ./adaptors/ampersand ./dist/tungsten.ampersand.min.js -p",
+    "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev",
+    "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
+    "build-ampersand-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=ampersand --dev",
+    "build-ampersand-dist": "webpack --config ./webpack.standalone.js --adaptor=ampersand",
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
-    "prepublish": "webpack --config ./webpack.standalone.js"
+    "prepublish": "npm run build-bb-dist && npm run build-ampersand-dist"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
@@ -50,8 +50,8 @@
     "x-is-array": "^0.1.0"
   },
   "devDependencies": {
-    "babel-core": "6.1.19",
-    "babel-loader": "6.0.1",
+    "babel-core": "6.3.26",
+    "babel-loader": "6.2.1",
     "babel-plugin-transform-es2015-block-scoping": "^6.1.18",
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "chai": "^2.2.0",

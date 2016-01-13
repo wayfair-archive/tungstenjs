@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('underscore');
 var AmpersandAdaptor = require('../../../adaptors/ampersand');
 var BaseModel = AmpersandAdaptor.Model;
 var BaseCollection = AmpersandAdaptor.Collection;
@@ -156,17 +155,15 @@ describe('base_model.js constructed api', function() {
     });
     it('should return the cid if debugName is not available', function() {
       var result = BaseModel.prototype.getDebugName.call({
-        cid: 'model1'
+        cid: 'state1'
       });
 
-      expect(result).to.equal('model1');
+      expect(result).to.equal('state1');
     });
     it('should return the debugName', function() {
       var result = BaseModel.prototype.getDebugName.call({
-        cid: 'model1',
-        constructor: {
-          debugName: 'FOOBAR'
-        }
+        cid: 'state1',
+        debugName: 'FOOBAR'
       });
 
       expect(result).to.equal('FOOBAR1');
@@ -228,7 +225,7 @@ describe('base_model.js constructed api', function() {
       spyOn(model.cl1, 'getDebugName').and.returnValue('CollectionName');
 
       var properties = model.getPropertiesArray();
-      var expectedProperties = [{
+      var expectedRelations = [{
         key: 'ch1',
         data: {
           isRelation: true,
@@ -240,19 +237,20 @@ describe('base_model.js constructed api', function() {
           isRelation: true,
           name: 'CollectionName'
         }
-      }, {
+      }];
+
+      var expectedProperties = [{
         key: 'prop',
         data: {
+          isEditable: true,
           isEditing: false,
-          value: 'test'
+          value: 'test',
+          displayValue: '"test"'
         }
       }];
 
-      // Sort both arrays by key to allow deep equality check
-      properties = _.sortBy(properties, 'key');
-      expectedProperties = _.sortBy(expectedProperties, 'key');
-
-      expect(properties).to.eql(expectedProperties);
+      expect(properties.normal).to.eql(expectedProperties);
+      expect(properties.relational).to.eql(expectedRelations);
     });
   });
   /* develblock:end */

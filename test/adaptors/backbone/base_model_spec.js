@@ -189,7 +189,7 @@ describe('base_model.js constructed api', function() {
       expect(BaseModel.prototype.getPropertiesArray).to.be.a('function');
       expect(BaseModel.prototype.getPropertiesArray).to.have.length(0);
     });
-    it('should return an array of properties', function() {
+    it('should return an object of property types', function() {
       var TestModel = BaseModel.extend({
         defaults: {
           cl1: [],
@@ -226,7 +226,7 @@ describe('base_model.js constructed api', function() {
       spyOn(model.get('cl1'), 'getDebugName').and.returnValue('CollectionName');
 
       var properties = model.getPropertiesArray();
-      var expectedProperties = [{
+      var expectedRelations = [{
         key: 'ch1',
         data: {
           isRelation: true,
@@ -238,19 +238,19 @@ describe('base_model.js constructed api', function() {
           isRelation: true,
           name: 'CollectionName'
         }
-      }, {
+      }];
+      var expectedDerived = [{
         key: 'd1',
         data: {
-          isDerived: true,
-          isEditable: true,
-          isEditing: false,
+          isDerived: model.derived.d1,
           value: ['derived'],
           displayValue: '["derived"]'
         }
-      }, {
+      }];
+
+      var expectedProperties = [{
         key: 'prop',
         data: {
-          isDerived: false,
           isEditable: true,
           isEditing: false,
           value: 'test',
@@ -259,7 +259,6 @@ describe('base_model.js constructed api', function() {
       }, {
         key: 'serializable',
         data: {
-          isDerived: false,
           isEditable: true,
           isEditing: false,
           value: serializable,
@@ -268,7 +267,6 @@ describe('base_model.js constructed api', function() {
       }, {
         key: 'unserializable',
         data: {
-          isDerived: false,
           isEditable: false,
           isEditing: false,
           value: unserializable,
@@ -276,10 +274,9 @@ describe('base_model.js constructed api', function() {
         }
       }];
 
-      // Sort both arrays by key to allow deep equality check
-      properties = _.sortBy(properties, 'key');
-      expectedProperties = _.sortBy(expectedProperties, 'key');
-      expect(properties).to.eql(expectedProperties);
+      expect(properties.normal).to.eql(expectedProperties);
+      expect(properties.relational).to.eql(expectedRelations);
+      expect(properties.derived).to.eql(expectedDerived);
     });
   });
   /* develblock:end */

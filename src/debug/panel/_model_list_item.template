@@ -3,8 +3,6 @@
     var liClass = '';
       if (w.model.selected) {
         liClass = 'is-highlighted';
-      } else {
-        liClass = 'is-not-highlighted';
       }
 
     var spanClass = '';
@@ -14,14 +12,14 @@
       spanClass += w.model.collapsed ? 'right' : 'down';
     }
 %>
-<li class="js-model-list-item tree-group-item <%= liClass %>" data-id="<%= w.model.debugName %>">
-  <div class="tree-list-item-hover">
+<li class="js-model-list-item Tree_item <%= liClass %>" data-id="<%= w.model.debugName %>">
+  <div class="Tree_item_hover">
     <span class="toggle-caret glyphicon <%= spanClass %>"></span>
-    <a class="js-more-model-info" href="#"><%= w.model.debugName %></a>
+    <a class="js-more-model-info Tree_item_link" href="#"><%= w.model.debugName %></a>
   </div>
   <% if (!w.model.collapsed) { %>
     <% if (modelIsParent) { %>
-      <ul class="tree-group">
+      <ul class="Tree">
         <% _.each(w.model.getChildren(), function(child) {
           print(w.partials['_model_list_item']({
             model: child,

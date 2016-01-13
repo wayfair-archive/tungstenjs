@@ -1,24 +1,17 @@
 <div class="model_events_panel">
-  <div class="js-sidebar-pane-title sidebar-pane-title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+  <div class="js-sidebar-pane-title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
    View Events
  </div>
  <% if (!panel.collapsed && panel.view) { %>
- <div class="sidebar-pane visible">
-  <div class="body">
-    <div class="section expanded">
-      <ol data-property-key="" class="properties properties-tree monospace">
-        <% _.each(panel.view.customEvents, function(evt) { %>
-        <li class="js-tracked-event" data-key="<%= evt.name %>">
-          <span class="name"><%= evt.name %></span><span class="separator">&nbsp;</span>
-          <span class="js-untrack-event value console-formatted-undefined clickable-property">-</span>
-        </li>
-        <% }) %>
-        <li>
-          <input type="text" class="js-add-new-event">
-        </li>
-      </ol>
-    </div>
+ <div class="SidebarPane_data pure-form">
+  <% _.each(panel.view.customEvents, function(evt) { %>
+  <div class="js-tracked-event" data-key="<%= evt.name %>">
+    <span class="name"><%= evt.name %></span>
+    <span>:</span>
+    <span class="js-untrack-event value u-clickable u-underlined u-mono">-</span>
   </div>
+  <% }) %>
+  <input type="text" class="js-add-new-event">
 </div>
 <% } %>
 </div>
