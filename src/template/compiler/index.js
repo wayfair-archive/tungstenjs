@@ -133,9 +133,9 @@ var getTemplate = function(template, options) {
   stack.clear();
   parser.reset();
 
-  let opts = {};
-  opts.errorLevel = typeof options.errorLevel === 'number' ? options.errorLevel : logger.ERROR_LEVELS.EXCEPTION;
-  opts.validateHtml = options.validateHtml != null ? options.validateHtml : 'strict';
+  let opts = typeof options === 'undefined' ? {} : options;
+  opts.errorLevel = typeof opts.errorLevel === 'number' ? opts.errorLevel : logger.ERROR_LEVELS.EXCEPTION;
+  opts.validateHtml = opts.validateHtml != null ? opts.validateHtml : 'strict';
 
   logger.setErrorLevel(opts.errorLevel);
   stack.setHtmlValidation(opts.validateHtml);

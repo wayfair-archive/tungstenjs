@@ -366,8 +366,6 @@ function processAttributeArray(attrArray) {
       if (name.length === 0) {
         if (item.type === types.INTERPOLATOR) {
           logger.warn('Double curly interpolators cannot be in attributes', item.value);
-          // Adjust the interpolator to an unescaped interpolator
-          item.type === types.TRIPLE;
         } else if (item.type === types.SECTION) {
           attrs.dynamic.push(templateStack.processObject(item));
           continue;
