@@ -1,11 +1,12 @@
 'use strict';
 
-var Parser = require('htmlparser2/lib/Parser');
-var types = require('../ractive_types');
-var stack = require('./stack');
+const Parser = require('htmlparser2/lib/Parser');
+const types = require('../ractive_types');
+const stack = require('./stack');
+const logger = require('./logger');
 
 // Taken from https://github.com/fb55/htmlparser2/blob/master/lib/Parser.js#L59
-var voidElements = {
+const voidElements = {
   __proto__: null,
   area: true,
   base: true,
@@ -42,24 +43,24 @@ var voidElements = {
 /*
  * Since htmlparser2 doesn't expose its states, run some tests to grep them
  */
-var testParser = new Parser({});
+const testParser = new Parser({});
 testParser.write('<div ');
-var BEFORE_ATTRIBUTE_NAME = testParser._tokenizer._state;
+const BEFORE_ATTRIBUTE_NAME = testParser._tokenizer._state;
 testParser.write('at');
-var IN_ATTRIBUTE_NAME = testParser._tokenizer._state;
+const IN_ATTRIBUTE_NAME = testParser._tokenizer._state;
 testParser.write(' ');
-var AFTER_ATTRIBUTE_NAME = testParser._tokenizer._state;
+const AFTER_ATTRIBUTE_NAME = testParser._tokenizer._state;
 
 testParser.write('attr="');
-var IN_ATTRIBUTE_VALUE_DQ = testParser._tokenizer._state;
+const IN_ATTRIBUTE_VALUE_DQ = testParser._tokenizer._state;
 testParser.write('" attr=\'');
-var IN_ATTRIBUTE_VALUE_SQ = testParser._tokenizer._state;
+const IN_ATTRIBUTE_VALUE_SQ = testParser._tokenizer._state;
 testParser.write('\' attr=val');
-var IN_ATTRIBUTE_VALUE_NQ = testParser._tokenizer._state;
+const IN_ATTRIBUTE_VALUE_NQ = testParser._tokenizer._state;
 testParser.write('><!-- ');
-var IN_COMMENT = testParser._tokenizer._state;
+const IN_COMMENT = testParser._tokenizer._state;
 
-var ATTRIBUTE_STATES = {};
+const ATTRIBUTE_STATES = {};
 ATTRIBUTE_STATES[BEFORE_ATTRIBUTE_NAME] = true;
 ATTRIBUTE_STATES[IN_ATTRIBUTE_NAME] = true;
 ATTRIBUTE_STATES[AFTER_ATTRIBUTE_NAME] = true;
@@ -74,12 +75,12 @@ ATTRIBUTE_STATES[IN_COMMENT] = true;
  * @param {[type]} cbs  [description]
  * @param {[type]} opts [description]
  */
-var MustacheParser = function(cbs) {
+function MustacheParser(cbs) {
   Parser.call(this, cbs, {
     decodeEntities: true,
     recognizeSelfClosing: true
   });
-};
+}
 MustacheParser.prototype = new Parser();
 MustacheParser.prototype.constructor = MustacheParser;
 
@@ -144,18 +145,18 @@ MustacheParser.prototype.onclosetag = function(name) {
   }
 
   if (this._stack.length && (!(name in voidElements) || this._options.xmlMode)) {
-    var pos = this._stack.lastIndexOf(name);
+    let pos = this._stack.lastIndexOf(name);
     if (pos === this._stack.length - 1) {
-      var el = this._stack.pop();
+      let el = this._stack.pop();
       if (this._cbs.onclosetag) {
         this._cbs.onclosetag(el);
       }
     } else {
-      var current = this._stack[this._stack.length - 1];
-      throw new Error('Closing ' + name + ' tag where a closing ' + current + ' should be.');
+      let current = this._stack[this._stack.length - 1];
+      logger.error('Closing ' + name + ' tag where a closing ' + current + ' should be.');
     }
   } else {
-    throw new Error('Closing ' + name + ' tag with no paired open');
+    logger.error('Closing ' + name + ' tag with no paired open');
   }
 };
 
@@ -184,7 +185,7 @@ MustacheParser.prototype.clearBuffer = function() {
  * @return {boolean}
  */
 MustacheParser.prototype.inRelevantState = function() {
-  var state = this._tokenizer._state;
+  let state = this._tokenizer._state;
   return ATTRIBUTE_STATES[state] === true;
 };
 
@@ -193,7 +194,7 @@ MustacheParser.prototype.inRelevantState = function() {
  * @return {boolean}
  */
 MustacheParser.prototype.inAttributeName = function() {
-  var state = this._tokenizer._state;
+  let state = this._tokenizer._state;
   return state === BEFORE_ATTRIBUTE_NAME ||
     state === IN_ATTRIBUTE_NAME;
 };
@@ -203,7 +204,7 @@ MustacheParser.prototype.inAttributeName = function() {
  * @return {boolean}
  */
 MustacheParser.prototype.afterAttributeName = function() {
-  var state = this._tokenizer._state;
+  let state = this._tokenizer._state;
   return state === AFTER_ATTRIBUTE_NAME;
 };
 
@@ -212,7 +213,7 @@ MustacheParser.prototype.afterAttributeName = function() {
  * @return {boolean}
  */
 MustacheParser.prototype.inAttributeValue = function() {
-  var state = this._tokenizer._state;
+  let state = this._tokenizer._state;
   return state === IN_ATTRIBUTE_VALUE_DQ ||
     state === IN_ATTRIBUTE_VALUE_SQ ||
     state === IN_ATTRIBUTE_VALUE_NQ;
@@ -223,11 +224,11 @@ MustacheParser.prototype.inAttributeValue = function() {
  * @return {boolean}
  */
 MustacheParser.prototype.inComment = function() {
-  var state = this._tokenizer._state;
+  let state = this._tokenizer._state;
   return state === IN_COMMENT;
 };
 
-var parser = new MustacheParser({
+const parser = new MustacheParser({
   /**
    * Runs when an open tag is first processed
    * @param  {string} name tag's name
@@ -239,7 +240,7 @@ var parser = new MustacheParser({
    * Runs when an open tag is completed
    */
   onopentag: function() {
-    var el = stack.peek();
+    let el = stack.peek();
     // Marks the element as no longer opening so we stop pushing to attributes
     el.isOpen = false;
   },
@@ -247,7 +248,7 @@ var parser = new MustacheParser({
    * Runs when an close tag is encountered
    */
   onclosetag: function() {
-    var el = stack.peek();
+    let el = stack.peek();
     stack.closeElement(el);
   },
   /**
@@ -255,7 +256,7 @@ var parser = new MustacheParser({
    * @param  {} text [description]
    */
   oncomment: function(text) {
-    var el = stack.peek();
+    let el = stack.peek();
     if (el && el.type === types.COMMENT) {
       stack.createObject(text);
       stack.closeElement(el);

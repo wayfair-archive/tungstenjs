@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('underscore');
+const _ = require('underscore');
 
 // List of elements that have no closing tag or slash
-var noClosing = {
+const noClosing = {
   'br': true,
   'hr': true,
   'img': true,
@@ -12,7 +12,7 @@ var noClosing = {
   'link': true
 };
 // List of elements with a closing slash, but no closing tag
-var selfClosing = {
+const selfClosing = {
   'area': true,
   'base': true,
   'col': true,
@@ -29,7 +29,7 @@ var selfClosing = {
 };
 
 // If any of the values are opened within the parent, the parent should be implicitly closed
-var formTags = {
+const formTags = {
   input: true,
   option: true,
   optgroup: true,
@@ -39,7 +39,7 @@ var formTags = {
   textarea: true
 };
 
-var openImpliesClose = {
+const openImpliesClose = {
   tr: { tr:true, th:true, td:true },
   th: { th:true },
   td: { thead:true, th:true, td:true },
@@ -62,10 +62,58 @@ var openImpliesClose = {
   optgroup: { optgroup:true }
 };
 
-var allowedParents = {
+const requiredParents = {
   body: {
     html: true
   },
+  tr: {
+    thead: true,
+    tbody: true,
+    tfoot: true
+  },
+  caption: {
+    table: function(parent) {
+      // captions must be the first element
+      if (parent.children.length === 0) {
+        return true;
+      }
+      return 'A caption tag must be the first child of its table';
+    }
+  },
+  colgroup: {
+    table: function(parent) {
+      for (let i = 0; i < parent.children.length; i++) {
+        switch (parent.children[i].tagName) {
+          case 'thead':
+          case 'tbody':
+          case 'tfoot':
+            return 'A colgroup must be before any ' + parent.children[i].tagName + ' elements';
+        }
+      }
+      return true;
+    }
+  },
+  col: {
+    colgroup: true
+  },
+  thead: {
+    table: true
+  },
+  tfoot: {
+    table: true
+  },
+  tbody: {
+    table: true
+  },
+  td: {
+    tr: true
+  },
+  th: {
+    tr: true
+  }
+};
+
+const standardsParents = _.defaults({
   li: {
     ol: true,
     ul: true
@@ -103,36 +151,6 @@ var allowedParents = {
     audio: true,
     video: true
   },
-  tr: {
-    thead: true,
-    tbody: true,
-    tfoot: true
-  },
-  caption: {
-    table: function(parent) {
-      // captions must be the first element
-      if (parent.children.length === 0) {
-        return true;
-      }
-      return 'A caption tag must be the first child of its table';
-    }
-  },
-  colgroup: {
-    table: function(parent) {
-      for (var i = 0; i < parent.children.length; i++) {
-        switch (parent.children[i].tagName) {
-          case 'thead':
-          case 'tbody':
-          case 'tfoot':
-            return 'A colgroup must be before any ' + parent.children[i].tagName + ' elements';
-        }
-      }
-      return true;
-    }
-  },
-  col: {
-    colgroup: true
-  },
   thead: {
     table: function(parent) {
       if (parent.childTags.tbody) {
@@ -153,15 +171,6 @@ var allowedParents = {
       return true;
     }
   },
-  tbody: {
-    table: true
-  },
-  td: {
-    tr: true
-  },
-  th: {
-    tr: true
-  },
   optgroup: {
     select: true
   },
@@ -169,17 +178,17 @@ var allowedParents = {
     select: true,
     datalist: true,
     optgroup: true
-  // },
-  // legend: {
-  //   fieldset: function(parent) {
-  //     // captions must be the first element
-  //     if (parent.children.length === 0) {
-  //       return true;
-  //     }
-  //     return 'A legend tag must be the first child of its fieldset';
-  //   }
+  },
+  legend: {
+    fieldset: function(parent) {
+      // captions must be the first element
+      if (parent.children.length === 0) {
+        return true;
+      }
+      return 'A legend tag must be the first child of its fieldset';
+    }
   }
-};
+}, requiredParents);
 
 /**
  * Many tags may have their close tag omitted depending on the next open tag
@@ -194,28 +203,30 @@ function impliedCloseTag(tag, next) {
   return openImpliesClose[next] && openImpliesClose[next][tag] || false;
 }
 
-function isAllowedChild(parent, child) {
+function isAllowedChild(parent, child, allowedParents) {
   if (!allowedParents[child]) {
     // if we haven't set up explicit data, assume it's fine
     return true;
   }
-  var isAllowed = allowedParents[child][parent.tagName];
+  let isAllowed = allowedParents[child][parent.tagName];
   if (typeof isAllowed === 'function') {
     return isAllowed(parent);
   }
   return Boolean(isAllowed) || false;
 }
 
-function isValidChild(parentNode, childTagName) {
+function isValidChild(parentNode, childTagName, enforceStandards) {
   if (impliedCloseTag(parentNode.tagName, childTagName)) {
     return 'Opening a ' + childTagName + ' implicitly closes a ' + parentNode.tagName + ' tag and all close tags must be explicit';
   }
-  var allowedChild = isAllowedChild(parentNode, childTagName);
+
+  let allowedParents = enforceStandards ? standardsParents : requiredParents;
+  let allowedChild = isAllowedChild(parentNode, childTagName, allowedParents);
   if (allowedChild !== true) {
     if (typeof allowedChild === 'string') {
       return allowedChild;
     } else {
-      return 'A ' + childTagName + ' may only be placed within one of the following tags: ' + _.keys(allowedParents[childTagName]).join(', ');
+      return 'A ' + childTagName + ' may not be placed within a ' + parentNode.tagName + ', only within one of the following tags: ' + _.keys(allowedParents[childTagName]).join(', ');
     }
   }
   return true;

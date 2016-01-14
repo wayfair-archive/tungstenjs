@@ -1,22 +1,23 @@
 'use strict';
 
-var _ = require('underscore');
-var types = require('../ractive_types');
-var htmlHelpers = require('../html_helpers');
+const _ = require('underscore');
+const types = require('../ractive_types');
+const htmlHelpers = require('../html_helpers');
+const logger = require('./logger');
 
 // Keys to use for the outputted array
-var templateKeys = {
-  type: 'type', // t
-  typeExtra: 'typeExtra', // n
-  value: 'value', // r
-  commentValue: 'value', // c
-  children: 'children', // f
-  tagName: 'tagName', // e
-  attributes: 'attributes', // a
-  dynamicAttributes: 'dynamicAttributes' // m
-};
+// const templateKeys = {
+//   type: 'type', // t
+//   typeExtra: 'typeExtra', // n
+//   value: 'value', // r
+//   commentValue: 'value', // c
+//   children: 'children', // f
+//   tagName: 'tagName', // e
+//   attributes: 'attributes', // a
+//   dynamicAttributes: 'dynamicAttributes' // m
+// };
 // Keys for Ractive adaptor compatibility
-templateKeys = {
+const templateKeys = {
   type: 't',
   typeExtra: 'n',
   value: 'r',
@@ -27,12 +28,17 @@ templateKeys = {
   dynamicAttributes: 'm'
 };
 
-var templateStack = {
+const templateStack = {
   startID: '',
   result: [],
   stack: [],
   partials: {},
-  inSVG: false
+  inSVG: false,
+  htmlValidationMode: true
+};
+
+templateStack.setHtmlValidation = function(htmlValidationMode) {
+  this.htmlValidationMode = htmlValidationMode;
 };
 
 templateStack.peek = function() {
@@ -40,7 +46,7 @@ templateStack.peek = function() {
 };
 
 templateStack.previousElement = function() {
-  var i = this.stack.length;
+  let i = this.stack.length;
   while (--i >= 0) {
     if (this.stack[i] && this.stack[i].type === types.ELEMENT) {
       return this.stack[i];
@@ -50,7 +56,7 @@ templateStack.previousElement = function() {
 };
 
 templateStack.inComment = function() {
-  for (var i = 0; i < this.stack.length; i++) {
+  for (let i = 0; i < this.stack.length; i++) {
     if (this.stack[i].type === types.COMMENT) {
       return true;
     }
@@ -59,9 +65,9 @@ templateStack.inComment = function() {
 };
 
 templateStack.getID = function() {
-  var id;
+  let id;
   if (this.stack.length) {
-    var openElem = this.peek();
+    let openElem = this.peek();
     id = openElem.id + '.' + openElem.children.length;
   } else {
     id = this.startID + this.result.length;
@@ -70,17 +76,17 @@ templateStack.getID = function() {
 };
 
 templateStack.openElement = function(type, value) {
-  var elem = {
+  let elem = {
     children: [],
     type: type,
     id: this.getID()
   };
   if (type === types.ELEMENT) {
-    var prev = this.previousElement();
-    if (prev) {
-      var isValid = htmlHelpers.validation.isValidChild(prev, value);
+    let prev = this.previousElement();
+    if (prev && this.htmlValidationMode) {
+      let isValid = htmlHelpers.validation.isValidChild(prev, value, this.htmlValidationMode === 'strict');
       if (isValid !== true) {
-        throw new Error('Cannot place this ' + value + ' tag within a ' + prev.tagName + ' tag. ' + isValid);
+        logger.error('Cannot place this ' + value + ' tag within a ' + prev.tagName + ' tag. ' + isValid);
       }
     }
     elem.childTags = {};
@@ -104,12 +110,12 @@ templateStack.processObject = function(obj) {
   if (typeof obj === 'string') {
     return obj;
   }
-  var processed = {};
+  let processed = {};
   switch (obj.type) {
     case types.ELEMENT:
       processed[templateKeys.type] = types.ELEMENT;
       processed[templateKeys.tagName] = obj.tagName;
-      var attrs = processAttributeArray(obj.attributes);
+      let attrs = processAttributeArray(obj.attributes);
       if (_.size(attrs.static) > 0) {
         processed[templateKeys.attributes] = attrs.static;
       }
@@ -181,13 +187,13 @@ templateStack.processObject = function(obj) {
  * @return {[type]}     [description]
  */
 templateStack._closeElem = function(obj) {
-  var i;
+  let i;
 
   if (obj.children && obj.children.length) {
     // Process child nodes
-    var children = [];
+    let children = [];
     for (i = 0; i < obj.children.length; i++) {
-      var child = this.processObject(obj.children[i]);
+      let child = this.processObject(obj.children[i]);
       // Filter the array to truthy values to remove empty strings
       if (child) {
         children.push(child);
@@ -200,9 +206,9 @@ templateStack._closeElem = function(obj) {
     this.inSVG = false;
   }
 
-  var pushingTo;
+  let pushingTo;
   if (this.stack.length > 0) {
-    var top = this.peek();
+    let top = this.peek();
     if (top.type === types.ELEMENT && top.isOpen) {
       pushingTo = top.attributes;
     } else {
@@ -240,27 +246,27 @@ templateStack.createComment = function(text) {
 };
 
 templateStack.closeElement = function(closingElem) {
-  var openElem = this.peek();
-  var id = closingElem.id;
-  var tagName = closingElem.tagName;
+  let openElem = this.peek();
+  let id = closingElem.id;
+  let tagName = closingElem.tagName;
   if (openElem) {
-    var openID = openElem.id;
+    let openID = openElem.id;
     if (openID !== id) {
-      throw new Error(tagName + ' tags improperly paired, closing ' + openID + ' with close tag from ' + id);
+      logger.error(tagName + ' tags improperly paired, closing ' + openID + ' with close tag from ' + id);
     } else {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
     }
   } else {
     // Something has gone terribly wrong
-    throw new Error('Closing element ' + id + ' when the stack was empty');
+    logger.error('Closing element ' + id + ' when the stack was empty');
   }
 };
 
 templateStack.getOutput = function() {
   // If any items are left on the stack, they weren't closed by the template
   if (this.stack.length) {
-    throw new Error('Template contains unclosed items:' + JSON.stringify(this.stack));
+    logger.warn('Template contains unclosed items', this.stack);
   }
   // Always return the array
   return this.result;
@@ -272,21 +278,22 @@ templateStack.clear = function() {
   this.partials = {};
   this.startID = '';
   this.inSVG = false;
+  this.htmlValidationMode = true;
 };
 
-var mergeStrings = function(arr) {
-  for (var i = 0; i < arr.length; i++) {
+function mergeStrings(arr) {
+  for (let i = 0; i < arr.length; i++) {
     while (typeof arr[i] === 'string' && typeof arr[i + 1] === 'string') {
       arr[i] += arr[i + 1];
       arr.splice(i + 1, 1);
     }
   }
   return arr;
-};
+}
 
-var flattenAttributeValues = function(attrObject) {
+function flattenAttributeValues(attrObject) {
   if (Array.isArray(attrObject)) {
-    for (var i = 0; i < attrObject.length; i++) {
+    for (let i = 0; i < attrObject.length; i++) {
       attrObject[i] = flattenAttributeValues(attrObject[i]);
     }
   } else if (attrObject.children) {
@@ -305,31 +312,31 @@ var flattenAttributeValues = function(attrObject) {
     attrObject = templateStack.processObject(attrObject);
   }
   return attrObject;
-};
+}
 
 /**
  * Processes attributes into static and dynamic values
  * @param  {Array<Object>} attrArray Attribute array built during parsing
  * @return {Object}
  */
-var processAttributeArray = function(attrArray) {
-  var attrs = {
+function processAttributeArray(attrArray) {
+  let attrs = {
     'static': {},
     'dynamic': []
   };
-  var name = [];
-  var value = [];
-  var item;
-  var pushingTo = name;
-  for (var i = 0; i < attrArray.length; i++) {
+  let name = [];
+  let value = [];
+  let item;
+  let pushingTo = name;
+  for (let i = 0; i < attrArray.length; i++) {
     item = attrArray[i];
     if (item.type === 'attributenameend') {
       pushingTo = value;
     } else if (item.type === 'attributeend') {
       // Ensure there are no tokens in a non-dynamic attribute name
-      for (var j = 0; j < name.length; j++) {
+      for (let j = 0; j < name.length; j++) {
         if (typeof name[j] !== 'string') {
-          throw new Error('Mustache token cannot be in attribute names', name[j]);
+          logger.warn('Mustache token cannot be in attribute names', name[j]);
         }
       }
 
@@ -358,7 +365,9 @@ var processAttributeArray = function(attrArray) {
     } else if (pushingTo === name) {
       if (name.length === 0) {
         if (item.type === types.INTERPOLATOR) {
-          throw new Error('Double curly interpolators cannot be in attributes: ' + JSON.stringify(item.value));
+          logger.warn('Double curly interpolators cannot be in attributes', item.value);
+          // Adjust the interpolator to an unescaped interpolator
+          item.type === types.TRIPLE;
         } else if (item.type === types.SECTION) {
           attrs.dynamic.push(templateStack.processObject(item));
           continue;
@@ -375,6 +384,6 @@ var processAttributeArray = function(attrArray) {
   mergeStrings(attrs.dynamic);
 
   return attrs;
-};
+}
 
 module.exports = templateStack;

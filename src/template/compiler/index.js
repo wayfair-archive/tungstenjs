@@ -6,6 +6,7 @@ var types = require('../ractive_types');
 
 var parser = require('./parser');
 var stack = require('./stack');
+var logger = require('./logger');
 
 /**
  * Gets the current buffer from htmlparser and processes it
@@ -52,7 +53,7 @@ function processHoganObject(token, inDynamicAttribute) {
     return;
   }
   if (Array.isArray(token)) {
-    for (var i = 0; i < token.length; i++) {
+    for (let i = 0; i < token.length; i++) {
       processHoganObject(token[i], inDynamicAttribute);
     }
     return;
@@ -63,7 +64,7 @@ function processHoganObject(token, inDynamicAttribute) {
     processBuffer();
   }
 
-  var obj;
+  let obj;
   switch (token.tag) {
     case '!':
       // Leave control comments in as interpolators
@@ -118,7 +119,7 @@ function processHoganObject(token, inDynamicAttribute) {
       }
       break;
     default:
-      throw new Error('Unhandled type: ' + JSON.stringify(token.tag));
+      logger.exception('Unexpected mustache type found', token);
   }
 }
 
@@ -128,24 +129,34 @@ function processHoganObject(token, inDynamicAttribute) {
  * @param  {string} template Mustache template string
  * @return {Object}          Processed template object
  */
-var getTemplate = function(template) {
+var getTemplate = function(template, options) {
   stack.clear();
   parser.reset();
-  var templateStr = template.toString();
+
+  let opts = {};
+  opts.errorLevel = typeof options.errorLevel === 'number' ? options.errorLevel : logger.ERROR_LEVELS.EXCEPTION;
+  opts.validateHtml = options.validateHtml != null ? options.validateHtml : 'strict';
+
+  logger.setErrorLevel(opts.errorLevel);
+  stack.setHtmlValidation(opts.validateHtml);
+
+  let templateStr = template.toString();
+  // Normalize whitespace within tokens
+  // {{ #foo }} !== {{#foo}} in Hogan's eyes
   templateStr = templateStr.replace(/\{\{\s+([#^\/])(\S*?)\s*\}\}/g, function(match, symbol, key) {
     return '{{' + symbol + key + '}}';
   });
-  var tokenTree = hogan.parse(hogan.scan(templateStr));
+  let tokenTree = hogan.parse(hogan.scan(templateStr));
   processHoganObject(tokenTree);
-  var output = {};
+  let output = {};
 
   if (stack.stack.length > 0) {
-    throw new Error('Not all tags were closed properly: ' + JSON.stringify(stack.stack));
+    logger.exception('Not all tags were closed properly', stack.stack);
   }
 
   parser.end();
   output.templateObj = stack.getOutput();
-  var Template = require('../template');
+  const Template = require('../template');
   output.template = new Template(output.templateObj);
   output.source = template;
   output.partials = _.keys(stack.partials);
