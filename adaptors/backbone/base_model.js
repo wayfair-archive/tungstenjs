@@ -71,6 +71,10 @@ var BaseModel = Backbone.Model.extend({
     return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('model', '') : this.cid;
   },
 
+  toString: function() {
+    return '[' + this.getDebugName() + ']';
+  },
+
   /**
    * Gets children of this object
    *
@@ -112,7 +116,8 @@ var BaseModel = Backbone.Model.extend({
       getVdomTemplate: true,
       isParent: true,
       getChildren: true,
-      getDebugName: true
+      getDebugName: true,
+      toString: true
     };
     var getFunctions = require('../shared/get_functions');
     return getFunctions(trackedFunctions, getTrackableFunction, this, BaseModel.prototype, blacklist);

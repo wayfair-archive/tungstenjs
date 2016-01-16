@@ -210,7 +210,8 @@ var BaseView = Backbone.View.extend({
       getVdomTemplate: true,
       getTemplateString: true,
       getChildren: true,
-      getDebugName: true
+      getDebugName: true,
+      toString: true
     };
     var getFunctions = require('../shared/get_functions');
     return getFunctions(trackedFunctions, getTrackableFunction, this, BaseView.prototype, blacklist);
@@ -332,6 +333,10 @@ var BaseView = Backbone.View.extend({
    */
   getDebugName: function() {
     return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('view', '') : this.cid;
+  },
+
+  toString: function() {
+    return '[' + this.getDebugName() + ']';
   },
   /* develblock:end */
 
