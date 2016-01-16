@@ -153,10 +153,10 @@ MustacheParser.prototype.onclosetag = function(name) {
       }
     } else {
       let current = this._stack[this._stack.length - 1];
-      logger.error('Closing ' + name + ' tag where a closing ' + current + ' should be.');
+      logger.exception('</' + name + '> where a </' + current + '> should be.');
     }
   } else {
-    logger.error('Closing ' + name + ' tag with no paired open');
+    logger.exception('</' + name + '> with no paired <' + name + '>');
   }
 };
 

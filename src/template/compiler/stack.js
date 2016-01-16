@@ -86,7 +86,7 @@ templateStack.openElement = function(type, value) {
     if (prev && this.htmlValidationMode) {
       let isValid = htmlHelpers.validation.isValidChild(prev, value, this.htmlValidationMode === 'strict');
       if (isValid !== true) {
-        logger.error('Cannot place this ' + value + ' tag within a ' + prev.tagName + ' tag. ' + isValid);
+        logger.warn('Cannot place this ' + value + ' tag within a ' + prev.tagName + ' tag. ' + isValid);
       }
     }
     elem.childTags = {};
@@ -248,18 +248,21 @@ templateStack.createComment = function(text) {
 templateStack.closeElement = function(closingElem) {
   let openElem = this.peek();
   let id = closingElem.id;
-  let tagName = closingElem.tagName;
   if (openElem) {
     let openID = openElem.id;
     if (openID !== id) {
-      logger.error(tagName + ' tags improperly paired, closing ' + openID + ' with close tag from ' + id);
+      if (closingElem.tagName) {
+        logger.exception('</' + openElem.tagName + '> where a </' + closingElem.tagName + '> should be.');
+      } else {
+        logger.exception('</' + openElem.tagName + '> where a {{/' + closingElem.value + '}} should be.');
+      }
     } else {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
     }
   } else {
     // Something has gone terribly wrong
-    logger.error('Closing element ' + id + ' when the stack was empty');
+    logger.exception('</' + closingElem.tagName + '> with no paired <' + closingElem.tagName + '>');
   }
 };
 

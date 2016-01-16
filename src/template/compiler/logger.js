@@ -5,8 +5,7 @@ const logger = require('../../utils/logger');
 
 const ERROR_LEVELS = {
   'EXCEPTION': 0,
-  'ERROR' : 1,
-  'WARNING': 2
+  'WARNING': 1
 };
 
 let errorLevel = ERROR_LEVELS.ERROR;
@@ -23,9 +22,6 @@ function logMessage(messageLevel, data) {
     case ERROR_LEVELS.WARNING:
       logger.warn.apply(logger, data);
       break;
-    case ERROR_LEVELS.ERROR:
-      logger.error.apply(logger, data);
-      break;
     default:
       logger.log.apply(logger, data);
   }
@@ -36,13 +32,6 @@ module.exports.warn = function() {
     data[i] = arguments[i];
   }
   logMessage(ERROR_LEVELS.WARNING, data);
-};
-
-module.exports.error = function() {
-  for (var l = arguments.length, data = Array(l), i = 0; i < l; i++) {
-    data[i] = arguments[i];
-  }
-  logMessage(ERROR_LEVELS.ERROR, data);
 };
 
 module.exports.exception = function() {
