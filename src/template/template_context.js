@@ -200,7 +200,7 @@ Context.prototype.lookup = function(name, handleLambda) {
  * @param  {Any}     object Any value referenced by a mustache section
  * @return {Boolean}        If the value is an Array or Collection
  */
-Context.isArray = function(object) {
+Context.isArray = Context.prototype.isArray = function(object) {
   return isArray(object) || object && object.tungstenCollection;
 };
 

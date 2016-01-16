@@ -4,7 +4,7 @@
   </div>
   <% if (!panel.collapsed && panel.view) { %>
     <div class="SidebarPane_data">
-      <pre class="TemplateString"><code><%= panel.view.templateString %></code></pre>
+      <pre class="TemplateString TemplateVisualizer"><code><%= panel.view.templateString %></code></pre>
     </div>
   <% } %>
 </div>

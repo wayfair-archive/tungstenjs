@@ -209,20 +209,48 @@ module.exports = function() {
     }
   });
   utils.addEvent('js-mustache', 'click', function(e) {
-    var ctx = new Context(appData.selectedView.obj.serialize());
-    var stack = new DebugValueStack();
-    var data = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-value')));
-    var tmpl = data[0].context;
-    ractiveAdaptor.render(stack, data[0].value, ctx, {});
-    var name = data[0].value.r;
-    console.log(name, stack.getOutput());
-    for (var i = 1; i < data.length; i++) {
-      stack.clear();
-      data[i - 1].f = data[i].value;
-      ractiveAdaptor.render(stack, tmpl, ctx, {});
-      name += ':' + data[i].value.r;
-      console.log(name, stack.getOutput());
-      data[i - 1].f = data[i].context;
+    if (!utils.hasClass(e.target, 'js-mustache')) {
+      return;
+    }
+    var existingPane = utils.selectElements('js-mustache-data', e.currentTarget)[0];
+    if (existingPane) {
+      existingPane.parentNode.removeChild(existingPane);
+    } else {
+      var pane = document.createElement('div');
+      pane.className = 'MustacheData js-mustache-data';
+      var html = '<table>';
+      var ctx = new Context(appData.selectedView.obj.serialize());
+      var stack = new DebugValueStack();
+      var data = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-value')));
+      var tmpl = null;
+      var tmplCtx = tmpl;
+      var name = [];
+      for (var i = 0; i < data.length; i++) {
+        stack.clear();
+        if (!tmpl) {
+          tmpl = data[i].context;
+          tmplCtx = tmpl;
+          ractiveAdaptor.render(stack, data[i].value, ctx, {});
+        } else {
+          tmplCtx.f = data[i].value;
+          ractiveAdaptor.render(stack, tmpl, ctx, {});
+        }
+        var value = stack.getOutput();
+        name.push(data[i].context.r);
+        html += '<tr><td>' + name.join(':') + '</td><td>' + String(value) + '</td></tr>';
+
+        if (Context.isArray(value)) {
+          data[i].context.r += '.0';
+          name[i] += '.0';
+        }
+        if (tmplCtx.f) {
+          tmplCtx.f = data[i].context;
+          tmplCtx = tmplCtx.f;
+        }
+      }
+      html += '</table>';
+      pane.innerHTML = html;
+      e.currentTarget.appendChild(pane);
     }
   });
 };

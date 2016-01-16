@@ -152,6 +152,26 @@ body, .pure-g [class *="pure-u"] {
   color: #D2AA3C;
 }
 
+.TemplateVisualizer .TemplateString_mustache {
+  cursor: pointer;
+  position: relative;
+}
+.TemplateVisualizer .MustacheData {
+  position: absolute;
+  border: 1px solid #000;
+  top: 100%;
+  left: 0;
+  background: #FFF;
+  z-index: 1;
+  padding: 5px;
+}
+.TemplateVisualizer .MustacheData td + td {
+  padding-left: 10px;
+}
+.TemplateVisualizer .MustacheData table {
+  font-size: inherit;
+}
+
 /*******************
  * Tree structure
  *******************/

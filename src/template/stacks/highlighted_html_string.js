@@ -56,7 +56,7 @@ HighlightedHtmlStringStack.prototype.processObject = function(obj) {
 
 HighlightedHtmlStringStack.prototype._createObject = HtmlStringStack.prototype.createObject;
 HighlightedHtmlStringStack.prototype.createObject = function(obj, options) {
-  if (options && options.mustache) {
+  if (options && options.mustache && obj.substr(0, 3) !== '{{!') {
     obj = syntaxHighlight.mustache(obj, options.mustache);
   }
   this._createObject(obj, options);
