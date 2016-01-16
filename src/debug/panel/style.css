@@ -148,6 +148,9 @@ body, .pure-g [class *="pure-u"] {
 .TemplateString_comment {
   color: #1F6F20;
 }
+.TemplateString_mustache {
+  color: #D2AA3C;
+}
 
 /*******************
  * Tree structure

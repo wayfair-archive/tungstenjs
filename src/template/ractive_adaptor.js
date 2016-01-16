@@ -112,7 +112,7 @@ function render(stack, template, context, partials, parentView) {
             stack.createObject(value[i]);
           }
         } else {
-          stack.createObject(value.toString(), {
+          stack.createObject(stack.stringify(value), {
             // TRIPLE is unescaped content, so it may need parsing
             parse: template.t === ractiveTypes.TRIPLE,
             // INTERPOLATOR is escaped content, so it may need escaping
@@ -372,23 +372,41 @@ function attach(templateObj, view, createWidget, partials) {
 /*****************************************************************************/
 
 var HtmlString = require('./stacks/html_string');
-function reverseAttributeString(templates, join) {
+function reverseAttributeString(templates, join, forDebugger, context) {
   if (typeof templates === 'string' || typeof templates === 'boolean') {
     return templates;
   }
   var output = [];
-  var toString = new ToString();
+  var stack;
+  /* develblock:start */
+  if (forDebugger) {
+    var HighlightedHtmlString = require('./stacks/highlighted_html_string');
+    stack = new HighlightedHtmlString();
+  }
+  /* develblock:end */
+  if (!stack) {
+    stack = new HtmlString();
+  }
   for (var i = 0; i < templates.length; i++) {
-    toString.clear();
-    _toSource(toString, templates[i]);
-    output.push(toString.getOutput());
+    stack.clear();
+    _toSource(stack, templates[i], forDebugger, context);
+    output.push(stack.getOutput());
   }
   return output.join(join);
 }
 
-function toSource(template) {
-  var stack = new HtmlString();
-  _toSource(stack, template);
+function toSource(template, forDebugger) {
+  var stack;
+  /* develblock:start */
+  if (forDebugger) {
+    var HighlightedHtmlString = require('./stacks/highlighted_html_string');
+    stack = new HighlightedHtmlString();
+  }
+  /* develblock:end */
+  if (!stack) {
+    stack = new HtmlString();
+  }
+  _toSource(stack, template, forDebugger, []);
   return stack.getOutput();
 }
 module.exports = toSource;
@@ -405,7 +423,7 @@ function encodeEntities(str) {
     });
 }
 
-function _toSource(stack, template) {
+function _toSource(stack, template, forDebugger, context) {
   var i;
   if (typeof template === 'undefined') {
     return;
@@ -413,10 +431,10 @@ function _toSource(stack, template) {
     stack.createObject(encodeEntities(template));
   } else if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
-      _toSource(stack, template[i]);
+      _toSource(stack, template[i], forDebugger, context);
     }
-  } else if (template.type === 'Widget') {
-    _toSource(stack, template.template.templateObj);
+  } else if (template.type === 'WidgetConstructor') {
+    _toSource(stack, template.template.templateObj, forDebugger, context);
     return;
   }
 
@@ -424,40 +442,50 @@ function _toSource(stack, template) {
     // <!-- comment -->
     case ractiveTypes.COMMENT:
       var htmlString = new HtmlString();
-      _toSource(htmlString, template.c);
+      _toSource(htmlString, template.c, forDebugger, context);
       stack.createComment(htmlString.getOutput());
       break;
 
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
-      stack.createObject('{{' + template.r + '}}');
+      stack.createObject('{{' + template.r + '}}', {
+        mustache: context.concat({t: template.t, r: template.r})
+      });
       break;
     case ractiveTypes.TRIPLE:
-      stack.createObject('{{{' + template.r + '}}}');
+      stack.createObject('{{{' + template.r + '}}}', {
+        mustache: context.concat({t: template.t, r: template.r})
+      });
       break;
 
     // {{> partial}}
     case ractiveTypes.PARTIAL:
-      stack.createObject('{{>' + template.r + '}}');
+      stack.createObject('{{>' + template.r + '}}', {mustache: true});
       break;
 
     // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
       var name = template.r;
       if (template.n === ractiveTypes.SECTION_UNLESS) {
-        stack.createObject('{{^' + name + '}}');
+        stack.createObject('{{^' + name + '}}', {
+          mustache: context.concat({t: ractiveTypes.TRIPLE, r: template.r})
+        });
       } else {
-        stack.createObject('{{#' + name + '}}');
+        stack.createObject('{{#' + name + '}}', {
+          mustache: context.concat({t: ractiveTypes.TRIPLE, r: template.r})
+        });
       }
-      _toSource(stack, template.f);
-      stack.createObject('{{/' + name + '}}');
+      _toSource(stack, template.f, forDebugger, context.concat({t: template.t, n: template.n, r: template.r}));
+      stack.createObject('{{/' + name + '}}', {
+        mustache: context.concat({t: ractiveTypes.TRIPLE, r: template.r})
+      });
       break;
 
     // DOM node
     case ractiveTypes.ELEMENT:
       var properties = {};
       var attributeHandler = function(values, attr) {
-        properties[attr] = reverseAttributeString(values, '');
+        properties[attr] = reverseAttributeString(values, '', forDebugger, context);
       };
 
       // Parse static attribute values
@@ -465,7 +493,7 @@ function _toSource(stack, template) {
 
       // Handle dynamic values if need be
       if (template.m) {
-        var attrs = reverseAttributeString(template.m, ' ');
+        var attrs = reverseAttributeString(template.m, ' ', forDebugger, context);
         properties[attrs] = false;
       }
 
@@ -474,7 +502,7 @@ function _toSource(stack, template) {
 
       // Recuse into the elements' children
       if (template.f) {
-        _toSource(stack, template.f);
+        _toSource(stack, template.f, forDebugger, context);
       }
 
       stack.closeElement(elem);

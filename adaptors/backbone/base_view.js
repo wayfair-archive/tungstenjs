@@ -207,8 +207,8 @@ var BaseView = Backbone.View.extend({
       initDebug: true,
       getFunctions: true,
       getEvents: true,
-      getElTemplate: true,
       getVdomTemplate: true,
+      getTemplateString: true,
       getChildren: true,
       getDebugName: true
     };
@@ -288,6 +288,10 @@ var BaseView = Backbone.View.extend({
       vtreeToRender = vtreeToRender.children;
     }
     return tungsten.debug.vtreeToString(vtreeToRender, true);
+  },
+
+  getTemplateString: function() {
+    return this.compiledTemplate.toSource(true);
   },
 
   /**

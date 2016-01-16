@@ -6,6 +6,9 @@ var appData = require('./app_data');
 var highlighter = require('../highlighter');
 var logger = require('../../utils/logger');
 var dataset = require('data-set');
+var Context = require('../../template/template_context');
+var ractiveAdaptor = require('../../template/ractive_adaptor');
+var DebugValueStack = require('../../template/stacks/debug_value');
 
 var getClosestView = appData.getClosestView = function(elem) {
   var view = null;
@@ -18,6 +21,7 @@ var getClosestView = appData.getClosestView = function(elem) {
 
 appData.updateSelectedView = function() {
   appData.selectedView.vdomTemplate = appData.selectedView.obj.getVdomTemplate();
+  appData.selectedView.templateString = appData.selectedView.obj.getTemplateString();
   var diff = appData.selectedView.obj.getTemplateDiff();
   if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
     appData.selectedView.templateDiff = diff;
@@ -202,6 +206,21 @@ module.exports = function() {
     if (utils.confirm('Are you sure you want to clear history?')) {
       appData.selectedView.getState().clear();
       utils.render();
+    }
+  });
+  utils.addEvent('js-mustache', 'click', function(e) {
+    try {
+      var data = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-value')));
+      var tmpl = data[0];
+      for (var i = 1; i < data.length; i++) {
+        data[i - 1].f = data[i];
+      }
+      var ctx = new Context(appData.selectedView.obj.serialize());
+      var stack = new DebugValueStack();
+      ractiveAdaptor.render(stack, tmpl, ctx, {});
+      console.log(tmpl, stack.getOutput());
+    } catch (ex) {
+      console.log(ex);
     }
   });
 };

@@ -133,8 +133,8 @@ Template.prototype.attachView = function(view, widgetWrapper) {
  * Used for lambdas to allow source transforms before rendering
  * @return {String}
  */
-Template.prototype.toSource = function() {
-  return ractiveAdaptor.toSource(this.templateObj);
+Template.prototype.toSource = function(forDebugger) {
+  return ractiveAdaptor.toSource(this.templateObj, forDebugger);
 };
 
 module.exports = Template;
