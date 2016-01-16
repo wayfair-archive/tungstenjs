@@ -209,18 +209,20 @@ module.exports = function() {
     }
   });
   utils.addEvent('js-mustache', 'click', function(e) {
-    try {
-      var data = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-value')));
-      var tmpl = data[0];
-      for (var i = 1; i < data.length; i++) {
-        data[i - 1].f = data[i];
-      }
-      var ctx = new Context(appData.selectedView.obj.serialize());
-      var stack = new DebugValueStack();
+    var ctx = new Context(appData.selectedView.obj.serialize());
+    var stack = new DebugValueStack();
+    var data = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-value')));
+    var tmpl = data[0].context;
+    ractiveAdaptor.render(stack, data[0].value, ctx, {});
+    var name = data[0].value.r;
+    console.log(name, stack.getOutput());
+    for (var i = 1; i < data.length; i++) {
+      stack.clear();
+      data[i - 1].f = data[i].value;
       ractiveAdaptor.render(stack, tmpl, ctx, {});
-      console.log(tmpl, stack.getOutput());
-    } catch (ex) {
-      console.log(ex);
+      name += ':' + data[i].value.r;
+      console.log(name, stack.getOutput());
+      data[i - 1].f = data[i].context;
     }
   });
 };

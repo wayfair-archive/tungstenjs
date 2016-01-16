@@ -423,6 +423,23 @@ function encodeEntities(str) {
     });
 }
 
+function getMustacheData(context, template) {
+  return {
+    mustache: context.concat({
+      context: {
+        t: template.t,
+        n: template.n,
+        r: template.r
+      },
+      value: {
+        t: ractiveTypes.TRIPLE,
+        n: template.n,
+        r: template.r
+      }
+    })
+  };
+}
+
 function _toSource(stack, template, forDebugger, context) {
   var i;
   if (typeof template === 'undefined') {
@@ -448,14 +465,10 @@ function _toSource(stack, template, forDebugger, context) {
 
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
-      stack.createObject('{{' + template.r + '}}', {
-        mustache: context.concat({t: template.t, r: template.r})
-      });
+      stack.createObject('{{' + template.r + '}}', getMustacheData(context, template));
       break;
     case ractiveTypes.TRIPLE:
-      stack.createObject('{{{' + template.r + '}}}', {
-        mustache: context.concat({t: template.t, r: template.r})
-      });
+      stack.createObject('{{{' + template.r + '}}}', getMustacheData(context, template));
       break;
 
     // {{> partial}}
@@ -466,19 +479,14 @@ function _toSource(stack, template, forDebugger, context) {
     // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
       var name = template.r;
+      var mustacheData = getMustacheData(context, template);
       if (template.n === ractiveTypes.SECTION_UNLESS) {
-        stack.createObject('{{^' + name + '}}', {
-          mustache: context.concat({t: ractiveTypes.TRIPLE, r: template.r})
-        });
+        stack.createObject('{{^' + name + '}}', mustacheData);
       } else {
-        stack.createObject('{{#' + name + '}}', {
-          mustache: context.concat({t: ractiveTypes.TRIPLE, r: template.r})
-        });
+        stack.createObject('{{#' + name + '}}', mustacheData);
       }
-      _toSource(stack, template.f, forDebugger, context.concat({t: template.t, n: template.n, r: template.r}));
-      stack.createObject('{{/' + name + '}}', {
-        mustache: context.concat({t: ractiveTypes.TRIPLE, r: template.r})
-      });
+      _toSource(stack, template.f, forDebugger, mustacheData.mustache);
+      stack.createObject('{{/' + name + '}}', mustacheData);
       break;
 
     // DOM node

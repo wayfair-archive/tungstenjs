@@ -14,5 +14,12 @@ DebugValueStack.prototype.stringify = _.identity;
 DebugValueStack.prototype.createObject = function(obj) {
   this._closeElem(obj);
 };
+DebugValueStack.prototype.processArrayOutput = function(outputArr) {
+  if (outputArr.length === 0) {
+    return null;
+  } else {
+    return outputArr;
+  }
+};
 
 module.exports = DebugValueStack;
