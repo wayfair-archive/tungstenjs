@@ -2037,7 +2037,7 @@ describe('base_model.js backbone nested functionality', function() {
  * Derived and session property unit tests modified from ampersand-state
  * https://github.com/AmpersandJS/ampersand-state/blob/master/test/basics.js
  *    @license MIT
- *    Copyright � 2014 &yet, LLC and AmpersandJS contributors
+ *    Copyright 2014 &yet, LLC and AmpersandJS contributors
  *    Permission is hereby granted, free of charge, to any person obtaining a
  *    copy of this software and associated documentation files (the
  *    "Software"), to deal in the Software without restriction, including
