@@ -2119,3 +2119,69 @@ describe('base_model.js special properties', function() {
     expect(bar.toJSON()).to.deep.equal({name: 'hi'});
   });
 });
+describe('base_model.js propTypes functionality', function() {
+  var book, BookModel;
+  afterEach(function() {
+    book = null, BookModel = null;
+  });
+  /* develblock:start */
+  it('should not warn on initialization correct simple propTypes', function() {
+    spyOn(logger, 'debug').and.callThrough();
+    BookModel = BaseModel.extend({
+      propTypes: {
+        title: 'string',
+        author: 'string',
+        pages: 'number',
+        available: 'boolean'
+      }
+    });
+    book = new BookModel({
+      title: 'Midsummer Night\'s Dream',
+      author: 'William Shakespeare',
+      pages: 123,
+      available: true
+    });
+    expect(book.attributes).to.deep.equal({
+      title: 'Midsummer Night\'s Dream',
+      author: 'William Shakespeare',
+      pages: 123,
+      available: true
+    });
+    jasmineExpect(logger.debug).not.toHaveBeenCalled();
+  });
+  it('should log on initialization when setting string to propType number', function() {
+    spyOn(logger, 'debug');
+    var attrs = {
+      title: 'Midsummer Night\'s Dream'
+    };
+    BookModel = BaseModel.extend({
+      propTypes: {
+        title: 'number'
+      }
+    });
+    book = new BookModel(attrs);
+    expect(book.attributes).to.deep.equal({
+      title: 'Midsummer Night\'s Dream'
+    });
+    jasmineExpect(logger.debug).toHaveBeenCalled();
+    expect(logger.debug.calls.argsFor(0)[0]).to.contain('Incorrect propType');
+  });
+  it('should log on initialization when setting number to propType string', function() {
+    spyOn(logger, 'debug');
+    var attrs = {
+      pages: 100
+    };
+    BookModel = BaseModel.extend({
+      propTypes: {
+        pages: 'string'
+      }
+    });
+    book = new BookModel(attrs);
+    expect(book.attributes).to.deep.equal({
+      pages: 100
+    });
+    jasmineExpect(logger.debug).toHaveBeenCalled();
+    expect(logger.debug.calls.argsFor(0)[0]).to.contain('Incorrect propType');
+  });
+  /* develblock:end */
+});

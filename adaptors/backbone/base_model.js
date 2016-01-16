@@ -412,6 +412,17 @@ BaseModel.prototype.set = function(key, val, options) {
   options = options || {};
 
   /* develblock:start */
+
+  // PropTypes Start
+  var propTypes = _.result(this, 'propTypes') || {};
+  _.each(attrs, (value, key) => {
+    var type = propTypes[key];
+    if (typeof type === 'string' && typeof value !== type) {
+      logger.debug('Incorrect propType: ' + key + ' is propType "' + type + '" but the set value is "' + typeof value + '".');
+    }
+  });
+  // PropTypes End
+
   // In order to compare server vs. client data, save off the initial data
   if (!this.initialData) {
     // Using JSON to get a deep clone to avoid any overlapping object references
