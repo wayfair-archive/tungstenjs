@@ -16,6 +16,10 @@ function closePanel() {
   utils.setDebugWindow(null);
 }
 
+function collectError() {
+  console.error(debugWindow.event.error, debugWindow.event.error.stack);
+}
+
 function getWindow() {
   // Launch panel
   debugWindow = window.open('', 'TungstenDebugger', 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,width=800,height=640');
@@ -23,6 +27,7 @@ function getWindow() {
     logger.error('Unable to launch debug panel. You may need to allow the popup or run "window.launchDebugger()" from your console');
   } else {
     debugWindow.document.title = 'DEBUG: ' + window.document.title;
+    debugWindow.onerror = collectError;
     debugWindow.onunload = closePanel;
     launchDebugger();
   }
@@ -35,6 +40,7 @@ window.attachTungstenDebugPane = function(panel) {
   if (debugWindow.activeTab) {
     utils.gotoTab(debugWindow.activeTab);
   }
+  debugWindow.onerror = collectError;
   debugWindow.onunload = closePanel;
   launchDebugger();
 };
