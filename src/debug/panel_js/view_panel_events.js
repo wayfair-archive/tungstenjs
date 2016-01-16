@@ -236,10 +236,16 @@ module.exports = function() {
           ractiveAdaptor.render(stack, tmpl, ctx, {});
         }
         var value = stack.getOutput();
-        name.push(data[i].context.r);
-        html += '<tr><td>' + name.join(':') + '</td><td>' + String(value) + '</td></tr>';
+        name.push(data[i].name);
 
-        if (Context.isArray(value)) {
+        var isArray = Context.isArray(value);
+        var extra = '';
+        if (isArray) {
+          extra += '<input type="number" min="0" max="' + value.length + '" value="0" />';
+        }
+        html += '<tr><td>' + name.join(':') + '</td><td>' + String(value) + extra + '</td></tr>';
+
+        if (isArray) {
           data[i].context.r += '.0';
           name[i] += '.0';
         }

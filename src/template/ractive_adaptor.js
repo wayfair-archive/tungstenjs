@@ -396,6 +396,9 @@ function reverseAttributeString(templates, join, forDebugger, context) {
 }
 
 function toSource(template, forDebugger) {
+  if (template.wrapped) {
+    template = template.f;
+  }
   var stack;
   /* develblock:start */
   if (forDebugger) {
@@ -423,9 +426,10 @@ function encodeEntities(str) {
     });
 }
 
-function getMustacheData(context, template) {
+function getMustacheData(context, template, prefix='') {
   return {
     mustache: context.concat({
+      name: prefix + template.r,
       context: {
         t: template.t,
         n: template.n,
@@ -479,10 +483,12 @@ function _toSource(stack, template, forDebugger, context) {
     // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
       var name = template.r;
-      var mustacheData = getMustacheData(context, template);
+      var mustacheData;
       if (template.n === ractiveTypes.SECTION_UNLESS) {
+        mustacheData = getMustacheData(context, template, '!');
         stack.createObject('{{^' + name + '}}', mustacheData);
       } else {
+        mustacheData = getMustacheData(context, template);
         stack.createObject('{{#' + name + '}}', mustacheData);
       }
       _toSource(stack, template.f, forDebugger, mustacheData.mustache);
