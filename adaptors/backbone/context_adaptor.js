@@ -59,6 +59,8 @@ var lookupValue = function(view, name) {
   var value = null;
   if (this.isModel(view) && view.has(name)) {
     value = view.get(name);
+  } else if (this.isArray(view) && typeof view.at === 'function' && _.isNumber(parseInt(name, 10))) {
+    return view.at(name);
   } else if (view[name] != null) {
     if (view.tungstenCollection && blockedCollectionProperties[name]) {
       return null;
