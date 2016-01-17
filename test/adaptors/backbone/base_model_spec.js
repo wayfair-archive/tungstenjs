@@ -2183,5 +2183,22 @@ describe('base_model.js propTypes functionality', function() {
     jasmineExpect(logger.debug).toHaveBeenCalled();
     expect(logger.debug.calls.argsFor(0)[0]).to.contain('Incorrect propType');
   });
+  it('should log when declaring an invalid propType', function() {
+    spyOn(logger, 'debug');
+    var attrs = {
+      pages: 100
+    };
+    BookModel = BaseModel.extend({
+      propTypes: {
+        pages: 'bar'
+      }
+    });
+    book = new BookModel(attrs);
+    expect(book.attributes).to.deep.equal({
+      pages: 100
+    });
+    jasmineExpect(logger.debug).toHaveBeenCalled();
+    expect(logger.debug.calls.argsFor(0)[0]).to.contain('Invalid propType');
+  });
   /* develblock:end */
 });

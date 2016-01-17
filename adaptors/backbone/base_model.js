@@ -414,11 +414,18 @@ BaseModel.prototype.set = function(key, val, options) {
   /* develblock:start */
 
   // PropTypes Start
+  var validPropTypes = ['string', 'boolean', 'number', 'object', 'array', 'symbol'];
   var propTypes = _.result(this, 'propTypes') || {};
   _.each(attrs, (value, key) => {
     var type = propTypes[key];
-    if (typeof type === 'string' && typeof value !== type) {
-      logger.debug('Incorrect propType: ' + key + ' is propType "' + type + '" but the set value is "' + typeof value + '".');
+    if (typeof type === 'string') {
+      if (_.indexOf(validPropTypes, type) !== -1) {
+        if (typeof value !== type) {
+          logger.debug('Incorrect propType: ' + key + ' is propType "' + type + '" but the set value is "' + typeof value + '".');
+        }
+      } else {
+        logger.debug('Invalid propType "' + type + '" for ' + key + '.');
+      }
     }
   });
   // PropTypes End
