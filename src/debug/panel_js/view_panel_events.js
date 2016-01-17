@@ -208,6 +208,46 @@ module.exports = function() {
       utils.render();
     }
   });
+
+  function getPanelOutput(mustacheElement, indicies={}) {
+    var data = JSON.parse(decodeURIComponent(mustacheElement.getAttribute('data-value')));
+    var html = '<table>';
+    var ctx = new Context(appData.selectedView.obj.serialize());
+    var stack = new DebugValueStack();
+    var tmpl = null;
+    var tmplCtx = tmpl;
+    var name = [];
+    for (var i = 0; i < data.length; i++) {
+      stack.clear();
+      if (!tmpl) {
+        tmpl = data[i].context;
+        tmplCtx = tmpl;
+        ractiveAdaptor.render(stack, data[i].value, ctx, {});
+      } else {
+        tmplCtx.f = data[i].value;
+        ractiveAdaptor.render(stack, tmpl, ctx, {});
+      }
+      var value = stack.getOutput();
+      name.push(data[i].name);
+
+      var isArray = Context.isArray(value);
+      html += '<tr><td>' + name.join(':') + '</td><td>' + String(value) + '</td></tr>';
+
+      if (isArray) {
+        if (!indicies[i]) {
+          indicies[i] = 0;
+        }
+        data[i].context.r += '.' + indicies[i];
+        name[i] += '.<span class=".u-underlined u-clickable js-range" data-index="' + i + '" data-max="' + value.length + '">' + indicies[i] + '</span>';
+      }
+      if (tmplCtx.f) {
+        tmplCtx.f = data[i].context;
+        tmplCtx = tmplCtx.f;
+      }
+    }
+    html += '</table>';
+    return {html, indicies};
+  }
   utils.addEvent('js-mustache', 'click', function(e) {
     if (!utils.hasClass(e.target, 'js-mustache')) {
       return;
@@ -218,45 +258,25 @@ module.exports = function() {
     } else {
       var pane = document.createElement('div');
       pane.className = 'MustacheData js-mustache-data';
-      var html = '<table>';
-      var ctx = new Context(appData.selectedView.obj.serialize());
-      var stack = new DebugValueStack();
-      var data = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-value')));
-      var tmpl = null;
-      var tmplCtx = tmpl;
-      var name = [];
-      for (var i = 0; i < data.length; i++) {
-        stack.clear();
-        if (!tmpl) {
-          tmpl = data[i].context;
-          tmplCtx = tmpl;
-          ractiveAdaptor.render(stack, data[i].value, ctx, {});
-        } else {
-          tmplCtx.f = data[i].value;
-          ractiveAdaptor.render(stack, tmpl, ctx, {});
-        }
-        var value = stack.getOutput();
-        name.push(data[i].name);
-
-        var isArray = Context.isArray(value);
-        var extra = '';
-        if (isArray) {
-          extra += '<input type="number" min="0" max="' + value.length + '" value="0" />';
-        }
-        html += '<tr><td>' + name.join(':') + '</td><td>' + String(value) + extra + '</td></tr>';
-
-        if (isArray) {
-          data[i].context.r += '.0';
-          name[i] += '.0';
-        }
-        if (tmplCtx.f) {
-          tmplCtx.f = data[i].context;
-          tmplCtx = tmplCtx.f;
-        }
-      }
-      html += '</table>';
-      pane.innerHTML = html;
+      var output = getPanelOutput(e.currentTarget);
+      var indicies = output.indicies;
+      pane.setAttribute('data-indicies', JSON.stringify(indicies));
+      pane.innerHTML = output.html;
       e.currentTarget.appendChild(pane);
     }
+  });
+  utils.addEvent('js-mustache', 'click', function (e) {
+    if (!utils.hasClass(e.target, 'js-range')) {
+      return;
+    }
+    var pane = utils.selectElements('js-mustache-data', e.currentTarget)[0];
+    var indicies = JSON.parse(pane.getAttribute('data-indicies'));
+    var index = parseInt(e.target.getAttribute('data-index'), 10);
+    var value = parseInt(e.target.textContent, 10);
+    var max = parseInt(e.target.getAttribute('data-max'), 10);
+    indicies[index] = (value + 10) % max;
+    var output = getPanelOutput(e.currentTarget, indicies);
+    pane.setAttribute('data-indicies', JSON.stringify(indicies));
+    pane.innerHTML = output.html;
   });
 };

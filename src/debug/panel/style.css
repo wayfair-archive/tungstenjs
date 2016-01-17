@@ -157,6 +157,7 @@ body, .pure-g [class *="pure-u"] {
   position: relative;
 }
 .TemplateVisualizer .MustacheData {
+  cursor: default;
   position: absolute;
   border: 1px solid #000;
   top: 100%;
