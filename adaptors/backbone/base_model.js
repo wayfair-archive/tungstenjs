@@ -414,12 +414,17 @@ BaseModel.prototype.set = function(key, val, options) {
   /* develblock:start */
 
   // PropTypes Start
-  var validPropTypes = ['string', 'boolean', 'number', 'object', 'array', 'symbol'];
+
   var propTypes = _.result(this, 'propTypes') || {};
+  // List of valid, default prop types
+  var validPropTypes = ['string', 'boolean', 'number', 'object', 'array', 'symbol'];
   _.each(attrs, (value, key) => {
     var type = propTypes[key];
+    // Check if declared propType is a string
     if (typeof type === 'string') {
+      // Check if declared propType is in the validPropTypes list
       if (_.indexOf(validPropTypes, type) !== -1) {
+        // Check declared propType against set value
         if (typeof value !== type) {
           logger.debug('Incorrect propType: ' + key + ' is propType "' + type + '" but the set value is "' + typeof value + '".');
         }
@@ -428,6 +433,7 @@ BaseModel.prototype.set = function(key, val, options) {
       }
     }
   });
+
   // PropTypes End
 
   // In order to compare server vs. client data, save off the initial data
