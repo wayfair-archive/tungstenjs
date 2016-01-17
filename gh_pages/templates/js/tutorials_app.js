@@ -90,7 +90,7 @@
     },
     run: function() {
       var newLines = /\n/g;
-      var boilerplate = 'var rawTemplates = { app_view: \'<div id=\"app\">' + templateCode.getValue().replace(newLines, '') + '</div>\' };var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);';
+      var boilerplate = 'var rawTemplates = { app_view: \'' + templateCode.getValue().replace(newLines, '') + '\' };var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);';
       var evalNoContext = eval.bind(null);
       try {
         evalNoContext(boilerplate + '\n;' + tungstenCode.getValue());
