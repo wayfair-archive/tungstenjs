@@ -14,7 +14,7 @@
   tungsten.Model.prototype._initialize = tungsten.Model.prototype.initialize;
   tungsten.Model.prototype.initialize = function(attributes, opts) {
     opts = opts || {};
-    if (!opts.parent && !opts.collection && !this.tutorialObj) {
+    if (!this.tutorialObj) {
       runtimeObjects.push(this);
     }
     this._initialize(opts);
@@ -22,7 +22,7 @@
   tungsten.Collection.prototype._initialize = tungsten.Collection.prototype.initialize;
   tungsten.Collection.prototype.initialize = function(models, opts) {
     opts = opts || {};
-    if (!opts.parent && !this.tutorialObj) {
+    if (!this.tutorialObj) {
       runtimeObjects.push(this);
     }
     this._initialize(opts);
