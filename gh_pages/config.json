@@ -33,9 +33,7 @@
     ],
     "/js/tutorials.js": [
       "../node_modules/underscore/underscore-min.js",
-      "../../dist/tungsten.core.js",
-      "../../dist/tungsten.backbone.js",
-      "../../dist/tungsten.template.js",
+      "../../dist/tungsten.backbone.debug.js",
       "../node_modules/ractive/ractive.min.js",
       "../node_modules/codemirror/lib/codemirror.js",
       "../node_modules/codemirror/addon/fold/foldcode.js",
