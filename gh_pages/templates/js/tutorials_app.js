@@ -30,6 +30,7 @@
 
   var View = tungsten.View.extend({
     initDebug: _.noop,
+    _setElement: tungsten.Backbone.View.prototype._setElement,
     tutorialObj: true
   });
   var Model = tungsten.Model.extend({
