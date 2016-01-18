@@ -3,24 +3,42 @@
 
   Ractive.DEBUG = false;
 
-  var topViews = [];
+  var runtimeObjects = [];
   tungsten.View.prototype._initialize = tungsten.View.prototype.initialize;
   tungsten.View.prototype.initialize = function(opts) {
-    if (!opts.parentView && !this.tutorialView) {
-      topViews.push(this);
+    if (!opts.parentView && !this.tutorialObj) {
+      runtimeObjects.push(this);
+    }
+    this._initialize(opts);
+  };
+  tungsten.Model.prototype._initialize = tungsten.Model.prototype.initialize;
+  tungsten.Model.prototype.initialize = function(attributes, opts) {
+    opts = opts || {};
+    if (!opts.parent && !opts.collection && !this.tutorialObj) {
+      runtimeObjects.push(this);
+    }
+    this._initialize(opts);
+  };
+  tungsten.Collection.prototype._initialize = tungsten.Collection.prototype.initialize;
+  tungsten.Collection.prototype.initialize = function(models, opts) {
+    opts = opts || {};
+    if (!opts.parent && !this.tutorialObj) {
+      runtimeObjects.push(this);
     }
     this._initialize(opts);
   };
 
   var View = tungsten.View.extend({
     initDebug: _.noop,
-    tutorialView: true
+    tutorialObj: true
   });
   var Model = tungsten.Model.extend({
-    initDebug: _.noop
+    initDebug: _.noop,
+    tutorialObj: true
   });
   var Collection = tungsten.Collection.extend({
-    initDebug: _.noop
+    initDebug: _.noop,
+    tutorialObj: true
   });
   var ComponentWidget = tungsten.ComponentWidget;
 
@@ -174,8 +192,8 @@
       var boilerplate = 'var rawTemplates = { app_view: \'' + this.model.get('template').doSerialize().replace(newLines, '') + '\' };var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);';
       var evalNoContext = eval.bind(null);
       // Destroy any views that were created in the last run to ensure a fresh runtime
-      _.invoke(topViews, 'destroy');
-      topViews = [];
+      _.invoke(runtimeObjects, 'destroy');
+      runtimeObjects = [];
       document.getElementById('app').innerHTML = '';
       try {
         evalNoContext(boilerplate + '\n;' + this.model.get('js').doSerialize());
