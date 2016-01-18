@@ -15,15 +15,15 @@
     "pretest": "npm run eslint && npm run jscs",
     "test": "npm run tests",
     "tests": "node ./test/build.js && npm run jasmine",
-    "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev",
+    "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev=true",
     "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
-    "build-ampersand-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=ampersand --dev",
+    "build-ampersand-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=ampersand --dev=true",
     "build-ampersand-dist": "webpack --config ./webpack.standalone.js --adaptor=ampersand",
     "jscs": "node node_modules/jscs/bin/jscs src adaptors test precompile",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "jsbeautify": "find ./src ./adaptors ./test ./precompile -name '*.js' | xargs ./node_modules/.bin/js-beautify -r",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
-    "prepublish": "npm run build-bb-dist && npm run build-ampersand-dist"
+    "prepublish": "npm run build-bb-dist && npm run build-ampersand-dist && npm run build-bb-dist-dev && npm run build-ampersand-dist-dev"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
