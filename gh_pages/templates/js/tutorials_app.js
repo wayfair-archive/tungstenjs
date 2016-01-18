@@ -258,7 +258,7 @@
   var AppModel = Model.extend({
     defaults: {
       js: _.extend({ mode: 'javascript', value: '' }, codeOptions),
-      template: _.extend({ mode: 'html', value: '' }, codeOptions)
+      template: _.extend({ mode: 'mustache', value: '' }, codeOptions)
     },
     relations: {
       js: CodeMirrorComponent.constructor,

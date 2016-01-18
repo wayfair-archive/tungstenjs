@@ -8,13 +8,16 @@
   "plugins": {
     "minifiers": {
       ".js": "./uglify_minifier.js"
+    },
+    "parsers": {
+      ".markdown": "./markdown_compiler.js"
     }
   },
   "bundles": {
     "/css/all.css": [
       "../node_modules/purecss/build/pure-min.css",
       "css/side-menu.css",
-      "../node_modules/codemirror/lib/codemirror.css",
+      "../node_modules/highlight.js/styles/monokai-sublime.css",
       "../node_modules/todomvc-app-css/index.css",
       "css/app.css"
     ],
@@ -26,12 +29,7 @@
       "css/app.css"
     ],
     "/js/all.js": [
-      "../node_modules/underscore/underscore-min.js",
-      "../node_modules/codemirror/lib/codemirror.js",
-      "../node_modules/codemirror/addon/mode/overlay.js",
-      "../node_modules/codemirror/mode/javascript/javascript.js",
-      "../node_modules/codemirror/addon/runmode/runmode.js",
-      "js/docs.js"
+      "../node_modules/underscore/underscore-min.js"
     ],
     "/js/tutorials.js": [
       "../node_modules/underscore/underscore-min.js",
