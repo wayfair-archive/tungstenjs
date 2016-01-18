@@ -152,6 +152,10 @@ body, .pure-g [class *="pure-u"] {
   color: #D2AA3C;
 }
 
+.TemplateVisualizer {
+  padding-bottom: 50px;
+  padding-right: 50px;
+}
 .TemplateVisualizer .TemplateString_mustache {
   cursor: pointer;
   position: relative;
@@ -163,7 +167,7 @@ body, .pure-g [class *="pure-u"] {
   top: 100%;
   left: 0;
   background: #FFF;
-  z-index: 1;
+  z-index: 10;
   padding: 5px;
 }
 .TemplateVisualizer .MustacheData td + td {
@@ -291,6 +295,14 @@ body, .pure-g [class *="pure-u"] {
 }
 .SidebarPane_data .value {
   color: #B54A94;
+}
+/* needed for scroll lag issue */
+.SidebarPane_data pre {
+  overflow-x: scroll;
+  overflow-y: visible;
+}
+.SidebarPane_data pre code {
+  position: relative;
 }
 
 /*******************

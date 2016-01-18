@@ -426,7 +426,10 @@ function encodeEntities(str) {
     });
 }
 
-function getMustacheData(context, template, prefix='') {
+function getMustacheData(context, template, prefix) {
+  if (typeof prefix === 'undefined') {
+    prefix = '';
+  }
   return {
     mustache: context.concat({
       name: prefix + template.r,
@@ -455,7 +458,12 @@ function _toSource(stack, template, forDebugger, context) {
       _toSource(stack, template[i], forDebugger, context);
     }
   } else if (template.type === 'WidgetConstructor') {
-    _toSource(stack, template.template.templateObj, forDebugger, context);
+    if (forDebugger) {
+      var debugName = template.childView.debugName || template.childView.prototype.debugName;
+      stack.createObject('[' + debugName + ']');
+    } else {
+      _toSource(stack, template.template.templateObj, forDebugger, context);
+    }
     return;
   }
 

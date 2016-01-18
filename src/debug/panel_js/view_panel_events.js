@@ -1,16 +1,16 @@
 'use strict';
 
-var _ = require('underscore');
-var utils = require('./utils');
-var appData = require('./app_data');
-var highlighter = require('../highlighter');
-var logger = require('../../utils/logger');
-var dataset = require('data-set');
-var Context = require('../../template/template_context');
-var ractiveAdaptor = require('../../template/ractive_adaptor');
-var DebugValueStack = require('../../template/stacks/debug_value');
+const _ = require('underscore');
+const utils = require('./utils');
+const appData = require('./app_data');
+const highlighter = require('../highlighter');
+const logger = require('../../utils/logger');
+const dataset = require('data-set');
+const Context = require('../../template/template_context');
+const ractiveAdaptor = require('../../template/ractive_adaptor');
+const DebugValueStack = require('../../template/stacks/debug_value');
 
-var getClosestView = appData.getClosestView = function(elem) {
+const getClosestView = appData.getClosestView = function(elem) {
   var view = null;
   var wrapper = utils.closest(elem, 'js-view-list-item');
   if (wrapper) {
@@ -238,7 +238,7 @@ module.exports = function() {
           indicies[i] = 0;
         }
         data[i].context.r += '.' + indicies[i];
-        name[i] += '.<span class=".u-underlined u-clickable js-range" data-index="' + i + '" data-max="' + value.length + '">' + indicies[i] + '</span>';
+        name[i] += '.<span class="u-underlined u-clickable js-range" data-index="' + i + '" data-max="' + value.length + '">' + indicies[i] + '</span>';
       }
       if (tmplCtx.f) {
         tmplCtx.f = data[i].context;
@@ -256,6 +256,10 @@ module.exports = function() {
     if (existingPane) {
       existingPane.parentNode.removeChild(existingPane);
     } else {
+      var panes = utils.selectElements('js-mustache-data');
+      for (var i = 0; i < panes.length; i++) {
+        panes[i].parentNode.removeChild(panes[i]);
+      }
       var pane = document.createElement('div');
       pane.className = 'MustacheData js-mustache-data';
       var output = getPanelOutput(e.currentTarget);
