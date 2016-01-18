@@ -269,12 +269,12 @@
     postInitialize: function() {
       this.listenTo(this, 'change:tutorial change:tutorial:step', function() {
         this.get('js').set({
-          value: this.getDeep('tutorial:step:js'),
-          highlights: this.getDeep('tutorial:step:js_highlights')
+          value: this.getDeep('tutorial:step:js') || '',
+          highlights: this.getDeep('tutorial:step:js_highlights') || []
         });
         this.get('template').set({
-          value: this.getDeep('tutorial:step:template'),
-          highlights: this.getDeep('tutorial:step:template_highlights')
+          value: this.getDeep('tutorial:step:template') || '',
+          highlights: this.getDeep('tutorial:step:template_highlights') || []
         });
       });
     }
