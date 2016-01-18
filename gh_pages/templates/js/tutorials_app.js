@@ -3,7 +3,16 @@
 
   Ractive.DEBUG = false;
 
-  var View = tungsten.View;
+  var topViews = [];
+  tungsten.View.prototype._initialize = tungsten.View.prototype.initialize;
+  tungsten.View.prototype.initialize = function(opts) {
+    if (!opts.parentView && !this.tutorialView) {
+      topViews.push(this);
+    }
+    this._initialize(opts);
+  };
+
+  var View = tungsten.View.extend({tutorialView: true});
   var Model = tungsten.Model;
   var Collection = tungsten.Collection;
   var tungstenCode;
@@ -92,9 +101,12 @@
       var newLines = /\n/g;
       var boilerplate = 'var rawTemplates = { app_view: \'' + templateCode.getValue().replace(newLines, '') + '\' };var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);';
       var evalNoContext = eval.bind(null);
+      // Destroy any views that were created in the last run to ensure a fresh runtime
+      _.invoke(topViews, 'destroy');
+      topViews = [];
       document.querySelector('#app').innerHTML = '';
-        try {
-          evalNoContext(boilerplate + '\n;' + tungstenCode.getValue());
+      try {
+        evalNoContext(boilerplate + '\n;' + tungstenCode.getValue());
       } catch (e) {
         document.querySelector('#app').innerHTML = '<br><span style="color: red;">ERROR: ' + e.toString() + '</span>';
       }
