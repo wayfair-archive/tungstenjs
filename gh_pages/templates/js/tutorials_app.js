@@ -103,8 +103,9 @@
   var CodeMirrorComponent = {
     View: View.extend({
       events: {
-        'keyup': 'update',
-        'input': 'update'
+        'keyup': 'quietUpdate',
+        'input': 'quietUpdate',
+        'blur': 'update'
       },
       postInitialize: function() {
         this.listenTo(this.model, 'change:value', function(model, value) {
@@ -120,8 +121,13 @@
           });
         });
       },
+      quietUpdate: function() {
+        this.model.set('value', this.codeMirror.getValue(), {silent: true});
+      },
       update: function() {
-        this.model.updateValue(this.codeMirror.getValue());
+        this.model.set('value', this.codeMirror.getValue());
+        // Fire a manual change event as well since value might not change
+        this.model.trigger('change', this.model);
       },
       postRender: function() {
         var self = this;
@@ -134,10 +140,6 @@
     }, {debugName: 'CodeMirrorComponentView'}),
     Model: Model.extend({
       exposedEvents: ['change'],
-      updateValue: function(val) {
-        this.set('value', val, {silent: true});
-        this.trigger('change', this);
-      },
       serialize: function(data) {
         return data.value;
       }
@@ -147,14 +149,12 @@
       if (data && data.constructor === ComponentWidget) {
         return data;
       }
-      var component = new ComponentWidget(
+      return new ComponentWidget(
         CodeMirrorComponent.View,
         new CodeMirrorComponent.Model(data),
         CodeMirrorComponent.template,
         options
       );
-
-      return component;
     }
   };
 
@@ -212,6 +212,7 @@
       var self = this;
       var debouncedRun = _.debounce(this.run, 200);
       this.listenTo(this.model, 'change:js change:template', debouncedRun);
+
       this.listenTo(this.model.get('tutorials'), 'selectTutorial', _.debounce(function(tutorialName) {
         var tutorial = self.model.get('tutorials').where({name: tutorialName})[0];
         self.model.unset('step');
