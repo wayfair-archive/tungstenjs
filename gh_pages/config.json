@@ -54,6 +54,7 @@
       "js/tutorials/todo.js",
       "js/tutorials/derived.js",
       "js/tutorials/events.js",
+      "js/tutorials/components.js",
       "js/tutorials_app.js"
     ]
   }
