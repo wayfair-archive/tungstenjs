@@ -12,9 +12,16 @@
     this._initialize(opts);
   };
 
-  var View = tungsten.View.extend({tutorialView: true});
-  var Model = tungsten.Model;
-  var Collection = tungsten.Collection;
+  var View = tungsten.View.extend({
+    tutorialView: true,
+    initDebug: _.noop
+  });
+  var Model = tungsten.Model.extend({
+    initDebug: _.noop
+  });
+  var Collection = tungsten.Collection.extend({
+    initDebug: _.noop
+  });
   var tungstenCode;
   var templateCode;
 
