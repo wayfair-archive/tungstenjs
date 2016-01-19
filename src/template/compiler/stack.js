@@ -295,17 +295,9 @@ function mergeStrings(arr) {
 }
 
 function flattenAttributeValues(attrObject) {
-  if (typeof attrObject === 'undefined') {
-    attrObject = '';
-  }
   if (Array.isArray(attrObject)) {
-    for (let i = 0, l = attrObject.length; i < l; i++) {
+    for (let i = 0; i < attrObject.length; i++) {
       attrObject[i] = flattenAttributeValues(attrObject[i]);
-      if (attrObject[i] === '' && l > 1) {
-        attrObject.splice(i, 1);
-        i -= 1;
-        l -= 1;
-      }
     }
   } else if (attrObject.children) {
     attrObject.children = mergeStrings(flattenAttributeValues(attrObject.children));

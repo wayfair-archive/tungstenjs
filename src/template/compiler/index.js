@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('underscore');
+const hogan = require('hogan.js/lib/compiler');
 const types = require('../ractive_types');
 
 const parser = require('./parser');
@@ -15,7 +16,7 @@ function processBuffer() {
   if (!parser.inRelevantState()) {
     return;
   }
-  const runningName = parser.getSection();
+  let runningName = parser.getSection();
   if (parser.inAttributeName()) {
     if (runningName) {
       parser.clearBuffer();
@@ -42,56 +43,85 @@ function processBuffer() {
   }
 }
 
-function trim(str) {
-  if (str.trim) {
-    return str.trim();
+/**
+ * [processHoganObject description]
+ * @param  {Object}  token              Nested mustache tree object
+ * @param  {booelan} inDynamicAttribute Whether we are in a dynamic attribute
+ */
+function processHoganObject(token, inDynamicAttribute) {
+  if (!token) {
+    return;
   }
-
-  return str.replace(/^\s*|\s*$/g, '');
-}
-
-function atTag(tag, text, position) {
-  for (let i = 0, l = tag.length; i < l; i++) {
-    if (text.charAt(position + i) != tag.charAt(i)) {
-      return false;
+  if (Array.isArray(token)) {
+    for (let i = 0; i < token.length; i++) {
+      processHoganObject(token[i], inDynamicAttribute);
     }
+    return;
   }
 
-  return true;
+  // Any time we hit a mustache node, check the buffer
+  if (token.tag !== '_t') {
+    processBuffer();
+  }
+
+  let obj;
+  switch (token.tag) {
+    case '!':
+      // Leave control comments in as interpolators
+      if (token.n.indexOf('w/') > -1) {
+        obj = {};
+        obj.type = types.INTERPOLATOR;
+        obj.value = '!' + token.n;
+        stack.createObject(obj);
+      }
+      break;
+    case '#':
+      obj = stack.openElement(types.SECTION, token.n.toString());
+      processHoganObject(token.nodes, parser.inAttributeName());
+      processBuffer();
+      stack.closeElement(obj);
+      break;
+    case '^':
+      obj = stack.openElement(types.SECTION_UNLESS, token.n.toString());
+      processHoganObject(token.nodes, parser.inAttributeName());
+      processBuffer();
+      stack.closeElement(obj);
+      break;
+    case '>':
+      obj = {};
+      obj.type = types.PARTIAL;
+      obj.value = token.n.toString();
+      stack.createObject(obj);
+      break;
+    case '&':
+    case '{':
+      obj = {};
+      obj.type = types.TRIPLE;
+      obj.value = token.n.toString();
+      stack.createObject(obj);
+      break;
+    case '_v':
+      obj = {};
+      obj.type = types.INTERPOLATOR;
+      obj.value = token.n.toString();
+      stack.createObject(obj);
+      break;
+    case '_t':
+      if (inDynamicAttribute) {
+        stack.createObject(token.text.toString());
+      } else {
+        parser.write(token.text.toString());
+      }
+      break;
+    case '\n':
+      if (!inDynamicAttribute) {
+        parser.write('\n');
+      }
+      break;
+    default:
+      logger.exception('Unexpected mustache type found', token);
+  }
 }
-
-const OUTSIDE_MUSTACHE = 0;
-const AT_MUSTACHE_TAG = 1;
-const IN_MUSTACHE_TAG = 2;
-const tags = {
-  open: '{{',
-  close: '}}'
-};
-
-function changeDelimiters(text, index) {
-  let close = '=' + tags.close;
-  let closeIndex = text.indexOf(close, index);
-  let delimiters = trim(
-    text.substring(text.indexOf('=', index) + 1, closeIndex)
-  ).split(' ');
-
-  tags.open = delimiters[0];
-  tags.close = delimiters[delimiters.length - 1];
-
-  return closeIndex + close.length - 1;
-}
-
-const tagTypes = {
-  '#': types.SECTION,
-  '^': types.SECTION_UNLESS,
-  '/': types.CLOSING_TAG,
-  '!': types.COMMENT,
-  '>': types.PARTIAL,
-  '=': types.DELIMCHANGE,
-  '_v': types.INTERPOLATOR,
-  '{': types.TRIPLE,
-  '&': types.TRIPLE
-};
 
 /**
  * Processes a template string into a Template
@@ -102,8 +132,6 @@ const tagTypes = {
 function getTemplate(template, options) {
   stack.clear();
   parser.reset();
-  tags.open = '{{';
-  tags.close = '}}';
 
   let opts = typeof options === 'undefined' ? {} : options;
   opts.errorLevel = typeof opts.errorLevel === 'number' ? opts.errorLevel : logger.ERROR_LEVELS.EXCEPTION;
@@ -112,101 +140,20 @@ function getTemplate(template, options) {
   logger.setErrorLevel(opts.errorLevel);
   stack.setHtmlValidation(opts.validateHtml);
 
-  let templateStr = trim(template.toString());
-  let strLen = templateStr.length;
-  let state = OUTSIDE_MUSTACHE;
-
-  let buffer = '';
-  let tagType;
-  let inDynamicAttribute = 0;
-
-  for (let i = 0; i < strLen; i++) {
-    if (state === OUTSIDE_MUSTACHE) {
-      if (atTag(tags.open, templateStr, i)) {
-        --i;
-        state = AT_MUSTACHE_TAG;
-      } else {
-        if (inDynamicAttribute) {
-          stack.createObject(templateStr.charAt(i));
-        } else {
-          parser.write(templateStr.charAt(i));
-        }
-      }
-    } else if (state === AT_MUSTACHE_TAG) {
-      processBuffer();
-      i += tags.open.length - 1;
-      let controlChar;
-      do {
-        controlChar = templateStr.charAt(i + 1);
-      } while (controlChar === ' ' && i++);
-
-      let tag = tagTypes[controlChar];
-      tagType = tag || types.INTERPOLATOR;
-      if (tagType == '=') {
-        i = changeDelimiters(templateStr, i);
-        state = OUTSIDE_MUSTACHE;
-      } else {
-        if (tag) {
-          i++;
-        }
-        state = IN_MUSTACHE_TAG;
-      }
-    } else {
-      if (atTag(tags.close, templateStr, i)) {
-        let tagText = trim(buffer);
-        switch (tagType) {
-          case types.COMMENT:
-            // Leave control comments in as interpolators
-            if (tagText.indexOf('w/') > -1) {
-              stack.createObject({
-                type: types.INTERPOLATOR,
-                value: '!' + tagText
-              });
-            }
-            break;
-          case types.SECTION:
-          case types.SECTION_UNLESS:
-            if (parser.inAttributeName()) {
-              inDynamicAttribute += 1;
-            }
-            stack.openElement(tagType, tagText);
-            break;
-          case types.CLOSING_TAG:
-            if (inDynamicAttribute > 0) {
-              inDynamicAttribute -= 1;
-            }
-            let elem = stack.peek();
-            if (elem.value !== tagText) {
-              logger.exception('Mispaired mustache tags. Found {{/' + tagText + '}} where a {{/' + elem.value + '}} was expected.');
-            }
-            stack.closeElement(elem);
-            break;
-          case types.PARTIAL:
-          case types.TRIPLE:
-          case types.INTERPOLATOR:
-            stack.createObject({
-              type: tagType,
-              value: tagText
-            });
-            break;
-        }
-        buffer = '';
-        i += tags.close.length - 1;
-        state = OUTSIDE_MUSTACHE;
-        if (tagType === types.TRIPLE && tags.close === '}}') {
-          i++;
-        }
-      } else {
-        buffer += templateStr.charAt(i);
-      }
-    }
-  }
+  let templateStr = template.toString();
+  // Normalize whitespace within tokens
+  // {{ #foo }} !== {{#foo}} in Hogan's eyes
+  templateStr = templateStr.replace(/\{\{\s+([#^\/])(\S*?)\s*\}\}/g, function(match, symbol, key) {
+    return '{{' + symbol + key + '}}';
+  });
+  let tokenTree = hogan.parse(hogan.scan(templateStr));
+  processHoganObject(tokenTree);
+  let output = {};
 
   if (stack.stack.length > 0) {
     logger.exception('Not all tags were closed properly', stack.stack);
   }
 
-  let output = {};
   parser.end();
   output.templateObj = stack.getOutput();
   const Template = require('../template');
@@ -214,6 +161,6 @@ function getTemplate(template, options) {
   output.source = template;
   output.partials = _.keys(stack.partials);
   return output;
-}
+};
 
 module.exports = getTemplate;
