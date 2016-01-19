@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -76,9 +76,5 @@
   "directories": {
     "example": "./examples",
     "lib": "./src"
-  },
-  "files": [
-    "dist",
-    "webpack-helper.js"
-  ]
+  }
 }
