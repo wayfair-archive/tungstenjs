@@ -69,7 +69,7 @@ function render(stack, template, context, partials, parentView) {
   if (typeof template === 'undefined') {
     return;
   } else if (typeof template === 'string') {
-    stack.createObject(template);
+    stack.createObject(template, {escapeHTML: true});
   } else if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
       render(stack, template[i], context, partials, parentView);

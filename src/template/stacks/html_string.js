@@ -6,8 +6,9 @@ var virtualDomImplementation = require('../../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var htmlHelpers = require('../html_helpers');
 
-function HtmlStringStack(attributesOnly, debugMode) {
-  DefaultStack.call(this, true, debugMode);
+function HtmlStringStack(asHTML) {
+  this.htmlMode = !!asHTML;
+  DefaultStack.call(this, true);
 }
 HtmlStringStack.prototype = new DefaultStack();
 HtmlStringStack.prototype.constructor = HtmlStringStack;
@@ -76,6 +77,8 @@ HtmlStringStack.prototype.createObject = function(obj, options) {
   if (isWidget(obj)) {
     obj.template._iterate(null, obj.model, null, null, this);
   } else if (typeof obj === 'string' && options && options.escape) {
+    this._closeElem(escapeString(obj));
+  } else if (this.htmlMode && typeof obj === 'string' && options && options.escapeHTML) {
     this._closeElem(escapeString(obj));
   } else {
     this._closeElem(obj);

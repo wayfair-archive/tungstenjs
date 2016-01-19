@@ -60,14 +60,15 @@ Template.prototype._render = function(template, data, view, partials, stack) {
 };
 
 /**
- * Outputs the template to a HTML string
- * @param  {Object} data Model to render the template with
- * @return {String}      HTML string of the rendered template
+ * Outputs the template to a string
+ * @param  {Object}  data Model to render the template with
+ * @param  {boolean} asHTML Whether to treat output as HTML (escaping entities)
+ * @return {String}      String of the rendered template
  */
-Template.prototype.toString = function(data) {
+Template.prototype.toString = function(data, asHTML) {
   var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
   var ToHtmlString = require('./stacks/html_string');
-  return this._render(templateToRender, data, null, this.partials, new ToHtmlString());
+  return this._render(templateToRender, data, null, this.partials, new ToHtmlString(asHTML));
 };
 /**
  * Outputs the template to a DocumentFragment

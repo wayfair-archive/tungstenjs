@@ -6,7 +6,7 @@ var htmlHelpers = require('../html_helpers');
 var syntaxHighlight = require('../../debug/syntax_highlight');
 
 function HighlightedHtmlStringStack() {
-  HtmlStringStack.call(this);
+  HtmlStringStack.call(this, true);
 }
 HighlightedHtmlStringStack.prototype = new HtmlStringStack();
 HighlightedHtmlStringStack.prototype.constructor = HighlightedHtmlStringStack;
