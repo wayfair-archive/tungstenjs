@@ -32,9 +32,29 @@ const templateStack = {
   startID: '',
   result: [],
   stack: [],
-  partials: {},
+  tokens: {
+    sections: {},
+    interpolators: {},
+    triple: {},
+    partials: {}
+  },
   inSVG: false,
   htmlValidationMode: true
+};
+
+templateStack.clear = function() {
+  this.result = [];
+  this.stack = [];
+  this.partials = {};
+  this.startID = '';
+  this.inSVG = false;
+  this.htmlValidationMode = true;
+  this.tokens = {
+    sections: {},
+    interpolators: {},
+    triple: {},
+    partials: {}
+  };
 };
 
 templateStack.setHtmlValidation = function(htmlValidationMode) {
@@ -100,6 +120,9 @@ templateStack.openElement = function(type, value) {
     elem.children.push(value);
   } else {
     elem.value = value;
+  }
+  if (type === types.SECTION || type === types.SECTION_UNLESS) {
+    this.tokens.sections[elem.value] = true;
   }
   this.stack.push(elem);
 
@@ -232,8 +255,16 @@ templateStack._closeElem = function(obj) {
 };
 
 templateStack.createObject = function(obj, options) {
-  if (obj.type === types.PARTIAL) {
-    this.partials[obj.value] = true;
+  switch (obj.type) {
+    case types.PARTIAL:
+      this.tokens.partials[obj.value] = true;
+      break;
+    case types.INTERPOLATOR:
+      this.tokens.interpolators[obj.value] = true;
+      break;
+    case types.TRIPLE:
+      this.tokens.triple[obj.value] = true;
+      break;
   }
   this._closeElem(obj, options);
 };
@@ -273,15 +304,6 @@ templateStack.getOutput = function() {
   }
   // Always return the array
   return this.result;
-};
-
-templateStack.clear = function() {
-  this.result = [];
-  this.stack = [];
-  this.partials = {};
-  this.startID = '';
-  this.inSVG = false;
-  this.htmlValidationMode = true;
 };
 
 function mergeStrings(arr) {

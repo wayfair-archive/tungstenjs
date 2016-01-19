@@ -159,7 +159,10 @@ function getTemplate(template, options) {
   const Template = require('../template');
   output.template = new Template(output.templateObj);
   output.source = template;
-  output.partials = _.keys(stack.partials);
+  output.tokens = {};
+  _.each(stack.tokens, function(values, type) {
+    output.tokens[type] = _.keys(values);
+  });
   return output;
 }
 
