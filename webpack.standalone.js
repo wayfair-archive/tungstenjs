@@ -27,13 +27,14 @@ function processArgs() {
 var args = processArgs();
 
 // set adaptor with --adaptor=adaptor_name
+// set debug mode with --dev=true
 // default is backbone
 var adaptor = args['--adaptor'] || 'backbone';
-
+var devStr = args['--dev'] ? '.debug' : '';
 module.exports = webpackSettings.compileSource({
   entry: './adaptors/' + adaptor,
   output: {
-    filename: './dist/tungsten.' + adaptor + '.js',
+    filename: './dist/tungsten.' + adaptor + devStr + '.js',
     libraryTarget: 'umd',
     library: 'tungsten'
   },

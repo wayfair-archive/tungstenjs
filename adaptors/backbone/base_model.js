@@ -426,7 +426,7 @@ BaseModel.prototype.set = function(key, val, options) {
     // Using JSON to get a deep clone to avoid any overlapping object references
     var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
     delete options.initialData;
-    this.initialData = JSON.parse(initialStr);
+    this.initialData = JSON.parse(initialStr || '{}');
     if (!_.isObject(this.initialData) || _.isArray(this.initialData)) {
       logger.warn('Model expected object of attributes but got: ' + initialStr);
     }

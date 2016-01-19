@@ -29,7 +29,9 @@ module.exports = function(html, stack) {
     _stack = defaultStack;
   }
 
+  parser.reset();
   parser.end(html);
+  // @TODO add logging when parser._stack.length > 0 as the html string left behind tags
 
   if (!stack) {
     return _stack.getOutput();

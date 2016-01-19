@@ -1603,18 +1603,17 @@ describe('base_model.js backbone functionality', function() {
     });
   });
 
-  // failing
-  // it('#1664 - Changing from one value, silently to another, back to original triggers a change.', function(done) {
-  //   var model = new BaseModel({x: 1});
-  //   model.on('change:x', function() {
-  //     value++;
-  //     expect(value).to.equal(1);
-  //     done();
-  //   });
-  //   model.set({x: 2}, {silent: true});
-  //   model.set({x: 3}, {silent: true});
-  //   model.set({x: 1});
-  // });
+  it('#1664 - Changing from one value, silently to another, back to original triggers a change.', function(done) {
+    var model = new BaseModel({x: 1});
+    model.on('change:x', function() {
+      value++;
+      expect(value).to.equal(1);
+      done();
+    });
+    model.set({x: 2}, {silent: true});
+    model.set({x: 3}, {silent: true});
+    model.set({x: 1});
+  });
 
   it('#1664 - multiple silent changes nested inside a change event', function() {
     var changes = [];
@@ -2038,7 +2037,7 @@ describe('base_model.js backbone nested functionality', function() {
  * Derived and session property unit tests modified from ampersand-state
  * https://github.com/AmpersandJS/ampersand-state/blob/master/test/basics.js
  *    @license MIT
- *    Copyright © 2014 &yet, LLC and AmpersandJS contributors
+ *    Copyright 2014 &yet, LLC and AmpersandJS contributors
  *    Permission is hereby granted, free of charge, to any person obtaining a
  *    copy of this software and associated documentation files (the
  *    "Software"), to deal in the Software without restriction, including

@@ -78,6 +78,7 @@ function renderDebugPanel() {
     });
     debugWindow.render = renderDebugPanel;
     utils.setDebugWindow(debugWindow);
+    appData.validateSelected();
     try {
       appData.resetCounters();
       debugDoc.body.innerHTML = templates.panel(appData);
