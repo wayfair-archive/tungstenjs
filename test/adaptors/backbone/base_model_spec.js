@@ -13,6 +13,7 @@ describe('base_model.js static api', function() {
       expect(BaseModel.extend).to.be.a('function');
       expect(BaseModel.extend).to.have.length(2);
     });
+
     it('should be different than Backbone\'s', function() {
       expect(BaseModel.extend).not.to.equal(Backbone.extend);
     });
@@ -396,6 +397,24 @@ describe('base_model.js backbone functionality', function() {
       defaults: {
         first_name: 'Unknown',
         last_name: 'Unknown'
+      }
+    });
+    var model = new Model({
+      'first_name': 'John'
+    });
+    equal(model.get('first_name'), 'John');
+    equal(model.get('last_name'), 'Unknown');
+  });
+
+  it('initialize with attributes hash defaults', function() {
+    var Model = BaseModel.extend({
+      attributes: {
+        first_name: {
+          default: 'Unknown'
+        },
+        last_name: {
+          default: 'Unknown'
+        }
       }
     });
     var model = new Model({
@@ -1988,43 +2007,6 @@ describe('base_model.js backbone nested functionality', function() {
     expect(book.get('pages').at(2).get('words')).not.to.equal(600);
     expect(book.get('pages').at(2).id).to.equal(2);
   });
-  // throws exception in debug build
-  // it('Should trigger reset events on nested collection relations', function(done) {
-  //       var Things = BaseCollection.extend({
-  //     model: Thing,
-//
-  //     postInitialize: function() {
-  //       this.listenTo('reset', function() {
-  //         count++;
-  //         expect(count).to.equal(1);
-  //         done();
-  //       });
-  //     }
-  //   });
-//
-  //   var Bucket = BaseModel.extend({
-  //     relations: {
-  //       'things': Things
-  //     }
-  //   });
-//
-  //   var Buckets = BaseCollection.extend({
-  //     model: Bucket
-  //   });
-//
-  //   var buckets = new Buckets();
-  //   buckets.reset([
-  //     {
-  //       name: 'a',
-  //       things: [{num: 1}, {num: 2}]
-  //     },
-  //     {
-  //       name: 'b',
-  //       things: [{num: 1}, {num: 2}]
-  //     }
-  //   ]);
-//
-  // });
 
   it('Should recursively call .toJSON', function() {
     var json = book.toJSON();
@@ -2111,6 +2093,58 @@ describe('base_model.js special properties', function() {
     person.set('name', 'world');
     expect(person.get('name')).to.equal('world');
   });
+
+  it('should fire events for cached derived properties in attributes hash on dependency change', function() {
+    var count = 0;
+    var NewPerson = Person.extend({
+      attributes: {
+        greeting: {
+          derived : {
+            deps: ['name'],
+            fn: function() {
+              count++;
+              return 'hi, ' + this.get('name') + '!';
+            }
+          }
+        }
+      }
+    });
+    var person = new NewPerson({name: 'world'});
+    expect(person.get('greeting')).to.equal('hi, world!');
+
+    // use again, should not increment counter
+    person.get('greeting');
+    expect(count, 1);
+
+    person.set('name', 'something');
+    expect(person.get('greeting')).to.equal('hi, something!');
+    // reference again
+    person.get('greeting');
+    expect(count).to.equal(2);
+  });
+
+  it('shouldn\'t fire events for cached derived properties in attributes hash if result is same', function () {
+    var NewPerson = Person.extend({
+      attributes: {
+        greeting: {
+          derived: {
+            deps: ['name'],
+            fn: function () {
+              return 'hi, ' + this.get('name') + '!';
+            }
+          }
+        }
+      }
+    });
+    var person = new NewPerson({name: 'world'});
+    person.on('change:greeting', function () {
+      // shouldn't fire if value is unchanged same value
+      expect(true).to.equal(false);
+    });
+    person.set('name', 'world');
+    expect(person.get('name')).to.equal('world');
+  });
+
   it('should exclude session properties from toJSON', function () {
     var Bar = BaseModel.extend({
       session: ['active']

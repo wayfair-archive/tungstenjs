@@ -216,6 +216,28 @@ var BaseModel = Backbone.Model.extend({
     }
     /* develblock:end */
 
+    // Allow for an attributes hash where users can assign certain properties like
+    // defaults, derived, and relations to attributes instead of the inverse.
+    var protoPropNames = {
+      defaults: 'default',
+      derived: 'derived',
+      relations: 'relation'
+    };
+
+    _.each(protoProps.attributes, function(attrValue, attrKey) {
+      _.each(protoPropNames, function(attrPropName, protoPropName) {
+        if (attrValue.hasOwnProperty(attrPropName)) {
+          var mergeProp = {};
+          mergeProp[attrKey] = attrValue[attrPropName];
+
+          if (protoProps[protoPropName]) {
+          }
+
+          protoProps[protoPropName] = _.defaults(mergeProp, protoProps[protoPropName]);
+        }
+      });
+    });
+
     return Backbone.Model.extend.call(this, protoProps, staticProps);
   }
 });
