@@ -109,16 +109,25 @@
         'blur': 'update'
       },
       postInitialize: function() {
-        this.listenTo(this.model, 'change:value', function(model, value) {
+        this.listenTo(this.model, 'change:clean_value', function(model, value) {
           this.codeMirror.setValue(value);
+          this.setHighlights();
+          this.codeMirror.setCursor(0, 0);
+          // Scrolling once doesn't seem to register with the scroll bar
+          this.codeMirror.scrollTo(0, 1);
+          this.codeMirror.scrollTo(0, 0);
         });
-        this.listenTo(this.model, 'change:highlights', function(model, value) {
-          var codeMirror = this.codeMirror;
-          _.each(value, function(highlight) {
-            codeMirror.markText(highlight.start, highlight.end, {
-              className: 'styled-background',
-              clearOnEnter: true
-            });
+        this.listenTo(this.model, 'change:highlights', this.setHighlights);
+      },
+      setHighlights: function() {
+        var codeMirror = this.codeMirror;
+        // Clear all current marks
+        _.invoke(codeMirror.getAllMarks(), 'clear');
+
+        _.each(this.model.get('highlights'), function(highlight) {
+          codeMirror.markText(highlight.start, highlight.end, {
+            className: 'styled-background',
+            clearOnEnter: true
           });
         });
       },
@@ -134,7 +143,11 @@
         var self = this;
         if (!this.codeMirror) {
           setTimeout(function() {
-            self.codeMirror = CodeMirror(self.el, self.model.attributes);
+            self.codeMirror = CodeMirror(self.el, _.extend({
+              value: self.model.get('clean_value'),
+              mode: self.model.get('mode')
+            }, codeOptions));
+            self.setHighlights();
           });
         }
       }
@@ -142,7 +155,48 @@
     Model: Model.extend({
       exposedEvents: ['change'],
       serialize: function(data) {
-        return data.value;
+        return data.value.replace(/``/g, '');
+      },
+      derived: {
+        highlights: {
+          deps: ['value'],
+          fn: function() {
+            var codeMirrorHighlights = [];
+            var value = this.get('value') || '';
+            var highlights = [];
+            var lines = value.split(/\r?\n/);
+            for (var line = 0; line < lines.length; line++) {
+              var cleanedLine = '';
+              var lineStr = lines[line];
+              var offset = 0;
+              for (var ch = 0; ch < lineStr.length; ch++) {
+                if (lineStr.charAt(ch) === '`' && lineStr.charAt(ch + 1) === '`') {
+                  highlights.push({ line: line, ch: ch - offset });
+                  offset += 2;
+                  ch += 1;
+                } else {
+                  cleanedLine += lineStr.charAt(ch);
+                }
+              }
+            }
+
+            var l = highlights.length - (highlights.length % 2);
+            for (var i = 0; i < l; i += 2) {
+              codeMirrorHighlights.push({
+                start: highlights[i],
+                end: highlights[i + 1]
+              });
+            }
+
+            return codeMirrorHighlights;
+          }
+        },
+        clean_value: {
+          deps: ['value'],
+          fn: function() {
+            return this.get('value').replace(/``/g, '');
+          }
+        }
       }
     }, {debugName: 'CodeMirrorComponentModel'}),
     template: compiledTemplates.codeMirror,
@@ -227,6 +281,9 @@
 
         self.model.set('tutorial', tutorial.toJSON());
         self.listenTo(self.model.get('tutorial').get('steps'), 'selectStep', function(s) {
+          if (s.get('selected') === true) {
+            return;
+          }
           self.model.get('tutorial').get('steps').each(function(step) {
             step.set('selected', false);
           });
@@ -278,8 +335,8 @@
   });
   var AppModel = Model.extend({
     defaults: {
-      js: _.extend({ mode: 'javascript', value: '' }, codeOptions),
-      template: _.extend({ mode: 'mustache', value: '' }, codeOptions)
+      js: { mode: 'javascript', value: '' },
+      template: { mode: 'mustache', value: '' }
     },
     relations: {
       js: CodeMirrorComponent.constructor,
@@ -290,12 +347,10 @@
     postInitialize: function() {
       this.listenTo(this, 'change:tutorial change:tutorial:step', function() {
         this.get('js').set({
-          value: this.getDeep('tutorial:step:js') || '',
-          highlights: this.getDeep('tutorial:step:js_highlights') || []
+          value: this.getDeep('tutorial:step:js') || ''
         });
         this.get('template').set({
-          value: this.getDeep('tutorial:step:template') || '',
-          highlights: this.getDeep('tutorial:step:template_highlights') || []
+          value: this.getDeep('tutorial:step:template') || ''
         });
       });
     }
