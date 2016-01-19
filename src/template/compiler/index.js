@@ -136,8 +136,10 @@ function getTemplate(template, options) {
   let opts = typeof options === 'undefined' ? {} : options;
   opts.errorLevel = typeof opts.errorLevel === 'number' ? opts.errorLevel : logger.ERROR_LEVELS.EXCEPTION;
   opts.validateHtml = opts.validateHtml != null ? opts.validateHtml : 'strict';
+  opts.logger = opts.logger != null ? opts.logger : {};
 
   logger.setErrorLevel(opts.errorLevel);
+  logger.setOverrides(opts.logger);
   stack.setHtmlValidation(opts.validateHtml);
 
   let templateStr = template.toString();

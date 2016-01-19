@@ -9,21 +9,35 @@ const ERROR_LEVELS = {
 };
 
 let errorLevel = ERROR_LEVELS.ERROR;
+let overrides = {};
 
 function logMessage(messageLevel, data) {
   // Reduce any error messages to the maximum allowed
   let level = Math.min(errorLevel, messageLevel);
   switch (level) {
     case ERROR_LEVELS.EXCEPTION:
-      let error = _.map(data, (item) => {
-        return JSON.stringify(item);
-      });
-      throw Error(error.join(' '));
+      if (overrides.exception) {
+        overrides.exception(data);
+      } else {
+        let error = _.map(data, (item) => {
+          return JSON.stringify(item);
+        });
+        throw Error(error.join(' '));
+      }
+      break;
     case ERROR_LEVELS.WARNING:
-      logger.warn.apply(logger, data);
+      if (overrides.warning) {
+        overrides.warning(data);
+      } else {
+        logger.warn.apply(logger, data);
+      }
       break;
     default:
-      logger.log.apply(logger, data);
+      if (overrides.log) {
+        overrides.log(data);
+      } else {
+        logger.log.apply(logger, data);
+      }
   }
 }
 
@@ -45,4 +59,7 @@ module.exports.ERROR_LEVELS = ERROR_LEVELS;
 
 module.exports.setErrorLevel = function(errorLevelToSet) {
   errorLevel = errorLevelToSet;
+};
+module.exports.setOverrides = function(opts) {
+  overrides = opts;
 };
