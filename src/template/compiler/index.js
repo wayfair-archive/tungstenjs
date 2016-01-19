@@ -161,6 +161,6 @@ function getTemplate(template, options) {
   output.source = template;
   output.partials = _.keys(stack.partials);
   return output;
-};
+}
 
 module.exports = getTemplate;

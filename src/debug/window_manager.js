@@ -17,7 +17,7 @@ function closePanel() {
 }
 
 function collectError() {
-  console.error(debugWindow.event.error, debugWindow.event.error.stack);
+  console.error(debugWindow.event.error, debugWindow.event.error.stack); // eslint-disable-line no-console
 }
 
 function getWindow() {
