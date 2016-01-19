@@ -53,6 +53,14 @@ var appData = window.appData = module.exports = {
     }
     return bgData.colors[bgData.counter];
   },
+  validateSelected: function() {
+    if (appData.selectedView && !appData.views[appData.selectedView.debugName]) {
+      appData.selectedView = null;
+    }
+    if (appData.selectedModel && !appData.models[appData.selectedModel.debugName]) {
+      appData.selectedModel = null;
+    }
+  },
   selectView: function(viewWrapper) {
     if (appData.selectedView) {
       appData.selectedView.obj.off('rendered', appData.updateSelectedView);
