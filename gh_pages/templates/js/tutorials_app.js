@@ -193,6 +193,7 @@
       var boilerplate = 'var rawTemplates = { app_view: \'' + this.model.get('template').doSerialize().replace(newLines, '') + '\' };var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);';
       var evalNoContext = eval.bind(null);
       // Destroy any views that were created in the last run to ensure a fresh runtime
+      _.invoke(runtimeObjects, 'stopListening');
       _.invoke(runtimeObjects, 'destroy');
       runtimeObjects = [];
       document.getElementById('app').innerHTML = '';
