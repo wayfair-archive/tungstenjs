@@ -78,6 +78,7 @@
     "lib": "./src"
   },
   "files": [
-    "dist"
+    "dist",
+    "webpack-helper.js"
   ]
 }
