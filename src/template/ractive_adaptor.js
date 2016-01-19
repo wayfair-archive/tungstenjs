@@ -41,7 +41,7 @@ function parseStringAttrs(templates, context) {
  * @return {String}                String value for the attribute
  */
 function renderAttributeString(values, context) {
-  if (typeof values === 'string') {
+  if (typeof values === 'string' || typeof values === 'boolean') {
     return values;
   }
 
