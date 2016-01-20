@@ -64,7 +64,6 @@ Context.prototype.isModel = function(object) {
 };
 
 /* develblock:start */
-var logger = require('../utils/logger');
 /**
  * Debug Helpers for determining context
  */
