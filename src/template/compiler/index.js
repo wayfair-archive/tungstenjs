@@ -134,11 +134,11 @@ function getTemplate(template, options) {
   parser.reset();
 
   let opts = typeof options === 'undefined' ? {} : options;
-  opts.errorLevel = typeof opts.errorLevel === 'number' ? opts.errorLevel : logger.ERROR_LEVELS.EXCEPTION;
+  opts.strict = typeof opts.strict === 'boolean' ? opts.strict : true;
   opts.validateHtml = opts.validateHtml != null ? opts.validateHtml : 'strict';
   opts.logger = opts.logger != null ? opts.logger : {};
 
-  logger.setErrorLevel(opts.errorLevel);
+  logger.setStrictMode(opts.strict);
   logger.setOverrides(opts.logger);
   stack.setHtmlValidation(opts.validateHtml);
 

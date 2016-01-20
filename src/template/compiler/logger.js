@@ -8,13 +8,15 @@ const ERROR_LEVELS = {
   'WARNING': 1
 };
 
-let errorLevel = ERROR_LEVELS.ERROR;
+let strictMode = true;
 let overrides = {};
 
 function logMessage(messageLevel, data) {
   // Reduce any error messages to the maximum allowed
-  let level = Math.min(errorLevel, messageLevel);
-  switch (level) {
+  if (strictMode) {
+    messageLevel = ERROR_LEVELS.EXCEPTION;
+  }
+  switch (messageLevel) {
     case ERROR_LEVELS.EXCEPTION:
       if (overrides.exception) {
         overrides.exception(data);
@@ -55,10 +57,8 @@ module.exports.exception = function() {
   logMessage(ERROR_LEVELS.EXCEPTION, data);
 };
 
-module.exports.ERROR_LEVELS = ERROR_LEVELS;
-
-module.exports.setErrorLevel = function(errorLevelToSet) {
-  errorLevel = errorLevelToSet;
+module.exports.setStrictMode = function(value) {
+  strictMode = value;
 };
 module.exports.setOverrides = function(opts) {
   overrides = opts;
