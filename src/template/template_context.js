@@ -8,6 +8,7 @@
  */
 'use strict';
 
+var logger = require('../utils/logger');
 var isArray = require('../utils/is_array');
 
 /**
@@ -178,6 +179,7 @@ Context.prototype.lookup = function(name, handleLambda) {
             handleLambda(value, fnContext);
             return;
           } else {
+            logger.warn('Computed properties are now deprecated and will be removed soon. Please change this to a derived property');
             value = value.call(fnContext);
           }
         }
