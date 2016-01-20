@@ -3,20 +3,9 @@
 const _ = require('underscore');
 const types = require('../ractive_types');
 const htmlHelpers = require('../html_helpers');
-const logger = require('./logger');
+const logger = require('./compiler_logger');
 
 // Keys to use for the outputted array
-// const templateKeys = {
-//   type: 'type', // t
-//   typeExtra: 'typeExtra', // n
-//   value: 'value', // r
-//   commentValue: 'value', // c
-//   children: 'children', // f
-//   tagName: 'tagName', // e
-//   attributes: 'attributes', // a
-//   dynamicAttributes: 'dynamicAttributes' // m
-// };
-// Keys for Ractive adaptor compatibility
 const templateKeys = {
   type: 't',
   typeExtra: 'n',

@@ -3,7 +3,7 @@
 const Parser = require('htmlparser2/lib/Parser');
 const types = require('../ractive_types');
 const stack = require('./stack');
-const logger = require('./logger');
+const logger = require('./compiler_logger');
 
 // Taken from https://github.com/fb55/htmlparser2/blob/master/lib/Parser.js#L59
 const voidElements = {

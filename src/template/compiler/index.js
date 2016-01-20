@@ -6,7 +6,7 @@ const types = require('../ractive_types');
 
 const parser = require('./parser');
 const stack = require('./stack');
-const logger = require('./logger');
+const logger = require('./compiler_logger');
 
 /**
  * Gets the current buffer from htmlparser and processes it
