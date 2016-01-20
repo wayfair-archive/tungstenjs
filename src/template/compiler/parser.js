@@ -144,6 +144,11 @@ MustacheParser.prototype.onclosetag = function(name) {
     name = name.toLowerCase();
   }
 
+  if (name in voidElements) {
+    logger.warn(name + ' is a void element so does not need a closing tag');
+    return;
+  }
+
   if (this._stack.length && (!(name in voidElements) || this._options.xmlMode)) {
     let pos = this._stack.lastIndexOf(name);
     if (pos === this._stack.length - 1) {
