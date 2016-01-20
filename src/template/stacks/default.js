@@ -35,7 +35,9 @@ function DefaultStack(attributesOnly, startID, debugMode) {
   this.stack = [];
 }
 
-DefaultStack.prototype.stringify = String;
+DefaultStack.prototype.stringify = function(val) {
+  return val.toString();
+};
 
 DefaultStack.prototype.peek = function() {
   return this.stack[this.stack.length - 1];
