@@ -414,18 +414,6 @@ function toSource(template, forDebugger) {
 }
 module.exports = toSource;
 
-var entities = require('entities');
-function encodeEntities(str) {
-  return entities.encodeHTML(str)
-    .replace(/&lowbar;/, '_')
-    .replace(/&NewLine;/, '\n')
-    .replace(/&quest;/, '?')
-    .replace(/&equals;/, '=')
-    .replace(/&#(x.*?);/g, function(match, capture) {
-      return '&#' + parseInt(capture.substr(1), 16) + ';';
-    });
-}
-
 function getMustacheData(context, template, prefix) {
   if (typeof prefix === 'undefined') {
     prefix = '';
@@ -452,7 +440,7 @@ function _toSource(stack, template, forDebugger, context) {
   if (typeof template === 'undefined') {
     return;
   } else if (typeof template === 'string') {
-    stack.createObject(encodeEntities(template));
+    stack.createObject(template);
   } else if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
       _toSource(stack, template[i], forDebugger, context);
