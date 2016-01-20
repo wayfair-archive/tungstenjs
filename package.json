@@ -37,7 +37,7 @@
     "data-set": "^4.0.0",
     "entities": "^1.1.1",
     "form-serialize": "^0.6.0",
-    "hogan.js": "^3.0.2",
+    "hogan.js": "git+http://github.com/MattDeeg/hogan.js.git#master",
     "htmlparser2": "^3.8.3",
     "jsdom": "^6.5.0",
     "json-loader": "^0.5.2",

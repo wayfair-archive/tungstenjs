@@ -135,6 +135,7 @@ function getTemplate(template, options) {
 
   let opts = typeof options === 'undefined' ? {} : options;
   opts.strict = typeof opts.strict === 'boolean' ? opts.strict : true;
+  opts.preserveWhitespace = typeof opts.preserveWhitespace === 'boolean' ? opts.preserveWhitespace : false;
   opts.validateHtml = opts.validateHtml != null ? opts.validateHtml : 'strict';
   opts.logger = opts.logger != null ? opts.logger : {};
 
@@ -148,7 +149,7 @@ function getTemplate(template, options) {
   templateStr = templateStr.replace(/\{\{\s+([#^\/])(\S*?)\s*\}\}/g, function(match, symbol, key) {
     return '{{' + symbol + key + '}}';
   });
-  let tokenTree = hogan.parse(hogan.scan(templateStr));
+  let tokenTree = hogan.parse(hogan.scan(templateStr, null, opts.preserveWhitespace), templateStr, {preserveWhitespace: opts.preserveWhitespace});
   processHoganObject(tokenTree);
   let output = {};
 
