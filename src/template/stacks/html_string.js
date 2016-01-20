@@ -22,9 +22,12 @@ var escapeCharacters = [
 ];
 // closing syntax highlighting from quote "
 
-function escapeString(str) {
+function escapeString(str, skipQuot) {
   if (charsToEscape.test(str)) {
     for (var i = 0; i < escapeCharacters.length; i++) {
+      if (skipQuot && escapeCharacters[i][1] === '&quot;') {
+        continue;
+      }
       str = str.replace(escapeCharacters[i][0], escapeCharacters[i][1]);
     }
   }
@@ -79,7 +82,7 @@ HtmlStringStack.prototype.createObject = function(obj, options) {
   } else if (typeof obj === 'string' && options && options.escape) {
     this._closeElem(escapeString(obj));
   } else if (this.htmlMode && typeof obj === 'string' && options && options.escapeHTML) {
-    this._closeElem(escapeString(obj));
+    this._closeElem(escapeString(obj, true));
   } else {
     this._closeElem(obj);
   }

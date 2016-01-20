@@ -385,7 +385,7 @@ function reverseAttributeString(templates, join, forDebugger, context) {
   }
   /* develblock:end */
   if (!stack) {
-    stack = new HtmlString();
+    stack = new HtmlString(true);
   }
   for (var i = 0; i < templates.length; i++) {
     stack.clear();
@@ -407,7 +407,7 @@ function toSource(template, forDebugger) {
   }
   /* develblock:end */
   if (!stack) {
-    stack = new HtmlString();
+    stack = new HtmlString(true);
   }
   _toSource(stack, template, forDebugger, []);
   return stack.getOutput();
@@ -440,7 +440,7 @@ function _toSource(stack, template, forDebugger, context) {
   if (typeof template === 'undefined') {
     return;
   } else if (typeof template === 'string') {
-    stack.createObject(template);
+    stack.createObject(template, {escapeHTML: true});
   } else if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
       _toSource(stack, template[i], forDebugger, context);
@@ -458,7 +458,7 @@ function _toSource(stack, template, forDebugger, context) {
   switch (template.t) {
     // <!-- comment -->
     case ractiveTypes.COMMENT:
-      var htmlString = new HtmlString();
+      var htmlString = new HtmlString(true);
       _toSource(htmlString, template.c, forDebugger, context);
       stack.createComment(htmlString.getOutput());
       break;
