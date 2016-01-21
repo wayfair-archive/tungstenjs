@@ -192,7 +192,7 @@ var BaseModel = Backbone.Model.extend({
   // Empty default function
   postInitialize: function() {}
 }, {
-  extend: function(protoProps, staticProps) {
+  extend: function(protoProps, staticProps, specialProps) {
     /* develblock:start */
     // Certain methods of BaseModel should be unable to be overridden
     var methods = ['initialize'];
@@ -216,26 +216,44 @@ var BaseModel = Backbone.Model.extend({
     }
     /* develblock:end */
 
-    // Allow for an attributes hash where users can assign certain properties like
-    // defaults, derived, and relations to attributes instead of the inverse.
-    var protoPropNames = {
-      defaults: 'default',
+    // Allow certain properties to be listed under items in an attributes
+    // hash These sub-properties will be pulled from the items in the
+    // attributes hash and merged at the parent level with proper subkeys.
+    // The items in the attributes hash will themselves be moved to the parent
+    // level with their special properties removed.
+    var specialPropNames = _.defaults({
+      default: 'defaults',
       derived: 'derived',
-      relations: 'relation'
-    };
+      relation: 'relations'
+    }, specialProps);
 
-    _.each(protoProps.attributes, function(attrValue, attrKey) {
-      _.each(protoPropNames, function(attrPropName, protoPropName) {
-        if (attrValue.hasOwnProperty(attrPropName)) {
-          var mergeProp = {};
-          mergeProp[attrKey] = attrValue[attrPropName];
+    var attributes = protoProps.attributes;
+    delete protoProps.attributes;
 
-          if (protoProps[protoPropName]) {
-          }
+    _.each(attributes, function(attributeValue, attributeKey) {
+      var mergeProps = {};
 
-          protoProps[protoPropName] = _.defaults(mergeProp, protoProps[protoPropName]);
+      if (_.keys(attributeValue).length) {
+        var specialProps = _.pick(attributeValue, _.keys(specialPropNames));
+        _.each(specialProps, function(specialProp, specialPropName) {
+          var localMergeProp = {};
+          var protoName = specialPropNames[specialPropName];
+          protoProps[protoName] = protoProps[protoName] || {};
+          localMergeProp[attributeKey] = specialProp;
+          protoProps[protoName] = _.defaults(protoProps[protoName], localMergeProp);
+
+        });
+
+        var filteredProps = _.omit(attributeValue, _.keys(specialPropNames));
+        if (!_.isEmpty(filteredProps)) {
+          mergeProps[attributeKey] = filteredProps;
+          _.defaults(protoProps, mergeProps);
         }
-      });
+      }
+      else {
+        mergeProps[attributeKey] = attributeValue;
+        _.defaults(protoProps, mergeProps);
+      }
     });
 
     return Backbone.Model.extend.call(this, protoProps, staticProps);

@@ -11,7 +11,7 @@ describe('base_model.js static api', function() {
   describe('extend', function () {
     it('should be a function', function() {
       expect(BaseModel.extend).to.be.a('function');
-      expect(BaseModel.extend).to.have.length(2);
+      expect(BaseModel.extend).to.have.length(3);
     });
 
     it('should be different than Backbone\'s', function() {
@@ -2099,7 +2099,7 @@ describe('base_model.js special properties', function() {
     var NewPerson = Person.extend({
       attributes: {
         greeting: {
-          derived : {
+          derived: {
             deps: ['name'],
             fn: function() {
               count++;
