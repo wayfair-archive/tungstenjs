@@ -23,8 +23,8 @@ module.exports.NODE_TYPES = {
 var entityMap = {};
 // entities is the package used by htmlparser2
 _.each(require('entities/maps/entities.json'), function(charCode, name) {
-  // Ignore whitespace only characters
-  if (!/\s/.test(charCode)) {
+  // Ignore multicharacter or whitespace only characters
+  if (charCode.length === 1 && !/\s/.test(charCode)) {
     entityMap[charCode.charCodeAt(0)] = '&' + name.toLowerCase() + ';';
   }
 });

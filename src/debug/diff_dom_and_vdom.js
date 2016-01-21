@@ -148,7 +148,7 @@ function recursiveDiff(vtree, elem) {
           output += '<ins>' + utils.elementToString(elem, chars) + '</ins>';
         }
       } else {
-        output += utils.getCommentString(textDiff(vtree.text, elem.textContent), chars);
+        output += utils.getCommentString(textDiff(utils.escapeString(vtree.text), elem.textContent), chars);
       }
     } else if (vtree && vtree.view) {
       widgetName = vtree.view.getDebugName();
