@@ -13,6 +13,7 @@ var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
 var virtualHyperscript = require('../vdom/virtual_hyperscript');
 var vdom = virtualDomImplementation.vdom;
 var utils = require('./to_string_utils');
+var escapeString = require('../utils/escape_string');
 
 function toString(vtree, escaped) {
   var chars = utils.entities[escaped ? 'escaped' : 'unescaped'];
@@ -58,9 +59,9 @@ function toString(vtree, escaped) {
       output += elem.innerHTML;
     }
   } else if (virtualDomImplementation.isVText(vtree)) {
-    output += utils.escapeString(vtree.text);
+    output += escapeString(vtree.text);
   } else if (typeof vtree === 'string') {
-    output += utils.escapeString(vtree);
+    output += escapeString(vtree);
   } else if (vtree.length) {
     for (i = 0; i < vtree.length; i++) {
       output += toString(vtree[i], escaped);

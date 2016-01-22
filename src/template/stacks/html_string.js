@@ -5,6 +5,7 @@ var DefaultStack = require('./default');
 var virtualDomImplementation = require('../../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var htmlHelpers = require('../html_helpers');
+var escapeString = require('../../utils/escape_string');
 
 function HtmlStringStack(asHTML) {
   this.htmlMode = !!asHTML;
@@ -13,26 +14,7 @@ function HtmlStringStack(asHTML) {
 HtmlStringStack.prototype = new DefaultStack();
 HtmlStringStack.prototype.constructor = HtmlStringStack;
 
-var charsToEscape = /[&<>\"\']/;
-var escapeCharacters = [
-  [/&/g, '&amp;'],
-  [/</g, '&lt;'],
-  [/>/g, '&gt;'],
-  [/\"/g, '&quot;']
-];
-// closing syntax highlighting from quote "
 
-function escapeString(str, skipQuot) {
-  if (charsToEscape.test(str)) {
-    for (var i = 0; i < escapeCharacters.length; i++) {
-      if (skipQuot && escapeCharacters[i][1] === '&quot;') {
-        continue;
-      }
-      str = str.replace(escapeCharacters[i][0], escapeCharacters[i][1]);
-    }
-  }
-  return str;
-}
 
 /**
  * When an element is resolved, push it to the result or the parent item on the stack
@@ -82,7 +64,7 @@ HtmlStringStack.prototype.createObject = function(obj, options) {
   } else if (typeof obj === 'string' && options && options.escape) {
     this._closeElem(escapeString(obj));
   } else if (this.htmlMode && typeof obj === 'string' && options && options.escapeHTML) {
-    this._closeElem(escapeString(obj, true));
+    this._closeElem(escapeString(obj));
   } else {
     this._closeElem(obj);
   }

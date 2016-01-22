@@ -124,6 +124,11 @@ templateStack.processObject = function(obj) {
   }
   let processed = {};
   switch (obj.type) {
+    case types.TEXT:
+      processed[templateKeys.type] = types.TEXT;
+      processed[templateKeys.value] = obj.value;
+      processed[templateKeys.typeExtra] = obj.original;
+      break;
     case types.ELEMENT:
       processed[templateKeys.type] = types.ELEMENT;
       processed[templateKeys.tagName] = obj.tagName;
@@ -236,8 +241,9 @@ templateStack._closeElem = function(obj) {
   }
 
   // Combine adjacent strings
-  if (typeof obj === 'string' && typeof pushingTo[pushingTo.length - 1] === 'string') {
-    pushingTo[pushingTo.length - 1] += obj;
+  if (obj.type === types.TEXT && pushingTo[pushingTo.length - 1] && pushingTo[pushingTo.length - 1].type === types.TEXT) {
+    pushingTo[pushingTo.length - 1].value += obj.value;
+    pushingTo[pushingTo.length - 1].original += obj.original;
   } else {
     pushingTo.push(obj);
   }

@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var escapeString = require('../utils/escape_string');
 
 /**
  * Transformed property names that should reverted
@@ -17,31 +17,6 @@ module.exports.NODE_TYPES = {
   ELEMENT: 1,
   TEXT: 3,
   COMMENT: 8
-};
-
-
-var entityMap = {};
-// entities is the package used by htmlparser2
-_.each(require('entities/maps/entities.json'), function(charCode, name) {
-  // Ignore multicharacter or whitespace only characters
-  if (charCode.length === 1 && !/\s/.test(charCode)) {
-    entityMap[charCode.charCodeAt(0)] = '&' + name.toLowerCase() + ';';
-  }
-});
-
-/**
- * Escapes HTML entities in the given string
- *
- * @param  {string} str String to escape
- *
- * @return {string}     Escaped string
- */
-module.exports.escapeString = function(str) {
-  var output = '';
-  for (var i = 0; i < str.length; i++) {
-    output += entityMap[str.charCodeAt(i)] || str.charAt(i);
-  }
-  return output;
 };
 
 /** @type {Object} Escaped or unescaped entities */
@@ -111,8 +86,8 @@ module.exports.elementToString = function(elem, chars) {
   if (elem.nodeType === module.exports.NODE_TYPES.COMMENT) {
     return module.exports.getCommentString(elem.textContent, chars);
   } else if (elem.nodeType === module.exports.NODE_TYPES.TEXT) {
-    return module.exports.escapeString(elem.textContent);
+    return escapeString(elem.textContent);
   } else {
-    return module.exports.escapeString(elem.outerHTML);
+    return escapeString(elem.outerHTML);
   }
 };

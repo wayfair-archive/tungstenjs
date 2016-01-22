@@ -90,6 +90,9 @@ function render(stack, template, context, partials, parentView) {
   }
 
   switch (template.t) {
+    case ractiveTypes.TEXT:
+      stack.createObject(template.r, {escapeHTML: true});
+      break;
     // <!-- comment -->
     case ractiveTypes.COMMENT:
       var toString = new ToString();
@@ -440,7 +443,7 @@ function _toSource(stack, template, forDebugger, context) {
   if (typeof template === 'undefined') {
     return;
   } else if (typeof template === 'string') {
-    stack.createObject(template, {escapeHTML: true});
+    stack.createObject(template);
   } else if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
       _toSource(stack, template[i], forDebugger, context);
@@ -456,6 +459,9 @@ function _toSource(stack, template, forDebugger, context) {
   }
 
   switch (template.t) {
+    case ractiveTypes.TEXT:
+      stack.createObject(template.n);
+      break;
     // <!-- comment -->
     case ractiveTypes.COMMENT:
       var htmlString = new HtmlString(true);

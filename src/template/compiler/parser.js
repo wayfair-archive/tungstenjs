@@ -4,6 +4,7 @@ const Parser = require('htmlparser2/lib/Parser');
 const types = require('../ractive_types');
 const stack = require('./stack');
 const logger = require('./compiler_logger');
+const decoder = require('./decoder');
 
 // Taken from https://github.com/fb55/htmlparser2/blob/master/lib/Parser.js#L59
 const voidElements = {
@@ -77,7 +78,7 @@ ATTRIBUTE_STATES[IN_COMMENT] = true;
  */
 function MustacheParser(cbs) {
   Parser.call(this, cbs, {
-    decodeEntities: true,
+    decodeEntities: false,
     recognizeSelfClosing: true
   });
 }
@@ -270,7 +271,10 @@ const parser = new MustacheParser({
     }
   },
   ontext: function(text) {
-    stack.createObject(text);
+    let decoded = decoder(text);
+    for (let i = 0; i < decoded.length; i++) {
+      stack.createObject(decoded[i]);
+    }
   }
 });
 
