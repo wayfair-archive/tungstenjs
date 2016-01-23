@@ -456,14 +456,21 @@ BaseModel.prototype.set = function(key, val, options) {
   // PropTypes Start
 
   var propTypes = _.result(this, 'propTypes') || {};
-  // List of valid, default prop types
-  var validPropTypes = ['string', 'boolean', 'number', 'object', 'array', 'symbol'];
+  // List of valid, default prop type
+  var validPropTypes = {
+    'string': 'string',
+    'boolean': 'boolean',
+    'number': 'number',
+    'object': 'object',
+    'array': 'array',
+    'symbol': 'symbol'
+  };
   _.each(attrs, (value, key) => {
     var type = propTypes[key];
     // Check if declared propType is a string
     if (typeof type === 'string') {
       // Check if declared propType is in the validPropTypes list
-      if (_.indexOf(validPropTypes, type) !== -1) {
+      if (validPropTypes[type] === type) {
         // Check declared propType against set value
         if (typeof value !== type) {
           logger.debug('Incorrect propType: ' + key + ' is propType "' + type + '" but the set value is "' + typeof value + '".');
