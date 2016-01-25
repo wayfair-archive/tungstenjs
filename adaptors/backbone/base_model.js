@@ -229,13 +229,13 @@ var BaseModel = Backbone.Model.extend({
       }, specialProps);
 
       var attributes = protoProps.attributes;
-      delete protoProps.attributes;
-
+      protoProps.attributes = null;
+      var specialPropNamesKeys = _.keys(specialPropNames);
       _.each(attributes, function(attributeValue, attributeKey) {
         var mergeProps = {};
-
         if (_.keys(attributeValue).length) {
-          var specialProps = _.pick(attributeValue, _.keys(specialPropNames));
+
+          var specialProps = _.pick(attributeValue, specialPropNamesKeys);
           _.each(specialProps, function(specialProp, specialPropName) {
             var localMergeProp = {};
             var protoName = specialPropNames[specialPropName];
@@ -245,7 +245,7 @@ var BaseModel = Backbone.Model.extend({
 
           });
 
-          var filteredProps = _.omit(attributeValue, _.keys(specialPropNames));
+          var filteredProps = _.omit(attributeValue, specialPropNamesKeys);
           if (!_.isEmpty(filteredProps)) {
             mergeProps[attributeKey] = filteredProps;
             _.defaults(protoProps, mergeProps);
