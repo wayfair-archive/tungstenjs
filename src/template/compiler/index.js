@@ -146,7 +146,7 @@ function getTemplate(template, options) {
   let templateStr = template.toString();
   // Normalize whitespace within tokens
   // {{ #foo }} !== {{#foo}} in Hogan's eyes
-  templateStr = templateStr.replace(/\{\{\s+([#^\/])(\S*?)\s*\}\}/g, function(match, symbol, key) {
+  templateStr = templateStr.replace(/\{\{\s+([#^\/>!])(\S*?)\s*\}\}/g, function(match, symbol, key) {
     return '{{' + symbol + key + '}}';
   });
   let tokenTree = hogan.parse(hogan.scan(templateStr, null, opts.preserveWhitespace), templateStr, {preserveWhitespace: opts.preserveWhitespace});
