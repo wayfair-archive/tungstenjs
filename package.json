@@ -43,7 +43,6 @@
     "json-loader": "^0.5.2",
     "punch": "^0.5.46",
     "purecss": "^0.6.0",
-    "ractive": "^0.6.1",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
     "webpack-strip-block": "0.0.1",

@@ -8,7 +8,7 @@ Tungsten.js is a modular framework for creating web UIs with high-performance re
 ## What Tungsten.js Provides
 
 * High-performance virtual DOM updates powered by [virtual-dom](https://github.com/Matt-Esch/virtual-dom)
-* Use of mustache templates, parsed with [Ractive.js](https://github.com/ractivejs/ractive), which render to virtual DOM objects
+* Use of mustache templates, parsed with [mustache.js](https://github.com/janl/mustache.js) and [htmlparser2](https://github.com/fb55/htmlparser2), which render to virtual DOM objects
 * Event system which binds and delegates each event type to the document root
 * Adaptor for [Backbone.js](https://github.com/jashkenas/backbone) or [Ampersand.js](https://github.com/ampersandjs) views and models
 
@@ -127,8 +127,8 @@ Tungsten.js uses portions of these and other open source libraries:
 
 * [virtual-dom](https://github.com/Matt-Esch/virtual-dom)
 * [vdom-virtualize](https://github.com/marcelklehr/vdom-virtualize)
-* [Ractive.js](https://github.com/ractivejs/ractive)
 * [mustache.js](https://github.com/janl/mustache.js)
+* [htmlparser2](https://github.com/fb55/htmlparser2)
 * [backbone](https://github.com/jashkenas/backbone)
 * [backbone-nested-models](https://github.com/blittle/backbone-nested-models)
 * [Tocca.js](https://github.com/GianlucaGuarini/Tocca.js)
