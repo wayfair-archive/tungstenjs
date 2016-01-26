@@ -11,6 +11,9 @@
 var logger = require('../utils/logger');
 var isArray = require('../utils/is_array');
 
+/** @type {Object} storage to prevent repeated warnings about the same computed property */
+var computedPropertyWarnings = {};
+
 /**
  * Represents a rendering context by wrapping a view object and
  * maintaining a reference to the parent context.
@@ -178,7 +181,10 @@ Context.prototype.lookup = function(name, handleLambda) {
             handleLambda(value, fnContext);
             return;
           } else {
-            logger.warn('Computed properties are now deprecated and will be removed soon. Please change this to a derived property');
+            if (computedPropertyWarnings[name] !== true) {
+              computedPropertyWarnings[name] = true;
+              logger.warn('Computed properties are now deprecated and will be removed soon. Please change "' + name + '" to a derived property');
+            }
             value = value.call(fnContext);
           }
         }
