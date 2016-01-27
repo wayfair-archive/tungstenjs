@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(hljs) {
   var BUILT_INS = {'builtin-name': 'content yield'};
   return {

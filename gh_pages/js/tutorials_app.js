@@ -1,7 +1,5 @@
-(function(Ractive, CodeMirror, _, tungsten) {
+(function(CodeMirror, _, tungsten) {
   'use strict';
-
-  Ractive.DEBUG = false;
 
   var runtimeObjects = [];
   tungsten.View.prototype._initialize = tungsten.View.prototype.initialize;
@@ -243,7 +241,7 @@
       }
     },
     run: function() {
-      var newLines = /\n/g;
+      var newLines = /\r?\n/g;
       var boilerplate = 'var rawTemplates = { app_view: \'' + this.model.get('template').doSerialize().replace(newLines, '') + '\' };var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);';
       var evalNoContext = eval.bind(null);
       // Destroy any views that were created in the last run to ensure a fresh runtime
@@ -358,7 +356,7 @@
   var appModel = new AppModel(window.data);
 
   // Start app
-  var app = new AppView({
+  var app = window.app = new AppView({
     el: document.getElementById('appwrapper'),
     template: compiledTemplates.app,
     model: appModel,
@@ -382,4 +380,4 @@
   }
 
 
-})(Ractive, CodeMirror, _, tungsten);
+})(CodeMirror, _, tungsten);
