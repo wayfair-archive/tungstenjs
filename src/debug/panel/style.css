@@ -148,6 +148,34 @@ body, .pure-g [class *="pure-u"] {
 .TemplateString_comment {
   color: #1F6F20;
 }
+.TemplateString_mustache {
+  color: #D2AA3C;
+}
+
+.TemplateVisualizer {
+  padding-bottom: 50px;
+  padding-right: 50px;
+}
+.TemplateVisualizer .TemplateString_mustache {
+  cursor: pointer;
+  position: relative;
+}
+.TemplateVisualizer .MustacheData {
+  cursor: default;
+  position: absolute;
+  border: 1px solid #000;
+  top: 100%;
+  left: 0;
+  background: #FFF;
+  z-index: 10;
+  padding: 5px;
+}
+.TemplateVisualizer .MustacheData td + td {
+  padding-left: 10px;
+}
+.TemplateVisualizer .MustacheData table {
+  font-size: inherit;
+}
 
 /*******************
  * Tree structure
@@ -267,6 +295,14 @@ body, .pure-g [class *="pure-u"] {
 }
 .SidebarPane_data .value {
   color: #B54A94;
+}
+/* needed for scroll lag issue */
+.SidebarPane_data pre {
+  overflow-x: scroll;
+  overflow-y: visible;
+}
+.SidebarPane_data pre code {
+  position: relative;
 }
 
 /*******************

@@ -27,6 +27,7 @@
         renderPanel('info_panels/view/_dom_events_panel', 'viewDomEvents');
         renderPanel('info_panels/view/_events_panel', 'viewEvents');
         renderPanel('info_panels/view/_time_travel_panel', 'viewTimeTravel');
+        renderPanel('info_panels/view/_template_visualizer', 'viewTemplate');
         renderPanel('info_panels/view/_template_info_panel', 'viewVDOM');
         renderPanel('info_panels/view/_template_info_diff_panel', 'viewDiff');
       }

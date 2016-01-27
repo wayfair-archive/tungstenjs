@@ -56,23 +56,26 @@ var initialize = function(view, parentContext) {
  * @return {Any?}        Value from view or null
  */
 var lookupValue = function(view, name) {
-  var value = null;
+  // If the view is a Model and has a property of the given name
   if (this.isModel(view) && view.has(name)) {
-    value = view.get(name);
-  } else if (view[name] != null) {
+    return view.get(name);
+  }
+  // If the view is a Collection, and name is a numeric string, return the item at that index
+  if (this.isArray(view) && typeof view.at === 'function' && /^\d+$/.test(name)) {
+    return view.at(name);
+  }
+  // Fall back to a property check
+  if (view[name] != null) {
     if (view.tungstenCollection && blockedCollectionProperties[name]) {
       return null;
     }
     if (view.tungstenModel && blockedModelProperties[name]) {
       return null;
     }
-    value = view[name];
+    return view[name];
   }
 
-  if (typeof value === 'function') {
-    value = value.call(view);
-  }
-  return value;
+  return null;
 };
 
 module.exports = {

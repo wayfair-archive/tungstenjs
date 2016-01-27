@@ -1,57 +1,71 @@
 {
-  "template_dir": "templates",
-  "content_dir": "contents",
-  "output_dir": "../output",
-  "server": {
-    "port": 9009
+  "outputDir": "../output",
+  "pageTemplate": "layout",
+  "pages": {
+    "index": {"src": "../readme.md", "css": "css/all.css", "js": "js/all.js"},
+    "views": {"src": "../docs/views.md", "css": "css/all.css", "js": "js/all.js"},
+    "models": {"src": "../docs/models.md", "css": "css/all.css", "js": "js/all.js"},
+    "templates": {"src": "../docs/templates.md", "css": "css/all.css", "js": "js/all.js"},
+    "components": {"src": "../docs/components.md", "css": "css/all.css", "js": "js/all.js"},
+    "debugger": {"src": "../docs/debugger.md", "css": "css/all.css", "js": "js/all.js"},
+    "tutorials": {"css": "css/tutorials.css", "js": "js/tutorials.js", "pageClass": "tutorials_page"}
   },
-  "plugins": {
-    "minifiers": {
-      ".js": "./uglify_minifier.js"
-    },
-    "parsers": {
-      ".markdown": "./markdown_compiler.js"
-    }
+  "pageData": {
+    "site-title": "Tungsten.js",
+    "docs": [
+      {"name": "Views", "url_name": "views.html"},
+      {"name": "Templates", "url_name": "templates.html"},
+      {"name": "Models", "url_name": "models.html"},
+      {"name": "Components", "url_name": "components.html"},
+      {"name": "Debugger", "url_name": "debugger.html"}
+    ],
+    "tutorials": [
+      {"name": "Hello World", "url_name": "Hello%20World"},
+      {"name": "Derived Props", "url_name": "Derived%20Props"},
+      {"name": "TodoMVC", "url_name": "TodoMVC"},
+      {"name": "Views & Context", "url_name": "Views%20&%20Context"},
+      {"name": "Events", "url_name": "Events"},
+      {"name": "Components", "url_name": "Components"}
+    ]
   },
   "bundles": {
-    "/css/all.css": [
-      "../node_modules/purecss/build/pure-min.css",
-      "css/side-menu.css",
-      "../node_modules/highlight.js/styles/monokai-sublime.css",
-      "../node_modules/todomvc-app-css/index.css",
-      "css/app.css"
+    "css/all.css": [
+      "./node_modules/purecss/build/pure-min.css",
+      "./css/side-menu.css",
+      "./node_modules/highlight.js/styles/monokai-sublime.css",
+      "./node_modules/todomvc-app-css/index.css",
+      "./css/app.css"
     ],
-    "/css/tutorials.css": [
-      "../node_modules/purecss/build/pure-min.css",
-      "css/side-menu.css",
-      "../node_modules/codemirror/lib/codemirror.css",
-      "../node_modules/todomvc-app-css/index.css",
-      "css/app.css"
+    "css/tutorials.css": [
+      "./node_modules/purecss/build/pure-min.css",
+      "./css/side-menu.css",
+      "./node_modules/codemirror/lib/codemirror.css",
+      "./node_modules/todomvc-app-css/index.css",
+      "./css/app.css"
     ],
-    "/js/all.js": [
-      "../node_modules/underscore/underscore-min.js"
+    "js/all.js": [
+      "./node_modules/underscore/underscore-min.js"
     ],
-    "/js/tutorials.js": [
-      "../node_modules/underscore/underscore-min.js",
-      "../../dist/tungsten.backbone.debug.js",
-      "../node_modules/ractive/ractive.min.js",
-      "../node_modules/codemirror/lib/codemirror.js",
-      "../node_modules/codemirror/addon/fold/foldcode.js",
-      "../node_modules/codemirror/addon/fold/foldgutter.js",
-      "../node_modules/codemirror/addon/fold/brace-fold.js",
-      "../node_modules/codemirror/addon/fold/comment-fold.js",
-      "../node_modules/codemirror/addon/fold/xml-fold.js",
-      "../node_modules/codemirror/addon/fold/indent-fold.js",
-      "../node_modules/codemirror/addon/mode/overlay.js",
-      "../node_modules/codemirror/mode/xml/xml.js",
-      "../node_modules/codemirror/mode/javascript/javascript.js",
-      "js/tutorials/hello.js",
-      "js/tutorials/views.js",
-      "js/tutorials/todo.js",
-      "js/tutorials/derived.js",
-      "js/tutorials/events.js",
-      "js/tutorials/components.js",
-      "js/tutorials_app.js"
+    "js/tutorials.js": [
+      "./node_modules/underscore/underscore-min.js",
+      "../dist/tungsten.backbone.debug.js",
+      "./node_modules/codemirror/lib/codemirror.js",
+      "./node_modules/codemirror/addon/fold/foldcode.js",
+      "./node_modules/codemirror/addon/fold/foldgutter.js",
+      "./node_modules/codemirror/addon/fold/brace-fold.js",
+      "./node_modules/codemirror/addon/fold/comment-fold.js",
+      "./node_modules/codemirror/addon/fold/xml-fold.js",
+      "./node_modules/codemirror/addon/fold/indent-fold.js",
+      "./node_modules/codemirror/addon/mode/overlay.js",
+      "./node_modules/codemirror/mode/xml/xml.js",
+      "./node_modules/codemirror/mode/javascript/javascript.js",
+      "./js/tutorials/hello.js",
+      "./js/tutorials/views.js",
+      "./js/tutorials/todo.js",
+      "./js/tutorials/derived.js",
+      "./js/tutorials/events.js",
+      "./js/tutorials/components.js",
+      "./js/tutorials_app.js"
     ]
   }
 }

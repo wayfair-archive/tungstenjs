@@ -5,30 +5,16 @@ var DefaultStack = require('./default');
 var virtualDomImplementation = require('../../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var htmlHelpers = require('../html_helpers');
+var escapeString = require('../../utils/escape_string');
 
-function HtmlStringStack(attributesOnly, debugMode) {
-  DefaultStack.call(this, true, debugMode);
+function HtmlStringStack(asHTML) {
+  this.htmlMode = !!asHTML;
+  DefaultStack.call(this, true);
 }
 HtmlStringStack.prototype = new DefaultStack();
 HtmlStringStack.prototype.constructor = HtmlStringStack;
 
-var charsToEscape = /[&<>\"\']/;
-var escapeCharacters = [
-  [/&/g, '&amp;'],
-  [/</g, '&lt;'],
-  [/>/g, '&gt;'],
-  [/\"/g, '&quot;']
-];
-// closing syntax highlighting from quote "
 
-function escapeString(str) {
-  if (charsToEscape.test(str)) {
-    for (var i = 0; i < escapeCharacters.length; i++) {
-      str = str.replace(escapeCharacters[i][0], escapeCharacters[i][1]);
-    }
-  }
-  return str;
-}
 
 /**
  * When an element is resolved, push it to the result or the parent item on the stack
@@ -41,15 +27,18 @@ HtmlStringStack.prototype.processObject = function(obj) {
     // For HTML strings, a textarea's value is defined by it's childNode
     // For everything else, it uses the value property
     // Since .toString is used least by far, add the expense here
-    if (obj.tagName.toLowerCase() === 'textarea' && obj.properties.attributes && obj.properties.attributes.value) {
+    if (obj.tagName.toLowerCase() === 'textarea' && obj.properties.attributes && obj.properties.attributes.value != null) {
       obj.children = [obj.properties.attributes.value];
       obj.properties.attributes.value = null;
     }
     _.each(obj.properties.attributes, function(value, name) {
-      if (value != null) {
+      if (typeof value === 'boolean') {
+        htmlStr += ' ' + name;
+      } else if (value != null) {
         htmlStr += ' ' + name + '="' + value + '"';
       }
     });
+
     if (obj.children.length) {
       htmlStr += '>';
       htmlStr += obj.children.join('');
@@ -73,6 +62,8 @@ HtmlStringStack.prototype.createObject = function(obj, options) {
   if (isWidget(obj)) {
     obj.template._iterate(null, obj.model, null, null, this);
   } else if (typeof obj === 'string' && options && options.escape) {
+    this._closeElem(escapeString(obj));
+  } else if (this.htmlMode && typeof obj === 'string' && options && options.escapeHTML) {
     this._closeElem(escapeString(obj));
   } else {
     this._closeElem(obj);

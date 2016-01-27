@@ -7,18 +7,20 @@
 
 var _ = require('underscore');
 var logger = require('../utils/logger');
+var syntaxHighlight = require('./syntax_highlight');
 
 var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
 var virtualHyperscript = require('../vdom/virtual_hyperscript');
 var vdom = virtualDomImplementation.vdom;
 var utils = require('./to_string_utils');
+var escapeString = require('../utils/escape_string');
 
 function toString(vtree, escaped) {
   var chars = utils.entities[escaped ? 'escaped' : 'unescaped'];
   var output = '';
   var i;
   if (virtualDomImplementation.isVNode(vtree)) {
-    var tagName = '<span class="TemplateString_tag">' + vtree.tagName.toLowerCase() + '</span>';
+    var tagName = syntaxHighlight.tag(vtree.tagName.toLowerCase());
     output += chars.open + tagName;
     var addAttributes = function(val, key) {
       if (virtualDomImplementation.isHook(val)) {
@@ -33,11 +35,7 @@ function toString(vtree, escaped) {
       if (key.toLowerCase() === 'contenteditable' && val.toLowerCase() === 'inherit') {
         return;
       }
-      if (utils.propertiesToTransform[key]) {
-        output += ' <span class="TemplateString_attrName">' + utils.propertiesToTransform[key] + '</span>=<span class="TemplateString_attrValue">' + chars.quote + val + chars.quote + '</span>';
-      } else {
-        output += ' <span class="TemplateString_attrName">' + key + '</span>=<span class="TemplateString_attrValue">' + chars.quote + val + chars.quote + '</span>';
-      }
+      output += ' ' + syntaxHighlight.attribute(utils.propertiesToTransform[key] || key, val);
     };
     _.each(vtree.properties, addAttributes);
     _.each(vtree.properties.attributes, addAttributes);
@@ -61,9 +59,9 @@ function toString(vtree, escaped) {
       output += elem.innerHTML;
     }
   } else if (virtualDomImplementation.isVText(vtree)) {
-    output += utils.escapeString(vtree.text);
+    output += escapeString(vtree.text);
   } else if (typeof vtree === 'string') {
-    output += utils.escapeString(vtree);
+    output += escapeString(vtree);
   } else if (vtree.length) {
     for (i = 0; i < vtree.length; i++) {
       output += toString(vtree[i], escaped);

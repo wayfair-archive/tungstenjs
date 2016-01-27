@@ -8,6 +8,7 @@ var ractiveTypes = require('./ractive_types');
 var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var isVNode = virtualDomImplementation.isVNode;
+var compiler = require('./compiler');
 
 var htmlParser = require('./html_parser');
 
@@ -40,7 +41,7 @@ function parseStringAttrs(templates, context) {
  * @return {String}                String value for the attribute
  */
 function renderAttributeString(values, context) {
-  if (typeof values === 'string') {
+  if (typeof values === 'string' || typeof values === 'boolean') {
     return values;
   }
 
@@ -68,12 +69,14 @@ function render(stack, template, context, partials, parentView) {
   if (typeof template === 'undefined') {
     return;
   } else if (typeof template === 'string') {
-    stack.createObject(template);
+    stack.createObject(template, {escapeHTML: true});
   } else if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
       render(stack, template[i], context, partials, parentView);
     }
-  } else if (template.type === 'Widget') {
+  } else if (template.type === 'Template') {
+    render(stack, template.templateObj, context, partials, parentView);
+  } else if (template.type === 'WidgetConstructor') {
     // Widgets are how we attach Views to subtrees
     // If we have a parentView, we're rendering Vdom, if not this is rendering to Dom or string, so ignore
     if (parentView) {
@@ -87,6 +90,9 @@ function render(stack, template, context, partials, parentView) {
   }
 
   switch (template.t) {
+    case ractiveTypes.TEXT:
+      stack.createObject(template.r, {escapeHTML: true});
+      break;
     // <!-- comment -->
     case ractiveTypes.COMMENT:
       var toString = new ToString();
@@ -96,13 +102,20 @@ function render(stack, template, context, partials, parentView) {
     // {{value}} or {{{value}}} or {{& value}}
     case ractiveTypes.INTERPOLATOR:
     case ractiveTypes.TRIPLE:
-      value = context.lookup(Context.getInterpolatorKey(template), stack);
+      value = context.lookup(template.r);
       if (value != null) {
         // If value is already a widget or vnode, add it wholesale
         if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
           stack.createObject(value);
+        } else if (template.t === ractiveTypes.TRIPLE && value.type === 'Template') {
+          var ctx = value.context || context;
+          render(stack, value.templateObj, ctx, partials, parentView);
+        } else if (Context.isArray(value) && template.t === ractiveTypes.TRIPLE && value.vdomArray === true) {
+          for (i = 0; i < value.length; i++) {
+            stack.createObject(value[i]);
+          }
         } else {
-          stack.createObject(value.toString(), {
+          stack.createObject(stack.stringify(value), {
             // TRIPLE is unescaped content, so it may need parsing
             parse: template.t === ractiveTypes.TRIPLE,
             // INTERPOLATOR is escaped content, so it may need escaping
@@ -114,7 +127,7 @@ function render(stack, template, context, partials, parentView) {
 
     // {{> partial}}
     case ractiveTypes.PARTIAL:
-      var partialName = Context.getInterpolatorKey(template);
+      var partialName = template.r;
       if (partials[partialName]) {
         var partialTemplate = partials[partialName];
         if (partialTemplate._iterate) {
@@ -131,7 +144,52 @@ function render(stack, template, context, partials, parentView) {
 
     // {{# section}} or {{^ unless}}
     case ractiveTypes.SECTION:
-      value = Context.parseValue(context.lookup(Context.getInterpolatorKey(template), stack));
+      var handleLambda = null;
+      var lambdaHandled = false;
+      if (template.n !== ractiveTypes.SECTION_UNLESS) {
+        // Section tags can be lambdas with contents
+        handleLambda = function(fn, ctx) {
+          // Create a template from the section's children
+          lambdaHandled = true;
+          if (fn.type === 'Widget' && typeof fn.updateContent === 'function') {
+            var contentTemplate = new (require('./template'))(template.f, partials, parentView, context);
+            fn.updateContent(contentTemplate);
+            stack.createObject(fn);
+          } else {
+            var templateString = toSource(template.f);
+            var lambdaValue = fn.call(ctx, templateString, function(template) {
+              var templateData = compiler(template);
+              return templateData.template.toString(context);
+            });
+            if (lambdaValue) {
+              if (typeof lambdaValue === 'string') {
+                var resultHasClass = lambdaValue.indexOf(' class="') > -1 && parentView.childViews;
+                var resultHasMustache = lambdaValue.indexOf('{{');
+                if (resultHasMustache || resultHasClass) {
+                  var lambdaTemplateData = compiler(lambdaValue);
+                  if (resultHasClass) {
+                    lambdaTemplateData.template = lambdaTemplateData.template.attachView(parentView);
+                  }
+                  lambdaValue = lambdaTemplateData.template.templateObj;
+                } else {
+                  stack.createObject(lambdaValue, {
+                    parse: true,
+                    escape: false
+                  });
+                  return;
+                }
+              }
+              render(stack, lambdaValue, context, partials, parentView);
+            }
+          }
+        };
+      }
+      value = context.lookup(template.r, handleLambda);
+      // if the render function passed into the lambda handler was invoked, don't process further
+      if (lambdaHandled) {
+        break;
+      }
+      value = Context.parseValue(value);
       if (template.n === ractiveTypes.SECTION_UNLESS) {
         if (!value.isTruthy) {
           render(stack, template.f, context, partials, parentView);
@@ -210,6 +268,11 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
     return template;
   }
 
+  // If this template has been attached to before, disregard any widget points
+  if (template.type === 'WidgetConstructor') {
+    return attachView(view, template.template.templateObj, createWidget, partials, childClasses);
+  }
+
   // Arrays need iterating over
   if (Context.isArray(template)) {
     for (i = 0; i < template.length; i++) {
@@ -254,7 +317,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
 
   // If this is a partial, lookup and recurse
   if (template.t === ractiveTypes.PARTIAL) {
-    var partialName = Context.getInterpolatorKey(template);
+    var partialName = template.r;
     if (!partials[partialName]) {
       logger.warn('Warning: no partial registered with the name ' + partialName);
       return null;
@@ -277,6 +340,9 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
 };
 
 function wrap(templateObj, tagName) {
+  if (tagName === false) {
+    return templateObj;
+  }
   var objectToWrap = null;
 
   if (templateObj.t === ractiveTypes.ELEMENT) {
@@ -302,12 +368,166 @@ function wrap(templateObj, tagName) {
 }
 
 function attach(templateObj, view, createWidget, partials) {
-  templateObj = wrap(templateObj, view.el.nodeName);
+  templateObj = wrap(templateObj, view.el && view.el.nodeName);
   return attachView(view, templateObj, createWidget, partials);
+}
+
+/*****************************************************************************/
+
+var HtmlString = require('./stacks/html_string');
+function reverseAttributeString(templates, join, forDebugger, context) {
+  if (typeof templates === 'string' || typeof templates === 'boolean') {
+    return templates;
+  }
+  var output = [];
+  var stack;
+  /* develblock:start */
+  if (forDebugger) {
+    var HighlightedHtmlString = require('./stacks/highlighted_html_string');
+    stack = new HighlightedHtmlString();
+  }
+  /* develblock:end */
+  if (!stack) {
+    stack = new HtmlString(true);
+  }
+  for (var i = 0; i < templates.length; i++) {
+    stack.clear();
+    _toSource(stack, templates[i], forDebugger, context);
+    output.push(stack.getOutput());
+  }
+  return output.join(join);
+}
+
+function toSource(template, forDebugger) {
+  if (template.wrapped) {
+    template = template.f;
+  }
+  var stack;
+  /* develblock:start */
+  if (forDebugger) {
+    var HighlightedHtmlString = require('./stacks/highlighted_html_string');
+    stack = new HighlightedHtmlString();
+  }
+  /* develblock:end */
+  if (!stack) {
+    stack = new HtmlString(true);
+  }
+  _toSource(stack, template, forDebugger, []);
+  return stack.getOutput();
+}
+module.exports = toSource;
+
+function getMustacheData(context, template, prefix) {
+  if (typeof prefix === 'undefined') {
+    prefix = '';
+  }
+  return {
+    mustache: context.concat({
+      name: prefix + template.r,
+      context: {
+        t: template.t,
+        n: template.n,
+        r: template.r
+      },
+      value: {
+        t: ractiveTypes.TRIPLE,
+        n: template.n,
+        r: template.r
+      }
+    })
+  };
+}
+
+function _toSource(stack, template, forDebugger, context) {
+  var i;
+  if (typeof template === 'undefined') {
+    return;
+  } else if (typeof template === 'string') {
+    stack.createObject(template);
+  } else if (Context.isArray(template)) {
+    for (i = 0; i < template.length; i++) {
+      _toSource(stack, template[i], forDebugger, context);
+    }
+  } else if (template.type === 'WidgetConstructor') {
+    if (forDebugger) {
+      var debugName = template.childView.debugName || template.childView.prototype.debugName;
+      stack.createObject('[' + debugName + ']');
+    } else {
+      _toSource(stack, template.template.templateObj, forDebugger, context);
+    }
+    return;
+  }
+
+  switch (template.t) {
+    case ractiveTypes.TEXT:
+      stack.createObject(template.n);
+      break;
+    // <!-- comment -->
+    case ractiveTypes.COMMENT:
+      var htmlString = new HtmlString(true);
+      _toSource(htmlString, template.c, forDebugger, context);
+      stack.createComment(htmlString.getOutput());
+      break;
+
+    // {{value}} or {{{value}}} or {{& value}}
+    case ractiveTypes.INTERPOLATOR:
+      stack.createObject('{{' + template.r + '}}', getMustacheData(context, template));
+      break;
+    case ractiveTypes.TRIPLE:
+      stack.createObject('{{{' + template.r + '}}}', getMustacheData(context, template));
+      break;
+
+    // {{> partial}}
+    case ractiveTypes.PARTIAL:
+      stack.createObject('{{>' + template.r + '}}', {mustache: true});
+      break;
+
+    // {{# section}} or {{^ unless}}
+    case ractiveTypes.SECTION:
+      var name = template.r;
+      var mustacheData;
+      if (template.n === ractiveTypes.SECTION_UNLESS) {
+        mustacheData = getMustacheData(context, template, '!');
+        stack.createObject('{{^' + name + '}}', mustacheData);
+      } else {
+        mustacheData = getMustacheData(context, template);
+        stack.createObject('{{#' + name + '}}', mustacheData);
+      }
+      _toSource(stack, template.f, forDebugger, mustacheData.mustache);
+      stack.createObject('{{/' + name + '}}', mustacheData);
+      break;
+
+    // DOM node
+    case ractiveTypes.ELEMENT:
+      var properties = {};
+      var attributeHandler = function(values, attr) {
+        properties[attr] = reverseAttributeString(values, '', forDebugger, context);
+      };
+
+      // Parse static attribute values
+      _.each(template.a, attributeHandler);
+
+      // Handle dynamic values if need be
+      if (template.m) {
+        var attrs = reverseAttributeString(template.m, ' ', forDebugger, context);
+        properties[attrs] = false;
+      }
+
+      // openElement gives back a unique ID so it can validate pairs when closing
+      var elem = stack.openElement(template.e, properties);
+
+      // Recuse into the elements' children
+      if (template.f) {
+        _toSource(stack, template.f, forDebugger, context);
+      }
+
+      stack.closeElement(elem);
+  }
 }
 
 module.exports = {
   render: render,
   attach: attach,
-  wrap: wrap
+  wrap: wrap,
+  toSource: toSource
 };

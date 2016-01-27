@@ -47,33 +47,6 @@ function equal(actual, expected, description) {
 
 module.exports = function(render) {
   describe(render.suiteName, function() {
-    describe('HTML composition', function() {
-      equal(render('<tr><div>{{hi}}</div></tr>', {
-        hi: 'Hi.'
-      }), '<tr><div>Hi.</div></tr>');
-
-      equal(render('<tr><p><div>{{hi}}</div></p></tr>', {
-        hi: 'Hi.'
-      }), '<tr><p></p><div>Hi.</div></tr>');
-
-      equal(render('<tr data-static="test" {{{attrs}}}></tr>', {
-        attrs: 'data-test="true"'
-      }), '<tr data-static="test" data-test="true"></tr>');
-
-      equal(render('<tr data-static="test" {{{attrs}}}></tr>', {
-        attrs: 'data_test="true"'
-      }), '<tr data-static="test" data_test="true"></tr>');
-
-      equal(render('<div>{{{row}}}</div>', {
-        row: '<tr><td>Row</td></tr>'
-      }), '<div><tr><td>Row</td></tr></div>');
-
-      equal(render('<p>1<p>2</p>3</p>', {}), '<p>1</p><p>2</p>3');
-      equal(render('<div>1<div>23</div>', {}), '<div>1<div>23</div></div>');
-      equal(render('<div>12</div>3</div>', {}), '<div>12</div>3');
-      equal(render('<div>12</p>3</div>', {}), '<div>12</div>3');
-    });
-
     /*
      * QUnit tests from https://github.com/thegrandpoobah/mustache.js
      */
@@ -113,7 +86,9 @@ module.exports = function(render) {
             partial: 'Hello {{ name}}\nYou have just won ${{value }}!\n{{# in_ca  }}\nWell, ${{ taxed_value }}, after taxes.\n{{/  in_ca }}\n'
           }
         ),
-        '<h1>Welcome</h1>\nHello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n\n<h3>Fair enough, right?</h3>',
+        // '<h1>Welcome</h1>\nHello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n\n<h3>Fair enough, right?</h3>',
+        // @adjusted
+        '<h1>Welcome</h1>\nHello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n<h3>Fair enough, right?</h3>',
         'Whitespace in Tag names'
       );
 
@@ -358,7 +333,9 @@ module.exports = function(render) {
             }]
           }, {}
         ),
-        'name\ndesc\n  t1\n  0\n  t2\n  1\n'
+        // 'name\ndesc\n  t1\n  0\n  t2\n  1\n'
+        // @adjusted
+        'name\ndesc\n\n  t1\n  0\n  t2\n  1\n'
       );
 
       // matches reuse_of_enumerables.html
@@ -374,7 +351,9 @@ module.exports = function(render) {
             }]
           }, {}
         ),
-        '\n  t1\n  0\n\n  t2\n  1\n\n  t1\n  0\n\n  t2\n  1\n',
+        // '\n  t1\n  0\n\n  t2\n  1\n\n  t1\n  0\n\n  t2\n  1\n',
+        // @adjusted
+        '  t1\n  0\n  t2\n  1\n  t1\n  0\n  t2\n  1\n',
         'Lazy match of Section and Inverted Section'
       );
 
@@ -393,7 +372,9 @@ module.exports = function(render) {
             }
           }, {}
         ),
-        '\n  <h1>this is an object</h1>\n  <p>one of its attributes is a list</p>\n  <ul>\n    <li>listitem1</li>\n    <li>listitem2</li>\n  </ul>\n',
+        // '\n  <h1>this is an object</h1>\n  <p>one of its attributes is a list</p>\n  <ul>\n    <li>listitem1</li>\n    <li>listitem2</li>\n  </ul>\n',
+        // @adjusted
+        '  <h1>this is an object</h1>\n  <p>one of its attributes is a list</p>\n  <ul>\n    <li>listitem1</li>\n    <li>listitem2</li>\n  </ul>\n',
         'Lazy match of Section and Inverted Section'
       );
 
@@ -417,7 +398,7 @@ module.exports = function(render) {
           }, {}
         ),
         // '  \n    1\n  \n    2\n  \n    3\n',
-        '\n    1\n\n    2\n\n    3\n', // @adjusted
+        '    1\n    2\n    3\n', // @adjusted
         'Context Nesting'
       );
     });
@@ -459,7 +440,9 @@ module.exports = function(render) {
             partial: 'Hello {{name}}\nYou have just won ${{value}}!\n{{#in_ca}}\nWell, ${{ taxed_value }}, after taxes.\n{{/in_ca}}\n'
           }
         ),
-        '<h1>Welcome</h1>\nHello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n\n<h3>Fair enough, right?</h3>'
+        // '<h1>Welcome</h1>\nHello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n\n<h3>Fair enough, right?</h3>'
+        // @adjusted
+        '<h1>Welcome</h1>\nHello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n<h3>Fair enough, right?</h3>'
       );
 
       // matches array_partial.html
@@ -607,8 +590,7 @@ module.exports = function(render) {
             foo: 1
           }
         ),
-        // 'hey 1\n',
-        'hey 1\n\n', // @adjusted
+        'hey 1\n',
         'Empty Partial'
       );
     });
@@ -680,7 +662,7 @@ module.exports = function(render) {
 
       // var expectedResult = '<h1>Colors</h1>\n  <ul>\n  \n      <li><strong>red</strong></li>\n      <li><a href=\"#Red\">red</a></li>\n        <li><a href=\"#Green\">green</a></li>\n        <li><a href=\"#Blue\">blue</a></li>\n  </ul>\n';
       // @adjusted
-      var expectedResult = '<h1>Colors</h1>\n  <ul>\n  \n      <li><strong>red</strong></li>\n  \n      <li><a href="#Red">red</a></li>\n    \n      <li><a href="#Green">green</a></li>\n    \n      <li><a href="#Blue">blue</a></li>\n  </ul>\n';
+      var expectedResult = '<h1>Colors</h1>\n  <ul>\n      <li><strong>red</strong></li>\n      <li><a href="#Red">red</a></li>\n      <li><a href="#Green">green</a></li>\n      <li><a href="#Blue">blue</a></li>\n  </ul>\n';
 
       equal(
         render(
@@ -717,8 +699,7 @@ module.exports = function(render) {
             partial: '{{=[[ ]]=}}\n{{text}}\n[[={{ }}=]]'
           }
         ),
-        // '{{text}}\n{{text}}\n',
-        '\n\n{{text}}\n\n\n\n{{text}}\n\n', // @adjusted
+        '{{text}}\n{{text}}\n',
         'Issue 44'
       );
 
@@ -800,22 +781,19 @@ module.exports = function(render) {
         }, {
           'name': 'Standalone Line Endings',
           'data': {},
-          // 'expected': '|\r\n|',
-          'expected': '|\n|', // @adjusted
+          'expected': '|\r\n|',
           'template': '|\r\n{{! Standalone Comment !}}\r\n|',
           'desc': '"\\r\\n" should be considered a newline for standalone tags.'
         }, {
           'name': 'Standalone Without Previous Line',
           'data': {},
-          // 'expected': '!',
-          'expected': '  \n!', // @adjusted
+          'expected': '!',
           'template': '  {{! I\'m Still Standalone !}}\n!',
           'desc': 'Standalone tags should not require a newline to precede them.'
         }, {
           'name': 'Standalone Without Newline',
           'data': {},
-          // 'expected': '!\n',
-          'expected': '!\n  ', // @adjusted
+          'expected': '!\n',
           'template': '!\n  {{! I\'m Still Standalone !}}',
           'desc': 'Standalone tags should not require a newline to follow them.'
         }, {
@@ -1198,7 +1176,7 @@ module.exports = function(render) {
           'name': 'Standalone Line Endings',
           'data': {},
           // 'expected': '|\r\n>|',
-          'expected': '|\r\n' + render.entities.unescaped.gt + '\r\n|', // @adjusted
+          'expected': '|\r\n' + render.entities.unescaped.gt + '|', // @adjusted
           'template': '|\r\n{{>partial}}\r\n|',
           'desc': '\'\\r\\n\' should be considered a newline for standalone tags.',
           'partials': {
@@ -1208,7 +1186,8 @@ module.exports = function(render) {
           'name': 'Standalone Without Previous Line',
           'data': {},
           // 'expected': '  >\n  >>',
-          'expected': '  ' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt + '', // @adjusted
+          // @TODO
+          'expected': render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt + render.entities.unescaped.gt + '', // @adjusted
           'template': '  {{>partial}}\n>',
           'desc': 'Standalone tags should not require a newline to precede them.',
           'partials': {
@@ -1218,7 +1197,8 @@ module.exports = function(render) {
           'name': 'Standalone Without Newline',
           'data': {},
           // 'expected': '>\n  >\n  >',
-          'expected': render.entities.unescaped.gt + '\n  ' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt, // @adjusted
+          // @TODO
+          'expected': render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt, // @adjusted
           'template': '>\n  {{>partial}}',
           'desc': 'Standalone tags should not require a newline to follow them.',
           'partials': {
@@ -1230,1200 +1210,8 @@ module.exports = function(render) {
             'content': '<\n->'
           },
           // 'expected': '\\\n |\n <\n->\n |\n/\n',
-          'expected': '\\\n |\n' + render.entities.unescaped.lt + '\n-' + render.entities.unescaped.gt + '\n|\n\n/\n', // @adjusted
-          'template': '\\\n {{>partial}}\n/\n',
-          'desc': 'Each line of the partial should be indented before rendering.',
-          'partials': {
-            'partial': '|\n{{{content}}}\n|\n'
-          }
-        }, {
-          'name': 'Padding Whitespace',
-          'data': {
-            'boolean': true
-          },
-          'expected': '|[]|',
-          'template': '|{{> partial }}|',
-          'desc': 'Superfluous in-tag whitespace should be ignored.',
-          'partials': {
-            'partial': '[]'
-          }
-        }]
-      });
-    });
-
-    describe('HTML composition', function() {
-      equal(render('<tr><div>{{hi}}</div></tr>', {
-        hi: 'Hi.'
-      }), '<tr><div>Hi.</div></tr>');
-
-      equal(render('<tr><p><div>{{hi}}</div></p></tr>', {
-        hi: 'Hi.'
-      }), '<tr><p></p><div>Hi.</div></tr>');
-
-      equal(render('<tr data-static="test" {{{attrs}}}></tr>', {
-        attrs: 'data-test="true"'
-      }), '<tr data-static="test" data-test="true"></tr>');
-
-      equal(render('<tr data-static="test" {{{attrs}}}></tr>', {
-        attrs: 'data_test="true"'
-      }), '<tr data-static="test" data_test="true"></tr>');
-
-      equal(render('<table>{{{row}}}</table>', {
-        row: '<tr><td>Row</td></tr>'
-      }), '<table><tr><td>Row</td></tr></table>');
-    });
-
-    /*
-     * QUnit tests from https://github.com/thegrandpoobah/mustache.js
-     */
-    describe('Argument validation', function() {
-      equal(render(undefined), '', 'No parameters');
-      equal(render('{{hi}}'), '', ' No View or Partials');
-      equal(render('{{hi}}', {
-        hi: 'Hi.'
-      }), 'Hi.', 'No Partials');
-      equal(render('{{>hi}}', undefined, {
-        hi: '{{p}}'
-      }), '', 'Partial but no view');
-    });
-
-    describe('Parser', function() {
-      // matches whitespace_partial.html
-      equal(
-        render(
-          '<h1>{{  greeting  }}</h1>\n{{#partial}}{{> partial }}{{/partial}}\n<h3>{{ farewell }}</h3>', {
-            greeting: function() {
-              return 'Welcome';
-            },
-
-            farewell: function() {
-              return 'Fair enough, right?';
-            },
-
-            partial: {
-              name: 'Chris',
-              value: 10000,
-              taxed_value: function() {
-                return this.value - (this.value * 0.4);
-              },
-              in_ca: true
-            }
-          }, {
-            partial: 'Hello {{ name}}\nYou have just won ${{value }}!\n{{# in_ca  }}\nWell, ${{ taxed_value }}, after taxes.\n{{/  in_ca }}\n'
-          }
-        ),
-        '<h1>Welcome</h1>\nHello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n\n<h3>Fair enough, right?</h3>',
-        'Whitespace in Tag names'
-      );
-
-      equal(
-        render(
-          '{{tag1}}\n\n\n{{tag2}}\n', {
-            tag1: 'Hello',
-            tag2: 'World'
-          }, {}
-        ),
-        'Hello\n\n\nWorld\n',
-        'Preservation of white space'
-      );
-
-    });
-
-    describe('Basic Variables', function() {
-      // matches escaped.html
-      equal(
-        render(
-          '<h1>{{title}}</h1>\nBut not {{entities}}.\n', {
-            title: function() {
-              return 'Bear > Shark';
-            },
-            entities: '&quot;'
-          }, {}
-        ),
-        '<h1>Bear &gt; Shark</h1>\nBut not &amp;quot;.\n',
-        'HTML Escaping'
-      );
-
-      // matches apostrophe.html (except in this implementation, apostrophes are not escaped.
-      equal(
-        render(
-          '{{apos}}{{control}}', {
-            apos: '\'',
-            control: 'X'
-          }, {}
-        ),
-        '\'X',
-        'Apostrophe escaping'
-      );
-
-      // matches null_string.html
-      equal(
-        render(
-          'Hello {{name}}\nglytch {{glytch}}\nbinary {{binary}}\nvalue {{value}}\nnumeric {{numeric}}', {
-            name: 'Elise',
-            glytch: true,
-            binary: false,
-            value: null,
-            numeric: function() {
-              return NaN;
-            }
-          }, {}
-        ),
-        'Hello Elise\nglytch true\nbinary false\nvalue \nnumeric NaN',
-        'Different variable types'
-      );
-
-      // matches two_in_a_row.html
-      equal(
-        render(
-          '{{greeting}}, {{name}}!', {
-            name: 'Joe',
-            greeting: 'Welcome'
-          }, {}
-        ),
-        'Welcome, Joe!'
-      );
-
-    });
-
-    describe('Dot Notation', function() {
-      equal(
-        render(
-          '{{a.b.c}}', {
-            a: {
-              b: {
-                c: 0
-              }
-            }
-          }, {}
-        ),
-        '0'
-      );
-
-      equal(
-        render(
-          '{{a.b.c}}', {
-            a: {
-              b: {}
-            }
-          }, {}
-        ),
-        ''
-      );
-
-      equal(
-        render(
-          '{{a.b.c}}', {
-            a: {
-              b: 0
-            }
-          }, {}
-        ),
-        ''
-      );
-
-      equal(
-        render(
-          '{{a.b.c}}', {
-            a: {
-              b: function() {
-                return {
-                  c: 5
-                };
-              }
-            }
-          }, {}
-        ),
-        '5'
-      );
-
-      equal(
-        render(
-          '{{#a.b.c}}{{d}}{{/a.b.c}}', {
-            a: {
-              b: function() {
-                return {
-                  c: [{
-                    d: 'a'
-                  }, {
-                    d: 'b'
-                  }, {
-                    d: 'c'
-                  }]
-                };
-              }
-            }
-          }, {}
-        ),
-        'abc'
-      );
-    });
-
-
-    describe('"{" or "&" (Unescaped Variable)', function() {
-      // matches unescaped.html
-      equal(
-        render(
-          '<h1>{{{title}}}</h1>', {
-            title: function() {
-              return 'Bear > Shark';
-            }
-          }, {}
-        ),
-        '<h1>Bear ' + render.entities.unescaped.gt + ' Shark</h1>',
-        '{ character'
-      );
-
-      equal(
-        render(
-          '<h1>{{&title}}</h1>', {
-            title: function() {
-              return 'Bear > Shark';
-            }
-          }, {}
-        ),
-        '<h1>Bear ' + render.entities.unescaped.gt + ' Shark</h1>',
-        '& character'
-      );
-
-      equal(
-        render(
-          '<h1>{{title}}}</h1>', {
-            title: 'Bear > Shark'
-          }, {}
-        ),
-        '<h1>Bear &gt; Shark}</h1>', 'Potential false positive'
-      );
-    });
-
-    describe('"#" (Sections)', function() {
-      // matches array_of_partials_implicit_partial.html
-      equal(
-        render(
-          'Here is some stuff!\n{{#numbers}}{{>partial}}{{/numbers}}', {
-            numbers: ['1', '2', '3', '4']
-          }, {
-            partial: '{{.}}'
-          }
-        ),
-        'Here is some stuff!\n1234',
-        'Array of Partials (Implicit)'
-      );
-
-      // matches array_of_partials_partial.html
-      equal(
-        render(
-          'Here is some stuff!\n{{#numbers}}{{>partial}}{{/numbers}}', {
-            numbers: [{
-              i: '1'
-            }, {
-              i: '2'
-            }, {
-              i: '3'
-            }, {
-              i: '4'
-            }]
-          }, {
-            partial: '{{i}}'
-          }
-        ),
-        'Here is some stuff!\n1234',
-        'Array of Partials (Explicit)'
-      );
-
-      // matches array_of_strings.html
-      equal(
-        render(
-          '{{#array_of_strings}}{{.}} {{/array_of_strings}}', {
-            array_of_strings: ['hello', 'world']
-          }, {}
-        ),
-        'hello world ',
-        'Array of Strings'
-      );
-
-      // matches recursion_with_same_names.html
-      equal(
-        render(
-          '{{ name }}\n{{ description }}\n\n{{#terms}}\n  {{name}}\n  {{index}}\n{{/terms}}\n', {
-            name: 'name',
-            description: 'desc',
-            terms: [{
-              name: 't1',
-              index: 0
-            }, {
-              name: 't2',
-              index: 1
-            }]
-          }, {}
-        ),
-        'name\ndesc\n  t1\n  0\n  t2\n  1\n'
-      );
-
-      // matches reuse_of_enumerables.html
-      equal(
-        render(
-          '{{#terms}}\n  {{name}}\n  {{index}}\n{{/terms}}\n{{#terms}}\n  {{name}}\n  {{index}}\n{{/terms}}\n', {
-            terms: [{
-              name: 't1',
-              index: 0
-            }, {
-              name: 't2',
-              index: 1
-            }]
-          }, {}
-        ),
-        '\n  t1\n  0\n\n  t2\n  1\n\n  t1\n  0\n\n  t2\n  1\n',
-        'Lazy match of Section and Inverted Section'
-      );
-
-      // matches section_as_context.html
-      equal(
-        render(
-          '{{#a_object}}\n  <h1>{{title}}</h1>\n  <p>{{description}}</p>\n  <ul>\n    {{#a_list}}\n    <li>{{label}}</li>\n    {{/a_list}}\n  </ul>\n{{/a_object}}\n', {
-            a_object: {
-              title: 'this is an object',
-              description: 'one of its attributes is a list',
-              a_list: [{
-                label: 'listitem1'
-              }, {
-                label: 'listitem2'
-              }]
-            }
-          }, {}
-        ),
-        '\n  <h1>this is an object</h1>\n  <p>one of its attributes is a list</p>\n  <ul>\n    <li>listitem1</li>\n    <li>listitem2</li>\n  </ul>\n',
-        'Lazy match of Section and Inverted Section'
-      );
-
-      // matches nesting.html
-      equal(
-        render(
-          '{{#foo}}\n  {{#a}}\n    {{b}}\n  {{/a}}\n{{/foo}}', {
-            foo: [{
-              a: {
-                b: 1
-              }
-            }, {
-              a: {
-                b: 2
-              }
-            }, {
-              a: {
-                b: 3
-              }
-            }]
-          }, {}
-        ),
-        // '  \n    1\n  \n    2\n  \n    3\n',
-        '\n    1\n\n    2\n\n    3\n', // @adjusted
-        'Context Nesting'
-      );
-    });
-
-    describe('"^" (Inverted Section)', function() {
-      // matches inverted_section.html
-      equal(
-        render(
-          '{{#repo}}<b>{{name}}</b>{{/repo}}\n{{^repo}}No repos :({{/repo}}\n', {
-            'repo': []
-          }, {}
-        ),
-        '\nNo repos :(\n'
-      );
-    });
-
-    describe('">" (Partials)', function() {
-      // matches view_partial.html
-      equal(
-        render(
-          '<h1>{{greeting}}</h1>\n{{#partial}}{{>partial}}{{/partial}}\n<h3>{{farewell}}</h3>', {
-            greeting: function() {
-              return 'Welcome';
-            },
-
-            farewell: function() {
-              return 'Fair enough, right?';
-            },
-
-            partial: {
-              name: 'Chris',
-              value: 10000,
-              taxed_value: function() {
-                return this.value - (this.value * 0.4);
-              },
-              in_ca: true
-            }
-          }, {
-            partial: 'Hello {{name}}\nYou have just won ${{value}}!\n{{#in_ca}}\nWell, ${{ taxed_value }}, after taxes.\n{{/in_ca}}\n'
-          }
-        ),
-        '<h1>Welcome</h1>\nHello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n\n<h3>Fair enough, right?</h3>'
-      );
-
-      // matches array_partial.html
-      equal(
-        render(
-          '{{>partial}}', {
-            array: ['1', '2', '3', '4']
-          }, {
-            partial: 'Here\'s a non-sense array of values\n{{#array}}\n  {{.}}\n{{/array}}'
-          }
-        ),
-        'Here\'s a non-sense array of values\n  1\n  2\n  3\n  4\n'
-      );
-
-      // matches template_partial.html
-      equal(
-        render(
-          '<h1>{{title}}</h1>\n{{>partial}}', {
-            title: function() {
-              return 'Welcome';
-            },
-            again: 'Goodbye'
-          }, {
-            partial: 'Again, {{again}}!'
-          }
-        ),
-        '<h1>Welcome</h1>\nAgain, Goodbye!'
-      );
-
-      // matches partial_recursion.html
-      // Test disabled as it causes infinite recursion
-      // equal(
-      //   toHTML(
-      //     '{{name}}\n{{#kids}}\n{{>partial}}\n{{/kids}}', {
-      //       name: '1',
-      //       kids: [{
-      //         name: '1.1',
-      //         children: [{
-      //           name: '1.1.1'
-      //         }]
-      //       }]
-      //     }, {
-      //       partial: '{{name}}\n{{#children}}\n{{>partial}}\n{{/children}}'
-      //     }
-      //   ),
-      //   '1\n1.1\n1.1.1\n'
-      // );
-    });
-
-    describe('"=" (Set Delimiter)', function() {
-      // matches delimiter.html
-      equal(
-        render(
-          '{{=<% %>=}}*\n<% first %>\n* <% second %>\n<%=| |=%>\n* | third |\n|={{ }}=|\n* {{ fourth }}', {
-            first: 'It worked the first time.',
-            second: 'And it worked the second time.',
-            third: 'Then, surprisingly, it worked the third time.',
-            fourth: 'Fourth time also fine!.'
-          }, {}
-        ),
-        '*\nIt worked the first time.\n* And it worked the second time.\n* Then, surprisingly, it worked the third time.\n* Fourth time also fine!.',
-        'Simple Set Delimiter'
-      );
-
-      equal(
-        render(
-          '{{#noData}}{{=~~ ~~=}}Set Change Delimiter ~~data~~ ~~={{ }}=~~{{/noData}}', {
-            noData: true,
-            data: false
-          }, {}
-        ), 'Set Change Delimiter false ', 'Change Delimiter inside Section');
-    });
-
-    describe('"!" (Comments)', function() {
-      equal(
-        render('{{! this is a single line comment !}}'),
-        '',
-        'Single Line Comments');
-
-      equal(
-        render('{{!this is a multiline comment\ni said this is a multiline comment!}}'),
-        '',
-        'Multiline Comments');
-
-      // matches comments.html
-      equal(
-        render(
-          '<h1>{{title}}{{! just something interesting... or not... !}}</h1>\n', {
-            title: function() {
-              return 'A Comedy of Errors';
-            }
-          }, {}
-        ),
-        '<h1>A Comedy of Errors</h1>\n'
-      );
-    });
-
-    describe('Context Stack', function() {
-      equal(
-        render(
-          '{{#documents}}<tr>{{#field_values}}<td><a href="?view={{id}}">{{.}}</a></td>{{/field_values}}</tr>{{/documents}}', {
-            documents: [{
-              id: 'alpha',
-              field_values: ['my', 'very', 'own', 'table']
-            }, {
-              id: 'beta'
-            }, {
-              id: 'delta',
-              field_values: ['etc', 'etc', 'etc']
-            }]
-          }
-        ), '<tr><td><a href="?view=alpha">my</a></td><td><a href="?view=alpha">very</a></td><td><a href="?view=alpha">own</a></td><td><a href="?view=alpha">table</a></td></tr><tr></tr><tr><td><a href="?view=delta">etc</a></td><td><a href="?view=delta">etc</a></td><td><a href="?view=delta">etc</a></td></tr>', 'Correct stack-based interpolation.'
-      );
-
-      equal(
-        render('{{#a}}{{#b}}{{#c}}{{#d}}{{token}}{{/d}}{{/c}}{{/b}}{{/a}}', {
-          a: {
-            b: {
-              c: true
-            },
-            d: {
-              token: 'Mustache'
-            }
-          }
-        }),
-        'Mustache',
-        'Correct stack-based interpolation.'
-      );
-    });
-
-    describe('Empty', function() {
-      // matches empty_template.html
-      equal(
-        render(
-          '<html><head></head><body><h1>Test</h1></body></html>', {}, {}
-        ),
-        '<html><head></head><body><h1>Test</h1></body></html>',
-        'Empty Template'
-      );
-
-      // matches empty_partial.html
-      equal(
-        render(
-          'hey {{foo}}\n{{>partial}}\n', {
-            foo: 1
-          }
-        ),
-        // 'hey 1\n',
-        'hey 1\n\n', // @adjusted
-        'Empty Partial'
-      );
-    });
-
-    describe('Demo', function() {
-      // matches simple.html
-      equal(
-        render(
-          'Hello {{name}}\nYou have just won ${{value}}!\n{{#in_ca}}\nWell, ${{ taxed_value }}, after taxes.\n{{/in_ca}}', {
-            name: 'Chris',
-            value: 10000,
-            taxed_value: function() {
-              return this.value - (this.value * 0.4);
-            },
-            in_ca: true
-          }, {}
-        ),
-        'Hello Chris\nYou have just won $10000!\nWell, $6000, after taxes.\n',
-        'A simple template'
-      );
-
-      // matches complex.html
-      var template = [
-        '<h1>{{header}}</h1>',
-        '{{#list}}',
-        '  <ul>',
-        '  {{#item}}',
-        '  {{#current}}',
-        '      <li><strong>{{name}}</strong></li>',
-        '  {{/current}}',
-        '  {{#link}}',
-        '      <li><a href="{{url}}">{{name}}</a></li>',
-        '  {{/link}}',
-        '  {{/item}}',
-        '  </ul>',
-        '{{/list}}',
-        '{{#empty}}',
-        '  <p>The list is empty.</p>',
-        '{{/empty}}'
-      ].join('\n');
-
-      var view = {
-        header: function() {
-          return 'Colors';
-        },
-        item: [{
-          name: 'red',
-          current: true,
-          url: '#Red'
-        }, {
-          name: 'green',
-          current: false,
-          url: '#Green'
-        }, {
-          name: 'blue',
-          current: false,
-          url: '#Blue'
-        }],
-        link: function() {
-          return this.current !== true;
-        },
-        list: function() {
-          return this.item.length !== 0;
-        },
-        empty: function() {
-          return this.item.length === 0;
-        }
-      };
-
-      // var expectedResult = '<h1>Colors</h1>\n  <ul>\n  \n      <li><strong>red</strong></li>\n      <li><a href=\"#Red\">red</a></li>\n        <li><a href=\"#Green\">green</a></li>\n        <li><a href=\"#Blue\">blue</a></li>\n  </ul>\n';
-      // @adjusted
-      var expectedResult = '<h1>Colors</h1>\n  <ul>\n  \n      <li><strong>red</strong></li>\n  \n      <li><a href="#Red">red</a></li>\n    \n      <li><a href="#Green">green</a></li>\n    \n      <li><a href="#Blue">blue</a></li>\n  </ul>\n';
-
-      equal(
-        render(
-          template,
-          view, {}
-        ),
-        expectedResult,
-        'A complex template'
-      );
-    });
-
-    describe('Regression Suite', function() {
-      // matches bug_11_eating_whitespace.html
-      equal(
-        render(
-          '{{tag}} foo', {
-            tag: 'yo'
-          }, {}
-        ),
-        'yo foo',
-        'Issue 11'
-      );
-
-      // matches delimiters_partial.html
-      equal(
-        render(
-          '{{#enumerate}}\n{{>partial}}\n{{/enumerate}}', {
-            enumerate: [{
-              text: 'A'
-            }, {
-              text: 'B'
-            }]
-          }, {
-            partial: '{{=[[ ]]=}}\n{{text}}\n[[={{ }}=]]'
-          }
-        ),
-        // '{{text}}\n{{text}}\n',
-        '\n\n{{text}}\n\n\n\n{{text}}\n\n', // @adjusted
-        'Issue 44'
-      );
-
-      // matches bug_46_set_delimiter.html
-      equal(
-        render(
-          '{{=[[ ]]=}}[[#IsMustacheAwesome]]mustache is awesome![[/IsMustacheAwesome]]', {
-            IsMustacheAwesome: true
-          }, {}
-        ),
-        'mustache is awesome!',
-        'Issue 46'
-      );
-
-      // matches Issue #79
-      equal(
-        render(
-          '{{#inner}}{{f}}{{#inner}}{{b}}{{/inner}}{{/inner}}', {
-            inner: [{
-              f: 'foo',
-              inner: [{
-                b: 'bar'
-              }]
-            }]
-          }, {}
-        ), 'foobar', 'Nested Sections with the same name'
-      );
-
-      // matches Issue #141
-      equal(
-        render('You said "{{{html}}}" today', {
-          html: 'I like {{mustache}}'
-        }), 'You said "I like {{mustache}}" today', 'No recursive parsing');
-
-      // matches Issue #148
-      equal(
-        render('{{#items}}{{name}}{{#items}}{{.}}{{/items}}{{/items}}', {
-          items: [{
-            name: 'name',
-            items: [1, 2, 3, 4]
-          }]
-        }), 'name1234', 'Nested Lists with the same name');
-    });
-
-    describe('Spec - Comments', function() {
-      specTests({
-        '__ATTN__': 'Do not edit this file; changes belong in the appropriate YAML file.',
-        'overview': 'Comment tags represent content that should never appear in the resulting\noutput.\n\nThe tag\'s content may contain any substring (including newlines) EXCEPT the\nclosing delimiter.\n\nComment tags SHOULD be treated as standalone when appropriate.\n',
-        'tests': [{
-          'name': 'Inline',
-          'data': {},
-          'expected': '1234567890',
-          'template': '12345{{! Comment Block! !}}67890',
-          'desc': 'Comment blocks should be removed from the template.'
-        }, {
-          'name': 'Multiline',
-          'data': {},
-          'expected': '1234567890\n',
-          'template': '12345{{!\n  This is a\n  multi-line comment...\n!}}67890\n',
-          'desc': 'Multiline comments should be permitted.'
-        }, {
-          'name': 'Standalone',
-          'data': {},
-          'expected': 'Begin.\nEnd.\n',
-          'template': 'Begin.\n{{! Comment Block! !}}\nEnd.\n',
-          'desc': 'All standalone comment lines should be removed.'
-        }, {
-          'name': 'Indented Standalone',
-          'data': {},
-          'expected': 'Begin.\nEnd.\n',
-          'template': 'Begin.\n  {{! Indented Comment Block! !}}\nEnd.\n',
-          'desc': 'All standalone comment lines should be removed.'
-        }, {
-          'name': 'Standalone Line Endings',
-          'data': {},
-          // 'expected': '|\r\n|',
-          'expected': '|\n|', // @adjusted
-          'template': '|\r\n{{! Standalone Comment !}}\r\n|',
-          'desc': '"\\r\\n" should be considered a newline for standalone tags.'
-        }, {
-          'name': 'Standalone Without Previous Line',
-          'data': {},
-          // 'expected': '!',
-          'expected': '  \n!', // @adjusted
-          'template': '  {{! I\'m Still Standalone !}}\n!',
-          'desc': 'Standalone tags should not require a newline to precede them.'
-        }, {
-          'name': 'Standalone Without Newline',
-          'data': {},
-          // 'expected': '!\n',
-          'expected': '!\n  ', // @adjusted
-          'template': '!\n  {{! I\'m Still Standalone !}}',
-          'desc': 'Standalone tags should not require a newline to follow them.'
-        }, {
-          'name': 'Multiline Standalone',
-          'data': {},
-          'expected': 'Begin.\nEnd.\n',
-          'template': 'Begin.\n{{!\nSomething\'s going on here...\n!}}\nEnd.\n',
-          'desc': 'All standalone comment lines should be removed.'
-        }, {
-          'name': 'Indented Multiline Standalone',
-          'data': {},
-          'expected': 'Begin.\nEnd.\n',
-          'template': 'Begin.\n  {{!\n    Something\'s going on here...\n  !}}\nEnd.\n',
-          'desc': 'All standalone comment lines should be removed.'
-        }, {
-          'name': 'Indented Inline',
-          'data': {},
-          'expected': '  12 \n',
-          'template': '  12 {{! 34 !}}\n',
-          'desc': 'Inline comments should not strip whitespace'
-        }, {
-          'name': 'Surrounding Whitespace',
-          'data': {},
-          'expected': '12345  67890',
-          'template': '12345 {{! Comment Block! !}} 67890',
-          'desc': 'Comment removal should preserve surrounding whitespace.'
-        }]
-      });
-    });
-
-    describe('Spec - Interpolation', function() {
-      specTests({
-        '__ATTN__': 'Do not edit this file; changes belong in the appropriate YAML file.',
-        'overview': 'Interpolation tags are used to integrate dynamic content into the template.\n\nThe tag\'s content MUST be a non-whitespace character sequence NOT containing\nthe current closing delimiter.\n\nThis tag\'s content names the data to replace the tag.  A single period (`.`)\nindicates that the item currently sitting atop the context stack should be\nused; otherwise, name resolution is as follows:\n  1) Split the name on periods; the first part is the name to resolve, any\n  remaining parts should be retained.\n  2) Walk the context stack from top to bottom, finding the first context\n  that is a) a hash containing the name as a key OR b) an object responding\n  to a method with the given name.\n  3) If the context is a hash, the data is the value associated with the\n  name.\n  4) If the context is an object, the data is the value returned by the\n  method with the given name.\n  5) If any name parts were retained in step 1, each should be resolved\n  against a context stack containing only the result from the former\n  resolution.  If any part fails resolution, the result should be considered\n  falsey, and should interpolate as the empty string.\nData should be coerced into a string (and escaped, if appropriate) before\ninterpolation.\n\nThe Interpolation tags MUST NOT be treated as standalone.\n',
-        'tests': [{
-          'name': 'No Interpolation',
-          'data': {},
-          'expected': 'Hello from {Mustache}!\n',
-          'template': 'Hello from {Mustache}!\n',
-          'desc': 'Mustache-free templates should render as-is.'
-        }, {
-          'name': 'Basic Interpolation',
-          'data': {
-            'subject': 'world'
-          },
-          'expected': 'Hello, world!\n',
-          'template': 'Hello, {{subject}}!\n',
-          'desc': 'Unadorned tags should interpolate content into the template.'
-        }, {
-          'name': 'HTML Escaping',
-          'data': {
-            'forbidden': '& \" < >'
-          },
-          'expected': 'These characters should be HTML escaped: ' + render.entities.escaped.amp + ' ' + render.entities.escaped.quote + ' ' + render.entities.escaped.lt + ' ' + render.entities.escaped.gt + '\n',
-          'template': 'These characters should be HTML escaped: {{forbidden}}\n',
-          'desc': 'Basic interpolation should be HTML escaped.'
-        }, {
-          'name': 'Triple Mustache',
-          'data': {
-            'forbidden': '& \" < >'
-          },
-          'expected': 'These characters should not be HTML escaped: ' + render.entities.unescaped.amp + ' ' + render.entities.unescaped.quote + ' ' + render.entities.unescaped.lt + ' ' + render.entities.unescaped.gt + '\n',
-          'template': 'These characters should not be HTML escaped: {{{forbidden}}}\n',
-          'desc': 'Triple mustaches should interpolate without HTML escaping.'
-        }, {
-          'name': 'Ampersand',
-          'data': {
-            'forbidden': '& \" < >'
-          },
-          'expected': 'These characters should not be HTML escaped: ' + render.entities.unescaped.amp + ' ' + render.entities.unescaped.quote + ' ' + render.entities.unescaped.lt + ' ' + render.entities.unescaped.gt + '\n',
-          'template': 'These characters should not be HTML escaped: {{&forbidden}}\n',
-          'desc': 'Ampersand should interpolate without HTML escaping.'
-        }, {
-          'name': 'Basic Integer Interpolation',
-          'data': {
-            'mph': 85
-          },
-          'expected': '\"85 miles an hour!\"',
-          'template': '\"{{mph}} miles an hour!\"',
-          'desc': 'Integers should interpolate seamlessly.'
-        }, {
-          'name': 'Triple Mustache Integer Interpolation',
-          'data': {
-            'mph': 85
-          },
-          'expected': '\"85 miles an hour!\"',
-          'template': '\"{{{mph}}} miles an hour!\"',
-          'desc': 'Integers should interpolate seamlessly.'
-        }, {
-          'name': 'Ampersand Integer Interpolation',
-          'data': {
-            'mph': 85
-          },
-          'expected': '\"85 miles an hour!\"',
-          'template': '\"{{&mph}} miles an hour!\"',
-          'desc': 'Integers should interpolate seamlessly.'
-        }, {
-          'name': 'Basic Decimal Interpolation',
-          'data': {
-            'power': 1.21
-          },
-          'expected': '\"1.21 jiggawatts!\"',
-          'template': '\"{{power}} jiggawatts!\"',
-          'desc': 'Decimals should interpolate seamlessly with proper significance.'
-        }, {
-          'name': 'Triple Mustache Decimal Interpolation',
-          'data': {
-            'power': 1.21
-          },
-          'expected': '\"1.21 jiggawatts!\"',
-          'template': '\"{{{power}}} jiggawatts!\"',
-          'desc': 'Decimals should interpolate seamlessly with proper significance.'
-        }, {
-          'name': 'Ampersand Decimal Interpolation',
-          'data': {
-            'power': 1.21
-          },
-          'expected': '\"1.21 jiggawatts!\"',
-          'template': '\"{{&power}} jiggawatts!\"',
-          'desc': 'Decimals should interpolate seamlessly with proper significance.'
-        }, {
-          'name': 'Basic Context Miss Interpolation',
-          'data': {},
-          'expected': 'I () be seen!',
-          'template': 'I ({{cannot}}) be seen!',
-          'desc': 'Failed context lookups should default to empty strings.'
-        }, {
-          'name': 'Triple Mustache Context Miss Interpolation',
-          'data': {},
-          'expected': 'I () be seen!',
-          'template': 'I ({{{cannot}}}) be seen!',
-          'desc': 'Failed context lookups should default to empty strings.'
-        }, {
-          'name': 'Ampersand Context Miss Interpolation',
-          'data': {},
-          'expected': 'I () be seen!',
-          'template': 'I ({{&cannot}}) be seen!',
-          'desc': 'Failed context lookups should default to empty strings.'
-        }, {
-          'name': 'Dotted Names - Basic Interpolation',
-          'data': {
-            'person': {
-              'name': 'Joe'
-            }
-          },
-          'expected': '\"Joe\" == \"Joe\"',
-          'template': '\"{{person.name}}\" == \"{{#person}}{{name}}{{/person}}\"',
-          'desc': 'Dotted names should be considered a form of shorthand for sections.'
-        }, {
-          'name': 'Dotted Names - Triple Mustache Interpolation',
-          'data': {
-            'person': {
-              'name': 'Joe'
-            }
-          },
-          'expected': '\"Joe\" == \"Joe\"',
-          'template': '\"{{{person.name}}}\" == \"{{#person}}{{{name}}}{{/person}}\"',
-          'desc': 'Dotted names should be considered a form of shorthand for sections.'
-        }, {
-          'name': 'Dotted Names - Ampersand Interpolation',
-          'data': {
-            'person': {
-              'name': 'Joe'
-            }
-          },
-          'expected': '\"Joe\" == \"Joe\"',
-          'template': '\"{{&person.name}}\" == \"{{#person}}{{&name}}{{/person}}\"',
-          'desc': 'Dotted names should be considered a form of shorthand for sections.'
-        }, {
-          'name': 'Dotted Names - Arbitrary Depth',
-          'data': {
-            'a': {
-              'b': {
-                'c': {
-                  'd': {
-                    'e': {
-                      'name': 'Phil'
-                    }
-                  }
-                }
-              }
-            }
-          },
-          'expected': '\"Phil\" == \"Phil\"',
-          'template': '\"{{a.b.c.d.e.name}}\" == \"Phil\"',
-          'desc': 'Dotted names should be functional to any level of nesting.'
-        }, {
-          'name': 'Dotted Names - Broken Chains',
-          'data': {
-            'a': {}
-          },
-          'expected': '\"\" == \"\"',
-          'template': '\"{{a.b.c}}\" == \"\"',
-          'desc': 'Any falsey value prior to the last part of the name should yield "".'
-        }, {
-          'name': 'Dotted Names - Broken Chain Resolution',
-          'data': {
-            'a': {
-              'b': {}
-            },
-            'c': {
-              'name': 'Jim'
-            }
-          },
-          'expected': '\"\" == \"\"',
-          'template': '\"{{a.b.c.name}}\" == \"\"',
-          'desc': 'Each part of a dotted name should resolve only against its parent.'
-        }, {
-          'name': 'Dotted Names - Initial Resolution',
-          'data': {
-            'a': {
-              'b': {
-                'c': {
-                  'd': {
-                    'e': {
-                      'name': 'Phil'
-                    }
-                  }
-                }
-              }
-            },
-            'b': {
-              'c': {
-                'd': {
-                  'e': {
-                    'name': 'Wrong'
-                  }
-                }
-              }
-            }
-          },
-          'expected': '\"Phil\" == \"Phil\"',
-          'template': '\"{{#a}}{{b.c.d.e.name}}{{/a}}\" == \"Phil\"',
-          'desc': 'The first part of a dotted name should resolve as any other name.'
-        }, {
-          'name': 'Interpolation - Surrounding Whitespace',
-          'data': {
-            'string': '---'
-          },
-          'expected': '| --- |',
-          'template': '| {{string}} |',
-          'desc': 'Interpolation should not alter surrounding whitespace.'
-        }, {
-          'name': 'Triple Mustache - Surrounding Whitespace',
-          'data': {
-            'string': '---'
-          },
-          'expected': '| --- |',
-          'template': '| {{{string}}} |',
-          'desc': 'Interpolation should not alter surrounding whitespace.'
-        }, {
-          'name': 'Ampersand - Surrounding Whitespace',
-          'data': {
-            'string': '---'
-          },
-          'expected': '| --- |',
-          'template': '| {{&string}} |',
-          'desc': 'Interpolation should not alter surrounding whitespace.'
-        }, {
-          'name': 'Interpolation - Standalone',
-          'data': {
-            'string': '---'
-          },
-          'expected': '  ---\n',
-          'template': '  {{string}}\n',
-          'desc': 'Standalone interpolation should not alter surrounding whitespace.'
-        }, {
-          'name': 'Triple Mustache - Standalone',
-          'data': {
-            'string': '---'
-          },
-          'expected': '  ---\n',
-          'template': '  {{{string}}}\n',
-          'desc': 'Standalone interpolation should not alter surrounding whitespace.'
-        }, {
-          'name': 'Ampersand - Standalone',
-          'data': {
-            'string': '---'
-          },
-          'expected': '  ---\n',
-          'template': '  {{&string}}\n',
-          'desc': 'Standalone interpolation should not alter surrounding whitespace.'
-        }, {
-          'name': 'Interpolation With Padding',
-          'data': {
-            'string': '---'
-          },
-          'expected': '|---|',
-          'template': '|{{ string }}|',
-          'desc': 'Superfluous in-tag whitespace should be ignored.'
-        }, {
-          'name': 'Triple Mustache With Padding',
-          'data': {
-            'string': '---'
-          },
-          'expected': '|---|',
-          'template': '|{{{ string }}}|',
-          'desc': 'Superfluous in-tag whitespace should be ignored.'
-        }, {
-          'name': 'Ampersand With Padding',
-          'data': {
-            'string': '---'
-          },
-          'expected': '|---|',
-          'template': '|{{& string }}|',
-          'desc': 'Superfluous in-tag whitespace should be ignored.'
-        }]
-      });
-    });
-
-    describe('Spec - Partials', function() {
-      specTests({
-        '__ATTN__': 'Do not edit this file; changes belong in the appropriate YAML file.',
-        'overview': 'Partial tags are used to expand an external template into the current\ntemplate.\n\nThe tag\'s content MUST be a non-whitespace character sequence NOT containing\nthe current closing delimiter.\n\nThis tag\'s content names the partial to inject.  Set Delimiter tags MUST NOT\naffect the parsing of a partial.  The partial MUST be rendered against the\ncontext stack local to the tag.  If the named partial cannot be found, the\nempty string SHOULD be used instead, as in interpolations.\n\nPartial tags SHOULD be treated as standalone when appropriate.  If this tag\nis used standalone, any whitespace preceding the tag should treated as\nindentation, and prepended to each line of the partial before rendering.\n',
-        'tests': [{
-          'name': 'Basic Behavior',
-          'data': {},
-          'expected': '\"from partial\"',
-          'template': '\"{{>text}}\"',
-          'desc': 'The greater-than operator should expand to the named partial.',
-          'partials': {
-            'text': 'from partial'
-          }
-        }, {
-          'name': 'Failed Lookup',
-          'data': {},
-          'expected': '\"\"',
-          'template': '\"{{>text}}\"',
-          'desc': 'The empty string should be used when the named partial is not found.',
-          'partials': {}
-        }, {
-          'name': 'Context',
-          'data': {
-            'text': 'content'
-          },
-          'expected': '\"*content*\"',
-          'template': '\"{{>partial}}\"',
-          'desc': 'The greater-than operator should operate within the current context.',
-          'partials': {
-            'partial': '*{{text}}*'
-          }
-        }, {
-        // @adjusted chokes hard on the matching bracket syntax
-          'name': 'Recursion',
-          'data': {
-            'content': 'X',
-            'nodes': [{
-              'content': 'Y',
-              'nodes': []
-            }]
-          },
-          // 'expected': 'X<Y<>>',
-          'expected': 'X(Y())',
-          'template': '{{>node}}',
-          'desc': 'The greater-than operator should properly recurse.',
-          'partials': {
-            'node': '{{content}}({{#nodes}}{{>node}}{{/nodes}})'
-          }
-        }, {
-          'name': 'Surrounding Whitespace',
-          'data': {},
-          'expected': '| \t|\t |',
-          'template': '| {{>partial}} |',
-          'desc': 'The greater-than operator should not alter surrounding whitespace.',
-          'partials': {
-            'partial': '\t|\t'
-          }
-        }, {
-          'name': 'Inline Indentation',
-          'data': {
-            'data': '|'
-          },
-          'expected': '  |  ' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt + '\n',
-          'template': '  {{data}}  {{> partial}}\n',
-          'desc': 'Whitespace should be left untouched.',
-          'partials': {
-            'partial': '>\n>'
-          }
-        }, {
-          'name': 'Standalone Line Endings',
-          'data': {},
-          // 'expected': '|\r\n>|',
-          'expected': '|\r\n' + render.entities.unescaped.gt + '\r\n|', // @adjusted
-          'template': '|\r\n{{>partial}}\r\n|',
-          'desc': '\'\\r\\n\' should be considered a newline for standalone tags.',
-          'partials': {
-            'partial': '>'
-          }
-        }, {
-          'name': 'Standalone Without Previous Line',
-          'data': {},
-          // 'expected': '  >\n  >>',
-          'expected': '  ' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt, // @adjusted
-          'template': '  {{>partial}}\n>',
-          'desc': 'Standalone tags should not require a newline to precede them.',
-          'partials': {
-            'partial': '>\n>'
-          }
-        }, {
-          'name': 'Standalone Without Newline',
-          'data': {},
-          // 'expected': '>\n  >\n  >',
-          'expected': render.entities.unescaped.gt + '\n  ' + render.entities.unescaped.gt + '\n' + render.entities.unescaped.gt, // @adjusted
-          'template': '>\n  {{>partial}}',
-          'desc': 'Standalone tags should not require a newline to follow them.',
-          'partials': {
-            'partial': '>\n>'
-          }
-        }, {
-          'name': 'Standalone Indentation',
-          'data': {
-            'content': '<\n->'
-          },
-          // 'expected': '\\\n |\n <\n->\n |\n/\n',
-          'expected': '\\\n |\n' + render.entities.unescaped.lt + '\n-' + render.entities.unescaped.gt + '\n|\n\n/\n', // @adjusted
+          // @TODO
+          'expected': '\\\n|\n' + render.entities.unescaped.lt + '\n-' + render.entities.unescaped.gt + '\n|\n/\n', // @adjusted
           'template': '\\\n {{>partial}}\n/\n',
           'desc': 'Each line of the partial should be indented before rendering.',
           'partials': {
@@ -2493,8 +1281,7 @@ module.exports = function(render) {
               'five': 5
             }
           },
-          // 'expected': '1\n121\n12321\n1234321\n123454321\n1234321\n12321\n121\n1\n',
-          'expected': '\n1\n121\n12321\n1234321\n123454321\n1234321\n12321\n121\n1\n', // @adjusted
+          'expected': '1\n121\n12321\n1234321\n123454321\n1234321\n12321\n121\n1\n',
           'template': '{{#a}}\n{{one}}\n{{#b}}\n{{one}}{{two}}{{one}}\n{{#c}}\n{{one}}{{two}}{{three}}{{two}}{{one}}\n{{#d}}\n{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}\n{{#e}}\n{{one}}{{two}}{{three}}{{four}}{{five}}{{four}}{{three}}{{two}}{{one}}\n{{/e}}\n{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}\n{{/d}}\n{{one}}{{two}}{{three}}{{two}}{{one}}\n{{/c}}\n{{one}}{{two}}{{one}}\n{{/b}}\n{{one}}\n{{/a}}\n',
           'desc': 'All elements on the context stack should be accessible.'
         }, {
@@ -2525,8 +1312,7 @@ module.exports = function(render) {
             'two': 'second',
             'bool': true
           },
-          // 'expected': '* first\n* second\n* third\n',
-          'expected': '\n* first\n* second\n* third\n', // @adjusted
+          'expected': '* first\n* second\n* third\n',
           'template': '{{#bool}}\n* first\n{{/bool}}\n* {{two}}\n{{#bool}}\n* third\n{{/bool}}\n',
           'desc': 'Multiple sections per template should be permitted.'
         }, {
@@ -2652,8 +1438,7 @@ module.exports = function(render) {
           'data': {
             'boolean': true
           },
-          // 'expected': '|\r\n|',
-          'expected': '|\n\r\n|', // @adjusted
+          'expected': '|\r\n|',
           'template': '|\r\n{{#boolean}}\r\n{{/boolean}}\r\n|',
           'desc': '\"\\r\\n\" should be considered a newline for standalone tags.'
         }, {
@@ -2661,8 +1446,7 @@ module.exports = function(render) {
           'data': {
             'boolean': true
           },
-          // 'expected': '#\n/',
-          'expected': '  \n#\n/', // @adjusted
+          'expected': '#\n/',
           'template': '  {{#boolean}}\n#{{/boolean}}\n/',
           'desc': 'Standalone tags should not require a newline to precede them.'
         }, {
@@ -2670,8 +1454,7 @@ module.exports = function(render) {
           'data': {
             'boolean': true
           },
-          // 'expected': '#\n/\n',
-          'expected': '#\n/\n  ', // @adjusted
+          'expected': '#\n/\n',
           'template': '#{{#boolean}}\n/\n  {{/boolean}}',
           'desc': 'Standalone tags should not require a newline to follow them.'
         }, {
@@ -2744,8 +1527,7 @@ module.exports = function(render) {
             'two': 'second',
             'bool': false
           },
-          // 'expected': '* first\n* second\n* third\n',
-          'expected': '\n* first\n* second\n* third\n', // @adjusted
+          'expected': '* first\n* second\n* third\n',
           'template': '{{^bool}}\n* first\n{{/bool}}\n* {{two}}\n{{^bool}}\n* third\n{{/bool}}\n',
           'desc': 'Multiple inverted sections per template should be permitted.'
         }, {
@@ -2847,8 +1629,7 @@ module.exports = function(render) {
           'data': {
             'boolean': false
           },
-          // 'expected': '|\r\n|',
-          'expected': '|\n\r\n|', // @adjusted
+          'expected': '|\r\n|',
           'template': '|\r\n{{^boolean}}\r\n{{/boolean}}\r\n|',
           'desc': '\"\\r\\n\" should be considered a newline for standalone tags.'
         }, {
@@ -2856,8 +1637,7 @@ module.exports = function(render) {
           'data': {
             'boolean': false
           },
-          // 'expected': '^\n/',
-          'expected': '  \n^\n/', // @adjusted
+          'expected': '^\n/',
           'template': '  {{^boolean}}\n^{{/boolean}}\n/',
           'desc': 'Standalone tags should not require a newline to precede them.'
         }, {
@@ -2865,8 +1645,7 @@ module.exports = function(render) {
           'data': {
             'boolean': false
           },
-          // 'expected': '^\n/\n',
-          'expected': '^\n/\n  ', // @adjusted
+          'expected': '^\n/\n',
           'template': '^{{^boolean}}\n/\n  {{/boolean}}',
           'desc': 'Standalone tags should not require a newline to follow them.'
         }, {
@@ -2968,22 +1747,19 @@ module.exports = function(render) {
         }, {
           'name': 'Standalone Line Endings',
           'data': {},
-          // 'expected': '|\r\n|',
-          'expected': '|\n|', // @adjusted
+          'expected': '|\r\n|',
           'template': '|\r\n{{= @ @ =}}\r\n|',
           'desc': '\"\\r\\n\" should be considered a newline for standalone tags.'
         }, {
           'name': 'Standalone Without Previous Line',
           'data': {},
-          // 'expected': '=',
-          'expected': '  \n=', // @adjusted
+          'expected': '=',
           'template': '  {{=@ @=}}\n=',
           'desc': 'Standalone tags should not require a newline to precede them.'
         }, {
           'name': 'Standalone Without Newline',
           'data': {},
-          // 'expected': '=\n',
-          'expected': '=\n  ', // @adjusted
+          'expected': '=\n',
           'template': '=\n  {{=@ @=}}',
           'desc': 'Standalone tags should not require a newline to follow them.'
         }, {
@@ -3062,8 +1838,7 @@ module.exports = function(render) {
               'five': 5
             }
           },
-          // 'expected': '1\n121\n12321\n1234321\n123454321\n1234321\n12321\n121\n1\n',
-          'expected': '\n1\n121\n12321\n1234321\n123454321\n1234321\n12321\n121\n1\n', // @adjusted
+          'expected': '1\n121\n12321\n1234321\n123454321\n1234321\n12321\n121\n1\n',
           'template': '{{#a}}\n{{one}}\n{{#b}}\n{{one}}{{two}}{{one}}\n{{#c}}\n{{one}}{{two}}{{three}}{{two}}{{one}}\n{{#d}}\n{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}\n{{#e}}\n{{one}}{{two}}{{three}}{{four}}{{five}}{{four}}{{three}}{{two}}{{one}}\n{{/e}}\n{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}\n{{/d}}\n{{one}}{{two}}{{three}}{{two}}{{one}}\n{{/c}}\n{{one}}{{two}}{{one}}\n{{/b}}\n{{one}}\n{{/a}}\n',
           'desc': 'All elements on the context stack should be accessible.'
         }, {
@@ -3094,8 +1869,7 @@ module.exports = function(render) {
             'two': 'second',
             'bool': true
           },
-          // 'expected': '* first\n* second\n* third\n',
-          'expected': '\n* first\n* second\n* third\n', // @adjusted
+          'expected': '* first\n* second\n* third\n',
           'template': '{{#bool}}\n* first\n{{/bool}}\n* {{two}}\n{{#bool}}\n* third\n{{/bool}}\n',
           'desc': 'Multiple sections per template should be permitted.'
         }, {
@@ -3221,8 +1995,7 @@ module.exports = function(render) {
           'data': {
             'boolean': true
           },
-          // 'expected': '|\r\n|',
-          'expected': '|\n\r\n|', // @adjusted
+          'expected': '|\r\n|',
           'template': '|\r\n{{#boolean}}\r\n{{/boolean}}\r\n|',
           'desc': '\"\\r\\n\" should be considered a newline for standalone tags.'
         }, {
@@ -3230,8 +2003,7 @@ module.exports = function(render) {
           'data': {
             'boolean': true
           },
-          // 'expected': '#\n/',
-          'expected': '  \n#\n/', // @adjusted
+          'expected': '#\n/',
           'template': '  {{#boolean}}\n#{{/boolean}}\n/',
           'desc': 'Standalone tags should not require a newline to precede them.'
         }, {
@@ -3239,8 +2011,7 @@ module.exports = function(render) {
           'data': {
             'boolean': true
           },
-          // 'expected': '#\n/\n',
-          'expected': '#\n/\n  ', // @adjusted
+          'expected': '#\n/\n',
           'template': '#{{#boolean}}\n/\n  {{/boolean}}',
           'desc': 'Standalone tags should not require a newline to follow them.'
         }, {
@@ -3313,8 +2084,7 @@ module.exports = function(render) {
             'two': 'second',
             'bool': false
           },
-          // 'expected': '* first\n* second\n* third\n',
-          'expected': '\n* first\n* second\n* third\n', // @adjusted
+          'expected': '* first\n* second\n* third\n',
           'template': '{{^bool}}\n* first\n{{/bool}}\n* {{two}}\n{{^bool}}\n* third\n{{/bool}}\n',
           'desc': 'Multiple inverted sections per template should be permitted.'
         }, {
@@ -3416,8 +2186,7 @@ module.exports = function(render) {
           'data': {
             'boolean': false
           },
-          // 'expected': '|\r\n|',
-          'expected': '|\n\r\n|', // @adjusted
+          'expected': '|\r\n|',
           'template': '|\r\n{{^boolean}}\r\n{{/boolean}}\r\n|',
           'desc': '\"\\r\\n\" should be considered a newline for standalone tags.'
         }, {
@@ -3425,8 +2194,7 @@ module.exports = function(render) {
           'data': {
             'boolean': false
           },
-          // 'expected': '^\n/',
-          'expected': '  \n^\n/', // @adjusted
+          'expected': '^\n/',
           'template': '  {{^boolean}}\n^{{/boolean}}\n/',
           'desc': 'Standalone tags should not require a newline to precede them.'
         }, {
@@ -3434,8 +2202,7 @@ module.exports = function(render) {
           'data': {
             'boolean': false
           },
-          // 'expected': '^\n/\n',
-          'expected': '^\n/\n  ', // @adjusted
+          'expected': '^\n/\n',
           'template': '^{{^boolean}}\n/\n  {{/boolean}}',
           'desc': 'Standalone tags should not require a newline to follow them.'
         }, {
@@ -3537,22 +2304,19 @@ module.exports = function(render) {
         }, {
           'name': 'Standalone Line Endings',
           'data': {},
-          // 'expected': '|\r\n|',
-          'expected': '|\n|', // @adjusted
+          'expected': '|\r\n|',
           'template': '|\r\n{{= @ @ =}}\r\n|',
           'desc': '\"\\r\\n\" should be considered a newline for standalone tags.'
         }, {
           'name': 'Standalone Without Previous Line',
           'data': {},
-          // 'expected': '=',
-          'expected': '  \n=', // @adjusted
+          'expected': '=',
           'template': '  {{=@ @=}}\n=',
           'desc': 'Standalone tags should not require a newline to precede them.'
         }, {
           'name': 'Standalone Without Newline',
           'data': {},
-          // 'expected': '=\n',
-          'expected': '=\n  ', // @adjusted
+          'expected': '=\n',
           'template': '=\n  {{=@ @=}}',
           'desc': 'Standalone tags should not require a newline to follow them.'
         }, {

@@ -1,13 +1,16 @@
 'use strict';
 
-var _ = require('underscore');
-var utils = require('./utils');
-var appData = require('./app_data');
-var highlighter = require('../highlighter');
-var logger = require('../../utils/logger');
-var dataset = require('data-set');
+const _ = require('underscore');
+const utils = require('./utils');
+const appData = require('./app_data');
+const highlighter = require('../highlighter');
+const logger = require('../../utils/logger');
+const dataset = require('data-set');
+const Context = require('../../template/template_context');
+const ractiveAdaptor = require('../../template/ractive_adaptor');
+const DebugValueStack = require('../../template/stacks/debug_value');
 
-var getClosestView = appData.getClosestView = function(elem) {
+const getClosestView = appData.getClosestView = function(elem) {
   var view = null;
   var wrapper = utils.closest(elem, 'js-view-list-item');
   if (wrapper) {
@@ -18,6 +21,7 @@ var getClosestView = appData.getClosestView = function(elem) {
 
 appData.updateSelectedView = function() {
   appData.selectedView.vdomTemplate = appData.selectedView.obj.getVdomTemplate();
+  appData.selectedView.templateString = appData.selectedView.obj.getTemplateString();
   var diff = appData.selectedView.obj.getTemplateDiff();
   if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
     appData.selectedView.templateDiff = diff;
@@ -203,5 +207,80 @@ module.exports = function() {
       appData.selectedView.getState().clear();
       utils.render();
     }
+  });
+
+  function getPanelOutput(mustacheElement, indicies={}) {
+    var data = JSON.parse(decodeURIComponent(mustacheElement.getAttribute('data-value')));
+    var html = '<table>';
+    var ctx = new Context(appData.selectedView.obj.serialize());
+    var stack = new DebugValueStack();
+    var tmpl = null;
+    var tmplCtx = tmpl;
+    var name = [];
+    for (var i = 0; i < data.length; i++) {
+      stack.clear();
+      if (!tmpl) {
+        tmpl = data[i].context;
+        tmplCtx = tmpl;
+        ractiveAdaptor.render(stack, data[i].value, ctx, {});
+      } else {
+        tmplCtx.f = data[i].value;
+        ractiveAdaptor.render(stack, tmpl, ctx, {});
+      }
+      var value = stack.getOutput();
+      name.push(data[i].name);
+
+      var isArray = Context.isArray(value);
+      html += '<tr><td>' + name.join(':') + '</td><td>' + String(value) + '</td></tr>';
+
+      if (isArray) {
+        if (!indicies[i]) {
+          indicies[i] = 0;
+        }
+        data[i].context.r += '.' + indicies[i];
+        name[i] += '.<span class="u-underlined u-clickable js-range" data-index="' + i + '" data-max="' + value.length + '">' + indicies[i] + '</span>';
+      }
+      if (tmplCtx.f) {
+        tmplCtx.f = data[i].context;
+        tmplCtx = tmplCtx.f;
+      }
+    }
+    html += '</table>';
+    return {html, indicies};
+  }
+  utils.addEvent('js-mustache', 'click', function(e) {
+    if (!utils.hasClass(e.target, 'js-mustache')) {
+      return;
+    }
+    var existingPane = utils.selectElements('js-mustache-data', e.currentTarget)[0];
+    if (existingPane) {
+      existingPane.parentNode.removeChild(existingPane);
+    } else {
+      var panes = utils.selectElements('js-mustache-data');
+      for (var i = 0; i < panes.length; i++) {
+        panes[i].parentNode.removeChild(panes[i]);
+      }
+      var pane = document.createElement('div');
+      pane.className = 'MustacheData js-mustache-data';
+      var output = getPanelOutput(e.currentTarget);
+      var indicies = output.indicies;
+      pane.setAttribute('data-indicies', JSON.stringify(indicies));
+      pane.innerHTML = output.html;
+      e.currentTarget.appendChild(pane);
+    }
+  });
+  utils.addEvent('js-mustache', 'click', function (e) {
+    if (!utils.hasClass(e.target, 'js-range')) {
+      return;
+    }
+    var pane = utils.selectElements('js-mustache-data', e.currentTarget)[0];
+    var indicies = JSON.parse(pane.getAttribute('data-indicies'));
+    var index = parseInt(e.target.getAttribute('data-index'), 10);
+    var value = parseInt(e.target.textContent, 10);
+    var max = parseInt(e.target.getAttribute('data-max'), 10);
+    indicies[index] = (value + 10) % max;
+    var output = getPanelOutput(e.currentTarget, indicies);
+    pane.setAttribute('data-indicies', JSON.stringify(indicies));
+    pane.innerHTML = output.html;
   });
 };

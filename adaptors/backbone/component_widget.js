@@ -6,6 +6,10 @@ var logger = require('../../src/utils/logger');
 var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize'];
 var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
 
+/* develblock:start */
+modelFunctionsToMap.push('getDebugName');
+/* develblock:end */
+
 /**
  * Similar to BackboneViewWidget, but more simplistic
  * @param {Function} ViewConstructor Constructor function for the view
@@ -19,6 +23,10 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.model = model;
   this.template = template;
   this.key = key || _.uniqueId('w_component');
+  this.model.session = (this.model.session || []).concat(['content', 'yield']);
+  /* develblock:start */
+  this.model._private = {content:true, yield:true};
+  /* develblock:end */
 
   // Start with generic model functions
   var methodsToExpose = modelFunctionsToMap;
@@ -95,6 +103,12 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
 ComponentWidget.prototype.type = 'Widget';
 
 /**
+ * Type indicator for Lookups
+ * @type {String}
+ */
+ComponentWidget.prototype.isComponent = true;
+
+/**
  * Render the view's template to DOM nodes and attach a view to it
  * @return {Element} DOM node with the child view attached
  */
@@ -128,6 +142,24 @@ ComponentWidget.prototype.attach = function attach(elem) {
     model: this.model,
     template: this.template,
     isComponentView: true
+  });
+};
+
+/**
+ * Handle for component lambdas to be updated less-expensively but less-flexibly
+ * @param  {Template} tmpl Template to use as content
+ */
+ComponentWidget.prototype.updateContent = function updateContent(template) {
+  // Attach to a fake view to avoid template wrapping or unnecessary construction
+  var thisView = {
+    childViews: this.ViewConstructor.prototype.childViews,
+    el: false
+  };
+  var contentTemplate = template.attachView(thisView);
+
+  this.model.set({
+    'content': contentTemplate,
+    'yield': template
   });
 };
 

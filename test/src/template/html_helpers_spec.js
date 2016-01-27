@@ -8,10 +8,13 @@ describe('html_helpers.js public API', function() {
       expect(htmlHelpers.validation.isValidChild).to.be.a('function');
     });
     it('should check for a valid child', function() {
-      expect(htmlHelpers.validation.isValidChild('li', 'li')).to.equal(false);
+      expect(htmlHelpers.validation.isValidChild('li', 'li', true)).to.be.a('string');
     });
     it('should check for an invalid child', function() {
-      expect(htmlHelpers.validation.isValidChild('li', 'ul')).to.equal(true);
+      expect(htmlHelpers.validation.isValidChild('li', 'ul', true)).to.equal(true);
+    });
+    it('should check for implicit tags created by browser in non-strict mode', function() {
+      expect(htmlHelpers.validation.isValidChild('tr', 'table')).to.equal(true);
     });
     it('should return the opposite of impliedCloseTag', function() {
       var isValidChild = htmlHelpers.validation.isValidChild('li', 'ul');

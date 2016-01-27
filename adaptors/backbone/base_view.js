@@ -24,6 +24,7 @@ var BaseView = Backbone.View.extend({
    * Default to an empty hash
    */
   eventOptions: {},
+  renderEvents: 'all',
   /**
    * Shared init logic
    */
@@ -130,7 +131,7 @@ var BaseView = Backbone.View.extend({
         };
       }
       if (runOnChange) {
-        this.listenTo(dataItem, 'all', () => {
+        this.listenTo(dataItem, this.renderEvents, () => {
           // Since we're attaching a very naive listener, we may get many events in sequence, so we set a small debounce
           clearTimeout(this.debouncer);
           this.debouncer = setTimeout(runOnChange, 1);
@@ -206,10 +207,11 @@ var BaseView = Backbone.View.extend({
       initDebug: true,
       getFunctions: true,
       getEvents: true,
-      getElTemplate: true,
       getVdomTemplate: true,
+      getTemplateString: true,
       getChildren: true,
-      getDebugName: true
+      getDebugName: true,
+      toString: true
     };
     var getFunctions = require('../shared/get_functions');
     return getFunctions(trackedFunctions, getTrackableFunction, this, BaseView.prototype, blacklist);
@@ -289,6 +291,10 @@ var BaseView = Backbone.View.extend({
     return tungsten.debug.vtreeToString(vtreeToRender, true);
   },
 
+  getTemplateString: function() {
+    return this.compiledTemplate.toSource(true);
+  },
+
   /**
    * Compares the current VTree and DOM structure and returns a diff
    *
@@ -327,6 +333,10 @@ var BaseView = Backbone.View.extend({
    */
   getDebugName: function() {
     return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('view', '') : this.cid;
+  },
+
+  toString: function() {
+    return '[' + this.getDebugName() + ']';
   },
   /* develblock:end */
 

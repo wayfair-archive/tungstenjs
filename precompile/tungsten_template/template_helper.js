@@ -1,29 +1,23 @@
 'use strict';
-/*global Ractive */
-var _ = require('underscore');
-var Template = require('../../src/template/template.js');
-function compileTemplates(rawTemplates) {
-  var compiledTemplates = {}, partialsList = {};
-  rawTemplates = rawTemplates || {};
-  var templateNames = Object.keys(rawTemplates);
 
-  function parseTemplates(rawTemplates, templateNames, compiledTemplates) {
-    for (var i = 0; i < templateNames.length; i++) {
-      var parsed = Ractive.parse(rawTemplates[templateNames[i]], {
-        stripComments: false,
-        preserveWhitespace: true
-      });
-      compiledTemplates[templateNames[i]] = new Template(parsed.t, partialsList);
-    }
+var _ = require('underscore');
+var compiler = require('../../src/template/compiler');
+function compileTemplates(rawTemplates) {
+  if (typeof rawTemplates === 'string') {
+    return compiler(rawTemplates).template;
   }
 
-  // Compile templates as partials
-  parseTemplates(rawTemplates, templateNames, compiledTemplates);
-  _.keys(rawTemplates).forEach(function(item) {
-    partialsList[item] = compiledTemplates[item];
+  var compiledTemplates = {};
+  _.each(rawTemplates, function(templateStr, name) {
+    var output = compiler(templateStr);
+    var template = output.template;
+    template.setPartials(compiledTemplates);
+    compiledTemplates[name] = template;
   });
-  // Reparse templates with partials
-  parseTemplates(rawTemplates, templateNames, compiledTemplates);
+
   return compiledTemplates;
 }
-module.exports = {compileTemplates: compileTemplates};
+
+module.exports = {
+  compileTemplates: compileTemplates
+};

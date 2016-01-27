@@ -6,9 +6,6 @@
 'use strict';
 
 var _ = require('underscore');
-var ToVdom = require('./stacks/vdom');
-var ToDom = require('./stacks/dom');
-var ToHtmlString = require('./stacks/html_string');
 var ractiveAdaptor = require('./ractive_adaptor');
 var Context = require('./template_context');
 
@@ -18,11 +15,14 @@ var Context = require('./template_context');
  */
 var registeredPartials = {};
 
-var Template = function(templateObj, partials, view) {
+var Template = function(templateObj, partials, view, context) {
   this.templateObj = templateObj;
   this.partials = partials;
   this.view = view;
+  this.context = context;
 };
+
+Template.prototype.type = 'Template';
 
 Template.prototype.getPartials = function() {
   return this.partials || registeredPartials;
@@ -42,6 +42,10 @@ Template.prototype.register = function(partialName) {
 
 Template.prototype._iterate = function(template, data, view, partials, stack) {
   var context = (data && data.constructor && data instanceof Context) ? data : new Context(data);
+  // If the template has declared context, ensure that it is within lookup scope but prioritize passed data
+  if (this.context) {
+    context = this.context.push(context);
+  }
   ractiveAdaptor.render(
     stack,
     template || this.templateObj,
@@ -56,13 +60,15 @@ Template.prototype._render = function(template, data, view, partials, stack) {
 };
 
 /**
- * Outputs the template to a HTML string
- * @param  {Object} data Model to render the template with
- * @return {String}      HTML string of the rendered template
+ * Outputs the template to a string
+ * @param  {Object}  data Model to render the template with
+ * @param  {boolean} asHTML Whether to treat output as HTML (escaping entities)
+ * @return {String}      String of the rendered template
  */
-Template.prototype.toString = function(data) {
+Template.prototype.toString = function(data, asHTML) {
   var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
-  return this._render(templateToRender, data, null, this.partials, new ToHtmlString());
+  var ToHtmlString = require('./stacks/html_string');
+  return this._render(templateToRender, data, null, this.partials, new ToHtmlString(asHTML));
 };
 /**
  * Outputs the template to a DocumentFragment
@@ -71,6 +77,7 @@ Template.prototype.toString = function(data) {
  */
 Template.prototype.toDom = function(data) {
   var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
+  var ToDom = require('./stacks/dom');
   return this._render(templateToRender, data, null, this.partials, new ToDom());
 };
 /**
@@ -79,6 +86,7 @@ Template.prototype.toDom = function(data) {
  * @return {Object}       VirtualTree representing the template
  */
 Template.prototype.toVdom = function(data) {
+  var ToVdom = require('./stacks/vdom');
   return this._render(this.templateObj, data, this.view, this.partials, new ToVdom());
 };
 
@@ -88,13 +96,13 @@ Template.prototype.toVdom = function(data) {
  * @return {Object}         Wrapped template
  */
 Template.prototype.wrap = function(tagName) {
-  return new Template(ractiveAdaptor.wrap(this.templateObj, tagName), this.partials, this.view);
+  return new Template(ractiveAdaptor.wrap(this.templateObj, tagName), this.partials, this.view, this.context);
 };
 
 var widgetConstructor;
 function createChildView(view, template, partials) {
   return {
-    type: 'Widget',
+    type: 'WidgetConstructor',
     constructor: widgetConstructor,
     childView: view,
     template: new Template(template, partials)
@@ -109,7 +117,9 @@ function createChildView(view, template, partials) {
  */
 Template.prototype.attachView = function(view, widgetWrapper) {
   // @TODO assign this via adaptor?
-  widgetConstructor = widgetWrapper;
+  if (widgetWrapper !== undefined) {
+    widgetConstructor = widgetWrapper;
+  }
   var templateObj = ractiveAdaptor.attach(
     _.clone(this.templateObj),
     view,
@@ -117,6 +127,15 @@ Template.prototype.attachView = function(view, widgetWrapper) {
     this.getPartials()
   );
   return new Template(templateObj, this.partials, view);
+};
+
+/**
+ * Returns the parsed template object into an equivalent Mustache string
+ * Used for lambdas to allow source transforms before rendering
+ * @return {String}
+ */
+Template.prototype.toSource = function(forDebugger) {
+  return ractiveAdaptor.toSource(this.templateObj, forDebugger);
 };
 
 module.exports = Template;

@@ -3,9 +3,37 @@
 var DefaultStack = require('./stacks/default');
 var Parser = require('htmlparser2/lib/Parser');
 
+/**
+ * htmlparser2 treats boolean attributes as attributes with an empty string value
+ * Since empty string is falsy, virtual-dom will turn the attribute off
+ * This treats attribute values as true until a value is found
+ *
+ * @param {Object} cbs     Callback functions
+ * @param {Object} options Options for htmlparser2
+ */
+function TungstenParser(cbs, options) {
+  Parser.call(this, cbs, options);
+  this._attribvalue = true;
+}
+TungstenParser.prototype = new Parser();
+TungstenParser.prototype.constructor = TungstenParser;
+
+TungstenParser.prototype.onattribdata = function(value) {
+  if (this._attribvalue === true) {
+    this._attribvalue = value;
+  } else {
+    this._attribvalue += value;
+  }
+};
+TungstenParser.prototype._onattribend = Parser.prototype.onattribend;
+TungstenParser.prototype.onattribend = function() {
+  this._onattribend();
+  this._attribvalue = true;
+};
+
 var defaultStack = new DefaultStack(true);
 var _stack;
-var parser = new Parser({
+var parser = new TungstenParser({
   onopentag: function(name, attributes) {
     _stack.openElement(name, attributes);
   },

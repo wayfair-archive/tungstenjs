@@ -1,0 +1,10 @@
+<div class="js-template-panel-view">
+  <div class="js-sidebar-pane-title SidebarPane_title <%= panel.collapsed ? '' : 'expanded' %>" data-id="<%= panel.tabName %>">
+    Current Template
+  </div>
+  <% if (!panel.collapsed && panel.view) { %>
+    <div class="SidebarPane_data">
+      <pre class="TemplateString TemplateVisualizer"><code><%= panel.view.templateString %></code></pre>
+    </div>
+  <% } %>
+</div>

@@ -60,6 +60,10 @@ module.exports = function(config) {
   ensureLoader(config.module.loaders, /\.json$/, 'json-loader');
   ensureLoader(config.module.loaders, /\.mustache$/, 'tungsten_template');
 
+  config.resolve = config.resolve || {};
+  config.resolve.alias = config.resolve.alias || {};
+  config.resolve.alias.entities = path.join(__dirname, './node_modules/entities');
+
   return config;
 };
 

@@ -10,6 +10,7 @@ var isWidget = virtualDomImplementation.isWidget;
 var HTMLCommentWidget = require('../template/widgets/html_comment');
 var isHook = virtualDomImplementation.isHook;
 var vNodeToString = require('./vtree_to_string');
+var escapeString = require('../utils/escape_string');
 
 var chars = utils.entities.escaped;
 
@@ -53,9 +54,9 @@ function diffElements(vNode, elem) {
     if (_.isObject(domValue)) {
       domValue = elem.getAttribute(key);
     }
-    if (propName === 'href') {
+    if (propName === 'href' || propName === 'src') {
       // the href property displays the fully resolved URL when read, so fall back to attribute value
-      domValue = elem.getAttribute('href');
+      domValue = elem.getAttribute(propName);
     } else if (propName === 'style') {
       // Style attributes are tricky because they can validly contain whitespace and be out of order
       propValue = _.filter(propValue.cssText.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
@@ -130,7 +131,7 @@ function recursiveDiff(vtree, elem) {
   } else if (isVText(vtree)) {
     if (!elem || elem.nodeType !== utils.NODE_TYPES.TEXT) {
       // If vtree is a VText, but elem isn't a textNode
-      output += '<del>' + utils.escapeString(vtree.text) + '</del>';
+      output += '<del>' + escapeString(vtree.text) + '</del>';
       if (elem) {
         output += '<ins>' + utils.elementToString(elem, chars) + '</ins>';
       }
@@ -143,12 +144,12 @@ function recursiveDiff(vtree, elem) {
     if (vtree.constructor === HTMLCommentWidget) {
       // HTMLCommentWidget is a special case
       if (!elem || elem.nodeType !== utils.NODE_TYPES.COMMENT) {
-        output += '<del>' + utils.getCommentString(utils.escapeString(vtree.text), chars) + '</del>';
+        output += '<del>' + utils.getCommentString(escapeString(vtree.text), chars) + '</del>';
         if (elem) {
           output += '<ins>' + utils.elementToString(elem, chars) + '</ins>';
         }
       } else {
-        output += utils.getCommentString(textDiff(vtree.text, elem.textContent), chars);
+        output += utils.getCommentString(textDiff(escapeString(vtree.text), elem.textContent), chars);
       }
     } else if (vtree && vtree.view) {
       widgetName = vtree.view.getDebugName();

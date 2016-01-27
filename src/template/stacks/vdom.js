@@ -4,11 +4,14 @@ var tungsten = require('../../tungsten');
 var HTMLCommentWidget = require('../widgets/html_comment');
 var htmlParser = require('../html_parser');
 var DefaultStack = require('./default');
+var Autofocus = require('../hooks/autofocus');
 
 function VdomStack(attributesOnly, debugMode) {
   DefaultStack.call(this, attributesOnly, debugMode);
   // Override default property
-  this.propertyOpts.useHooks = true;
+  this.propertyOpts.useHooks = {
+    'autofocus': Autofocus
+  };
 }
 VdomStack.prototype = new DefaultStack();
 VdomStack.prototype.constructor = VdomStack;
