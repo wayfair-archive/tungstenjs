@@ -17,7 +17,7 @@ module.exports = function(bundleMap) {
     var data = _.extend({}, global.config.pageData, page, {
       content: content,
       js: bundleMap[page.js],
-      css: bundleMap[page.css],
+      css: bundleMap[page.css]
     });
     file.write(name + '.html', doctype + compiledTemplates[global.config.pageTemplate].toString(data));
   });

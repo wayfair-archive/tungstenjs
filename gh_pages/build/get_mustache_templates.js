@@ -27,6 +27,7 @@ var templateFolder = path.join(__dirname, '../templates');
 var templatesFiles = glob.sync(path.join(templateFolder, '/**/*.mustache'));
 var templateMap = {};
 _.each(templatesFiles, function(template) {
+  template = path.normalize(template);
   var name = template.replace(templateFolder + path.sep, '').replace(/\.mustache$/, '');
   templateMap[name] = fs.readFileSync(template).toString();
 });
