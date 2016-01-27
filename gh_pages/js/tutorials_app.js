@@ -103,8 +103,7 @@
     View: View.extend({
       events: {
         'keyup': 'quietUpdate',
-        'input': 'quietUpdate',
-        'blur': 'update'
+        'input': 'quietUpdate'
       },
       postInitialize: function() {
         this.listenTo(this.model, 'change:clean_value', function(model, value) {
