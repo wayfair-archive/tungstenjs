@@ -34,12 +34,6 @@ function logMessage(messageLevel, data) {
         logger.warn.apply(logger, data);
       }
       break;
-    default:
-      if (overrides.log) {
-        overrides.log(data);
-      } else {
-        logger.log.apply(logger, data);
-      }
   }
 }
 

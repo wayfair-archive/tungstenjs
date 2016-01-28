@@ -25,5 +25,6 @@ function queue(obj, fn) {
 }
 
 module.exports = {
-  queue: queue
+  queue: queue,
+  _key: OBJECT_QUEUED
 };
