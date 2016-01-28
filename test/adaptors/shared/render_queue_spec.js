@@ -15,14 +15,32 @@ describe('render_queue', function() {
       };
       renderQueue.queue(obj, obj.fn);
       renderQueue.queue(obj2, obj2.fn);
+
       expect(Object.keys(obj)).to.have.length(2);
       expect(Object.keys(obj2)).to.have.length(2);
       expect(obj).to.include.keys(['fn', renderQueue._key]);
       expect(obj2).to.include.keys(['fn', renderQueue._key]);
       setTimeout(function() {
-        // @TODO check that both were called only once
         jasmineExpect(obj.fn).toHaveBeenCalled();
         jasmineExpect(obj2.fn).toHaveBeenCalled();
+        expect(obj.fn.calls.count()).to.equal(1);
+        expect(obj2.fn.calls.count()).to.equal(1);
+        done();
+      }, 100);
+    });
+    it('should not repeat queued functions if queued repeatedly', function(done) {
+      var obj = {
+        fn: jasmine.createSpy('fn')
+      };
+      renderQueue.queue(obj, obj.fn);
+      renderQueue.queue(obj, obj.fn);
+      renderQueue.queue(obj, obj.fn);
+      renderQueue.queue(obj, obj.fn);
+      renderQueue.queue(obj, obj.fn);
+
+      setTimeout(function() {
+        jasmineExpect(obj.fn).toHaveBeenCalled();
+        expect(obj.fn.calls.count()).to.equal(1);
         done();
       }, 100);
     });
