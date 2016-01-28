@@ -114,6 +114,7 @@ MustacheParser.prototype.onattribend = function() {
 };
 
 MustacheParser.prototype.endAttribute = function() {
+  this.onattribend();
   this._tokenizer._state = BEFORE_ATTRIBUTE_NAME;
 };
 
