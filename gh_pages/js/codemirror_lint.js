@@ -3,12 +3,6 @@
 
   var eslintConfig = {
     'rules': {
-      'indent': [
-        2,
-        2, {
-          'SwitchCase': 1
-        }
-      ],
       'quotes': [
         2,
         'single'
@@ -19,7 +13,7 @@
       ]
     },
     'env': {
-      'es6': false,
+      'es6': true,
       'browser': true
     },
     'globals': {
