@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <title>{{site-title}}</title>
     {{#css}}
-    <link rel="stylesheet" href="{{css}}">
+    <link rel="stylesheet" href="{{.}}">
     {{/css}}
   </head>
   <body {{#pageClass}}class="{{pageClass}}"{{/pageClass}}>
@@ -39,7 +39,7 @@
       </div>
     </div>
     {{#js}}
-    <script src="{{js}}"></script>
+    <script src="{{.}}"></script>
     {{/js}}
   </body>
 </html>
