@@ -6,7 +6,7 @@ var films = require('./data.js');
 var template = require('../templates/app.mustache');
 
 window.appView = new AppView({
-  el: '#appwrapper',
+  el: document.getElementById('appwrapper'),
   template: template,
   model: new AppModel({films:films}),
   dynamicInitialize: true
