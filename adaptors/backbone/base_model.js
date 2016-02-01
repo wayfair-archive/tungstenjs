@@ -232,7 +232,7 @@ var BaseModel = Backbone.Model.extend({
     // level with their special properties removed.
     if (protoProps && protoProps.attributes) {
       var specialPropNames = _.defaults({
-        default: 'defaults',
+        'default': 'defaults',
         derived: 'derived',
         relation: 'relations'
       }, specialProps);
