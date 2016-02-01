@@ -1,5 +1,5 @@
 /**
- * Standalone version of Ractive Types
+ * Forked from Ractive Types
  *
  * @license MIT
  * @source https://github.com/ractivejs/ractive/blob/master/src/config/types.js
@@ -26,7 +26,7 @@
  */
 'use strict';
 
-var ractiveTypes = {
+var types = {
   TEXT: 1,
   INTERPOLATOR: 2,
   TRIPLE: 3,
@@ -64,4 +64,4 @@ var ractiveTypes = {
   SECTION_IF_WITH: 54
 };
 
-module.exports = ractiveTypes;
+module.exports = types;

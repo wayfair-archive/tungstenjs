@@ -4,7 +4,7 @@ var _ = require('underscore');
 var ToString = require('./stacks/string');
 var Context = require('./template_context');
 var logger = require('./../utils/logger');
-var ractiveTypes = require('./ractive_types');
+var types = require('./types');
 var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var isVNode = virtualDomImplementation.isVNode;
@@ -90,43 +90,43 @@ function render(stack, template, context, partials, parentView) {
   }
 
   switch (template.t) {
-    case ractiveTypes.TEXT:
+    case types.TEXT:
       stack.createObject(template.r, {escapeHTML: true});
       break;
     // <!-- comment -->
-    case ractiveTypes.COMMENT:
+    case types.COMMENT:
       var toString = new ToString();
       render(toString, template.c, context, partials, parentView);
       stack.createComment(toString.getOutput());
       return;
     // {{value}} or {{{value}}} or {{& value}}
-    case ractiveTypes.INTERPOLATOR:
-    case ractiveTypes.TRIPLE:
+    case types.INTERPOLATOR:
+    case types.TRIPLE:
       value = context.lookup(template.r);
       if (value != null) {
         // If value is already a widget or vnode, add it wholesale
-        if (template.t === ractiveTypes.TRIPLE && (isWidget(value) || isVNode(value))) {
+        if (template.t === types.TRIPLE && (isWidget(value) || isVNode(value))) {
           stack.createObject(value);
-        } else if (template.t === ractiveTypes.TRIPLE && value.type === 'Template') {
+        } else if (template.t === types.TRIPLE && value.type === 'Template') {
           var ctx = value.context || context;
           render(stack, value.templateObj, ctx, partials, parentView);
-        } else if (Context.isArray(value) && template.t === ractiveTypes.TRIPLE && value.vdomArray === true) {
+        } else if (Context.isArray(value) && template.t === types.TRIPLE && value.vdomArray === true) {
           for (i = 0; i < value.length; i++) {
             stack.createObject(value[i]);
           }
         } else {
           stack.createObject(stack.stringify(value), {
             // TRIPLE is unescaped content, so it may need parsing
-            parse: template.t === ractiveTypes.TRIPLE,
+            parse: template.t === types.TRIPLE,
             // INTERPOLATOR is escaped content, so it may need escaping
-            escape: template.t === ractiveTypes.INTERPOLATOR
+            escape: template.t === types.INTERPOLATOR
           });
         }
       }
       break;
 
     // {{> partial}}
-    case ractiveTypes.PARTIAL:
+    case types.PARTIAL:
       var partialName = template.r;
       if (partials[partialName]) {
         var partialTemplate = partials[partialName];
@@ -143,10 +143,10 @@ function render(stack, template, context, partials, parentView) {
       break;
 
     // {{# section}} or {{^ unless}}
-    case ractiveTypes.SECTION:
+    case types.SECTION:
       var handleLambda = null;
       var lambdaHandled = false;
-      if (template.n !== ractiveTypes.SECTION_UNLESS) {
+      if (template.n !== types.SECTION_UNLESS) {
         // Section tags can be lambdas with contents
         handleLambda = function(fn, ctx) {
           // Create a template from the section's children
@@ -190,7 +190,7 @@ function render(stack, template, context, partials, parentView) {
         break;
       }
       value = Context.parseValue(value);
-      if (template.n === ractiveTypes.SECTION_UNLESS) {
+      if (template.n === types.SECTION_UNLESS) {
         if (!value.isTruthy) {
           render(stack, template.f, context, partials, parentView);
         }
@@ -212,7 +212,7 @@ function render(stack, template, context, partials, parentView) {
       break;
 
     // DOM node
-    case ractiveTypes.ELEMENT:
+    case types.ELEMENT:
       var properties = {};
       var attributeHandler = function(values, attr) {
         properties[attr] = renderAttributeString(values, context);
@@ -316,7 +316,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
   }
 
   // If this is a partial, lookup and recurse
-  if (template.t === ractiveTypes.PARTIAL) {
+  if (template.t === types.PARTIAL) {
     var partialName = template.r;
     if (!partials[partialName]) {
       logger.warn('Warning: no partial registered with the name ' + partialName);
@@ -345,7 +345,7 @@ function wrap(templateObj, tagName) {
   }
   var objectToWrap = null;
 
-  if (templateObj.t === ractiveTypes.ELEMENT) {
+  if (templateObj.t === types.ELEMENT) {
     // There is a top level element from previous wrapping
     //  Grab the contents
     if (templateObj.wrapped) {
@@ -359,7 +359,7 @@ function wrap(templateObj, tagName) {
     return templateObj;
   } else {
     return {
-      't': ractiveTypes.ELEMENT,
+      't': types.ELEMENT,
       'e': tagName || 'div',
       'f': objectToWrap,
       wrapped: true
@@ -430,7 +430,7 @@ function getMustacheData(context, template, prefix) {
         r: template.r
       },
       value: {
-        t: ractiveTypes.TRIPLE,
+        t: types.TRIPLE,
         n: template.n,
         r: template.r
       }
@@ -459,34 +459,34 @@ function _toSource(stack, template, forDebugger, context) {
   }
 
   switch (template.t) {
-    case ractiveTypes.TEXT:
+    case types.TEXT:
       stack.createObject(template.n);
       break;
     // <!-- comment -->
-    case ractiveTypes.COMMENT:
+    case types.COMMENT:
       var htmlString = new HtmlString(true);
       _toSource(htmlString, template.c, forDebugger, context);
       stack.createComment(htmlString.getOutput());
       break;
 
     // {{value}} or {{{value}}} or {{& value}}
-    case ractiveTypes.INTERPOLATOR:
+    case types.INTERPOLATOR:
       stack.createObject('{{' + template.r + '}}', getMustacheData(context, template));
       break;
-    case ractiveTypes.TRIPLE:
+    case types.TRIPLE:
       stack.createObject('{{{' + template.r + '}}}', getMustacheData(context, template));
       break;
 
     // {{> partial}}
-    case ractiveTypes.PARTIAL:
+    case types.PARTIAL:
       stack.createObject('{{>' + template.r + '}}', {mustache: true});
       break;
 
     // {{# section}} or {{^ unless}}
-    case ractiveTypes.SECTION:
+    case types.SECTION:
       var name = template.r;
       var mustacheData;
-      if (template.n === ractiveTypes.SECTION_UNLESS) {
+      if (template.n === types.SECTION_UNLESS) {
         mustacheData = getMustacheData(context, template, '!');
         stack.createObject('{{^' + name + '}}', mustacheData);
       } else {
@@ -498,7 +498,7 @@ function _toSource(stack, template, forDebugger, context) {
       break;
 
     // DOM node
-    case ractiveTypes.ELEMENT:
+    case types.ELEMENT:
       var properties = {};
       var attributeHandler = function(values, attr) {
         properties[attr] = reverseAttributeString(values, '', forDebugger, context);

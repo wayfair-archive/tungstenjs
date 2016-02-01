@@ -1,7 +1,7 @@
 'use strict';
 
-var ractiveAdaptor = require('../../../src/template/ractive_adaptor');
-var ractiveTypes = require('../../../src/template/ractive_types');
+var ractiveAdaptor = require('../../../src/template/adaptor');
+var ractiveTypes = require('../../../src/template/types');
 
 var compiler = require('../../../precompile/tungsten_template/inline');
 function getTemplate(templateStr, partials) {
@@ -9,7 +9,7 @@ function getTemplate(templateStr, partials) {
 }
 
 
-describe('ractive_adaptor.js public API', function() {
+describe('adaptor.js public API', function() {
   describe('render', function() {
     var render = ractiveAdaptor.render;
     it('should be a function', function() {

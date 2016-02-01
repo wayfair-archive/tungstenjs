@@ -7,7 +7,7 @@ const highlighter = require('../highlighter');
 const logger = require('../../utils/logger');
 const dataset = require('data-set');
 const Context = require('../../template/template_context');
-const ractiveAdaptor = require('../../template/ractive_adaptor');
+const templateAdaptor = require('../../template/adaptor');
 const DebugValueStack = require('../../template/stacks/debug_value');
 
 const getClosestView = appData.getClosestView = function(elem) {
@@ -222,10 +222,10 @@ module.exports = function() {
       if (!tmpl) {
         tmpl = data[i].context;
         tmplCtx = tmpl;
-        ractiveAdaptor.render(stack, data[i].value, ctx, {});
+        templateAdaptor.render(stack, data[i].value, ctx, {});
       } else {
         tmplCtx.f = data[i].value;
-        ractiveAdaptor.render(stack, tmpl, ctx, {});
+        templateAdaptor.render(stack, tmpl, ctx, {});
       }
       var value = stack.getOutput();
       name.push(data[i].name);

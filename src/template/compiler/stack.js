@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('underscore');
-const types = require('../ractive_types');
+const types = require('../types');
 const htmlHelpers = require('../html_helpers');
 const logger = require('./compiler_logger');
 

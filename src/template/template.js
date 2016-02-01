@@ -6,7 +6,7 @@
 'use strict';
 
 var _ = require('underscore');
-var ractiveAdaptor = require('./ractive_adaptor');
+var templateAdaptor = require('./adaptor');
 var Context = require('./template_context');
 
 /**
@@ -46,7 +46,7 @@ Template.prototype._iterate = function(template, data, view, partials, stack) {
   if (this.context) {
     context = this.context.push(context);
   }
-  ractiveAdaptor.render(
+  templateAdaptor.render(
     stack,
     template || this.templateObj,
     context,
@@ -96,7 +96,7 @@ Template.prototype.toVdom = function(data) {
  * @return {Object}         Wrapped template
  */
 Template.prototype.wrap = function(tagName) {
-  return new Template(ractiveAdaptor.wrap(this.templateObj, tagName), this.partials, this.view, this.context);
+  return new Template(templateAdaptor.wrap(this.templateObj, tagName), this.partials, this.view, this.context);
 };
 
 var widgetConstructor;
@@ -120,7 +120,7 @@ Template.prototype.attachView = function(view, widgetWrapper) {
   if (widgetWrapper !== undefined) {
     widgetConstructor = widgetWrapper;
   }
-  var templateObj = ractiveAdaptor.attach(
+  var templateObj = templateAdaptor.attach(
     _.clone(this.templateObj),
     view,
     createChildView,
@@ -135,7 +135,7 @@ Template.prototype.attachView = function(view, widgetWrapper) {
  * @return {String}
  */
 Template.prototype.toSource = function(forDebugger) {
-  return ractiveAdaptor.toSource(this.templateObj, forDebugger);
+  return templateAdaptor.toSource(this.templateObj, forDebugger);
 };
 
 module.exports = Template;

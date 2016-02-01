@@ -1,7 +1,7 @@
 'use strict';
 
 const Parser = require('htmlparser2/lib/Parser');
-const types = require('../ractive_types');
+const types = require('../types');
 const stack = require('./stack');
 const logger = require('./compiler_logger');
 const decoder = require('./decoder');

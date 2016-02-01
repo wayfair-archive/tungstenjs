@@ -4,7 +4,7 @@
 
 var decodeCodePoint = require('entities/lib/decode_codepoint.js');
 var entityMap = require('entities/maps/entities.json');
-var types = require('../ractive_types');
+var types = require('../types');
 var legacyMap = require('entities/maps/legacy.json');
 
 module.exports = (function() {
