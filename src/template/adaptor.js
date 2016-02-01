@@ -451,7 +451,15 @@ function _toSource(stack, template, forDebugger, context) {
   } else if (template.type === 'WidgetConstructor') {
     if (forDebugger) {
       var debugName = template.childView.debugName || template.childView.prototype.debugName;
-      stack.createObject('[' + debugName + ']');
+      debugName = '[' + debugName + ']';
+      if (stack.createChildView) {
+        stack.createChildView(debugName, getMustacheData(context, {
+          t: types.TRIPLE,
+          r: '!w/lastModelForDebugger'
+        }));
+      } else {
+        stack.createObject(debugName);
+      }
     } else {
       _toSource(stack, template.template.templateObj, forDebugger, context);
     }

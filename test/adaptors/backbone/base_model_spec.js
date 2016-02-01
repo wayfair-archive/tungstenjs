@@ -252,6 +252,7 @@ describe('base_model.js constructed api', function() {
       var expectedProperties = [{
         key: 'prop',
         data: {
+          isRemovable: true,
           isEditable: true,
           isEditing: false,
           value: 'test',
@@ -260,6 +261,7 @@ describe('base_model.js constructed api', function() {
       }, {
         key: 'serializable',
         data: {
+          isRemovable: true,
           isEditable: true,
           isEditing: false,
           value: serializable,
@@ -268,6 +270,7 @@ describe('base_model.js constructed api', function() {
       }, {
         key: 'unserializable',
         data: {
+          isRemovable: true,
           isEditable: false,
           isEditing: false,
           value: unserializable,

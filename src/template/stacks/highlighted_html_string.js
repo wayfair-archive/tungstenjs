@@ -62,4 +62,9 @@ HighlightedHtmlStringStack.prototype.createObject = function(obj, options) {
   this._createObject(obj, options);
 };
 
+HighlightedHtmlStringStack.prototype.createChildView = function(obj, options) {
+  obj = syntaxHighlight.mustacheChildView(obj, options.mustache);
+  this._createObject(obj, options);
+};
+
 module.exports = HighlightedHtmlStringStack;

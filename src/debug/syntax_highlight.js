@@ -22,6 +22,13 @@ function mustache(value, data) {
   }
   return '<span class="TemplateString_mustache js-mustache"' + dataStr + '>' + value + '</span>';
 }
+function mustacheChildView(value, data) {
+  var dataStr = '';
+  if (data) {
+    dataStr = ' data-value="' + encodeURIComponent(JSON.stringify(data)) + '"';
+  }
+  return '<span class="TemplateString_mustacheChildView js-mustache"' + dataStr + '>' + value + '</span>';
+}
 
 module.exports = {
   tag,
@@ -29,5 +36,6 @@ module.exports = {
   attrValue,
   attribute,
   comment,
-  mustache
+  mustache,
+  mustacheChildView
 };

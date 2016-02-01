@@ -81,6 +81,9 @@ var debugHelpers = {
   lastModel: function() {
     logger.log('W/LASTMODEL:', this.lastModel);
   },
+  lastModelForDebugger: function() {
+    return this.lastModel;
+  },
   debug: function() {
     var self = this;
     for (var i = 0; i < arguments.length; i++) {
@@ -119,7 +122,7 @@ Context.prototype.lookup = function(name, handleLambda) {
     if (debugName[0] === 'w' && debugHelpers[debugName[1]]) {
       var fn = debugHelpers[debugName[1]];
       debugName = debugName.slice(2);
-      fn.apply(this, debugName);
+      return fn.apply(this, debugName);
     }
     /* develblock:end */
     return null;
