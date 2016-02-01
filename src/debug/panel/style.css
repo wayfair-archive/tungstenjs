@@ -245,6 +245,9 @@ body, .pure-g [class *="pure-u"] {
 .AttributeSection_data {
   margin-left: 1.5em;
 }
+.AttributeSection_removeAttribute {
+  margin-left: 0.5em;
+}
 
 /*******************
  * Loading overlay

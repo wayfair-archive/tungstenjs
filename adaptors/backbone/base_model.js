@@ -181,6 +181,7 @@ var BaseModel = Backbone.Model.extend({
           data: {
             isEditable: isEditable(value),
             isEditing: false,
+            isRemovable: true,
             value: value
           }
         };

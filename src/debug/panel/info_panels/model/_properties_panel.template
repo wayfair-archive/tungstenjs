@@ -23,21 +23,34 @@
           <% if (prop.data.isRelation) { %>
             <span class="value u-mono u-clickable u-underlined js-model-list-item" data-id="<%= prop.data.name %>"> <%= prop.data.name %> </span>
           <% } else { %>
-            <span class="value u-mono <%= clickableClassName %>">
-            <% if (prop.data.isEditing) { %>
+            <span class="value u-mono <%= clickableClassName %>"><%
+            if (prop.data.isEditing) { %>
               <input type="text" value="<%- prop.data.displayValue %>" autofocus="true" class="js-model-property-value u-mono">
             <% } else { %>
-              <span><%- prop.data.displayValue %></span>
-            <% } %>
-          </span>
-          <% } %>
+              <span><%- prop.data.displayValue %></span><%
+            }
+           %></span><%
+          }
+          if (!prop.data.isEditing && prop.data.isRemovable) {
+            %><span class="AttributeSection_removeAttribute u-mono u-clickable u-underlined js-remove-attribute" data-key="<%= prop.key %>">-</span><%
+          } %>
         </div>
       <% };
 
       var props = panel.model.modelProperties;
-      if (props.normal.length) {
-        %><h4 class="AttributeSection_header">Properties</h4><%
-        _.each(props.normal, propRow);
+      %><h4 class="AttributeSection_header">Properties</h4>
+      <%
+      _.each(props.normal, propRow);
+      if (panel.settings.modelProperties && panel.settings.modelProperties.adding) {
+      %>
+      <form class="pure-form js-adding-attribute">
+        <input type="text" name="name">
+        <input type="text" name="value">
+        <input type="submit" class="pure-button" value="Add">
+        <button class="pure-button js-cancel-adding-attribute" type="button">Cancel</button>
+      </form><%
+      } else {
+        %><span class="AttributeSection_data u-clickable u-underlined js-add-attribute">Add Property</span><%
       }
       if (props.derived.length) {
         %><h4 class="AttributeSection_header">Derived</h4><%
