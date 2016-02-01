@@ -5,6 +5,8 @@
 
 Tungsten.js is a modular framework for creating web UIs with high-performance rendering on both server and client.
 
+[wayfair.github.io/tungstenjs/](https://wayfair.github.io/tungstenjs/)
+
 ## What Tungsten.js Provides
 
 * High-performance virtual DOM updates powered by [virtual-dom](https://github.com/Matt-Esch/virtual-dom)
