@@ -2,7 +2,7 @@
 
 const _ = require('underscore');
 const hogan = require('hogan.js/lib/compiler');
-const types = require('../ractive_types');
+const types = require('../types');
 
 const parser = require('./parser');
 const stack = require('./stack');
