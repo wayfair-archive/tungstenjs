@@ -16,9 +16,9 @@ _@todo: automate more of this process_
 
 ### Add a tutorial
 
-1. Add tutorial's JS file to `templates/js/tutorials`
-2. List JS file in `bundles[/js/tutorials.js]` array in `config.js`
-3. Add tutorial name, and URIEncoded name, in `contents/shared.json`
+1. Add tutorial's JS file to `js/tutorials`
+2. List JS file in `bundles[/js/tutorials.js]` array in `config.json`
+3. Add tutorial name, and URIEncoded name, in `pageData[tutorials]` array in `config.json`
 
 ### Add a `sampleFeature` docs page
 
