@@ -142,4 +142,39 @@ module.exports = function() {
     appData.selectedModel.obj.reset(appData.selectedModel.obj.initialData);
     appData.updateSelectedModel();
   });
+  utils.addEvent('js-remove-attribute', 'click', function(e) {
+    e.stopPropagation();
+    appData.selectedModel.obj.unset(e.currentTarget.getAttribute('data-key'));
+    appData.updateSelectedModel();
+  });
+  utils.addEvent('js-add-attribute', 'click', function() {
+    appData.settings.modelProperties = appData.settings.modelProperties || {};
+    appData.settings.modelProperties.adding = true;
+    utils.render();
+  });
+  utils.addEvent('js-cancel-adding-attribute', 'click', function() {
+    appData.settings.modelProperties = appData.settings.modelProperties || {};
+    appData.settings.modelProperties.adding = false;
+    utils.render();
+  });
+  utils.addEvent('js-adding-attribute', 'submit', function(e) {
+    e.preventDefault();
+    var form = e.currentTarget;
+    var name = form.name.value;
+    var value;
+    try {
+      value = JSON.parse(form.value.value);
+    } catch (ex) {
+      value = form.value.value;
+    }
+    var model = appData.selectedModel.obj;
+    if (model.has(name)) {
+      alert('Model already has property named "' + name + '"');
+    } else {
+      model.set(name, value);
+      appData.settings.modelProperties = appData.settings.modelProperties || {};
+      appData.settings.modelProperties.adding = false;
+      appData.updateSelectedModel();
+    }
+  });
 };

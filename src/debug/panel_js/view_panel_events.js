@@ -231,7 +231,11 @@ module.exports = function() {
       name.push(data[i].name);
 
       var isArray = Context.isArray(value);
-      html += '<tr><td>' + name.join(':') + '</td><td>' + String(value) + '</td></tr>';
+      var outputName = name.join(':');
+      if (name[name.length - 1] === '!w/lastModelForDebugger') {
+        outputName = 'Model&nbsp;for&nbsp;ChildView';
+      }
+      html += '<tr><td>' + outputName + '</td><td>' + String(value) + '</td></tr>';
 
       if (isArray) {
         if (!indicies[i]) {

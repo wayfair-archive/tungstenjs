@@ -151,12 +151,17 @@ body, .pure-g [class *="pure-u"] {
 .TemplateString_mustache {
   color: #D2AA3C;
 }
+.TemplateString_mustacheChildView {
+  background-color: #D79DC5;
+  color: #FFF;
+}
 
 .TemplateVisualizer {
   padding-bottom: 50px;
   padding-right: 50px;
 }
-.TemplateVisualizer .TemplateString_mustache {
+.TemplateVisualizer .TemplateString_mustache,
+.TemplateVisualizer .TemplateString_mustacheChildView {
   cursor: pointer;
   position: relative;
 }
@@ -244,6 +249,9 @@ body, .pure-g [class *="pure-u"] {
 }
 .AttributeSection_data {
   margin-left: 1.5em;
+}
+.AttributeSection_removeAttribute {
+  margin-left: 0.5em;
 }
 
 /*******************
