@@ -60,13 +60,15 @@ function diffElements(vNode, elem) {
     } else if (propName === 'style') {
       // Style attributes are tricky because they can validly contain whitespace and be out of order
       propValue = _.filter(propValue.cssText.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
-      domValue = _.filter(domValue.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
+      if (typeof domValue === 'string') {
+        domValue = _.filter(domValue.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
+      }
     }
 
     var vAttr = ' <span class="TemplateString_attrName">' + propName + '</span>=<span class="TemplateString_attrValue">' + chars.quote + propValue + chars.quote + '</span>';
-    var eAttr = ' <span class="TemplateString_attrName">' + propName + '</span>=<span class="TemplateString_attrValue">' + chars.quote + domValue + chars.quote + '</span>';
+    var dAttr = ' <span class="TemplateString_attrName">' + propName + '</span>=<span class="TemplateString_attrValue">' + chars.quote + textDiff(String(propValue), String(domValue)) + chars.quote + '</span>';
     // If the property is a boolean, any non-"false" value of the template is fine
-    output += elem[key] === true && propValue.toString() !== 'false' ? vAttr : textDiff(vAttr, eAttr);
+    output += elem[key] === true && propValue.toString() !== 'false' ? vAttr : dAttr;
   });
 
   // Check declared attribute values vs DOM values
