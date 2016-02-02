@@ -60,7 +60,7 @@ function diffElements(vNode, elem) {
     } else if (propName === 'style') {
       // Style attributes are tricky because they can validly contain whitespace and be out of order
       propValue = _.filter(propValue.cssText.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
-      domValue = _.filter(domValue.split(';'), _.identity).sort().join(';').replace(/\s/g, '');
+      domValue = _.filter((domValue || '').split(';'), _.identity).sort().join(';').replace(/\s/g, '');
     }
 
     var vAttr = ' <span class="TemplateString_attrName">' + propName + '</span>=<span class="TemplateString_attrValue">' + chars.quote + propValue + chars.quote + '</span>';
