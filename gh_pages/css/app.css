@@ -130,3 +130,11 @@ body {
 a, a:visited {
   color: inherit;
 }
+
+.solution {
+  display: none;
+}
+
+button:focus + .solution {
+  display: block;
+}
