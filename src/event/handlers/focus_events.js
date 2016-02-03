@@ -27,7 +27,7 @@ var eventNameMap = {
   'focus': 'focusin'
 };
 
-/*global TUNGSTENJS_IS_TEST */
+/* global TUNGSTENJS_IS_TEST */
 var TEST_MODE = typeof TUNGSTENJS_IS_TEST !== 'undefined' && TUNGSTENJS_IS_TEST;
 
 module.exports = function(el, eventName, selector, method, options, bindVirtualEvent) {

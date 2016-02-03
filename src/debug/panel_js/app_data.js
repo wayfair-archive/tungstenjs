@@ -1,5 +1,5 @@
 'use strict';
-/*global TUNGSTENJS_VERSION */
+/* global TUNGSTENJS_VERSION */
 var isNode = require('../is_node');
 var _ = require('underscore');
 var styles = isNode ? '' : (

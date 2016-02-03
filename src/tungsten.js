@@ -8,7 +8,7 @@
  * @author Matt DeGennaro <mdegennaro@wayfair.com>
  * @license Apache-2.0
  */
-/*global TUNGSTENJS_VERSION */
+/* global TUNGSTENJS_VERSION */
 'use strict';
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');

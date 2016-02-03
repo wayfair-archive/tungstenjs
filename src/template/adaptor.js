@@ -372,7 +372,7 @@ function attach(templateObj, view, createWidget, partials) {
   return attachView(view, templateObj, createWidget, partials);
 }
 
-/*****************************************************************************/
+/* ************************************************************************** */
 
 var HtmlString = require('./stacks/html_string');
 function reverseAttributeString(templates, join, forDebugger, context) {
