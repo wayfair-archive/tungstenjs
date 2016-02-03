@@ -1,18 +1,27 @@
 {
   "rules": {
-    "indent": [
-      2,
-      2,
-      {"SwitchCase": 1}
-    ],
-    "quotes": [
-      2,
-      "single"
-    ],
-    "semi": [
-      2,
-      "always"
-    ]
+    "indent": [2, 2, {"SwitchCase": 1}],
+    "quotes": [2, "single"],
+    "semi": [2, "always"],
+    "brace-style": [1, "1tbs"],
+    "max-len": [1, 190, 2],
+    "eol-last": [1],
+    "wrap-iife": [1, "any"],            // require IIFEs to be wrapped in parentheses
+    "no-with": [2],
+    "camelcase": [1, {"properties": "never"}],  // require camel case vars but not properties
+    "spaced-comment": [1, "always"],    // require a space immediately following the // or /* in a comment
+    "no-trailing-spaces": [1],          // disallow trailing whitespace at the end of lines (fixable)
+    "comma-dangle": [1],                // disallow trailing comma
+    "new-cap": [1],                     // require a capital letter for constructors
+    "dot-notation": [1],                // encourages use of dot notation whenever possible
+    "key-spacing": [1],                 // enforces spacing around the colon in object literal properties
+    "curly": [2],                       // specify curly brace conventions for all control statements
+    "space-infix-ops": [1],             // require spaces around operators (fixable)
+    "space-before-blocks": [1, "always"],       // require or disallow a space before blocks (fixable)
+    "operator-linebreak": [1, "after"],         // enforces a particular operator line break style
+    "space-after-keywords": [1, "always"],      // require a space after certain keywords (fixable)
+    "no-mixed-spaces-and-tabs": [2, "smart-tabs"],  // disallow mixed spaces and tabs for indentation (recommended)
+    "space-unary-ops": [1, { "words": true, "nonwords": false }],   // require or disallow spaces before/after unary operators (fixable)
   },
   "env": {
     "es6": true,

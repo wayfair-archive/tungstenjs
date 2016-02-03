@@ -128,7 +128,11 @@ var BaseModel = AmpersandModel.extend({
    * @return {Array<Object>} List of attribute key/values
    */
   getPropertiesArray: function() {
-    var properties = {normal:[], relational:[], derived:[]};
+    var properties = {
+      normal: [],
+      relational: [],
+      derived: []
+    };
 
     var isEditable = function(value) {
       if (!_.isObject(value)) {

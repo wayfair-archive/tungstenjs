@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint-disable new-cap */
+
 var FocusHook = require('../../../../src/template/hooks/autofocus.js');
 
 describe('autofocus.js', function() {

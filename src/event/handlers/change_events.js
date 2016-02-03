@@ -47,7 +47,7 @@ function removeListener(e) {
   e.target.detachEvent(getChangeEventName(e.target), trigger);
 }
 
-/*global TUNGSTENJS_IS_TEST */
+/* global TUNGSTENJS_IS_TEST */
 var TEST_MODE = typeof TUNGSTENJS_IS_TEST !== 'undefined' && TUNGSTENJS_IS_TEST;
 
 module.exports = function(el, eventName, selector, method, options, bindVirtualEvent) {
