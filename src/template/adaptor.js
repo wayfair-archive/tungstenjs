@@ -282,6 +282,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
     return template;
   }
 
+  /* eslint-disable dot-notation */
   // If the view has childViews and this isn't the root, attempt to attach Widget
   if (!template.root && view.childViews) {
     // If this is an element with a class property, see if we should attach Widget
@@ -305,6 +306,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
       }
     }
   }
+  /* eslint-enable dot-notation */
 
   // Recurse on any child elements
   if (template.f) {
