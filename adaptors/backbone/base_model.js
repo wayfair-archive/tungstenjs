@@ -264,8 +264,7 @@ var BaseModel = Backbone.Model.extend({
             mergeProps[attributeKey] = filteredProps;
             _.defaults(protoProps, mergeProps);
           }
-        }
-        else {
+        } else {
           mergeProps[attributeKey] = attributeValue;
           _.defaults(protoProps, mergeProps);
         }

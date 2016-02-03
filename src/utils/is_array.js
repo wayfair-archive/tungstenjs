@@ -8,7 +8,10 @@ var ObjectToString = Object.prototype.toString;
  */
 
 var nativeFn = Array.isArray;
-var polyfillFn = function(object) { return ObjectToString.call(object) === '[object Array]'; };
+var polyfillFn = function(object) {
+  return ObjectToString.call(object) === '[object Array]';
+};
+
 module.exports = nativeFn || polyfillFn;
 // only export polyfill if running in node for testing
 /* global TUNGSTENJS_IS_TEST */
