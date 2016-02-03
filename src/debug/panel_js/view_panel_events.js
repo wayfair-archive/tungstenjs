@@ -209,7 +209,7 @@ module.exports = function() {
     }
   });
 
-  function getPanelOutput(mustacheElement, indicies={}) {
+  function getPanelOutput(mustacheElement, indicies = {}) {
     var data = JSON.parse(decodeURIComponent(mustacheElement.getAttribute('data-value')));
     var html = '<table>';
     var ctx = new Context(appData.selectedView.obj.serialize());
