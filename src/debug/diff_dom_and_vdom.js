@@ -65,8 +65,12 @@ function diffElements(vNode, elem) {
       }
     }
 
-    var vAttr = ' <span class="TemplateString_attrName">' + propName + '</span>=<span class="TemplateString_attrValue">' + chars.quote + propValue + chars.quote + '</span>';
-    var dAttr = ' <span class="TemplateString_attrName">' + propName + '</span>=<span class="TemplateString_attrValue">' + chars.quote + textDiff(String(propValue), String(domValue)) + chars.quote + '</span>';
+    var vAttr = ' <span class="TemplateString_attrName">' +
+          propName + '</span>=<span class="TemplateString_attrValue">' +
+          chars.quote + propValue + chars.quote + '</span>';
+    var dAttr = ' <span class="TemplateString_attrName">' +
+          propName + '</span>=<span class="TemplateString_attrValue">' +
+          chars.quote + textDiff(String(propValue), String(domValue)) + chars.quote + '</span>';
     // If the property is a boolean, any non-"false" value of the template is fine
     output += elem[key] === true && propValue.toString() !== 'false' ? vAttr : dAttr;
   });

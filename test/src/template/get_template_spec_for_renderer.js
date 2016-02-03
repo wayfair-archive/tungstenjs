@@ -27,6 +27,8 @@
  */
 'use strict';
 
+/* eslint-disable max-len */
+
 // Ractive's parser has minor whitespace issues for Mustache Spec.
 // Tests whose expected value have been changed are marked with "@adjusted"
 
