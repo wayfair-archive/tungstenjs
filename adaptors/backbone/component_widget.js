@@ -25,7 +25,9 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.key = key || _.uniqueId('w_component');
   this.model.session = (this.model.session || []).concat(['content', 'yield']);
   /* develblock:start */
-  this.model._private = {content:true, yield:true};
+  this.model._private = {
+    content: true, yield: true
+  };
   /* develblock:end */
 
   // Start with generic model functions

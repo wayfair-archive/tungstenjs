@@ -107,13 +107,13 @@ describe('base_model.js constructed api', function() {
         p2: 'p2'
       });
       expect(model.toJSON()).to.eql({
-        p1:'p1',
-        p2:'p2'
+        p1: 'p1',
+        p2: 'p2'
       });
       model.reset({
         p1: 'p2'
       });
-      expect(model.toJSON()).to.eql({p1:'p2'});
+      expect(model.toJSON()).to.eql({p1: 'p2'});
     });
   });
   describe('reset', function() {
