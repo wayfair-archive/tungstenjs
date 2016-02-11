@@ -107,7 +107,33 @@ describe('base_model.js constructed api', function() {
   });
   describe('setRelation', function() {
     it('should be a function', function() {
+      expect(BaseModel.prototype.setRelation).to.be.a('function');
       expect(BaseModel.prototype.setRelation).to.have.length(3);
+    });
+    it('should update a nested collection', function() {
+      var TestModel = BaseModel.extend({
+        relations: {
+          collection: BaseCollection
+        }
+      });
+      var testModel = new TestModel({
+        collection: [
+          { id: 1, n: 1 },
+          { id: 2, n: 2 }
+        ]
+      });
+      expect(testModel.get('collection').pluck('id').join('&')).to.equal('1&2');
+      expect(testModel.get('collection').pluck('n').join('&')).to.equal('1&2');
+
+      testModel.set({
+        collection: [
+          { id: 2, n: 1 },
+          { id: 3, n: 2 },
+          { id: 4, n: 3 }
+        ]
+      });
+      expect(testModel.get('collection').pluck('id').join('&')).to.equal('2&3&4');
+      expect(testModel.get('collection').pluck('n').join('&')).to.equal('1&2&3');
     });
   });
   describe('trigger', function() {
