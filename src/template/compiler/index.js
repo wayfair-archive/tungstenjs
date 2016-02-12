@@ -45,16 +45,17 @@ function processBuffer() {
 
 /**
  * [processHoganObject description]
+ * @param  {Object}  options            Compiler options
  * @param  {Object}  token              Nested mustache tree object
  * @param  {booelan} inDynamicAttribute Whether we are in a dynamic attribute
  */
-function processHoganObject(token, inDynamicAttribute) {
+function processHoganObject(options, token, inDynamicAttribute) {
   if (!token) {
     return;
   }
   if (Array.isArray(token)) {
     for (let i = 0; i < token.length; i++) {
-      processHoganObject(token[i], inDynamicAttribute);
+      processHoganObject(options, token[i], inDynamicAttribute);
     }
     return;
   }
@@ -77,13 +78,21 @@ function processHoganObject(token, inDynamicAttribute) {
       break;
     case '#':
       obj = stack.openElement(types.SECTION, token.n.toString());
-      processHoganObject(token.nodes, parser.inAttributeName());
+      let isLambda = options.lambdas[token.n.toString()] === true;
+      let processingHTML = options.processingHTML;
+      if (isLambda) {
+        options.processingHTML = false;
+      }
+      processHoganObject(options, token.nodes, parser.inAttributeName());
       processBuffer();
       stack.closeElement(obj);
+      if (isLambda) {
+        options.processingHTML = processingHTML;
+      }
       break;
     case '^':
       obj = stack.openElement(types.SECTION_UNLESS, token.n.toString());
-      processHoganObject(token.nodes, parser.inAttributeName());
+      processHoganObject(options, token.nodes, parser.inAttributeName());
       processBuffer();
       stack.closeElement(obj);
       break;
@@ -107,14 +116,16 @@ function processHoganObject(token, inDynamicAttribute) {
       stack.createObject(obj);
       break;
     case '_t':
-      if (inDynamicAttribute) {
+      if (inDynamicAttribute || !options.processingHTML) {
         stack.createObject(token.text.toString());
       } else {
         parser.write(token.text.toString());
       }
       break;
     case '\n':
-      if (!inDynamicAttribute) {
+      if (!options.processingHTML) {
+        stack.createObject('\n');
+      } else if (!inDynamicAttribute) {
         parser.write('\n');
       }
       break;
@@ -139,6 +150,15 @@ function getTemplate(template, options) {
   opts.validateHtml = opts.validateHtml != null ? opts.validateHtml : 'strict';
   opts.logger = opts.logger != null ? opts.logger : {};
 
+  let lambdas = {};
+  if (_.isArray(opts.lambdas)) {
+    for (let i = 0; i < opts.lambdas.length; i++) {
+      lambdas[opts.lambdas[i]] = true;
+    }
+  }
+  opts.lambdas = lambdas;
+  opts.processingHTML = true;
+
   logger.setStrictMode(opts.strict);
   logger.setOverrides(opts.logger);
   stack.setHtmlValidation(opts.validateHtml);
@@ -150,7 +170,7 @@ function getTemplate(template, options) {
     return '{{' + symbol + key + '}}';
   });
   let tokenTree = hogan.parse(hogan.scan(templateStr, null, opts.preserveWhitespace), templateStr, {preserveWhitespace: opts.preserveWhitespace});
-  processHoganObject(tokenTree);
+  processHoganObject(opts, tokenTree);
   let output = {};
 
   if (stack.stack.length > 0) {
