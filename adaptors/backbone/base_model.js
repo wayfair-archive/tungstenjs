@@ -343,7 +343,7 @@ BaseModel.prototype.setRelation = function(attr, val, options) {
           relation.reset(modelsToAdd);
         } else {
 
-          relation.each(function(model, i) {
+          relation.each(function(model) {
             var idAttribute;
             if (ComponentWidget.isComponent(model)) {
               idAttribute = model.model.idAttribute || 'id';
@@ -361,16 +361,21 @@ BaseModel.prototype.setRelation = function(attr, val, options) {
             // If the incoming model also exists within the existing collection,
             // call set on that model. If it doesn't exist in the incoming array,
             // then add it to a list that will be removed.
-            var rModel = _.find(val, function(_model) {
-              return _model[idAttribute] === id;
-            });
+            var rModel = null, mIndex = -1;
+            for (var i = 0; i < modelsToAdd.length; i++) {
+              if (modelsToAdd[i][idAttribute] === id) {
+                rModel = modelsToAdd[i];
+                mIndex = i;
+                break;
+              }
+            }
 
             if (rModel) {
               model.set(rModel.toJSON ? rModel.toJSON() : rModel);
 
               // Remove the model from the incoming list because all remaining models
               // will be added to the relation
-              modelsToAdd.splice(i, 1);
+              modelsToAdd.splice(mIndex, 1);
             } else {
               modelsToRemove.push(model);
             }
