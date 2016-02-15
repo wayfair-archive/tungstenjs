@@ -164,11 +164,14 @@ function render(stack, template, context, partials, parentView) {
             if (lambdaValue) {
               if (typeof lambdaValue === 'string') {
                 var resultHasClass = lambdaValue.indexOf(' class="') > -1 && parentView.childViews;
-                var resultHasMustache = lambdaValue.indexOf('{{');
+                var resultHasMustache = lambdaValue.indexOf('{{') > -1;
                 if (resultHasMustache || resultHasClass) {
                   var lambdaTemplateData = compiler(lambdaValue);
                   if (resultHasClass) {
-                    lambdaTemplateData.template = lambdaTemplateData.template.attachView(parentView);
+                    lambdaTemplateData.template = lambdaTemplateData.template.attachView({
+                      el: false,
+                      childViews: parentView.childViews
+                    });
                   }
                   lambdaValue = lambdaTemplateData.template.templateObj;
                 } else {
