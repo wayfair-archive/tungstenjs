@@ -18,6 +18,15 @@ describe('base_view.js public api', function() {
     it('should be different than Backbone\'s', function() {
       expect(BaseView.extend).not.to.equal(Backbone.extend);
     });
+    it('should validate the childView array', function() {
+      var validate = require('../../../adaptors/shared/validate');
+      spyOn(validate, 'childViews');
+      var data = {
+        childViews: {}
+      };
+      BaseView.extend(data);
+      jasmineExpect(validate.childViews).toHaveBeenCalledWith(data.childViews);
+    });
     /* develblock:start */
     it('should prevent initialize from being overwritten', function() {
       spyOn(logger, 'warn');

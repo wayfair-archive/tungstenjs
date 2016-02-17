@@ -12,6 +12,7 @@ var ViewWidget = require('./backbone_view_widget');
 var ComponentWidget = require('./component_widget');
 
 var renderQueue = require('../shared/render_queue');
+var validate = require('../shared/validate');
 
 // Cached regex to split keys for `delegate`.
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -578,6 +579,10 @@ var BaseView = Backbone.View.extend({
       }
     }
     /* develblock:end */
+
+    if (protoProps && protoProps.childViews) {
+      validate.childViews(protoProps.childViews);
+    }
 
     return Backbone.View.extend.call(this, protoProps, staticProps);
   }
