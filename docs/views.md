@@ -91,7 +91,7 @@ View.extend({
 
 ### `postInitialize`
 
-Any logic that should happen in the view's initialization should be done in a `postInitialize` method on the view.  Never override `initialize`.  If extending a view that already implements `postInitialize`, consider adding `MyView.prototype.postInitialize.apply(this);` in the extended view's `postInitialize` method.
+Any logic that should happen in the view's initialization should be done in a `postInitialize` method on the view.  Never override `initialize`.  If extending a view that already implements `postInitialize`, consider adding `MyView.prototype.postInitialize.apply(this);` in the extended view's `postInitialize` method (where `MyView` is the view being inherited from).
 
 ### `postRender`
 
