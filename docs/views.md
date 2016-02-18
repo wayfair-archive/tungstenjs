@@ -86,3 +86,15 @@ View.extend({
   }
 });
 ```
+
+## Lifecycle Methods
+
+### `postInitialize`
+
+Any logic that should happen in the view's initialization should be done in a `postInitialize` method on the view.  Never override `initialize`.  If extending a view that already implements `postInitialize`, consider adding `MyView.prototype.postInitialize.apply(this);` in the extended view's `postInitialize` method.
+
+### `postRender`
+
+In Tungsten.js, `render` is an implementation detail, and generally logic shouldn't rely on whether or when a view is being rendered.  From the view perspective, it's hard to rely on or predict when `render` will actually be called.
+
+That being said, there are times when it's necessary to know when a view has rendered.  For example, a view might need to access its height and width after it's rendered in order to apply some customized styling.  For these edge cases, the `postRender` function is made available, and this is called synchronously after the DOM is updated (nb: but not necessarily before a browser reflow is completed).  Alternatively, the view will fire a `rendered` event immediately before `postRender` is called.
