@@ -77,7 +77,11 @@ templateStack.getID = function() {
   let id;
   if (this.stack.length) {
     let openElem = this.peek();
-    id = openElem.id + '.' + openElem.children.length;
+    if (openElem.isOpen) {
+      id = openElem.id + '-' + openElem.attributes.length;
+    } else {
+      id = openElem.id + '.' + openElem.children.length;
+    }
   } else {
     id = this.startID + this.result.length;
   }
@@ -277,18 +281,30 @@ templateStack.closeElement = function(closingElem) {
   if (openElem) {
     let openID = openElem.id;
     if (openID !== id) {
-      if (closingElem.tagName) {
-        logger.exception('</' + openElem.tagName + '> where a </' + closingElem.tagName + '> should be.');
+      let expectedTag;
+      if (openElem.tagName) {
+        expectedTag = '</' + openElem.tagName + '>';
       } else {
-        logger.exception('</' + openElem.tagName + '> where a {{/' + closingElem.value + '}} should be.');
+        expectedTag = '{{/' + openElem.value + '}}';
       }
+      let actualTag;
+      if (closingElem.tagName) {
+        actualTag = '</' + closingElem.tagName + '>';
+      } else {
+        actualTag = '{{/' + closingElem.value + '}}';
+      }
+      logger.exception(actualTag + ' where a ' + expectedTag + ' should be.');
     } else {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
     }
   } else {
-    // Something has gone terribly wrong
-    logger.exception('</' + closingElem.tagName + '> with no paired <' + closingElem.tagName + '>');
+    if (closingElem.tagName) {
+      // Something has gone terribly wrong
+      logger.exception('</' + closingElem.tagName + '> with no paired <' + closingElem.tagName + '>');
+    } else {
+      logger.exception('{{/' + closingElem.value + '}} with no paired {{#' + closingElem.value + '}}');
+    }
   }
 };
 
