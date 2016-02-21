@@ -78,8 +78,8 @@ function processHoganObject(options, token, inDynamicAttribute) {
       break;
     case '#':
       obj = stack.openElement(types.SECTION, token.n.toString());
-      let isLambda = options.lambdas[token.n.toString()] === true;
-      let processingHTML = options.processingHTML;
+      var isLambda = options.lambdas[token.n.toString()] === true;
+      var processingHTML = options.processingHTML;
       if (isLambda) {
         options.processingHTML = false;
       }
