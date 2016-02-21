@@ -8,6 +8,16 @@
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
 
+/**
+ * Widget wrapper for HTML Comment
+ * Widgets in Virtual-Dom have three lifecycle methods: init, update, destroy
+ * 'init' is called when the new VTree contains a widget that the old VTree does not
+ * 'update' is called when the old and the new VTree contains a widget at the same position
+ * 'destroy' is called when the old VTree contains a widget that the new VTree does not
+ *
+ * @author    Matt DeGennaro <mdegennaro@wayfair.com>
+ */
+
 'use strict';
 
 /**

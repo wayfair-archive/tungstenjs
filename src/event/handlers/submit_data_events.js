@@ -1,9 +1,12 @@
 /**
  * Module to serialize data on form submission
  */
+/**
+ * Module to serialize data on form submission
+ */
 'use strict';
-var serialize = require('form-serialize');
-var _ = require('underscore');
+import serialize from 'form-serialize';
+import _ from 'underscore';
 
 var EVENT_NAME = 'submit-data';
 var SUBMIT_SELECTOR = 'js-submit';

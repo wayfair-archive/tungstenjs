@@ -1,6 +1,9 @@
 /**
  * Module to handle events that fire outside of the element
  */
+/**
+ * Module to handle events that fire outside of the element
+ */
 'use strict';
 
 

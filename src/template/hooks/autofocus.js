@@ -5,9 +5,16 @@
  * @copyright 2015 Wayfair, LLC - All rights reserved
  */
 
+/**
+ * Hook for Virtual-Dom library to set focus for newly created elements
+ *
+ * @author    Matt DeGennaro <mdegennaro@wayfair.com>
+ * @copyright 2015 Wayfair, LLC - All rights reserved
+ */
+
 'use strict';
 
-var featureDetect = require('../../utils/feature_detect');
+import featureDetect from '../../utils/feature_detect';
 
 var isiOS = featureDetect.isiOS();
 

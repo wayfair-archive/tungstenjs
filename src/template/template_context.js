@@ -6,10 +6,18 @@
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
+/**
+ * Context to wrap Tungsten Models and Collections transparently
+ * This allows us to know what bit of a model is currently being referenced while rendering template
+ *
+ * Originally based on https://github.com/janl/mustache.js/blob/master/mustache.js#L336
+ *
+ * @author    Matt DeGennaro <mdegennaro@wayfair.com>
+ */
 'use strict';
 
-var logger = require('../utils/logger');
-var isArray = require('../utils/is_array');
+import logger from '../utils/logger';
+import isArray from '../utils/is_array';
 
 /** @type {Object} storage to prevent repeated warnings about the same computed property */
 var computedPropertyWarnings = {};

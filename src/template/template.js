@@ -3,11 +3,20 @@
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
+/**
+ * Template constructor
+ *
+ * @author    Matt DeGennaro <mdegennaro@wayfair.com>
+ */
 'use strict';
 
-var _ = require('underscore');
-var templateAdaptor = require('./adaptor');
-var Context = require('./template_context');
+import _ from 'underscore';
+import templateAdaptor from './adaptor';
+import Context from './template_context';
+import ToHtmlString from './stacks/html_string';
+import ToDom from './stacks/dom';
+import ToVdom from './stacks/vdom';
+
 
 /**
  * Hash of registered partials
@@ -67,7 +76,6 @@ Template.prototype._render = function(template, data, view, partials, stack) {
  */
 Template.prototype.toString = function(data, asHTML) {
   var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
-  var ToHtmlString = require('./stacks/html_string');
   return this._render(templateToRender, data, null, this.partials, new ToHtmlString(asHTML));
 };
 /**
@@ -77,7 +85,6 @@ Template.prototype.toString = function(data, asHTML) {
  */
 Template.prototype.toDom = function(data) {
   var templateToRender = this.templateObj.wrapped ? this.templateObj.f : this.templateObj;
-  var ToDom = require('./stacks/dom');
   return this._render(templateToRender, data, null, this.partials, new ToDom());
 };
 /**
@@ -86,7 +93,6 @@ Template.prototype.toDom = function(data) {
  * @return {Object}       VirtualTree representing the template
  */
 Template.prototype.toVdom = function(data) {
-  var ToVdom = require('./stacks/vdom');
   return this._render(this.templateObj, data, this.view, this.partials, new ToVdom());
 };
 

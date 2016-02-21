@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('underscore');
+import _ from 'underscore';
 
 // List of elements that have no closing tag or slash
 const noClosing = {

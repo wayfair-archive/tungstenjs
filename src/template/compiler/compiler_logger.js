@@ -1,7 +1,7 @@
 'use strict';
 
-const _ = require('underscore');
-const logger = require('../../utils/logger');
+import _ from 'underscore';
+import logger from '../../utils/logger';
 
 const ERROR_LEVELS = {
   'EXCEPTION': 0,

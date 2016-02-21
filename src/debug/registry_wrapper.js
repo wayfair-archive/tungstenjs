@@ -1,8 +1,8 @@
 'use strict';
 
-var _ = require('underscore');
-var logger = require('../utils/logger');
-var StateHistory = require('./state_history');
+import _ from 'underscore';
+import logger from '../utils/logger';
+import StateHistory from './state_history';
 
 /**
  * Returns a passthrough function wrapping the passed in one

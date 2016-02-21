@@ -1,12 +1,12 @@
 'use strict';
 
-const _ = require('underscore');
-const hogan = require('hogan.js/lib/compiler');
-const types = require('../types');
-
-const parser = require('./parser');
-const stack = require('./stack');
-const logger = require('./compiler_logger');
+import _ from 'underscore';
+import hogan from 'hogan.js/lib/compiler';
+import types from '../types';
+import parser from './parser';
+import stack from './stack';
+import logger from './compiler_logger';
+import Template from '../template';
 
 /**
  * Gets the current buffer from htmlparser and processes it
@@ -179,7 +179,6 @@ function getTemplate(template, options) {
 
   parser.end();
   output.templateObj = stack.getOutput();
-  const Template = require('../template');
   output.template = new Template(output.templateObj);
   output.source = template;
   output.tokens = {};

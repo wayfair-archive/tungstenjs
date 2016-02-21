@@ -1,19 +1,13 @@
 'use strict';
 
-/**
- * Creates an HTML string from a VTree
- * This bypasses any DOM restrictions to give an accurate view of the VTree
- */
-
-var _ = require('underscore');
-var logger = require('../utils/logger');
-var syntaxHighlight = require('./syntax_highlight');
-
-var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
-var virtualHyperscript = require('../vdom/virtual_hyperscript');
+import _ from 'underscore';
+import logger from '../utils/logger';
+import syntaxHighlight from './syntax_highlight';
+import virtualDomImplementation from '../vdom/virtual_dom_implementation';
+import virtualHyperscript from '../vdom/virtual_hyperscript';
 var vdom = virtualDomImplementation.vdom;
-var utils = require('./to_string_utils');
-var escapeString = require('../utils/escape_string');
+import utils from './to_string_utils';
+import escapeString from '../utils/escape_string';
 
 function toString(vtree, escaped) {
   var chars = utils.entities[escaped ? 'escaped' : 'unescaped'];

@@ -1,7 +1,7 @@
 'use strict';
 
-var DefaultStack = require('./stacks/default');
-var Parser = require('htmlparser2/lib/Parser');
+import DefaultStack from './stacks/default';
+import Parser from 'htmlparser2/lib/Parser';
 
 /**
  * htmlparser2 treats boolean attributes as attributes with an empty string value

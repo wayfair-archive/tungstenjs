@@ -1,10 +1,10 @@
 'use strict';
 
-var tungsten = require('../../tungsten');
-var HTMLCommentWidget = require('../widgets/html_comment');
-var htmlParser = require('../html_parser');
-var DefaultStack = require('./default');
-var Autofocus = require('../hooks/autofocus');
+import tungsten from '../../tungsten';
+import HTMLCommentWidget from '../widgets/html_comment';
+import htmlParser from '../html_parser';
+import DefaultStack from './default';
+import Autofocus from '../hooks/autofocus';
 
 function VdomStack(attributesOnly, debugMode) {
   DefaultStack.call(this, attributesOnly, debugMode);

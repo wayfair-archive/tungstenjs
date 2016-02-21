@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+import _ from 'underscore';
 
 /** @type {Object} Whitelist of properties. All others are treated as attributes */
 var nonTransformedProperties = {

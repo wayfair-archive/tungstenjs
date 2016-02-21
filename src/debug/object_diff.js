@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+import _ from 'underscore';
 
 /**
  * Naive function to check if the input is a plain object

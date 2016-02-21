@@ -1,6 +1,6 @@
 'use strict';
 
-var escapeString = require('../utils/escape_string');
+import escapeString from '../utils/escape_string';
 
 /**
  * Transformed property names that should reverted

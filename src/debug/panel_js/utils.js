@@ -1,7 +1,8 @@
 'use strict';
 
-var _ = require('underscore');
-var logger = require('../../utils/logger');
+import _ from 'underscore';
+import logger from '../../utils/logger';
+import appData from './app_data';
 
 var debugWindow;
 
@@ -16,7 +17,6 @@ function render() {
 }
 
 function gotoTab(tabName) {
-  var appData = require('./app_data');
   appData.changedTab = true;
   appData.tabs.selected = {};
   appData.tabs.selected[tabName] = true;

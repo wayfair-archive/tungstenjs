@@ -9,6 +9,17 @@
  * More Info:
  *  http://ejohn.org/projects/javascript-diff-algorithm/
  */
+/*
+ * Javascript Diff Algorithm
+ *  By John Resig (http://ejohn.org/)
+ *  Modified by Chu Alan "sprite"
+ *  Modified by MattDeeg for CommonJS and project needs
+ *
+ * Released under the MIT license.
+ *
+ * More Info:
+ *  http://ejohn.org/projects/javascript-diff-algorithm/
+ */
 'use strict';
 
 function diff(o, n) {

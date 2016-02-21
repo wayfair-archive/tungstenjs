@@ -1,6 +1,9 @@
 /**
  * Module to handle the shimming in delegated mouseenter events
  */
+/**
+ * Module to handle the shimming in delegated mouseenter events
+ */
 'use strict';
 
 /**

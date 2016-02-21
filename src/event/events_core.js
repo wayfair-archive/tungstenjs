@@ -1,10 +1,10 @@
 'use strict';
 
-var dataset = require('data-set');
-var eventWrapper = require('./tungsten_event');
-var _ = require('underscore');
-var isArray = require('../utils/is_array');
-var logger = require('../utils/logger');
+import dataset from 'data-set';
+import eventWrapper from './tungsten_event';
+import _ from 'underscore';
+import isArray from '../utils/is_array';
+import logger from '../utils/logger';
 
 module.exports = {};
 

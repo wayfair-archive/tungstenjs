@@ -1,6 +1,9 @@
 /**
  * Module to map cross browser blur and focus events
  */
+/**
+ * Module to map cross browser blur and focus events
+ */
 'use strict';
 
 /**

@@ -1,10 +1,10 @@
 'use strict';
 
-const Parser = require('htmlparser2/lib/Parser');
-const types = require('../types');
-const stack = require('./stack');
-const logger = require('./compiler_logger');
-const decoder = require('./decoder');
+import Parser from 'htmlparser2/lib/Parser';
+import types from '../types';
+import stack from './stack';
+import logger from './compiler_logger';
+import decoder from './decoder';
 
 // Taken from https://github.com/fb55/htmlparser2/blob/master/lib/Parser.js#L59
 const voidElements = {

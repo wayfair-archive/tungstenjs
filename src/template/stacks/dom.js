@@ -1,10 +1,10 @@
 'use strict';
 
-var _ = require('underscore');
-var DefaultStack = require('./default');
-var virtualDomImplementation = require('../../vdom/virtual_dom_implementation');
+import _ from 'underscore';
+import DefaultStack from './default';
+import virtualDomImplementation from '../../vdom/virtual_dom_implementation';
 var isWidget = virtualDomImplementation.isWidget;
-var htmlParser = require('../html_parser');
+import htmlParser from '../html_parser';
 
 function applyProperties(node, props) {
   for (var propName in props) {

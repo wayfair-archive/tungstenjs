@@ -1,10 +1,13 @@
 /**
  * Module to map cross browser change events
  */
+/**
+ * Module to map cross browser change events
+ */
 'use strict';
 
-var eventsCore = require('../events_core');
-var defaultEvents = require('./default_events');
+import eventsCore from '../events_core';
+import defaultEvents from './default_events';
 
 /**
  * Check to see if this browser supports the onchange attribute

@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('underscore');
-var logger = require('../../utils/logger');
-var utils = require('./utils');
-var appData = require('./app_data');
+import _ from 'underscore';
+import logger from '../../utils/logger';
+import utils from './utils';
+import appData from './app_data';
 
 var getClosestModel = appData.getClosestModel = function(elem) {
   var model = null;

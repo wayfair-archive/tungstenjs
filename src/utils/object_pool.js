@@ -1,9 +1,12 @@
 /**
  * Abstract structure to pool and recycle constructed objects
  */
+/**
+ * Abstract structure to pool and recycle constructed objects
+ */
 'use strict';
 
-var _ = require('underscore');
+import _ from 'underscore';
 
 function ObjectPool(limit, constructorFunc) {
   this.allocatedObjects = new Array(limit);

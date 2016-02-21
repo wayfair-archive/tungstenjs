@@ -3,9 +3,14 @@
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
  */
+/**
+ * Wrapper for logging that can be abstracted based on needs
+ *
+ * @author    Matt DeGennaro <mdegennaro@wayfair.com>
+ */
 'use strict';
 
-var _ = require('underscore');
+import _ from 'underscore';
 
 /**
  * Gets a bound console method, falls back to log for unavailable functions

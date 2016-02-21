@@ -2,10 +2,10 @@
  * Forked from https://github.com/fb55/entities
  */
 
-var decodeCodePoint = require('entities/lib/decode_codepoint.js');
-var entityMap = require('entities/maps/entities.json');
-var types = require('../types');
-var legacyMap = require('entities/maps/legacy.json');
+import decodeCodePoint from 'entities/lib/decode_codepoint.js';
+import entityMap from 'entities/maps/entities.json';
+import types from '../types';
+import legacyMap from 'entities/maps/legacy.json';
 
 module.exports = (function() {
   var legacy = Object.keys(legacyMap)

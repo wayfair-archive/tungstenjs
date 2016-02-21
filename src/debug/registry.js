@@ -1,7 +1,7 @@
 'use strict';
 
-var _ = require('underscore');
-var eventBus = require('./event_bus');
+import _ from 'underscore';
+import eventBus from './event_bus';
 
 var nestedRegistry = _.create(null);
 var flatRegistry = _.create(null);
@@ -10,7 +10,7 @@ nestedRegistry.models = {};
 flatRegistry.views = {};
 flatRegistry.models = {};
 
-var RegistryWrapper = require('./registry_wrapper');
+import RegistryWrapper from './registry_wrapper';
 RegistryWrapper.flatRegistry = flatRegistry;
 
 /**

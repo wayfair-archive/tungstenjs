@@ -1,7 +1,7 @@
 'use strict';
 
-var _ = require('underscore');
-var objectDiff = require('./object_diff');
+import _ from 'underscore';
+import objectDiff from './object_diff';
 
 function pad(input, len) {
   var str = input == null ? '' : input.toString();

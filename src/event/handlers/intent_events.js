@@ -1,9 +1,12 @@
 /**
  * Module to handle "intent" delay on events
  */
+/**
+ * Module to handle "intent" delay on events
+ */
 'use strict';
 
-var _ = require('underscore');
+import _ from 'underscore';
 
 var eventPairs = {
   'mouseenter': 'mouseleave',

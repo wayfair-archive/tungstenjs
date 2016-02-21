@@ -1,9 +1,9 @@
 'use strict';
 
-const _ = require('underscore');
-const types = require('../types');
-const htmlHelpers = require('../html_helpers');
-const logger = require('./compiler_logger');
+import _ from 'underscore';
+import types from '../types';
+import htmlHelpers from '../html_helpers';
+import logger from './compiler_logger';
 
 // Keys to use for the outputted array
 const templateKeys = {

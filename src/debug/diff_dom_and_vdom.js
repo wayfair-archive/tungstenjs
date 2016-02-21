@@ -1,16 +1,16 @@
 'use strict';
 
-var _ = require('underscore');
-var utils = require('./to_string_utils');
-var textDiff = require('./text_diff');
-var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
+import _ from 'underscore';
+import utils from './to_string_utils';
+import textDiff from './text_diff';
+import virtualDomImplementation from '../vdom/virtual_dom_implementation';
 var isVNode = virtualDomImplementation.isVNode;
 var isVText = virtualDomImplementation.isVText;
 var isWidget = virtualDomImplementation.isWidget;
-var HTMLCommentWidget = require('../template/widgets/html_comment');
+import HTMLCommentWidget from '../template/widgets/html_comment';
 var isHook = virtualDomImplementation.isHook;
-var vNodeToString = require('./vtree_to_string');
-var escapeString = require('../utils/escape_string');
+import vNodeToString from './vtree_to_string';
+import escapeString from '../utils/escape_string';
 
 var chars = utils.entities.escaped;
 

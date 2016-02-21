@@ -1,8 +1,8 @@
 'use strict';
 
-var _ = require('underscore');
-var process = require('process');
-var logger = require('../utils/logger');
+import _ from 'underscore';
+import process from 'process';
+import logger from '../utils/logger';
 var now;
 /**
  * Use the highest resolution timing that the environment provides

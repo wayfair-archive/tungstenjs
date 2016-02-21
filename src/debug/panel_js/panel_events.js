@@ -1,7 +1,7 @@
 'use strict';
 
-var appData = require('./app_data');
-var utils = require('./utils');
+import appData from './app_data';
+import utils from './utils';
 
 module.exports = function() {
   utils.addEvent('js-tab', 'click', function(e) {

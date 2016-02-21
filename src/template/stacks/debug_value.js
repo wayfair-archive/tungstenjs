@@ -1,7 +1,7 @@
 'use strict';
 
-var _ = require('underscore');
-var DefaultStack = require('./default');
+import _ from 'underscore';
+import DefaultStack from './default';
 
 function DebugValueStack() {
   DefaultStack.call(this);

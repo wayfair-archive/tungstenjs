@@ -1,7 +1,7 @@
 'use strict';
 
-var processProperties = require('../process_properties');
-var logger = require('../../utils/logger');
+import processProperties from '../process_properties';
+import logger from '../../utils/logger';
 
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either

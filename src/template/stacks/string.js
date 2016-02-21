@@ -1,7 +1,7 @@
 'use strict';
 
-var DefaultStack = require('./default');
-var htmlParser = require('../html_parser');
+import DefaultStack from './default';
+import htmlParser from '../html_parser';
 
 function StringStack(attributesOnly, noParse) {
   DefaultStack.call(this, attributesOnly);

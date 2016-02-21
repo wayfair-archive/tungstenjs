@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('underscore');
-var HtmlStringStack = require('./html_string');
-var htmlHelpers = require('../html_helpers');
-var syntaxHighlight = require('../../debug/syntax_highlight');
+import _ from 'underscore';
+import HtmlStringStack from './html_string';
+import htmlHelpers from '../html_helpers';
+import syntaxHighlight from '../../debug/syntax_highlight';
 
 function HighlightedHtmlStringStack() {
   HtmlStringStack.call(this, true);

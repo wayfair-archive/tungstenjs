@@ -1,11 +1,11 @@
 'use strict';
 
-var _ = require('underscore');
-var DefaultStack = require('./default');
-var virtualDomImplementation = require('../../vdom/virtual_dom_implementation');
+import _ from 'underscore';
+import DefaultStack from './default';
+import virtualDomImplementation from '../../vdom/virtual_dom_implementation';
 var isWidget = virtualDomImplementation.isWidget;
-var htmlHelpers = require('../html_helpers');
-var escapeString = require('../../utils/escape_string');
+import htmlHelpers from '../html_helpers';
+import escapeString from '../../utils/escape_string';
 
 function HtmlStringStack(asHTML) {
   this.htmlMode = !!asHTML;

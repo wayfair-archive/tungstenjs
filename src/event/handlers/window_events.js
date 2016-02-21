@@ -1,10 +1,13 @@
 /**
  * Module to bind to common window events
  */
+/**
+ * Module to bind to common window events
+ */
 'use strict';
 
-var eventsCore = require('../events_core');
-var eventWrapper = require('../tungsten_event');
+import eventsCore from '../events_core';
+import eventWrapper from '../tungsten_event';
 
 /**
  * Read data to pass through for Scroll event to prevent repeated reads

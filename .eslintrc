@@ -23,6 +23,13 @@
     "no-mixed-spaces-and-tabs": [2, "smart-tabs"],  // disallow mixed spaces and tabs for indentation (recommended)
     "space-unary-ops": [1, { "words": true, "nonwords": false }],   // require or disallow spaces before/after unary operators (fixable)
   },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "modules": true
+    },
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
   "env": {
     "es6": true,
     "browser": true
@@ -31,5 +38,6 @@
     "require": true,
     "module": true
   },
+  "plugins": ["import"],
   "extends": "eslint:recommended"
 }

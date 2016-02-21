@@ -1,14 +1,14 @@
 'use strict';
 
-const _ = require('underscore');
-const utils = require('./utils');
-const appData = require('./app_data');
-const highlighter = require('../highlighter');
-const logger = require('../../utils/logger');
-const dataset = require('data-set');
-const Context = require('../../template/template_context');
-const templateAdaptor = require('../../template/adaptor');
-const DebugValueStack = require('../../template/stacks/debug_value');
+import _ from 'underscore';
+import utils from './utils';
+import appData from './app_data';
+import highlighter from '../highlighter';
+import logger from '../../utils/logger';
+import dataset from 'data-set';
+import Context from '../../template/template_context';
+import templateAdaptor from '../../template/adaptor';
+import DebugValueStack from '../../template/stacks/debug_value';
 
 const getClosestView = appData.getClosestView = function(elem) {
   var view = null;

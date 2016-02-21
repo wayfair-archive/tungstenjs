@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+import _ from 'underscore';
 /**
  * Wrapper function for the event object
  * @param {Object} evt  Native event to wrap
@@ -52,7 +52,7 @@ WEvent.prototype.isImmediatePropagationStopped = function() {
   return this.immediatePropagationStopped;
 };
 
-var ObjectPool = require('./../utils/object_pool');
+import ObjectPool from './../utils/object_pool';
 
 // Create object pool for events
 var eventPool = new ObjectPool(20, WEvent);
