@@ -47,10 +47,6 @@ Context.setAdapterFunctions({
     if (view && view[name] != null) {
       value = view[name];
     }
-
-    if (typeof value === 'function') {
-      value = value.call(view);
-    }
     return value;
   }
 });
