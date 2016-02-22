@@ -138,35 +138,6 @@ toHtmlViaString.entities = {
   }
 };
 
-var Hogan = require('hogan.js');
-var _ = require('underscore');
-function toHtmlViaHogan(templateStr, data, partials) {
-  var template = Hogan.compile(templateStr || '');
-  var partialTemplates = {};
-  _.each(partials, function(str, name) {
-    partialTemplates[name] = Hogan.compile(str);
-  });
-  return template.render(data || {}, partialTemplates);
-}
-toHtmlViaHogan.suiteName = 'Hogan.js';
-toHtmlViaHogan.parsesTriple = false;
-toHtmlViaHogan.entities = {
-  escaped: {
-    amp: '&amp;',
-    lt: '&lt;',
-    gt: '&gt;',
-    quote: '&quot;',
-    single: '&#39;'
-  },
-  unescaped: {
-    amp: '&',
-    lt: '<',
-    gt: '>',
-    quote: '"',
-    single: '\''
-  }
-};
-
 function compileOnly(templateStr) {
   return getTemplate(templateStr, {}).templateObj;
 }
@@ -178,7 +149,6 @@ var specs = require('./get_template_spec_for_renderer');
 specs(toHtmlViaString);
 specs(toHtmlViaDom);
 specs(toHtmlViaVdom);
-// specs(toHtmlViaHogan);
 
 describe('textarea value sets', function() {
   var TEST_VALUE = 'testvalue';
