@@ -267,7 +267,7 @@ function getTemplate(template, options) {
     }
   }
   opts.lambdas = lambdas;
-  opts.processingHTML = true;
+  opts.processingHTML = typeof opts.processingHTML === 'boolean' ? opts.processingHTML : true;
 
   logger.setStrictMode(opts.strict);
   logger.setOverrides(opts.logger);
