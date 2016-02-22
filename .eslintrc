@@ -19,7 +19,7 @@
     "space-infix-ops": [1],             // require spaces around operators (fixable)
     "space-before-blocks": [1, "always"],       // require or disallow a space before blocks (fixable)
     "operator-linebreak": [1, "after"],         // enforces a particular operator line break style
-    "space-after-keywords": [1, "always"],      // require a space after certain keywords (fixable)
+    "keyword-spacing": [1, {"after": true}],      // enforces spacing before and after keywords (fixable)
     "no-mixed-spaces-and-tabs": [2, "smart-tabs"],  // disallow mixed spaces and tabs for indentation (recommended)
     "space-unary-ops": [1, { "words": true, "nonwords": false }],   // require or disallow spaces before/after unary operators (fixable)
   },

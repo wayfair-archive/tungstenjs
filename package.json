@@ -53,7 +53,7 @@
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "chai": "^2.2.0",
     "coveralls": "^2.11.4",
-    "eslint": "1.10.3",
+    "eslint": "2.2.0",
     "express": "^4.13.3",
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",

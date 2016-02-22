@@ -132,7 +132,7 @@ templateStack.processObject = function(obj) {
     case types.ELEMENT:
       processed[templateKeys.type] = types.ELEMENT;
       processed[templateKeys.tagName] = obj.tagName;
-      let attrs = processAttributeArray(obj.attributes);
+      var attrs = processAttributeArray(obj.attributes);
       if (_.size(attrs.static) > 0) {
         processed[templateKeys.attributes] = attrs.static;
       }
