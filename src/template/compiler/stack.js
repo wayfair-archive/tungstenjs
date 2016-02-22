@@ -244,10 +244,14 @@ templateStack._closeElem = function(obj) {
     obj = this.processObject(obj);
   }
 
+  let lastPushingTo = pushingTo[pushingTo.length - 1];
+
   // Combine adjacent strings
-  if (obj.type === types.TEXT && pushingTo[pushingTo.length - 1] && pushingTo[pushingTo.length - 1].type === types.TEXT) {
-    pushingTo[pushingTo.length - 1].value += obj.value;
-    pushingTo[pushingTo.length - 1].original += obj.original;
+  if (obj.type === types.TEXT && lastPushingTo && lastPushingTo.type === types.TEXT) {
+    lastPushingTo.value += obj.value;
+    lastPushingTo.original += obj.original;
+  } else if (typeof obj === 'string' && lastPushingTo && typeof lastPushingTo === 'string') {
+    pushingTo[pushingTo.length - 1] += obj;
   } else {
     pushingTo.push(obj);
   }

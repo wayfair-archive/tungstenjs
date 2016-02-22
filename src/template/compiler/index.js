@@ -98,16 +98,13 @@ function trimWhitespace(line) {
     }
   }
 
-  // console.log(line, allWhitespace, seenAnyTag);
-
   if (allWhitespace && seenAnyTag) {
     for (let i = 0; i < whitespaceIndicies.length; i++) {
       let index = whitespaceIndicies[i];
       let obj = newLine[index];
       newLine[index] = {
         type: types.TEXT,
-        original: obj,
-        value: ''
+        original: obj
       };
     }
   }
@@ -144,7 +141,6 @@ function processTemplate(str, opts) {
         }
       } else {
         processBuffer();
-        obj.value = obj.value.trim();
         if (obj.skip === true) {
           continue;
         } else if (obj.type === types.CLOSING) {
@@ -195,9 +191,10 @@ function processTemplate(str, opts) {
       let closingDelim = delimiters.close;
       while (c = str.charAt(++p)) { // eslint-disable-line no-cond-assign
         if (atDelim(str, p, closingDelim)) {
+          obj.value = obj.value.trim();
           if (obj.type === types.DELIMCHANGE) {
             // Delimiter change tags change how we compile, but don't need to be processed onto the template
-            let newDelims = obj.value.trim().split(/\s+/);
+            let newDelims = obj.value.split(/\s+/);
             delimiters.open = newDelims[0];
             delimiters.close = newDelims[1];
             obj.skip = true;
