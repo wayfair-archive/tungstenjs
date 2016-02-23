@@ -234,6 +234,40 @@ MustacheParser.prototype.inComment = function() {
   let state = this._tokenizer._state;
   return state === IN_COMMENT;
 };
+/**
+ * Gets the current buffer from htmlparser and processes it
+ * Used to handle section tags inside attribute values
+ */
+MustacheParser.prototype.processBuffer = function() {
+  if (!this.inRelevantState()) {
+    return;
+  }
+  let runningName = this.getSection();
+  if (this.inAttributeName()) {
+    if (runningName) {
+      this.clearBuffer();
+      stack.createObject({
+        type: 'attributename',
+        value: runningName
+      });
+    }
+  } else if (this.afterAttributeName()) {
+    this.endAttribute();
+  } else if (this.inAttributeValue()) {
+    this.clearBuffer();
+    stack.createObject({
+      type: 'attributevalue',
+      value: runningName
+    });
+  } else if (this.inComment()) {
+    this.clearBuffer();
+    if (stack.inComment()) {
+      stack.createObject(runningName);
+    } else {
+      stack.openElement(types.COMMENT, runningName);
+    }
+  }
+};
 
 const parser = new MustacheParser({
   /**
