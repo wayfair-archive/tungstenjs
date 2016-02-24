@@ -27,7 +27,7 @@
  */
 'use strict';
 
-// Ractive's parser has minor whitespace issues for Mustache Spec.
+// Our renderer has minor whitespace issues for Mustache Spec.
 // Tests whose expected value have been changed are marked with "@adjusted"
 
 var vdomToDom = require('../../../src/tungsten').toDOM;
@@ -150,6 +150,24 @@ specs(toHtmlViaString);
 specs(toHtmlViaDom);
 specs(toHtmlViaVdom);
 
+describe('html comments', function() {
+  var HtmlCommentWidget = require('../../../src/template/widgets/html_comment');
+  it('can be parsed', function() {
+    var content = ' FOO ';
+    var template = compiler('<!--' + content + '-->');
+    var output = template.toVdom();
+    expect(output).to.be.instanceof(HtmlCommentWidget);
+    expect(output.text).to.equal(content);
+  });
+  it('can contain mustache', function() {
+    var template = compiler('<!--{{foo}}-->');
+    var data = { foo: 'FOO' };
+    var output = template.toVdom(data);
+    expect(output).to.be.instanceof(HtmlCommentWidget);
+    expect(output.text).to.equal(data.foo);
+  });
+});
+
 describe('textarea value sets', function() {
   var TEST_VALUE = 'testvalue';
   var template = compiler('<textarea>{{value}}</textarea>');
@@ -170,7 +188,7 @@ describe('textarea value sets', function() {
   });
 });
 describe('wrap', function() {
-  it('should be able to access the ractive adaptor\'s wrap function', function() {
+  it('should be able to access the adaptor\'s wrap function', function() {
     var template = getTemplate('<div>{{value}}</div>');
     var divWrappedTemplate = template.wrap();
     var pWrappedTemplate = template.wrap('p');
@@ -185,7 +203,7 @@ describe('attachView', function() {
   var fakeWidgetConstructor = function() {
     return {};
   };
-  it('should be able to access the ractive adaptor\'s attachView function', function() {
+  it('should be able to access the adaptor\'s attachView function', function() {
     var output = template.attachView(template2.view, fakeWidgetConstructor);
     expect(output.view).to.deep.equal(template2.view);
   });
