@@ -17,7 +17,7 @@ function render() {
 
 function gotoTab(tabName) {
   var appData = require('./app_data');
-  appData.changedTab = true;
+  appData.scrollFlag = true;
   appData.tabs.selected = {};
   appData.tabs.selected[tabName] = true;
   _.each(appData.tabs.tabs, function(data) {
