@@ -2,7 +2,7 @@
  * Hook for Virtual-Dom library to set focus for newly created elements
  *
  * @author    Matt DeGennaro <mdegennaro@wayfair.com>
- * @copyright 2015 Wayfair, LLC - All rights reserved
+ * @copyright 2016 Wayfair, LLC - All rights reserved
  */
 
 'use strict';
