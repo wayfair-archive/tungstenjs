@@ -3,7 +3,6 @@
 var dataset = require('data-set');
 var eventWrapper = require('./tungsten_event');
 var _ = require('underscore');
-var isArray = require('../utils/is_array');
 var logger = require('../utils/logger');
 
 module.exports = {};
@@ -128,8 +127,8 @@ module.exports.addEvent = function(el, eventName, selector, method) {
 };
 
 module.exports.removeEvent = function(evt) {
-  if (isArray(evt)) {
-    if (isArray(evt[0])) {
+  if (_.isArray(evt)) {
+    if (_.isArray(evt[0])) {
       // Some plugins may bind multiple handlers, in which case we have an array of arrays
       for (var i = evt.length; i--;) {
         module.exports.removeEvent(evt[i]);

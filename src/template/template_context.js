@@ -8,8 +8,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
 var logger = require('../utils/logger');
-var isArray = require('../utils/is_array');
 
 /** @type {Object} storage to prevent repeated warnings about the same computed property */
 var computedPropertyWarnings = {};
@@ -211,7 +211,7 @@ Context.prototype.lookup = function(name, handleLambda) {
  * @return {Boolean}        If the value is an Array or Collection
  */
 Context.isArray = Context.prototype.isArray = function(object) {
-  return isArray(object) || object && object.tungstenCollection;
+  return _.isArray(object) || object && object.tungstenCollection;
 };
 
 /**
