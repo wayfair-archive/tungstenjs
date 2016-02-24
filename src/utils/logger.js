@@ -13,11 +13,20 @@ var _ = require('underscore');
  * @return {Function}      Bound console function
  */
 /* eslint-disable no-console */
-var defaultConsole = console && typeof console.log === 'function' ? console.log : function() {
+function getDefaultConsole() {
   if (console && typeof console.log === 'function') {
-    console.log.apply(console, arguments);
+    return console.log;
+  } else {
+    return function() {
+      // Console isn't available until dev tools is open in old IE, so keep checking
+      if (console && typeof console.log === 'function') {
+        console.log.apply(console, arguments);
+      }
+    };
   }
-};
+}
+
+var defaultConsole = getDefaultConsole();
 
 var getConsoleMethod = function(name) {
   var func = typeof console[name] === 'function' ? console[name] : defaultConsole;
@@ -32,5 +41,6 @@ module.exports = {
   warn: getConsoleMethod('warn'),
   error: getConsoleMethod('error'),
   trace: getConsoleMethod('trace'),
-  getConsoleMethod: getConsoleMethod
+  getConsoleMethod: getConsoleMethod,
+  getDefaultConsole: getDefaultConsole
 };

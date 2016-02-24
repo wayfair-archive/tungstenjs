@@ -31,7 +31,6 @@ ObjectPool.prototype.preallocate = function(num) {
   for (i = size; i--;) {
     objs[i].recycle();
   }
-  this.size = size;
 };
 
 /**

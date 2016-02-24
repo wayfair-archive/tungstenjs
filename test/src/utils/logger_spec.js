@@ -24,4 +24,16 @@ describe('logger.js public API', function() {
     fakeMethod(message);
     jasmineExpect(console.log).toHaveBeenCalledWith(message);
   });
+  it('should handle when console.log isn\'t available', function() {
+    var log = console.log;
+    log.calls.reset();
+    console.log = null;
+    var defaultConsole = logger.getDefaultConsole();
+    expect(defaultConsole).to.be.a('function');
+    defaultConsole(message);
+    jasmineExpect(log).not.toHaveBeenCalled();
+    console.log = log;
+    defaultConsole(message);
+    jasmineExpect(log).toHaveBeenCalledWith(message);
+  });
 });

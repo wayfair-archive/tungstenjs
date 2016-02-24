@@ -6,7 +6,7 @@ var logger = require('../../utils/logger');
 // IE8 and back don't create whitespace-only nodes from the DOM
 // This sets a flag so that templates don't create them either
 var whitespaceOnlyRegex = /^\s*$/;
-var supportsWhitespaceTextNodes = (function() {
+function doesSupportWhitespaceTextNodes() {
   // if document isn't defined, we're running in node. so use whitespace nodes
   if (typeof document === 'undefined') {
     return true;
@@ -14,7 +14,8 @@ var supportsWhitespaceTextNodes = (function() {
   var d = document.createElement('div');
   d.innerHTML = ' ';
   return d.childNodes.length === 1;
-})();
+}
+var supportsWhitespaceTextNodes = doesSupportWhitespaceTextNodes();
 
 /**
  * [DefaultStack description]
@@ -74,6 +75,10 @@ DefaultStack.prototype.processObject = function(obj) {
   return obj;
 };
 
+/* global TUNGSTENJS_IS_TEST */
+var TEST_MODE = typeof TUNGSTENJS_IS_TEST !== 'undefined' && TUNGSTENJS_IS_TEST;
+
+
 /**
  * When an element is resolved, push it to the result or the parent item on the stack
  * @param  {Object} obj Text / Widget / or Tungsten node
@@ -83,7 +88,7 @@ DefaultStack.prototype._closeElem = function(obj) {
   var i;
   // if this is an element, create a VNode now so that count is set properly
   if (obj.type === 'node') {
-    if (!supportsWhitespaceTextNodes) {
+    if (!(TEST_MODE ? module.exports.supportsWhitespaceTextNodes : supportsWhitespaceTextNodes)) {
       var children = [];
       for (i = 0; i < obj.children.length; i++) {
         if (typeof obj.children[i] !== 'string') {
@@ -146,11 +151,11 @@ DefaultStack.prototype.closeElement = function(closingElem) {
     var openID = openElem.id;
     if (openID !== id) {
       logger.warn(tagName + ' tags improperly paired, closing ' + openID + ' with close tag from ' + id);
-      openElem = this.stack.pop();
-      while (openElem && openElem.tagName !== tagName) {
-        this._closeElem(openElem);
+      do {
         openElem = this.stack.pop();
-      }
+        this._closeElem(openElem);
+        // close tags until we find one with the same tagName
+      } while (openElem && openElem.tagName !== tagName);
     } else {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
@@ -188,28 +193,7 @@ DefaultStack.prototype.clear = function() {
   this.stack = [];
 };
 
-/* develblock:start */
-DefaultStack.prototype.startContextChange = function(label, isLoop) {
-  if (this.debugMode) {
-    var className = 'debug_context';
-    if (isLoop) {
-      className += ' debug_context_loop';
-    }
-    this.stack.push({
-      tagName: 'div',
-      properties: processProperties({'class': className}),
-      label: label,
-      children: [],
-      debugContext: true
-    });
-  }
-};
-
-DefaultStack.prototype.endContextChange = function() {
-  if (this.debugMode) {
-    this.closeElem(this.stack.pop());
-  }
-};
-/* develblock:end */
-
 module.exports = DefaultStack;
+// Exports for testing
+module.exports.doesSupportWhitespaceTextNodes = doesSupportWhitespaceTextNodes;
+module.exports.supportsWhitespaceTextNodes = supportsWhitespaceTextNodes;
