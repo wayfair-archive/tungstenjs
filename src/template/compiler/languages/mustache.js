@@ -21,7 +21,6 @@ typeHasContent[types.SECTION_UNLESS] = true;
 
 const nonWhitespace = /\S/;
 const nonWhitespaceNodes = {};
-nonWhitespaceNodes[types.TEXT] = true;
 nonWhitespaceNodes[types.INTERPOLATOR] = true;
 nonWhitespaceNodes[types.TRIPLE] = true;
 
@@ -78,6 +77,10 @@ function trimWhitespace(line) {
     }
   }
 
+  // Remove the whitespace nodes if this line consists of:
+  //  - only whitespace text
+  //  - no Interpolators or Unescaped Interpolators
+  //  - at least one Mustache tag
   if (allWhitespace && seenAnyTag) {
     for (let i = 0; i < whitespaceIndicies.length; i++) {
       let index = whitespaceIndicies[i];
@@ -93,7 +96,7 @@ function trimWhitespace(line) {
 }
 
 let inDynamicAttribute = false;
-let sectionIDs = {};
+let mustacheClosureIDs = {};
 let lineBuffer = [];
 function processLine(opts) {
   if (!opts.preserveWhitespace) {
@@ -113,7 +116,7 @@ function processLine(opts) {
       if (obj.skip === true) {
         continue;
       } else if (obj.type === types.CLOSING) {
-        obj.id = sectionIDs[obj.value] && sectionIDs[obj.value].pop();
+        obj.id = mustacheClosureIDs[obj.value] && mustacheClosureIDs[obj.value].pop();
         let openObj = stack.peek();
         if (openObj) {
           if (openObj.openingDynamicAttribute) {
@@ -130,10 +133,10 @@ function processLine(opts) {
           obj.processingHTML = opts.processingHTML;
           opts.processingHTML = false;
         }
-        if (!sectionIDs[obj.value]) {
-          sectionIDs[obj.value] = [];
+        if (!mustacheClosureIDs[obj.value]) {
+          mustacheClosureIDs[obj.value] = [];
         }
-        sectionIDs[obj.value].push(obj.id);
+        mustacheClosureIDs[obj.value].push(obj.id);
         if (!inDynamicAttribute && parser.inAttributeName()) {
           inDynamicAttribute = true;
           obj.openingDynamicAttribute = true;
@@ -156,7 +159,7 @@ function processTemplate(str, opts) {
   };
   // Reset running variables, just in case
   inDynamicAttribute = false;
-  sectionIDs = {};
+  mustacheClosureIDs = {};
   lineBuffer = [];
 
   const strLen = str.length;
@@ -222,9 +225,11 @@ function processTemplate(str, opts) {
         p += 1;
       }
     } else {
+      // For any non-mustache character, add it to the buffer
       c = str.charAt(p);
       textBuffer += c;
       if (c === '\n') {
+        // When we hit a newline, process the line for whitespace rules
         lineBuffer.push(textBuffer);
         textBuffer = '';
         processLine(opts);

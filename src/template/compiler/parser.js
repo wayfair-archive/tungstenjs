@@ -235,8 +235,8 @@ MustacheParser.prototype.inComment = function() {
   return state === IN_COMMENT;
 };
 /**
- * Gets the current buffer from htmlparser and processes it
- * Used to handle section tags inside attribute values
+ * Gets the current buffer and processes it
+ * Used to handle tags appearing inside attributes
  */
 MustacheParser.prototype.processBuffer = function() {
   if (!this.inRelevantState()) {
