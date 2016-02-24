@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -52,7 +52,7 @@
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "chai": "^2.2.0",
     "coveralls": "^2.11.4",
-    "eslint": "1.10.3",
+    "eslint": "2.2.0",
     "express": "^4.13.3",
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",

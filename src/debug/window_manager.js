@@ -91,12 +91,12 @@ function renderDebugPanel() {
       toolPanels[i].scrollTop = toolPanelScrolls[i];
     }
 
-    if (appData.changedTab) {
+    if (appData.scrollFlag) {
       var selectedTree = toolPanels[0].querySelector('.is-highlighted');
       if (selectedTree) {
         selectedTree.scrollIntoView();
       }
-      appData.changedTab = false;
+      appData.scrollFlag = false;
     }
 
     require('./panel_js/panel_events')();

@@ -1,7 +1,7 @@
 /**
  * Pre-compiles templates using Ractive and returns a module with all dependencies required
  *
- * Copyright 2015 Wayfair, LLC
+ * Copyright 2016 Wayfair, LLC
  * Available under the Apache Version 2.0 License
  *
  * https://github.com/wayfair/tungstenjs

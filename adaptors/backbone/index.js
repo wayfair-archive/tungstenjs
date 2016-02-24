@@ -1,7 +1,7 @@
 /**
  * Backbone.js Adaptor for Tungsten.js
  *
- * Copyright 2015 Wayfair, LLC
+ * Copyright 2016 Wayfair, LLC
  * Available under the Apache Version 2.0 License
  *
  * https://github.com/wayfair/tungstenjs

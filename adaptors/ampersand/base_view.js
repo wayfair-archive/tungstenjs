@@ -12,6 +12,7 @@ var logger = require('../../src/utils/logger');
 
 // Cached regex to split keys for `delegate`.
 var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+var validate = require('../shared/validate');
 
 /**
  * Provides generic reusable methods that child views can inherit from
@@ -529,6 +530,10 @@ BaseView.extend = function(protoProps) {
     }
   }
   /* develblock:end */
+
+  if (protoProps && protoProps.childViews) {
+    validate.childViews(protoProps.childViews);
+  }
 
   return AmpersandView.extend.call(this, protoProps);
 };

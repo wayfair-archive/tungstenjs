@@ -48,6 +48,7 @@ utils.addEventListener(document.getElementById('tungstenDebugOverlay'), 'mousemo
   }
   if (matchedElems.length) {
     highlighter.highlight(matchedElems);
+    appData.scrollFlag = true;
   } else {
     highlighter.unhighlight();
   }

@@ -5,7 +5,6 @@ const _ = require('underscore');
 const parser = require('./parser');
 const stack = require('./stack');
 const logger = require('./compiler_logger');
-
 const processTemplate = require('./languages/mustache');
 
 /**
