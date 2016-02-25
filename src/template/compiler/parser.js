@@ -255,16 +255,20 @@ MustacheParser.prototype.processBuffer = function() {
     this.endAttribute();
   } else if (this.inAttributeValue()) {
     this.clearBuffer();
-    stack.createObject({
-      type: 'attributevalue',
-      value: runningName
-    });
+    if (runningName) {
+      stack.createObject({
+        type: 'attributevalue',
+        value: runningName
+      });
+    }
   } else if (this.inComment()) {
     this.clearBuffer();
-    if (stack.inComment()) {
-      stack.createObject(runningName);
-    } else {
-      stack.openElement(types.COMMENT, runningName);
+    if (runningName) {
+      if (stack.inComment()) {
+        stack.createObject(runningName);
+      } else {
+        stack.openElement(types.COMMENT, runningName);
+      }
     }
   }
 };
