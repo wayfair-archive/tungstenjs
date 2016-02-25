@@ -287,7 +287,7 @@ const parser = new MustacheParser({
   onopentag: function() {
     let el = stack.peek();
     // Marks the element as no longer opening so we stop pushing to attributes
-    el.isOpen = false;
+    el.close();
   },
   /**
    * Runs when an close tag is encountered

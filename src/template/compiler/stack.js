@@ -88,6 +88,11 @@ templateStack.getID = function() {
   return id;
 };
 
+function closeElem() {
+  this.isOpen = false;
+  this.attributes = processAttributeArray(this.attributes);
+}
+
 templateStack.openElement = function(type, value) {
   let elem = {
     children: [],
@@ -106,6 +111,7 @@ templateStack.openElement = function(type, value) {
     elem.tagName = value;
     elem.attributes = [];
     elem.isOpen = true;
+    elem.close = _.bind(closeElem, elem);
     if (elem.tagName.toLowerCase() === 'svg') {
       this.inSVG = elem.id;
     }
@@ -136,12 +142,11 @@ templateStack.processObject = function(obj) {
     case types.ELEMENT:
       processed[templateKeys.type] = types.ELEMENT;
       processed[templateKeys.tagName] = obj.tagName;
-      var attrs = processAttributeArray(obj.attributes);
-      if (_.size(attrs.static) > 0) {
-        processed[templateKeys.attributes] = attrs.static;
+      if (_.size(obj.attributes.static) > 0) {
+        processed[templateKeys.attributes] = obj.attributes.static;
       }
-      if (attrs.dynamic.length > 0) {
-        processed[templateKeys.dynamicAttributes] = attrs.dynamic;
+      if (obj.attributes.dynamic.length > 0) {
+        processed[templateKeys.dynamicAttributes] = obj.attributes.dynamic;
       }
       if (obj.tagName.toLowerCase() === 'textarea') {
         if (!processed[templateKeys.attributes]) {
