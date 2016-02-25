@@ -3,6 +3,7 @@
 const types = require('../../types');
 const parser = require('../parser');
 const stack = require('../stack');
+const logger = require('../compiler_logger');
 
 var templateTypes = {
   '#': types.SECTION,
@@ -87,7 +88,8 @@ function trimWhitespace(line) {
       let obj = newLine[index];
       newLine[index] = {
         type: types.TEXT,
-        original: obj
+        original: obj,
+        length: obj.length
       };
     }
   }
@@ -98,6 +100,9 @@ function trimWhitespace(line) {
 let inDynamicAttribute = false;
 let mustacheClosureIDs = {};
 let lineBuffer = [];
+let errorPosition = 0;
+let errorInParser = false;
+let templateString;
 function processLine(opts) {
   if (!opts.preserveWhitespace) {
     lineBuffer = trimWhitespace(lineBuffer);
@@ -105,11 +110,14 @@ function processLine(opts) {
 
   for (let i = 0; i < lineBuffer.length; i++) {
     let obj = lineBuffer[i];
+    let len = obj.length;
     if (typeof obj === 'string') {
       if (inDynamicAttribute) {
         stack.createObject(obj);
       } else {
+        errorInParser = true;
         parser.write(obj);
+        errorInParser = false;
       }
     } else {
       parser.processBuffer();
@@ -145,8 +153,37 @@ function processLine(opts) {
         stack.createObject(obj);
       }
     }
+    errorPosition += len;
   }
   lineBuffer.length = 0;
+}
+
+function repeatChar(c, n) {
+  return (new Array(n + 1).join(c));
+}
+
+function errorContext() {
+  var context = 50;
+  var parserOffset = errorInParser ? parser.getPosition() : 0;
+  var start = Math.max(0, parserOffset + errorPosition - context);
+  var contextStr = templateString.substr(start, context * 2 + 1);
+  if (errorPosition < context) {
+    contextStr = repeatChar(' ', context + 1 - errorPosition) + contextStr;
+  }
+  var contextLines = contextStr.split('\n');
+  var p = 0;
+  var newlineOffset = 0;
+  contextStr = '';
+  for (var i = 0; i < contextLines.length; i++) {
+    contextStr += contextLines[i] + '\\n';
+    p += contextLines[i].length + 2;
+    if (p <= context + 1) {
+      newlineOffset += 1;
+    }
+  }
+
+  return '\n' + contextStr + '\n' +
+    repeatChar(' ', context + newlineOffset) + '^' + repeatChar('-', context);
 }
 
 function processTemplate(str, opts) {
@@ -157,10 +194,16 @@ function processTemplate(str, opts) {
     open: '{{',
     close: '}}'
   };
-  // Reset running variables, just in case
+
+  // Set function to logger to show context around any parsing error
+  logger.setContextFunction(errorContext);
+
+  templateString = str;
   inDynamicAttribute = false;
   mustacheClosureIDs = {};
   lineBuffer = [];
+  errorPosition = 0;
+  errorInParser = false;
 
   const strLen = str.length;
 
@@ -170,11 +213,12 @@ function processTemplate(str, opts) {
         lineBuffer.push(textBuffer);
         textBuffer = '';
       }
-      p += delimiters.open.length;
       let obj = {
         type: null,
-        value: ''
+        value: '',
+        start: p
       };
+      p += delimiters.open.length;
       let closingDelim = delimiters.close;
       while (p < strLen) {
         if (atDelim(str, p, closingDelim)) {
@@ -197,6 +241,7 @@ function processTemplate(str, opts) {
               obj.skip = true;
             }
           }
+          obj.length = (p - obj.start) + closingDelim.length;
           lineBuffer.push(obj);
           p += closingDelim.length - 1;
           break;
@@ -241,6 +286,9 @@ function processTemplate(str, opts) {
     lineBuffer.push(textBuffer);
   }
   processLine(opts);
+
+  // Clear logger context function for next run
+  logger.setContextFunction();
 }
 
 module.exports = processTemplate;

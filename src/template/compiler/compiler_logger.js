@@ -10,27 +10,35 @@ const ERROR_LEVELS = {
 
 let strictMode = true;
 let overrides = {};
+let contextFn = _.noop;
 
 function logMessage(messageLevel, data) {
   // Reduce any error messages to the maximum allowed
   if (strictMode) {
     messageLevel = ERROR_LEVELS.EXCEPTION;
   }
+  let context = contextFn();
+  if (typeof context !== 'string') {
+    context = '';
+  }
   switch (messageLevel) {
     case ERROR_LEVELS.EXCEPTION:
       if (overrides.exception) {
-        overrides.exception(data);
+        overrides.exception(data, context);
       } else {
         let error = _.map(data, (item) => {
           return JSON.stringify(item);
         });
-        throw Error(error.join(' '));
+        throw Error(error.join(' ') + context);
       }
       break;
     case ERROR_LEVELS.WARNING:
       if (overrides.warning) {
-        overrides.warning(data);
+        overrides.warning(data, context);
       } else {
+        if (context) {
+          data.push(context);
+        }
         logger.warn.apply(logger, data);
       }
       break;
@@ -56,4 +64,7 @@ module.exports.setStrictMode = function(value) {
 };
 module.exports.setOverrides = function(opts) {
   overrides = opts;
+};
+module.exports.setContextFunction = function(fn) {
+  contextFn = typeof fn === 'function' ? fn : _.noop;
 };

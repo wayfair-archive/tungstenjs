@@ -269,6 +269,10 @@ MustacheParser.prototype.processBuffer = function() {
   }
 };
 
+MustacheParser.prototype.getPosition = function() {
+  return this._tokenizer._sectionStart;
+};
+
 const parser = new MustacheParser({
   /**
    * Runs when an open tag is first processed
