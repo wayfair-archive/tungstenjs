@@ -59,8 +59,8 @@ describe('compiler_logger', function() {
       compilerLogger.warn('foo');
       compilerLogger.exception('bar');
 
-      jasmineExpect(overrides.warning).toHaveBeenCalledWith(['foo']);
-      jasmineExpect(overrides.exception).toHaveBeenCalledWith(['bar']);
+      jasmineExpect(overrides.warning).toHaveBeenCalledWith(['foo'], '');
+      jasmineExpect(overrides.exception).toHaveBeenCalledWith(['bar'], '');
     });
   });
 });

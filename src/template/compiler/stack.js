@@ -77,12 +77,21 @@ templateStack.getID = function() {
   let id;
   if (this.stack.length) {
     let openElem = this.peek();
-    id = openElem.id + '.' + openElem.children.length;
+    if (openElem.isOpen) {
+      id = openElem.id + '-' + openElem.attributes.length;
+    } else {
+      id = openElem.id + '.' + openElem.children.length;
+    }
   } else {
     id = this.startID + this.result.length;
   }
   return id;
 };
+
+function closeElem() {
+  this.isOpen = false;
+  this.attributes = processAttributeArray(this.attributes);
+}
 
 templateStack.openElement = function(type, value) {
   let elem = {
@@ -102,6 +111,7 @@ templateStack.openElement = function(type, value) {
     elem.tagName = value;
     elem.attributes = [];
     elem.isOpen = true;
+    elem.close = _.bind(closeElem, elem);
     if (elem.tagName.toLowerCase() === 'svg') {
       this.inSVG = elem.id;
     }
@@ -132,12 +142,11 @@ templateStack.processObject = function(obj) {
     case types.ELEMENT:
       processed[templateKeys.type] = types.ELEMENT;
       processed[templateKeys.tagName] = obj.tagName;
-      var attrs = processAttributeArray(obj.attributes);
-      if (_.size(attrs.static) > 0) {
-        processed[templateKeys.attributes] = attrs.static;
+      if (_.size(obj.attributes.static) > 0) {
+        processed[templateKeys.attributes] = obj.attributes.static;
       }
-      if (attrs.dynamic.length > 0) {
-        processed[templateKeys.dynamicAttributes] = attrs.dynamic;
+      if (obj.attributes.dynamic.length > 0) {
+        processed[templateKeys.dynamicAttributes] = obj.attributes.dynamic;
       }
       if (obj.tagName.toLowerCase() === 'textarea') {
         if (!processed[templateKeys.attributes]) {
@@ -240,10 +249,14 @@ templateStack._closeElem = function(obj) {
     obj = this.processObject(obj);
   }
 
+  let lastPushingTo = pushingTo[pushingTo.length - 1];
+
   // Combine adjacent strings
-  if (obj.type === types.TEXT && pushingTo[pushingTo.length - 1] && pushingTo[pushingTo.length - 1].type === types.TEXT) {
-    pushingTo[pushingTo.length - 1].value += obj.value;
-    pushingTo[pushingTo.length - 1].original += obj.original;
+  if (obj.type === types.TEXT && lastPushingTo && lastPushingTo.type === types.TEXT) {
+    lastPushingTo.value += obj.value;
+    lastPushingTo.original += obj.original;
+  } else if (typeof obj === 'string' && lastPushingTo && typeof lastPushingTo === 'string') {
+    pushingTo[pushingTo.length - 1] += obj;
   } else {
     pushingTo.push(obj);
   }
@@ -277,18 +290,30 @@ templateStack.closeElement = function(closingElem) {
   if (openElem) {
     let openID = openElem.id;
     if (openID !== id) {
-      if (closingElem.tagName) {
-        logger.exception('</' + openElem.tagName + '> where a </' + closingElem.tagName + '> should be.');
+      let expectedTag;
+      if (openElem.tagName) {
+        expectedTag = '</' + openElem.tagName + '>';
       } else {
-        logger.exception('</' + openElem.tagName + '> where a {{/' + closingElem.value + '}} should be.');
+        expectedTag = '{{/' + openElem.value + '}}';
       }
+      let actualTag;
+      if (closingElem.tagName) {
+        actualTag = '</' + closingElem.tagName + '>';
+      } else {
+        actualTag = '{{/' + closingElem.value + '}}';
+      }
+      logger.exception(actualTag + ' where a ' + expectedTag + ' should be.');
     } else {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
     }
   } else {
-    // Something has gone terribly wrong
-    logger.exception('</' + closingElem.tagName + '> with no paired <' + closingElem.tagName + '>');
+    if (closingElem.tagName) {
+      // Something has gone terribly wrong
+      logger.exception('</' + closingElem.tagName + '> with no paired <' + closingElem.tagName + '>');
+    } else {
+      logger.exception('{{/' + closingElem.value + '}} with no paired {{#' + closingElem.value + '}}');
+    }
   }
 };
 

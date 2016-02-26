@@ -91,7 +91,9 @@ function render(stack, template, context, partials, parentView) {
 
   switch (template.t) {
     case types.TEXT:
-      stack.createObject(template.r, {escapeHTML: true});
+      if (template.r) {
+        stack.createObject(template.r, {escapeHTML: true});
+      }
       break;
     // <!-- comment -->
     case types.COMMENT:

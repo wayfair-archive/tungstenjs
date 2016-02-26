@@ -108,7 +108,7 @@ const requiredParents = {
   caption: {
     table: function(parent) {
       // captions must be the first element
-      if (parent.children.length === 0) {
+      if (_.size(parent.childTags) === 0) {
         return true;
       }
       return 'A caption tag must be the first child of its table';
@@ -216,7 +216,7 @@ const standardsParents = _.defaults({
   legend: {
     fieldset: function(parent) {
       // captions must be the first element
-      if (parent.children.length === 0) {
+      if (_.size(parent.childTags) === 0) {
         return true;
       }
       return 'A legend tag must be the first child of its fieldset';

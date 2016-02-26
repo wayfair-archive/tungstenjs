@@ -234,6 +234,44 @@ MustacheParser.prototype.inComment = function() {
   let state = this._tokenizer._state;
   return state === IN_COMMENT;
 };
+/**
+ * Gets the current buffer and processes it
+ * Used to handle tags appearing inside attributes
+ */
+MustacheParser.prototype.processBuffer = function() {
+  if (!this.inRelevantState()) {
+    return;
+  }
+  let runningName = this.getSection();
+  if (this.inAttributeName()) {
+    if (runningName) {
+      this.clearBuffer();
+      stack.createObject({
+        type: 'attributename',
+        value: runningName
+      });
+    }
+  } else if (this.afterAttributeName()) {
+    this.endAttribute();
+  } else if (this.inAttributeValue()) {
+    this.clearBuffer();
+    stack.createObject({
+      type: 'attributevalue',
+      value: runningName
+    });
+  } else if (this.inComment()) {
+    this.clearBuffer();
+    if (stack.inComment()) {
+      stack.createObject(runningName);
+    } else {
+      stack.openElement(types.COMMENT, runningName);
+    }
+  }
+};
+
+MustacheParser.prototype.getPosition = function() {
+  return this._tokenizer._sectionStart;
+};
 
 const parser = new MustacheParser({
   /**
@@ -249,7 +287,7 @@ const parser = new MustacheParser({
   onopentag: function() {
     let el = stack.peek();
     // Marks the element as no longer opening so we stop pushing to attributes
-    el.isOpen = false;
+    el.close();
   },
   /**
    * Runs when an close tag is encountered
