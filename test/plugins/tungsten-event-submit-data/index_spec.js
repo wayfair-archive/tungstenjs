@@ -1,5 +1,5 @@
 'use strict';
-var submitDataBind = require('../../../../src/event/handlers/submit_data_events.js');
+var submitDataBind = require('../../../plugins/tungsten-event-submit-data');
 describe('submit_events', function() {
   var elem, type, obj, handler;
   beforeEach(function() {

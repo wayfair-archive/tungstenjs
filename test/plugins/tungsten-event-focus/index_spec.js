@@ -1,6 +1,6 @@
 'use strict';
 
-var focusEvents = require('../../../../src/event/handlers/focus_events.js');
+var focusEvents = require('../../../plugins/tungsten-event-focus');
 
 describe('focus events', function() {
   var elem, handler, opts;

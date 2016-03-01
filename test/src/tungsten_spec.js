@@ -29,8 +29,8 @@ describe('tungsten.js public API', function() {
       expect(tungsten.addEventPlugin).to.be.a('function');
       expect(tungsten.addEventPlugin).to.have.length(1);
     });
-    it('should be globalEvents.registerEventHandler', function() {
-      expect(tungsten.addEventPlugin).to.equal(globalEvents.registerEventHandler);
+    it('should be globalEvents.addEventPlugin', function() {
+      expect(tungsten.addEventPlugin).to.equal(globalEvents.addEventPlugin);
     });
   });
   describe('bindEvent', function() {

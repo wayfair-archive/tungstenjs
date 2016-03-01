@@ -3,7 +3,7 @@
  */
 'use strict';
 var serialize = require('form-serialize');
-var _ = require('underscore');
+var extend = require('extend');
 
 var EVENT_NAME = 'submit-data';
 var SUBMIT_SELECTOR = 'js-submit';
@@ -14,7 +14,7 @@ function getHandlers(method) {
   var submitHandler = function(evt) {
     var form = evt.target;
     var data = serialize(form, { hash: true, empty: true });
-    method(evt, _.extend(data, submit));
+    method(evt, extend(data, submit));
   };
 
   var submitClickHandler = function(evt) {

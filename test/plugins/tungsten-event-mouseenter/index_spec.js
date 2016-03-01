@@ -1,5 +1,5 @@
 'use strict';
-var mouseenterleaveBind = require('../../../../src/event/handlers/mouseenter_events.js');
+var mouseenterleaveBind = require('../../../plugins/tungsten-event-mouseenter');
 describe('mouseenter_and_mouseleave_events', function() {
   var elem, otherElem, handler, obj;
   beforeEach(function() {

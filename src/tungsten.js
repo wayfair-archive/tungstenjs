@@ -22,7 +22,7 @@ exports.VERSION = typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION
 
 exports.IS_DEV = false;
 
-exports.addEventPlugin = globalEvents.registerEventHandler;
+exports.addEventPlugin = globalEvents.addEventPlugin;
 
 exports.bindEvent = function(el, eventName, selector, method, options) {
   globalEvents.validateSelector(selector);

@@ -1,7 +1,7 @@
 'use strict';
 
-var intentEvents = require('../../../../src/event/handlers/intent_events.js');
-var globalEvents = require('../../../../src/event/global_events.js');
+var intentEvents = require('../../../plugins/tungsten-event-intent');
+var globalEvents = require('../../../src/event/global_events.js');
 
 describe('intent events', function() {
   var elem, type, handler, opts;

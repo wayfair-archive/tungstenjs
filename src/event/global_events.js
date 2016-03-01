@@ -4,19 +4,12 @@
 'use strict';
 var _ = require('underscore');
 var eventsCore = require('./events_core');
-require('./handlers/touch_events');
 
 var eventHandlers = [
-  require('./handlers/document_events'),
-  require('./handlers/focus_events'),
   require('./handlers/change_events'),
-  require('./handlers/mouseenter_events'),
-  require('./handlers/window_events'),
-  require('./handlers/intent_events'),
-  require('./handlers/outside_events'),
-  require('./handlers/submit_data_events')
+  require('./handlers/window_events')
 ];
-var registerEventPlugin = function(handler) {
+var addEventPlugin = function(handler) {
   eventHandlers.push(handler);
 };
 var defaultEvents = require('./handlers/default_events');
@@ -134,7 +127,7 @@ module.exports = {
   validateSelector: eventsCore.validateSelector,
   bindVirtualEvent: bindVirtualEvent,
   unbindVirtualEvent: unbindVirtualEvent,
-  registerEventHandler: registerEventPlugin,
+  addEventPlugin: addEventPlugin,
   // Exposing for testing purposes, should not be directly accessed
   _eventHandlers: eventHandlers
 };
