@@ -14,6 +14,8 @@
 // Require context adaptor to set functions
 var Context = require('../../src/template/template_context');
 var BackboneAdaptor = require('./context_adaptor');
+var tungsten = require('../../src/tungsten.js');
+
 Context.setAdapterFunctions(BackboneAdaptor);
 
 module.exports = {
@@ -24,7 +26,8 @@ module.exports = {
   Backbone: require('backbone'),
   ComponentWidget: require('./component_widget'),
   Template: require('../../src/template/template.js'),
-  _core: require('../../src/tungsten.js'),
+  addEventPlugin: tungsten.addEventPlugin,
+  _core: tungsten,
   _template: require('../../precompile/tungsten_template/template_helper'),
   _Context: Context
 };

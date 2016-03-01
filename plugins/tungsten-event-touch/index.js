@@ -27,8 +27,6 @@
 'use strict';
 
 if (typeof document.createEvent === 'function') {
-  var _ = require('underscore');
-
   // some helpers borrowed from https://github.com/WebReflection/ie-touch
   var msEventType = function(type) {
     var lo = type.toLowerCase(),
@@ -75,9 +73,9 @@ if (typeof document.createEvent === 'function') {
     data.y = currY;
     data.distance = data.distance;
     customEvent.originalEvent = originalEvent;
-    _.each(data, function(value, key) {
-      customEvent[key] = value;
-    });
+    for (var key in data) {
+      customEvent[key] = data[key];
+    }
     customEvent.initEvent(eventName, true, true);
     elm.dispatchEvent(customEvent);
   };
@@ -157,14 +155,7 @@ if (typeof document.createEvent === 'function') {
   setListener(touchevents.touchend + (justTouchEvents ? '' : ' mouseup'), onTouchEnd);
   setListener(touchevents.touchmove + (justTouchEvents ? '' : ' mousemove'), onTouchMove);
 
-  module.exports = {
-    events: [
-      'swiperight',
-      'swipeleft',
-      'swipedown',
-      'swipeup',
-      'dbltap',
-      'tap'
-    ]
-  };
 }
+
+// Export an empty function to conform to the plugin API
+module.exports = function() {};

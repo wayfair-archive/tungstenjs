@@ -1,5 +1,5 @@
 'use strict';
-var documentBind = require('../../../../src/event/handlers/document_events.js');
+var documentBind = require('../../../plugins/tungsten-event-document');
 
 describe('document_events', function() {
   var elem, type, handler;

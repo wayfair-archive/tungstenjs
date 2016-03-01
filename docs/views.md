@@ -44,23 +44,57 @@ BaseView.extend({
 
 ## Event Handling
 
-Events are defined with the standard [`events` hash](http://backbonejs.org/#View-events) API when using the Backbone or Ampersand adaptor.  If a selector is passed in the event key, however, it can only use a `js-` prefixed class selector.  This optimizes performance when delegating events because under the hood, unlike Backbone or Ampersand, Tungsten.js provides its own event delegation system.  By default, all events are delegated from the document.  Special events can also be handled by an [event handler plugin](https://github.com/wayfair/tungstenjs/tree/master/src/event/handlers).  The included event handlers are:
+Events are defined with the standard [`events` hash][events-hash] API when using the Backbone or Ampersand adaptor.  If a selector is passed in the event key, however, it can only use a `js-` prefixed class selector.  This optimizes performance when delegating events because under the hood, unlike Backbone or Ampersand, Tungsten.js provides its own event delegation system.  By default, all events are delegated from the document.  Special events can also be handled by an [event handler plugin][tungsten-plugins].
 
-* Directional swipe events - exactly what it sounds like
-    * `swipeup`, `swipedown`, `swipeleft`, `swiperight`
-* Intent Events - limited to a subset of events that can be "cancelled". The handler will be called n milliseconds (default 200ms) after the initial event if it is not "cancelled"
-    * Bindable by appending `-intent` to one of the following events and configurable using the eventOptions hash
-    * `mouseenter`, `mouseleave`, `mousedown`, `mouseup`, `keydown`, `keyup`, `touchstart`, `touchend`
-* Document bindings - Adds an event binding to the document with delegation still working as expected
-    * Bindable by prepending `doc-` to any event type
+[events-hash]: http://backbonejs.org/#View-events
+[tungsten-plugins]: https://github.com/wayfair/tungstenjs/tree/master/plugins/
+
+### Special Events Built into Tungsten.js
+These events are available by default in any Tungsten.js view.
+
 * Window bindings - Adds an event binding to the window
     * Bindable by prepending `win-` to any event that the window fires (primarily scroll or resize, and height/width/scroll values are cached to prevent repeated reads)
-* Outside Events - Adds an event binding to events firing outside of the element
-    * Bindable by appending `-outside` to any event type
-* Submit Data - Adds an event binding to form submit events with the form's serialized data passed as the second parameter of the callback (uses [form-serialize](https://github.com/defunctzombie/form-serialize))
-    * Bindable by using the `submit-data` event type
 
-They can be used directly in Tungsten.js views by using the events hash as usual.  For example:
+#### Usage Examples
+
+```javascript
+View.extend({
+  // [...]
+  events: {
+    // standard click event
+    'click .js-bar' : 'doSomethingOnClick',
+    // window scroll event
+    'win-scroll' : 'doSomethingOnScroll',
+  },
+});
+```
+
+### Special Events Packaged with Tungsten.js:
+
+These events are included in Tungsten.js's NPM module but must be loaded
+explicitly.
+
+* Intent Events (`tungstenjs/dist/tungsten.event.intent`) - limited to a subset of events that can be "cancelled". The handler will be called n milliseconds (default 200ms) after the initial event if it is not "cancelled"
+    * Bindable by appending `-intent` to one of the following events and configurable using the eventOptions hash
+    * `mouseenter`, `mouseleave`, `mousedown`, `mouseup`, `keydown`, `keyup`, `touchstart`, `touchend`
+* Outside Events (`tungstenjs/dist/tungsten.event.outside`) - Adds an event binding to events firing outside of the element
+    * Bindable by appending `-outside` to any event type
+* Directional swipe events (`tungstenjs/dist/tungsten.event.touch`) - exactly what it sounds like
+    * `swipeup`, `swipedown`, `swipeleft`, `swiperight`
+* Submit Data (`tungstenjs/dist/tungsten.event.submit-data`) - Adds an event binding to form submit events with the form's serialized data passed as the second parameter of the callback (uses [form-serialize](https://github.com/defunctzombie/form-serialize))
+    * Bindable by using the `submit-data` event type
+* Document bindings (`tungstenjs/dist/tungsten.event.document`) - Adds an event binding to the document with delegation still working as expected
+    * Bindable by prepending `doc-` to any event type
+
+#### Packaged Event Configuration
+
+```js
+var tungsten = require('tungstenjs');
+var focusEvents = require('tungstenjs/dist/tungsten.event.focus');
+tungsten.addEventPlugin(focusEvents);
+```
+
+#### Usage Examples
 
 ```javascript
 View.extend({
@@ -70,8 +104,6 @@ View.extend({
     'click .js-bar' : 'doSomethingOnClick',
     // mouseenter-intent event (see corresponding eventOptions object)
     'mouseenter-intent .js-foo' : 'doSomethingOnHoverIntent',
-    // window scroll event
-    'win-scroll' : 'doSomethingOnScroll',
     // outside event
     'click-outside .js-foo' :'doSomethingOnOutsideClick',
     // submit data event
