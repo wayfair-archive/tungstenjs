@@ -103,7 +103,9 @@ function diffElements(vNode, elem) {
   var numChildren = Math.max(vNode.children.length, elem.childNodes.length);
 
   for (var i = 0; i < numChildren; i++) {
-    output += recursiveDiff(vNode.children[i], elem.childNodes[i]);
+    if (vNode.children[i].tagName !== 'noscript') {
+      output += recursiveDiff(vNode.children[i], elem.childNodes[i]);
+    }
   }
   // For diffing purposes all tags are <tag></tag>, even self-closing tags
   output += chars.open + '/' + tagDiff + chars.close;

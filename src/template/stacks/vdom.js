@@ -18,6 +18,10 @@ VdomStack.prototype.constructor = VdomStack;
 
 VdomStack.prototype.processObject = function(obj) {
   if (obj.type === 'node') {
+    // children of noscript elements should not be processed
+    if (obj.tagName === 'noscript') {
+      return tungsten.createVNode(obj.tagName, obj.properties, []);
+    }
     // virtual-dom has issues removing the contentEditable property, so leaving a default in place is needed
     if (!obj.properties.contentEditable) {
       obj.properties.contentEditable = 'inherit';
@@ -26,7 +30,6 @@ VdomStack.prototype.processObject = function(obj) {
   } else if (obj.type === 'comment') {
     return new HTMLCommentWidget(obj.text);
   }
-
   return obj;
 };
 
