@@ -102,11 +102,12 @@ function diffElements(vNode, elem) {
   // Iterate over the larger number of children
   var numChildren = Math.max(vNode.children.length, elem.childNodes.length);
 
-  for (var i = 0; i < numChildren; i++) {
-    if (vNode.children[i].tagName !== 'noscript') {
+  if (vNode.tagName.toLowerCase() !== 'noscript') {
+    for (var i = 0; i < numChildren; i++) {
       output += recursiveDiff(vNode.children[i], elem.childNodes[i]);
     }
   }
+
   // For diffing purposes all tags are <tag></tag>, even self-closing tags
   output += chars.open + '/' + tagDiff + chars.close;
   return output;
