@@ -1,5 +1,5 @@
 'use strict';
-var outsideBind = require('../../../../src/event/handlers/outside_events.js');
+var outsideBind = require('../../../plugins/tungsten-event-outside');
 describe('outside_events', function() {
   var elem, type, obj, handler;
   beforeEach(function() {

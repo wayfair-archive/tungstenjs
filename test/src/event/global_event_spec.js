@@ -2,24 +2,27 @@
 
 var eventsCore = require('../../../src/event/events_core.js');
 var globalEvents = require('../../../src/event/global_events.js');
-var documentEvents = require('../../../src/event/handlers/document_events.js');
+var documentEvents = require('../../../plugins/tungsten-event-document');
 var defaultEvents = require('../../../src/event/handlers/default_events.js');
 
 describe('global_event.js public api', function () {
+  beforeAll(function() {
+    globalEvents.addEventPlugin(documentEvents);
+  });
   describe('_eventHandlers', function () {
     it('should be an array', function() {
       expect(globalEvents._eventHandlers).to.be.a('array');
     });
   });
-  describe('registerEventHandler', function () {
+  describe('addEventPlugin', function () {
     it('should be a function', function() {
-      expect(globalEvents.registerEventHandler).to.be.a('function');
-      expect(globalEvents.registerEventHandler).to.have.length(1);
+      expect(globalEvents.addEventPlugin).to.be.a('function');
+      expect(globalEvents.addEventPlugin).to.have.length(1);
     });
     it('should push to eventHandlers', function() {
       var startingLength = globalEvents._eventHandlers.length;
       var fn = function() {};
-      globalEvents.registerEventHandler(fn);
+      globalEvents.addEventPlugin(fn);
       expect(globalEvents._eventHandlers).to.have.length(startingLength + 1);
       expect(globalEvents._eventHandlers[globalEvents._eventHandlers.length - 1]).to.equal(fn);
     });

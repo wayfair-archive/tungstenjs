@@ -3,6 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Tungsten.js standalone browser app (no server needed)</title>
+    <style>
+      .js-box {
+        height: 200px;
+        width: 200px;
+        line-height: 200px;
+        text-align: center;
+        margin: 50px;
+        outline: 1px solid red;
+      }
+      .js-box span {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: normal;
+      }
+    </style>
 </head>
 <body>
 
@@ -10,29 +25,45 @@
 
 <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 <script src="../../dist/tungsten.backbone.js"></script>
-<!-- Ractive.js for parsing templates -->
-<script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
+
+<!-- tungsten event plugin -->
+<script src="../../dist/tungsten.event.intent.js"></script>
+
 <!-- Application code -->
 <script>
-    Ractive.DEBUG = false;
-    (function() {
-        // Template strings; usually these are in separate files
-        var rawTemplates = {
-            app_view: 'Hello, {{> name_view}}!',
-            name_view: '<b>{{name}}</b>'
-        };
+  (function() {
+    // Load 'intent' event plugin using tungsten's event plugin interface
+    tungsten.addEventPlugin(tungsten.plugins.event.intent);
 
-        // Compile templates; usually this is done at build time.
-        var compiledTemplates = window.ct = tungsten._template.compileTemplates(rawTemplates);
+    // Template strings; usually these are in separate files
+    var rawTemplates = {
+      app_view: '<div class="js-box"><span>Hello, {{> name_view}}!</span></div>',
+      name_view: '<b>{{name}}</b>'
+    };
 
-        var View = tungsten.View, Model = tungsten.Model;
-        new View({
-            el: document.getElementById('appwrapper'),
-            template: compiledTemplates.app_view,
-            model: new Model({name: 'world'}),
-            dynamicInitialize: true
-        });
-    }());
+    // Compile templates; usually this is done at build time.
+    var compiledTemplates = window.ct = tungsten._template.compileTemplates(rawTemplates);
+
+    var Model = tungsten.Model;
+    var AppView = tungsten.View.extend({
+      events: {
+        'mouseenter-intent .js-box': 'alertIntent'
+      },
+      eventOptions: {
+        'mouseenter-intent .js-box': { intentDelay: 1000 }
+      },
+      alertIntent: function () {
+        alert('I hope you intended to do that!');
+      }
+    });
+
+    new AppView({
+      el: document.getElementById('appwrapper'),
+      template: compiledTemplates.app_view,
+      model: new Model({name: 'world'}),
+      dynamicInitialize: true
+    });
+  }());
 </script>
 </body>
 </html>

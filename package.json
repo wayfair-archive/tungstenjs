@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -11,17 +11,19 @@
   "bugs": "https://github.com/wayfair/tungstenjs/issues",
   "main": "tungsten.js",
   "scripts": {
+    "clean": "rm dist/*.js",
     "jasmine": "node test/jasmine.js",
     "pretest": "npm run eslint",
     "test": "npm run tests",
     "tests": "node ./test/build.js && npm run jasmine",
+    "build-plugins": "webpack --config ./webpack.plugins.js",
     "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev=true",
     "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
     "build-ampersand-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=ampersand --dev=true",
     "build-ampersand-dist": "webpack --config ./webpack.standalone.js --adaptor=ampersand",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
-    "prepublish": "npm run build-bb-dist && npm run build-ampersand-dist && npm run build-bb-dist-dev && npm run build-ampersand-dist-dev"
+    "prepublish": "npm run build-plugins && npm run build-bb-dist && npm run build-ampersand-dist && npm run build-bb-dist-dev && npm run build-ampersand-dist-dev"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
@@ -34,6 +36,7 @@
     "backbone.nativeajax": "^0.4.3",
     "data-set": "^4.0.0",
     "entities": "^1.1.1",
+    "extend": "^3.0.0",
     "form-serialize": "^0.6.0",
     "htmlparser2": "^3.8.3",
     "jsdom": "^6.5.0",

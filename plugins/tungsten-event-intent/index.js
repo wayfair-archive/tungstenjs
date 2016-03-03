@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var _ = require('underscore');
+var extend = require('extend');
 
 var eventPairs = {
   'mouseenter': 'mouseleave',
@@ -26,7 +26,7 @@ function getIntentHandler(method, options) {
   var lastEvent = null;
   var timeout = null;
 
-  var opts = _.extend({
+  var opts = extend({
     intentDelay: 200
   }, options);
 

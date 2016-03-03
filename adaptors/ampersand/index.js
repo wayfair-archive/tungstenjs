@@ -14,6 +14,7 @@
 // Require context adaptor to set functions
 var Context = require('../../src/template/template_context');
 var AmpersandAdaptor = require('./context_adaptor');
+var tungsten = require('../../src/tungsten.js');
 Context.setAdapterFunctions(AmpersandAdaptor);
 
 module.exports = {
@@ -27,6 +28,7 @@ module.exports = {
     View: require('ampersand-view')
   },
   Template: require('../../src/template/template.js'),
-  _core: require('../../src/tungsten.js'),
+  addEventPlugin: tungsten.addEventPlugin,
+  _core: tungsten,
   _template: require('../../precompile/tungsten_template/template_helper')
 };
