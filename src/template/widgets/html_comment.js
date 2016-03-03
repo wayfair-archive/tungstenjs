@@ -9,6 +9,7 @@
  */
 
 'use strict';
+var document = require('global/document');
 
 /**
  * Wrapper Widget for child views

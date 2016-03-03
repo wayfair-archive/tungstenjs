@@ -1,5 +1,6 @@
 'use strict';
-
+const document = require('global/document');
+const window = require('global/window');
 const _ = require('underscore');
 const utils = require('./utils');
 const appData = require('./app_data');

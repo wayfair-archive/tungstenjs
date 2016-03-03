@@ -10,6 +10,7 @@
  */
 /* global TUNGSTENJS_VERSION */
 'use strict';
+var document = require('global/document');
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');
 var virtualHyperscript = require('./vdom/virtual_hyperscript');

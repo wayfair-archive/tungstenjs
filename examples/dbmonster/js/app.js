@@ -1,11 +1,13 @@
 'use strict';
 
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
-var BaseView = TungstenBackboneBase.View;
-var BaseModel = TungstenBackboneBase.Model;
-var BaseCollection = TungstenBackboneBase.Collection;
+var tungsten = require('tungstenjs');
+var BaseView = tungsten.View;
+var BaseModel = tungsten.Model;
+var BaseCollection = tungsten.Collection;
 var template = require('../templates/table.mustache');
+
 require('./database-generator');
+
 var TableModel = BaseModel.extend({
   defaults: {
     dbs: []

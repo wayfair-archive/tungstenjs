@@ -9,7 +9,7 @@
     "url": "https://github.com/wayfair/tungstenjs.git"
   },
   "bugs": "https://github.com/wayfair/tungstenjs/issues",
-  "main": "tungsten.js",
+  "main": "./dist/tungsten.backbone.js",
   "scripts": {
     "clean": "rm dist/*.js",
     "jasmine": "node test/jasmine.js",
@@ -38,6 +38,7 @@
     "entities": "^1.1.1",
     "extend": "^3.0.0",
     "form-serialize": "^0.6.0",
+    "global": "^4.3.0",
     "htmlparser2": "^3.8.3",
     "jsdom": "^6.5.0",
     "json-loader": "^0.5.2",
