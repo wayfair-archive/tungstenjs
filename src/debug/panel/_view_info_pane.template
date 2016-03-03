@@ -1,5 +1,12 @@
+<%
+  var collapseAllClass = 'js-collapse-all-views TreeOptionsBar_item glyphicon glyphicon-';
+  collapseAllClass += w.allViewsCollapsed ? 'collapse-down' : 'collapse-up';
+%>
 <div class="js-view-pane pure-g">
   <div class="AppBody_panel pure-u-2-5">
+    <ul class="TreeOptionsBar">
+      <a title="Expand/Collapse All" class="<%= collapseAllClass %>"></a>
+    </ul>
     <ul class="Tree js-view-tree-list">
       <% for (var i = 0; i < w.activeViews.length; i++) {
         print(w.partials['_view_list_item']({

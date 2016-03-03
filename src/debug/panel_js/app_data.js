@@ -39,6 +39,7 @@ var appData = window.appData = module.exports = {
   showInheritedMethods: false,
   hiddenPanels: {},
   settings: {},
+  allViewsCollapsed: false,
   /**
    * Reset any data pre-render to keep things consistent
    */
