@@ -13,9 +13,11 @@
   "scripts": {
     "clean": "rm dist/*.js",
     "jasmine": "node test/jasmine.js",
+    "jasmine-debug": "node debug test/jasmine.js",
     "pretest": "npm run eslint",
     "test": "npm run tests",
     "tests": "node ./test/build.js && npm run jasmine",
+    "tests-debug": "node ./test/build.js && npm run jasmine-debug",
     "build-plugins": "webpack --config ./webpack.plugins.js",
     "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev=true",
     "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
