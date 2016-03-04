@@ -40,6 +40,7 @@ var appData = window.appData = module.exports = {
   hiddenPanels: {},
   settings: {},
   allViewsCollapsed: false,
+  allModelsCollapsed: false,
   /**
    * Reset any data pre-render to keep things consistent
    */

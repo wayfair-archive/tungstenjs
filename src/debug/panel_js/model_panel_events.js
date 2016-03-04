@@ -26,6 +26,19 @@ module.exports = function() {
     e.stopPropagation();
     var view = getClosestModel(e.target);
     view.collapsed = !view.collapsed;
+    if (!view.collapsed) {
+      appData.allModelsCollapsed = false;
+    }
+    utils.render();
+  });
+  utils.addEvent('js-collapse-all-models', 'click', function() {
+    for (var model in appData.models) {
+      model = appData.models[model];
+      if (model.isParent()) {
+        model.collapsed = !appData.allModelsCollapsed;
+      }
+    }
+    appData.allModelsCollapsed = !appData.allModelsCollapsed;
     utils.render();
   });
   utils.addEvent('js-model-list-item', 'click', function(e) {
