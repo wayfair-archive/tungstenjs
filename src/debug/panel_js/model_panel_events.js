@@ -24,9 +24,9 @@ appData.updateSelectedModel = function() {
 module.exports = function() {
   utils.addEvent('js-toggle-model-children', 'click', function(e) {
     e.stopPropagation();
-    var view = getClosestModel(e.target);
-    view.collapsed = !view.collapsed;
-    if (!view.collapsed) {
+    var model = getClosestModel(e.target);
+    model.collapsed = !model.collapsed;
+    if (!model.collapsed) {
       appData.allModelsCollapsed = false;
     }
     utils.render();
