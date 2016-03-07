@@ -456,28 +456,52 @@ BaseModel.prototype.set = function(key, val, options) {
   // PropTypes Start
 
   var propTypes = _.result(this, 'propTypes') || {};
-  // List of valid, default prop type
-  var validPropTypes = {
-    'string': 'string',
-    'boolean': 'boolean',
-    'number': 'number',
-    'object': 'object',
-    'array': 'array',
-    'symbol': 'symbol'
-  };
-  _.each(attrs, (value, key) => {
-    var type = propTypes[key];
-    // Check if declared propType is a string
-    if (typeof type === 'string') {
-      // Check if declared propType is in the validPropTypes list
-      if (validPropTypes[type] === type) {
-        // Check declared propType against set value
-        if (typeof value !== type) {
-          logger.debug('Incorrect propType: ' + key + ' is propType "' + type + '" but the set value is "' + typeof value + '".');
-        }
-      } else {
-        logger.debug('Invalid propType "' + type + '" for ' + key + '.');
+
+  function validatePropertyType(propTypeDesc, propValue) {
+    var validTypesHash = {
+      string: 'string',
+      number: 'number',
+      boolean: 'boolean',
+      array: 'object',
+      object: 'object',
+      custom: 'function',
+      symbol: 'symbol'
+    };
+    var propValueType = typeof propValue;
+    var isRequired = propTypeDesc.required;
+    var type = propTypeDesc.type;
+
+    // check if propTypeDesc is an object and has at lest one valid option
+    if (!_.isObject(propTypeDesc) || !_.intersection(['type', 'required'], _.keys(propTypeDesc)).length) {
+      throw({msg: 'invalid property descriptor.'});
+    }
+
+    // validate property type only when it was specified
+    if (propTypeDesc.hasOwnProperty('type') && (!_.isString(type) || _.keys(validTypesHash).indexOf(type) < 0 )) {
+      throw({msg: 'unsupported property type of `' + JSON.stringify(type) + '`.'});
+    }
+
+    if (isRequired) {
+      if (propValue === undefined) {
+        throw({msg: 'was required, but never specified.'});
       }
+      if (type && validTypesHash[type] !== propValueType) {
+        throw({msg: 'expected property type of `' + type + '`, but got `' + propValueType + '`.'});
+      }
+    } else {
+      if (propValue && type && validTypesHash[type] !== propValueType) {
+        throw({msg: 'expected property type of `' + type + '`, but got `' + propValueType + '`.'});
+      }
+    }
+    return true;
+  }
+
+  _.each(propTypes, (propType, propName) => {
+    var propValue = attrs[propName];
+    try {
+      validatePropertyType(propType, propValue);
+    } catch (err) {
+      throw new TypeError('PropTypes.' + propName + ' ' + err.msg);
     }
   });
 
