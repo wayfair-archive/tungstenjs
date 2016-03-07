@@ -244,19 +244,23 @@ body, .pure-g [class *="pure-u"] {
  * Tree Options bar
  *******************/
 .TreeOptionsBar {
+  background: #5A2249;
+  color: #fff;
   margin: 0;
-  padding: 0;
+  margin-bottom: 1px;
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #666;
+  padding: 0.1em;
+  padding-left: 0.5em;
+  min-height: 24.1875px;
 }
-.TreeOptionsBar_item {
-  padding: 0.5em;
-  color: #5A2249;
-  float: right;
-  padding-bottom: 5em;
-  z-index: 100;
-}
-
-.TreeOptionsBar_item.glyphicon:hover {
+.TreeOptionsBar_item:hover {
+  color: #EAD8E5;
+  background: rgba(0,0,0,0.25);
   cursor: pointer;
+}
+.TreeOptionsBar_item.glyphicon {
+  margin-top: -2px;
 }
 
 /*******************
