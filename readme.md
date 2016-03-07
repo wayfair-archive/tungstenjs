@@ -42,18 +42,20 @@ For the latest, but unstable, version:
 
 ### UMD
 
-The UMD build is also available for including Tungsten.js in a project.  It assumes [underscore](http://underscorejs.org/) is included as `window._`.  Other dependencies are bundled in the build.
+The UMD build is also available for including Tungsten.js in a project.
+Dependencies are bundled in the build.  It exposes [underscore] and [backbone]
+as `tungstenjs._` and `tungstenjs.Backbone` respectively.
 
-```html
-<!-- Include underscore -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-<!-- Backbone.js Adaptor -->
-<script src="./node_modules/tungstenjs/dist/tungsten.backbone.js"></script>
-```
+To compile templates, use
+`tungsten._template.compileTemplates({myTemplate: 'Hello {{name}.'})`.
+Ordinarily this is done on the server at build time.
 
-To compile templates, use `tungsten._template.compileTemplates({myTemplate: 'Hello {{name}.'})`.  Ordinarily this is done on the server at build time.
+An client-side only example of a Tungsten.js app using the UMD build is
+available in the [examples].
 
-An client-side only example of a Tungsten.js app using the UMD build is available in the [examples](https://github.com/wayfair/tungstenjs/tree/master/examples/browser-standalone).
+[underscore]: http://underscorejs.org/
+[backbone]: http://backbonejs.org/
+[examples]: https://github.com/wayfair/tungstenjs/tree/master/examples/browser-standalone
 
 ### Bundler (e.g., webpack)
 
