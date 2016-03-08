@@ -4,11 +4,12 @@
  * @author Andrew Rota <rota.andrew@gmail.com>
  */
 'use strict';
+var window = require('global/window');
 module.exports = {
   isiOS: function() {
-    if (!navigator) {
+    if (!window.navigator) {
       return false;
     }
-    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    return /iPhone|iPad|iPod/i.test(window.navigator.userAgent);
   }
 };

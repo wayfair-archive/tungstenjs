@@ -7,6 +7,7 @@
 
 'use strict';
 
+var document = require('global/document');
 var featureDetect = require('../../utils/feature_detect');
 
 var isiOS = featureDetect.isiOS();

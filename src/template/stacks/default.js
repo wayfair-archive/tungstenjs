@@ -1,5 +1,6 @@
 'use strict';
 
+var document = require('global/document');
 var processProperties = require('../process_properties');
 var logger = require('../../utils/logger');
 

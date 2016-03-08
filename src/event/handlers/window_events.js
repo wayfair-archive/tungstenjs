@@ -3,6 +3,7 @@
  */
 'use strict';
 
+var window = require('global/window');
 var eventsCore = require('../events_core');
 var eventWrapper = require('../tungsten_event');
 

@@ -25,7 +25,7 @@ module.exports = function(contents) {
   var templatePath = path.relative(path.dirname(module.dest), __dirname + '/template');
   templatePath = templatePath.replace(/\\/g, '/');
 
-  var output = 'var Template=require("tungstenjs/src/template/template");';
+  var output = 'var Template=require("tungstenjs").Template;';
   output += 'var template=new Template(' + JSON.stringify(templateData.templateObj) + ');';
   output += 'module.exports=template;';
   var partials = templateData.tokens.partials;

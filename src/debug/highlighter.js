@@ -4,6 +4,8 @@
  * Chrome DevTools-esque plugin to highlight DOM elements from debugger panel
  */
 
+var document = require('global/document');
+var window = require('global/window');
 var utils = require('./panel_js/utils');
 
 var isNode = require('./is_node');
