@@ -3,6 +3,7 @@
  */
 'use strict';
 
+var document = require('global/document');
 var eventsCore = require('../events_core');
 
 module.exports = function(el, eventName, selector, method) {

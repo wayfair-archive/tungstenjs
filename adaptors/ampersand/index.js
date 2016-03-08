@@ -27,6 +27,7 @@ module.exports = {
     Model: require('ampersand-model'),
     View: require('ampersand-view')
   },
+  _: require('underscore'),
   Template: require('../../src/template/template.js'),
   addEventPlugin: tungsten.addEventPlugin,
   _core: tungsten,

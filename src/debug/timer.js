@@ -1,5 +1,6 @@
 'use strict';
 
+var window = require('global/window');
 var _ = require('underscore');
 var process = require('process');
 var logger = require('../utils/logger');

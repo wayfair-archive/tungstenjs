@@ -2,6 +2,7 @@
  * Utility class to non-directly bind events
  */
 'use strict';
+var window = require('global/window');
 var _ = require('underscore');
 var eventsCore = require('./events_core');
 

@@ -43,10 +43,6 @@ module.exports = webpackSettings.compileSource({
       jquery: path.join(__dirname, './src/polyfill/jquery')
     }
   },
-  externals: [
-    {underscore: 'var window._'},
-    {lodash: 'var window._'}
-  ],
   resolveLoader: {
     modulesDirectories: ['node_modules']
   },

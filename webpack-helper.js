@@ -63,6 +63,7 @@ module.exports = function(config) {
   config.resolve = config.resolve || {};
   config.resolve.alias = config.resolve.alias || {};
   config.resolve.alias.entities = path.join(__dirname, './node_modules/entities');
+  config.resolve.alias.global = path.join(__dirname, './node_modules/global');
 
   return config;
 };

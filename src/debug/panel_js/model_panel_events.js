@@ -1,5 +1,6 @@
 'use strict';
 
+var window = require('global/window');
 var _ = require('underscore');
 var logger = require('../../utils/logger');
 var utils = require('./utils');
@@ -169,7 +170,7 @@ module.exports = function() {
     }
     var model = appData.selectedModel.obj;
     if (model.has(name)) {
-      alert('Model already has property named "' + name + '"');
+      window.alert('Model already has property named "' + name + '"');
     } else {
       model.set(name, value);
       appData.settings.modelProperties = appData.settings.modelProperties || {};

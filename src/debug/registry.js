@@ -1,5 +1,6 @@
 'use strict';
 
+var window = require('global/window');
 var _ = require('underscore');
 var eventBus = require('./event_bus');
 

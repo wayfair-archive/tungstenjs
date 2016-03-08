@@ -1,5 +1,6 @@
 'use strict';
 
+var document = require('global/document');
 var _ = require('underscore');
 var DefaultStack = require('./default');
 var virtualDomImplementation = require('../../vdom/virtual_dom_implementation');

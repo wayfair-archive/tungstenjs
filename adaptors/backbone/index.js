@@ -24,6 +24,7 @@ module.exports = {
   View: require('./base_view'),
   ViewWidget: require('./backbone_view_widget'),
   Backbone: require('backbone'),
+  _: require('underscore'),
   ComponentWidget: require('./component_widget'),
   Template: require('../../src/template/template.js'),
   addEventPlugin: tungsten.addEventPlugin,

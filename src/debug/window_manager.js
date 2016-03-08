@@ -1,5 +1,7 @@
 'use strict';
 
+var document = require('global/document');
+var window = require('global/window');
 var _ = require('underscore');
 var utils = require('./panel_js/utils');
 var appData = require('./panel_js/app_data');
