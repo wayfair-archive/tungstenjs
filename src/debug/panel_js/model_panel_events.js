@@ -25,8 +25,21 @@ appData.updateSelectedModel = function() {
 module.exports = function() {
   utils.addEvent('js-toggle-model-children', 'click', function(e) {
     e.stopPropagation();
-    var view = getClosestModel(e.target);
-    view.collapsed = !view.collapsed;
+    var model = getClosestModel(e.target);
+    model.collapsed = !model.collapsed;
+    if (!model.collapsed) {
+      appData.allModelsCollapsed = false;
+    }
+    utils.render();
+  });
+  utils.addEvent('js-collapse-all-models', 'click', function() {
+    for (var model in appData.models) {
+      model = appData.models[model];
+      if (model.isParent()) {
+        model.collapsed = !appData.allModelsCollapsed;
+      }
+    }
+    appData.allModelsCollapsed = !appData.allModelsCollapsed;
     utils.render();
   });
   utils.addEvent('js-model-list-item', 'click', function(e) {

@@ -96,6 +96,19 @@ module.exports = function() {
     e.stopPropagation();
     var view = getClosestView(e.target);
     view.collapsed = !view.collapsed;
+    if (!view.collapsed) {
+      appData.allViewsCollapsed = false;
+    }
+    utils.render();
+  });
+  utils.addEvent('js-collapse-all-views', 'click', function() {
+    for (var view in appData.views) {
+      view = appData.views[view];
+      if (view.isParent()) {
+        view.collapsed = !appData.allViewsCollapsed;
+      }
+    }
+    appData.allViewsCollapsed = !appData.allViewsCollapsed;
     utils.render();
   });
   utils.addEvent('js-view-list-item', 'click', function(e) {
