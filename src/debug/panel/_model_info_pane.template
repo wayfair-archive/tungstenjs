@@ -4,9 +4,9 @@
 %>
 <div class="js-model-pane pure-g">
   <div class="AppBody_panel pure-u-2-5">
-    <ul class="TreeOptionsBar">
+    <div class="TreeOptionsBar">
       <a title="Expand/Collapse All" class="<%= collapseAllClass %>"></a>
-    </ul>
+    </div>
     <ul data-view="tree-view" data-cid="-1" class="Tree js-view-tree-list">
       <% for (var i = 0; i < w.activeModels.length; i++) {
         print(w.partials['_model_list_item']({
