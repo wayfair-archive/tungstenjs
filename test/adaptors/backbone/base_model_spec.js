@@ -2323,7 +2323,7 @@ describe('base_model.js propTypes functionality', function() {
     });
     expect(function() {
       return new BookModel({});
-    }).throw('PropTypes.year unsupported property type of `undefined`.');
+    }).throw('PropTypes.year invalid property descriptor.');
   });
   it('should throw an error when passing not supported type in propType.', function() {
     BookModel = BaseModel.extend({
@@ -2361,7 +2361,7 @@ describe('base_model.js propTypes functionality', function() {
     BookModel = BaseModel.extend({
       propTypes: {
         year: {
-          type: 'number',
+          type: null,
           required: false
         }
       }
@@ -2370,7 +2370,7 @@ describe('base_model.js propTypes functionality', function() {
       return new BookModel({
         year: '42'
       });
-    }).throw('PropTypes.year expected property type of `number`, but got `string`.');
+    }).throw('PropTypes.year unsupported property type of `null`.');
   });
   /* develblock:end */
 });
