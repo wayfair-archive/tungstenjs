@@ -11,6 +11,7 @@
 /* global TUNGSTENJS_VERSION */
 'use strict';
 var document = require('global/document');
+var window = require('global/window');
 var globalEvents = require('./event/global_events');
 var virtualDomImplementation = require('./vdom/virtual_dom_implementation');
 var virtualHyperscript = require('./vdom/virtual_hyperscript');
@@ -51,7 +52,7 @@ function updateTree(container, initialTree, newTree) {
 /* develblock:start */
 exports.debug = require('./debug');
 // Override toJSON for DOM nodes to prevent circular references in debug mode
-Element.prototype.toJSON = function() {return null;};
+window.Element.prototype.toJSON = function() {return null;};
 /* develblock:end */
 
 exports.parseString = function (htmlString) {
