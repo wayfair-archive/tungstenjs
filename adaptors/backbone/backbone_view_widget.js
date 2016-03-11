@@ -62,13 +62,12 @@ BackboneViewWidget.prototype.type = 'Widget';
  * @return {Element} DOM node with the child view attached
  */
 BackboneViewWidget.prototype.init = function init() {
-  var elem = this.template.toDom(this.context);
   this.view = new this.ViewConstructor({
     template: this.template,
     model: this.model,
     context: this.context,
-    el: elem,
-    parentView: this.parentView
+    parentView: this.parentView,
+    dynamicInitialize: true
   });
   return this.view.el;
 };

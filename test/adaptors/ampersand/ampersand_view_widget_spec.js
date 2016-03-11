@@ -107,22 +107,18 @@ describe('ampersand_view_widget public api', function() {
     it('should construct from the template\'s DOM and return the element', function() {
       // template.toDom returns a documentFragment
       var elem = {};
-      var template = {
-        toDom: jasmine.createSpy('toDom').and.returnValue(elem)
-      };
       var expectedView;
       var ViewConstructor = jasmine.createSpy('ViewConstructor').and.callFake(function (args) {
         expectedView = args;
+        args.el = elem;
         return args;
       });
       var ctx = {
         ViewConstructor: ViewConstructor,
-        context: {},
-        template: template
+        context: {}
       };
       var result = AmpersandViewWidget.prototype.init.call(ctx);
       expect(result).to.equal(elem);
-      jasmineExpect(template.toDom).toHaveBeenCalledWith(ctx.context);
       jasmineExpect(ViewConstructor).toHaveBeenCalled();
       expect(ctx.view).to.equal(expectedView);
     });
