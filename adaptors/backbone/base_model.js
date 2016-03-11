@@ -475,7 +475,12 @@ BaseModel.prototype.set = function(key, val, options) {
   // In order to compare server vs. client data, save off the initial data
   if (!this.initialData) {
     // Using JSON to get a deep clone to avoid any overlapping object references
-    var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
+    var initialStr = '{}';
+    try {
+      initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
+    } catch (e) {
+      logger.warn('Unable to serialize data (possible circular reference)');
+    }
     delete options.initialData;
     this.initialData = JSON.parse(initialStr || '{}');
     if (!_.isObject(this.initialData) || _.isArray(this.initialData)) {

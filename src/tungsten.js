@@ -50,6 +50,8 @@ function updateTree(container, initialTree, newTree) {
 
 /* develblock:start */
 exports.debug = require('./debug');
+// Override toJSON for DOM nodes to prevent circular references in debug mode
+Element.prototype.toJSON = function() {return null;};
 /* develblock:end */
 
 exports.parseString = function (htmlString) {
