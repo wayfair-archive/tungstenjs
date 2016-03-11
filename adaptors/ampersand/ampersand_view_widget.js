@@ -62,13 +62,11 @@ AmpersandViewWidget.prototype.type = 'Widget';
  * @return {Element} DOM node with the child view attached
  */
 AmpersandViewWidget.prototype.init = function init() {
-  var elem = this.template.toDom(this.context);
   this.view = new this.ViewConstructor({
     template: this.template,
     model: this.model,
     context: this.context,
-    // Since we can't attach a view to a DocumentFragment, pull out firstChild
-    el: elem,
+    dynamicInitialize: true,
     parentView: this.parentView
   });
   return this.view.el;
