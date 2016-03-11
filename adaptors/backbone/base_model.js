@@ -479,7 +479,7 @@ BaseModel.prototype.set = function(key, val, options) {
     try {
       initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : attrs);
     } catch (e) {
-      logger.warn('Unable to serialize data (possible circular reference)');
+      initialStr = '{"Error": "Unable to serialize initial data (possible circular reference)."}';
     }
     delete options.initialData;
     this.initialData = JSON.parse(initialStr || '{}');
