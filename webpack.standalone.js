@@ -31,10 +31,13 @@ var args = processArgs();
 // default is backbone
 var adaptor = args['--adaptor'] || 'backbone';
 var devStr = args['--dev'] ? '.debug' : '';
+var entryPoints = {};
+entryPoints[adaptor] = ['./adaptors/' + adaptor];
+entryPoints.precompiler = ['./precompile/tungsten_template'];
 module.exports = webpackSettings.compileSource({
-  entry: './adaptors/' + adaptor,
+  entry: entryPoints,
   output: {
-    filename: './dist/tungsten.' + adaptor + devStr + '.js',
+    filename: './dist/tungsten.[name]' + devStr + '.js',
     libraryTarget: 'umd',
     library: 'tungsten'
   },

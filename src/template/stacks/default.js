@@ -9,7 +9,7 @@ var logger = require('../../utils/logger');
 var whitespaceOnlyRegex = /^\s*$/;
 function doesSupportWhitespaceTextNodes() {
   // if document isn't defined, we're running in node. so use whitespace nodes
-  if (typeof document === 'undefined') {
+  if (typeof document === 'undefined' || typeof document.createElement !== 'function') {
     return true;
   }
   var d = document.createElement('div');
