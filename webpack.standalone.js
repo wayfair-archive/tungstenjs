@@ -38,6 +38,7 @@ module.exports = webpackSettings.compileSource({
     libraryTarget: 'umd',
     library: 'tungsten'
   },
+  target: 'node',
   resolve: {
     alias: {
       jquery: path.join(__dirname, './src/polyfill/jquery')
