@@ -1,6 +1,6 @@
 (function(CodeMirror, _, tungsten) {
   'use strict';
-
+  tungsten.plugins.event.all.forEach(tungsten.addEventPlugin);
   var runtimeObjects = [];
   tungsten.View.prototype._initialize = tungsten.View.prototype.initialize;
   tungsten.View.prototype.initialize = function(opts) {
