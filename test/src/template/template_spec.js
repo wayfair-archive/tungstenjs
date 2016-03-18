@@ -33,6 +33,7 @@
 var vdomToDom = require('../../../src/tungsten').toDOM;
 var Context = require('../../../src/template/template_context');
 var compiler = require('../../../precompile/tungsten_template/inline');
+var types = require('../../../src/template/types');
 
 // Using simplified lookup functions
 Context.setAdapterFunctions({
@@ -210,6 +211,10 @@ describe('attachView', function() {
   it('should not modify the original template', function() {
     var template1 = getTemplate('<div class="js-child"></div>');
     var template2 = getTemplate('<div><div class="js-child"></div></div>');
+    var template3 = getTemplate('{{#foo}}<div class="js-child"></div>{{/foo}}');
+    var template4 = getTemplate('<div>{{>partial}}</div>', {partial:'<div><div class="js-child"></div></div>'});
+    var template4Partial = template4.partials.partial;
+
     var widgetConstructor = function() { return {}; };
     var childView = function() {};
     childView.tungstenView = true;
@@ -222,9 +227,21 @@ describe('attachView', function() {
 
     var output1 = template1.attachView(view, fakeWidgetConstructor);
     var output2 = template2.attachView(view, fakeWidgetConstructor);
-    expect(template1.templateObj[0].t).to.equal(7);
+    var output3 = template3.attachView(view, fakeWidgetConstructor);
+    var output4 = template4.attachView(view, fakeWidgetConstructor);
+
     expect(output1.templateObj[0].type).to.equal('WidgetConstructor');
-    expect(template2.templateObj[0].f[0].t).to.equal(7);
+    expect(template1.templateObj[0].t).to.equal(types.ELEMENT);
+
     expect(output2.templateObj[0].f[0].type).to.equal('WidgetConstructor');
+    expect(template2.templateObj[0].f[0].t).to.equal(types.ELEMENT);
+
+    expect(output3.templateObj[0].f[0].type).to.equal('WidgetConstructor');
+    expect(template3.templateObj[0].f[0].t).to.equal(types.ELEMENT);
+
+    // Double array due to partial flattening
+    expect(output4.templateObj[0].f[0][0].f[0].type).to.equal('WidgetConstructor');
+    expect(template4.templateObj[0].f[0].t).to.equal(types.PARTIAL);
+    expect(template4Partial.templateObj[0].f[0].t).to.equal(types.ELEMENT);
   });
 });
