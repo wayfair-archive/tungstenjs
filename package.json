@@ -25,8 +25,8 @@
     "build-ampersand-dist": "webpack --config ./webpack.standalone.js --adaptor=ampersand",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
-    "release": "npm run build-plugins && npm run build-bb-dist && npm run build-ampersand-dist && npm run build-bb-dist-dev && npm run build-ampersand-dist-dev",
-    "bump-tag": "node ./test/bump-tag.js"
+    "bump-tag": "node ./test/bump-tag.js",
+    "release": "npm run bump-tag && npm run build-plugins && npm run build-bb-dist && npm run build-ampersand-dist && npm run build-bb-dist-dev && npm run build-ampersand-dist-dev"
   },
   "dependencies": {
     "ampersand-collection": "^1.4.5",
