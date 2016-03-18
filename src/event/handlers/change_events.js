@@ -21,7 +21,7 @@ var changeDoesNotBubble = (function() {
   d.setAttribute('onchange', 't');
   if (typeof d.attributes === 'undefined') {
     // Element.attributes is undefined in an node environment
-    return;
+    return true;
   }
   return d.attributes.onchange && d.attributes.onchange.expando === true;
 })();
