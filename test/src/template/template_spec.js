@@ -207,4 +207,24 @@ describe('attachView', function() {
     var output = template.attachView(template2.view, fakeWidgetConstructor);
     expect(output.view).to.deep.equal(template2.view);
   });
+  it('should not modify the original template', function() {
+    var template1 = getTemplate('<div class="js-child"></div>');
+    var template2 = getTemplate('<div><div class="js-child"></div></div>');
+    var widgetConstructor = function() { return {}; };
+    var childView = function() {};
+    childView.tungstenView = true;
+    var view = {
+      el: {nodeName: false},
+      childViews: {
+        'js-child': childView
+      }
+    };
+
+    var output1 = template1.attachView(view, fakeWidgetConstructor);
+    var output2 = template2.attachView(view, fakeWidgetConstructor);
+    expect(template1.templateObj[0].t).to.equal(7);
+    expect(output1.templateObj[0].type).to.equal('WidgetConstructor');
+    expect(template2.templateObj[0].f[0].t).to.equal(7);
+    expect(output2.templateObj[0].f[0].type).to.equal('WidgetConstructor');
+  });
 });
