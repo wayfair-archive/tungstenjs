@@ -26,9 +26,10 @@ module.exports = {
   Backbone: require('backbone'),
   _: require('underscore'),
   ComponentWidget: require('./component_widget'),
-  Template: require('../../src/template/template.js'),
+  Template: require('../../src/template/template'),
   addEventPlugin: tungsten.addEventPlugin,
   _core: tungsten,
   _template: require('../../precompile/tungsten_template/template_helper'),
+  compiler: require('../../precompile/tungsten_template'),
   _Context: Context
 };

@@ -28,8 +28,9 @@ module.exports = {
     View: require('ampersand-view')
   },
   _: require('underscore'),
-  Template: require('../../src/template/template.js'),
+  Template: require('../../src/template/template'),
   addEventPlugin: tungsten.addEventPlugin,
   _core: tungsten,
-  _template: require('../../precompile/tungsten_template/template_helper')
+  _template: require('../../precompile/tungsten_template/template_helper'),
+  compiler: require('../../precompile/tungsten_template')
 };
