@@ -5,7 +5,6 @@
  */
 'use strict';
 
-var _ = require('underscore');
 var templateAdaptor = require('./adaptor');
 var Context = require('./template_context');
 

@@ -212,10 +212,12 @@ describe('attachView', function() {
     var template1 = getTemplate('<div class="js-child"></div>');
     var template2 = getTemplate('<div><div class="js-child"></div></div>');
     var template3 = getTemplate('{{#foo}}<div class="js-child"></div>{{/foo}}');
-    var template4 = getTemplate('<div>{{>partial}}</div>', {partial:'<div><div class="js-child"></div></div>'});
+    var template4 = getTemplate('<div>{{>partial}}</div>', {partial: '<div><div class="js-child"></div></div>'});
     var template4Partial = template4.partials.partial;
 
-    var widgetConstructor = function() { return {}; };
+    var widgetConstructor = function() {
+      return {};
+    };
     var childView = function() {};
     childView.tungstenView = true;
     var view = {
@@ -225,10 +227,10 @@ describe('attachView', function() {
       }
     };
 
-    var output1 = template1.attachView(view, fakeWidgetConstructor);
-    var output2 = template2.attachView(view, fakeWidgetConstructor);
-    var output3 = template3.attachView(view, fakeWidgetConstructor);
-    var output4 = template4.attachView(view, fakeWidgetConstructor);
+    var output1 = template1.attachView(view, widgetConstructor);
+    var output2 = template2.attachView(view, widgetConstructor);
+    var output3 = template3.attachView(view, widgetConstructor);
+    var output4 = template4.attachView(view, widgetConstructor);
 
     expect(output1.templateObj[0].type).to.equal('WidgetConstructor');
     expect(template1.templateObj[0].t).to.equal(types.ELEMENT);
