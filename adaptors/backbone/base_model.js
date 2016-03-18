@@ -470,13 +470,13 @@ BaseModel.prototype.validateProperty = function (propTypeDesc, propValue) {
     return !!counter;
   }
 
-  // check if propTypeDesc is an object and has at lest one valid attribute
+  // check if propTypeDesc is an object and has at least one valid attribute
   if (typeof propTypeDesc !== 'object' || !hasAtLeastOneKey(propTypeDesc, validDescAttrs)) {
     throw({msg: 'invalid property descriptor.'});
   }
 
   // validate property type only when it was specified and is a string
-  if (typeof type !== 'string' || Object.keys(typeValidators).indexOf(type) === -1 ) {
+  if (typeof type !== 'string' || typeof typeValidators[type] !== 'function' ) {
     throw({msg: 'unsupported property type of `' + JSON.stringify(type) + '`.'});
   }
 
