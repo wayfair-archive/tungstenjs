@@ -280,12 +280,15 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
 
   // Arrays need iterating over
   if (Context.isArray(template)) {
+    var clone = new Array(template.length);
     for (i = 0; i < template.length; i++) {
-      template[i] = attachView(view, template[i], createWidget, partials, childClasses);
+      clone[i] = attachView(view, template[i], createWidget, partials, childClasses);
     }
     // short circuit
-    return template;
+    return clone;
   }
+
+  template = _.clone(template);
 
   /* eslint-disable dot-notation */
   // If the view has childViews and this isn't the root, attempt to attach Widget
@@ -315,11 +318,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
 
   // Recurse on any child elements
   if (template.f) {
-    for (i = 0; i < template.f.length; i++) {
-      template.f[i] = attachView(view, template.f[i], createWidget, partials, childClasses);
-    }
-    // in the event of a partial, we may get a nested array, this flattens it out
-    template.f = _.flatten(template.f, true);
+    template.f = attachView(view, template.f, createWidget, partials, childClasses);
   }
 
   // If this is a partial, lookup and recurse
@@ -335,7 +334,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
       }
       template = attachView(
         view,
-        _.clone(partialTemplate),
+        partialTemplate,
         createWidget,
         partials[partialName].partials || partials,
         childClasses
