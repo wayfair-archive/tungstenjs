@@ -1,6 +1,6 @@
 var VdomStack = require('../../../../src/template/stacks/vdom');
 var tungsten = require('../../../../src/tungsten');
-define('processObject', function() {
+describe('processObject', function() {
   var stack, props, children;
   beforeEach(function() {
     stack = new VdomStack(), props = {}, children = [{}];

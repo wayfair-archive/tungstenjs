@@ -1,6 +1,6 @@
 var DomStack = require('../../../../src/template/stacks/dom');
 var compiler = require('../../../../precompile/tungsten_template/inline');
-define('DomStack', function() {
+describe('DomStack', function() {
   it('should be a function', function() {
     expect(DomStack).to.be.a('function');
     expect(DomStack).to.have.length(2);
