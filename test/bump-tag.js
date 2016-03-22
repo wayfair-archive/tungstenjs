@@ -103,7 +103,7 @@ function final(error, match) {
               if (stderr) {
                 callback(stderr);
               } else {
-                prettyLog.success('Successfully tagged and updated package.json to ' + stdout);
+                prettyLog.success('Successfully tagged and updated package.json to ' + stdout.replace(newLine, ''));
                 callback(null);
               }
             });
