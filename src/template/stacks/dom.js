@@ -59,6 +59,23 @@ DomStack.prototype.processObject = function(obj) {
   }
 };
 
+DomStack.prototype.appendItem = function(pushingTo, obj) {
+  var lastItem = pushingTo[pushingTo.length - 1];
+  var lastItemIsText = lastItem && lastItem.nodeType === 3;
+  if (typeof obj === 'string' && typeof lastItem === 'string') {
+    // string/string
+    pushingTo[pushingTo.length - 1] += obj;
+  } else if (typeof obj === 'string' && lastItemIsText) {
+    // textNode/string
+    pushingTo[pushingTo.length - 1].nodeValue += obj;
+  } else if (obj.nodeType === 3 && lastItemIsText) {
+    // textNode/textNode
+    pushingTo[pushingTo.length - 1].nodeValue += obj.nodeValue;
+  } else {
+    pushingTo.push(obj);
+  }
+};
+
 DomStack.prototype.createObject = function(obj, options) {
   if (isWidget(obj)) {
     obj.template._iterate(null, obj.model, null, null, this);
