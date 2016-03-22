@@ -492,24 +492,24 @@ BaseModel.prototype.validateProperty = function (propTypeDesc, propValue) {
 
   // check if propTypeDesc is an object and has at least one valid attribute
   if (typeof propTypeDesc !== 'object' || !hasAtLeastOneKey(propTypeDesc, validDescAttrs)) {
-    throw({msg: 'invalid property descriptor.'});
+    return {msg: 'invalid property descriptor.'};
   }
 
   // validate property type only when it was specified and is a string
   if (typeof type !== 'string' || typeof typeValidators[type] !== 'function' ) {
-    throw({msg: 'unsupported property type of `' + JSON.stringify(type) + '`.'});
+    return {msg: 'unsupported property type of `' + JSON.stringify(type) + '`.'};
   }
 
   if (isRequired) {
     if (propValue === undefined) {
-      throw({msg: 'was required, but never specified.'});
+      return {msg: 'was required, but never specified.'};
     }
     if (type && !typeValidators[type](propValue)) {
-      throw({msg: 'expected property type of `' + type + '`, but got `' + propValueType + '`.'});
+      return {msg: 'expected property type of `' + type + '`, but got `' + propValueType + '`.'};
     }
   } else {
     if (propValue && type && !typeValidators[type](propValue)) {
-      throw({msg: 'expected property type of `' + type + '`, but got `' + propValueType + '`.'});
+      return {msg: 'expected property type of `' + type + '`, but got `' + propValueType + '`.'};
     }
   }
   return true;
@@ -535,10 +535,9 @@ BaseModel.prototype.set = function(key, val, options) {
   // iterate though properties and check if valid
   _.each(propTypes, (propType, propName) => {
     var propValue = attrs[propName];
-    try {
-      this.validateProperty(propType, propValue);
-    } catch (err) {
-      throw new TypeError('PropTypes.' + propName + ' ' + err.msg);
+    var validationResult = this.validateProperty(propType, propValue);
+    if (validationResult !== true) {
+      throw new TypeError('PropTypes.' + propName + ' ' + validationResult.msg);
     }
   });
 
