@@ -2,8 +2,8 @@ var packageInfo = require('../package.json');
 var inquirer = require('inquirer');
 var semver = require('semver');
 var async = require('async');
-var exec = require('child_process').exec;
 var fs = require('fs');
+var exec = require('child_process').exec;
 var chalk = require('chalk');
 var logger = require('../src/utils/logger');
 
@@ -15,6 +15,7 @@ var getRepoStatus = 'git status --porcelain';
 var getCurrentBranch = 'git rev-parse --abbrev-ref HEAD';
 
 var newLine = /\n/g;
+var packagePath = 'package.json';
 
 // logs pretty messages
 var prettyLog = {
@@ -84,11 +85,66 @@ var questions = [{
   }
 }];
 
+// if match === false - we have commited changes without new tag
+function final(error, match) {
+  if (error) {
+    prettyLog.error(error);
+    process.exit(1);
+  }
+  if (!match) {
+    // repo is clean but tag is missing, setting one
+    inquirer.prompt(questions, function(answers) {
+      var tagVersion = answers.bumpWord || answers.rawBump;
+      var command = 'npm version ' + tagVersion + ' -m "' + answers.tagMessage + '"';
+      if (answers.toAddNewTag && tagVersion && answers.tagMessage) {
+        async.waterfall([
+          function bump(callback) {
+            exec(command, function(error, stdout, stderr) {
+              if (stderr) {
+                callback(stderr);
+              } else {
+                prettyLog.success('Successfully tagged and updated package.json to ' + stdout);
+                callback(null);
+              }
+            });
+          },
+          function readJson(callback) {
+            fs.readFile(packagePath, 'utf8', function (error, data) {
+              if (error) {
+                callback(error);
+              } else {
+                callback(null, JSON.parse(data));
+              }
+            });
+          },
+          function writeJson(package, callback) {
+            package.files = ['dist'];
+            fs.writeFile(packagePath, JSON.stringify(package, null, 2), function(error) {
+              if (error) {
+                callback(error);
+              } else {
+                prettyLog.success('Successfully added [files] attribute to package.json');
+              }
+            });
+          }
+        ], function(error) {
+          if (error) {
+            prettyLog.error(error);
+            process.exit(1);
+          }
+        });
+      }
+    });
+  } else {
+    prettyLog.success('You already have one tag associated with the latest commit');
+  }
+}
+
 // simple validations to make sure we can safely tag
 async.waterfall([
   // checks if is on Master
   function getBranch(callback) {
-    exec(getCurrentBranch, function(err, branch, stderr) {
+    exec(getCurrentBranch, function(error, branch, stderr) {
       if (stderr) {
         callback(stderr);
       } else {
@@ -101,7 +157,7 @@ async.waterfall([
     if (!isMaster) {
       callback('Not a master branch');
     } else {
-      exec(getRepoStatus, function (err, dirty, stderr) {
+      exec(getRepoStatus, function (error, dirty, stderr) {
         if (!dirty) {
           callback(null);  // pass through
         } else if (stderr) {
@@ -114,17 +170,19 @@ async.waterfall([
   },
   // gets latest Tag name, e.g. v.1.12.3
   function getTag(callback) {
-    exec(getLastTag, function(err, tagName, stderr) {
-      if (stderr) {
-        callback(stderr);
-      } else {
+    exec(getLastTag, function(error, tagName, stderr) {
+      if (!stderr) {
         callback(null, tagName);
+      } else if (stderr.replace(newLine, '') === 'fatal: No names found, cannot describe anything.') {
+        final(null, false);
+      } else {
+        callback(stderr);
       }
     });
   },
   // gets hash for that Tag name
   function getTagsHash(tagName, callback) {
-    exec(getHashForTag + tagName, function(err, tagHash, stderr) {
+    exec(getHashForTag + tagName, function(error, tagHash, stderr) {
       if (stderr) {
         callback(stderr);
       } else {
@@ -134,7 +192,7 @@ async.waterfall([
   },
   // compares last commit hash and tags hash
   function compareWithLastHash(tagHash, callback, stderr) {
-    exec(getLastCommitHash, function(err, commitHash) {
+    exec(getLastCommitHash, function(error, commitHash) {
       if (stderr) {
         callback(stderr);
       } else {
@@ -142,39 +200,4 @@ async.waterfall([
       }
     });
   }
-],
-  // if match === false - we have commited changes without new tag
-  function(err, match) {
-    if (err) {
-      prettyLog.error(err);
-      process.exit(1);
-    }
-    if (!match) {
-      // repo is clean but tag is missing, setting one
-      inquirer.prompt(questions, function(answers) {
-        var tagVersion = answers.bumpWord || answers.rawBump;
-        var command = 'npm version ' + tagVersion + ' -m "' + answers.tagMessage + '"';
-        if (answers.toAddNewTag && tagVersion && answers.tagMessage) {
-          exec(command, function(error, stdout, stderr) {
-            if (stderr) {
-              prettyLog.error(stderr);
-              process.exit(1);
-            } else {
-              prettyLog.success('Successfully tagged and updated package.json to ' + stdout.replace(newLine, ''));
-              packageInfo.files = ['dist'];
-              fs.writeFile('package.json', JSON.stringify(packageInfo, null,  2), function(err) {
-                if (err) {
-                  prettyLog.error(err);
-                  process.exit(1);
-                } else {
-                  prettyLog.success('Successfully added [files] attribute to package.json');
-                }
-              });
-            }
-          });
-        }
-      });
-    } else {
-      prettyLog.success('You already have one tag associated with the latest commit');
-    }
-  });
+], final);
