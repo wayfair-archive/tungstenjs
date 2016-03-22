@@ -1,6 +1,6 @@
 var DefaultStack = require('../../../../src/template/stacks/default');
 
-define('default_stack private functions', function() {
+describe('default_stack private functions', function() {
   describe('doesSupportWhitespaceTextNodes', function() {
     it('should be a function', function() {
       expect(DefaultStack.doesSupportWhitespaceTextNodes).to.be.a('function');
