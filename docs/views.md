@@ -1,6 +1,6 @@
 # Views
 
-Views in Tungsten.js use the standard Backbone (or Ampersand) view API, along with a few added features such as child views and extended event handling.  Each view's model is inferred from the template.
+Views in Tungsten.js use the standard Backbone view API, along with a few added features such as child views and extended event handling.  Each view's model is inferred from the template.
 
 ## Child Views
 
@@ -44,7 +44,7 @@ BaseView.extend({
 
 ## Event Handling
 
-Events are defined with the standard [`events` hash][events-hash] API when using the Backbone or Ampersand adaptor.  If a selector is passed in the event key, however, it can only use a `js-` prefixed class selector.  This optimizes performance when delegating events because under the hood, unlike Backbone or Ampersand, Tungsten.js provides its own event delegation system.  By default, all events are delegated from the document.  Special events can also be handled by an [event handler plugin][tungsten-plugins].
+Events are defined with the standard [`events` hash][events-hash] API when using the Backbone adaptor.  If a selector is passed in the event key, however, it can only use a `js-` prefixed class selector.  This optimizes performance when delegating events because under the hood, unlike Backbone, Tungsten.js provides its own event delegation system.  By default, all events are delegated from the document.  Special events can also be handled by an [event handler plugin][tungsten-plugins].
 
 [events-hash]: http://backbonejs.org/#View-events
 [tungsten-plugins]: https://github.com/wayfair/tungstenjs/tree/master/plugins/
