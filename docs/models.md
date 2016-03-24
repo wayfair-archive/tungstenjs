@@ -1,13 +1,13 @@
 # Models
 
-Models in Tungsten.js use the standard Backbone (or Ampersand) model API, along with support for related (nested) models and collections.
+Models in Tungsten.js use the standard Backbone model API, along with support for related (nested) models and collections.
 
 
 ##  App Data
 
 Each Tungsten.js app expects a single data store where the current state of the application is kept.  This data store takes the form of an app model instance.
 
-The root app model, like a standard Backbone or Ampersand model, contains the model's state in a hash of attributes.  This is usually passed from the server, via either a [boostrapped data object](http://backbonejs.org/#FAQ-bootstrap) or an [XHR request](http://backbonejs.org/#Model-fetch).  In addition to standard Backbone and Ampersand behavior, we also provide a nested model functionality based on Bret Little's [backbone-nested-models](https://github.com/blittle/backbone-nested-models).  To define a particular attribute as a reference to a model or collection, set `relations` hash on the model constructor with the key being the attribute name and the value being the nested model/collection constructor:
+The root app model, like a standard Backbone model, contains the model's state in a hash of attributes.  This is usually passed from the server, via either a [boostrapped data object](http://backbonejs.org/#FAQ-bootstrap) or an [XHR request](http://backbonejs.org/#Model-fetch).  In addition to standard Backbone behavior, we also provide a nested model functionality based on Bret Little's [backbone-nested-models](https://github.com/blittle/backbone-nested-models).  To define a particular attribute as a reference to a model or collection, set `relations` hash on the model constructor with the key being the attribute name and the value being the nested model/collection constructor:
 
 ```javascript
 BaseModel.extend({
