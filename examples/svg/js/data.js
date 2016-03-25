@@ -1,4 +1,10 @@
 (function() {
+  var moment;
+  if (typeof window === 'undefined') {
+    moment = require('moment');
+  } else {
+    moment = window.moment;
+  }
   function getTicks(numTicks) {
     var ticks = new Array(numTicks);
     for (var i = numTicks; i--;) {
@@ -141,7 +147,6 @@
     chart: chart
   };
   if (typeof window === 'undefined') {
-    global.moment = require('moment');
     module.exports = data;
   } else {
     window.data = data;
