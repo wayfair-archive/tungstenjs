@@ -16,6 +16,9 @@ describe('compiler', function() {
       }
     };
   });
+  afterEach(function() {
+    compilerOptions = null;
+  });
   it('should warn about closing tags for void elements', function() {
     compiler('<br></br>', compilerOptions);
     jasmineExpect(compilerOptions.logger.warning).toHaveBeenCalled();
@@ -68,8 +71,8 @@ describe('compiler', function() {
   it('should parse control comments', function() {
     var commentOnlyTemplate = '{{!foobar}}';
     var controlCommentTemplate = '{{!w/foobar}}';
-    var commentOnly = compiler(commentOnlyTemplate);
-    var controlComment = compiler(controlCommentTemplate);
+    var commentOnly = compiler(commentOnlyTemplate, compilerOptions);
+    var controlComment = compiler(controlCommentTemplate, compilerOptions);
     jasmineExpect(compilerOptions.logger.warning).not.toHaveBeenCalled();
     jasmineExpect(compilerOptions.logger.exception).not.toHaveBeenCalled();
     expect(commentOnly.templateObj).to.have.length(0);
@@ -78,16 +81,25 @@ describe('compiler', function() {
     expect(controlComment.template.toSource()).to.equal(controlCommentTemplate);
   });
   it('should parse dynamicAttributes', function() {
-    var output = compiler('<div {{#foo}}bar="baz"{{/foo}}></div>');
+    var output = compiler('<div {{#foo}}bar="baz"{{/foo}}></div>', compilerOptions);
     jasmineExpect(compilerOptions.logger.warning).not.toHaveBeenCalled();
     jasmineExpect(compilerOptions.logger.exception).not.toHaveBeenCalled();
     expect(output.templateObj[0].m).to.have.length(1);
   });
   it('should normalize whitespace inside mustache tags', function() {
-    var output = compiler('{{ > foo/bar }}');
+    var output = compiler('{{ > foo/bar }}', compilerOptions);
     jasmineExpect(compilerOptions.logger.warning).not.toHaveBeenCalled();
     jasmineExpect(compilerOptions.logger.exception).not.toHaveBeenCalled();
     expect(output.templateObj).to.have.length(1);
     expect(output.template.toSource()).to.equal('{{>foo/bar}}');
+  });
+  it('should leave declared lambdas unparsed', function() {
+    compilerOptions.lambdas = ['foo'];
+    var output = compiler('<div>{{#foo}}</span><span>{{/foo}}</div>', compilerOptions);
+    jasmineExpect(compilerOptions.logger.warning).not.toHaveBeenCalled();
+    jasmineExpect(compilerOptions.logger.exception).not.toHaveBeenCalled();
+    _console.log(output.templateObj);
+    // expect(output.templateObj).to.have.length(1);
+    // expect(output.template.toSource()).to.equal('{{>foo/bar}}');
   });
 });
