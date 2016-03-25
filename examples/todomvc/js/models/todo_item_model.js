@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var Model = require('tungstenjs/adaptors/backbone').Model;
+var Model = require('tungstenjs').Model;
 var ItemModel = Model.extend({
   toggle: function() {
     this.set({

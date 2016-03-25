@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import { Collection } from 'tungstenjs/adaptors/backbone';
+import { Collection } from 'tungstenjs';
 
 function itemIsHidden(item, filter) {
   if (filter === 'active') {

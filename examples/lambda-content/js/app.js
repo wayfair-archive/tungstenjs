@@ -1,7 +1,7 @@
 var template = require('../templates/app.mustache');
 
 var BorderedComponent = require('../components/bordered');
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var BaseView = TungstenBackboneBase.View;
 var BaseModel = TungstenBackboneBase.Model;
 

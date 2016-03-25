@@ -2,7 +2,7 @@
 // since there's no good way to implement props for Backbone classes
 // See http://benmccormick.org/2015/07/06/backbone-and-es6-classes-revisited/
 
-import _ from 'underscore';
+import { _ } from 'tungstenjs';
 
 export function childViews(value) {
   return function decorator(target) {

@@ -9,7 +9,6 @@
     "start": "node ../examples_server.js --example=\"drag-and-drop\""
   },
   "dependencies": {
-    "dragula": "3.5.4",
-    "underscore": "^1.8.3"
+    "dragula": "3.5.4"
   }
 }

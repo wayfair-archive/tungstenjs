@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import { Backbone } from 'tungstenjs/adaptors/backbone';
+import { Backbone } from 'tungstenjs';
 var history = Backbone.history;
 var Router = Backbone.Router;
 var app, router;
