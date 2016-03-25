@@ -95,11 +95,13 @@ describe('compiler', function() {
   });
   it('should leave declared lambdas unparsed', function() {
     compilerOptions.lambdas = ['foo'];
-    var output = compiler('<div>{{#foo}}</span><span>{{/foo}}</div>', compilerOptions);
+    var invalidContent = '</span><span>';
+    var output = compiler('<div>{{#foo}}' + invalidContent + '{{/foo}}</div>', compilerOptions);
     jasmineExpect(compilerOptions.logger.warning).not.toHaveBeenCalled();
     jasmineExpect(compilerOptions.logger.exception).not.toHaveBeenCalled();
-    _console.log(output.templateObj);
-    // expect(output.templateObj).to.have.length(1);
-    // expect(output.template.toSource()).to.equal('{{>foo/bar}}');
+    expect(output.templateObj).to.have.length(1);
+    expect(output.templateObj[0].f).to.have.length(1);
+    expect(output.templateObj[0].f[0].f).to.have.length(1);
+    expect(output.templateObj[0].f[0].f[0]).to.equal(invalidContent);
   });
 });
