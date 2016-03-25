@@ -9,7 +9,8 @@
     "url": "https://github.com/wayfair/tungstenjs.git"
   },
   "bugs": "https://github.com/wayfair/tungstenjs/issues",
-  "main": "./dist/tungsten.backbone.js",
+  "main": "./dist/tungsten.backbone.node.js",
+  "browser": "./dist/tungsten.backbone.web.js",
   "scripts": {
     "clean": "rm dist/*.js",
     "jasmine": "node test/jasmine.js",
@@ -21,9 +22,11 @@
     "build-plugins": "webpack --config ./webpack.plugins.js",
     "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev=true",
     "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
+    "build-bb-dist-node-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --env=node --dev=true",
+    "build-bb-dist-node": "webpack --config ./webpack.standalone.js --adaptor=backbone --env=node",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
-    "prepublish": "npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev"
+    "prepublish": "npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev && npm run build-bb-dist-node && npm run build-bb-dist-node-dev"
   },
   "dependencies": {
     "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",

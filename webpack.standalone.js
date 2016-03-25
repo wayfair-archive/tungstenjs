@@ -31,14 +31,19 @@ var args = processArgs();
 // default is backbone
 var adaptor = args['--adaptor'] || 'backbone';
 var devStr = args['--dev'] ? '.debug' : '';
+
+// Target environment (eg: web browsers, nodejs)
+// https://webpack.github.io/docs/configuration.html#target
+var envStr = args['--env'] || 'web';
+
 module.exports = webpackSettings.compileSource({
   entry: './adaptors/' + adaptor,
   output: {
-    filename: './dist/tungsten.' + adaptor + devStr + '.js',
+    filename: './dist/tungsten.' + adaptor + devStr + '.' + envStr + '.js',
     libraryTarget: 'umd',
     library: 'tungsten'
   },
-  target: 'node',
+  target: envStr,
   resolve: {
     alias: {
       jquery: path.join(__dirname, './src/polyfill/jquery')
