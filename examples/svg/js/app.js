@@ -93,7 +93,6 @@ var DemoView = TungstenBackboneBase.View.extend({
   }
 });
 
-debugger;
 window.app = module.exports = new DemoView({
   el: elem,
   template: template,
