@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('underscore');
-var logger = require('../utils/logger');
 var StateHistory = require('./state_history');
 var instrumentFunction = require('./instrument_function');
 
