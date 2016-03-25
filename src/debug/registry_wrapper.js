@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var logger = require('../utils/logger');
 var StateHistory = require('./state_history');
+var instrumentFunction = require('./instrument_function');
 
 /**
  * Returns a passthrough function wrapping the passed in one
@@ -14,15 +15,17 @@ var StateHistory = require('./state_history');
  * @return {Function}                  Passthrough function
  */
 function getTrackableFunction(obj, name, trackedFunctions) {
-  var originalFn = obj[name];
   var debugName = obj.getDebugName();
+  var originalFn = obj[name];
+  var fnName = `${debugName}.${name}`;
+  var instrumentedFn = instrumentFunction(fnName, originalFn);
   var fn = function tungstenTrackingPassthrough() {
     // Since objects are passed by reference, it can be updated without loosing reference
     if (trackedFunctions[name]) {
-      logger.trace('Tracked function "' + debugName + '.' + name + '"', arguments);
+      return instrumentedFn.apply(this, arguments);
+    } else {
+      return originalFn.apply(this, arguments);
     }
-    // Apply using whatever context this function was called with
-    return originalFn.apply(this, arguments);
   };
   fn.original = originalFn;
   return fn;

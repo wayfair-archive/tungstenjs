@@ -24,17 +24,6 @@ if (process && typeof process.hrtime === 'function') {
 }
 
 /**
- * Calculates the time offset for the given timer
- *
- * @param  {Timer} timer Timer to check
- *
- * @return {Number}      Time offset
- */
-function offset(timer) {
-  return timer.adjust + now() - timer.startTime;
-}
-
-/**
  * Timing helper to performance test functionality
  *
  * @param {String}  name         Name of this time for tracking purposes
@@ -57,10 +46,21 @@ Timer.prototype.log = function(label) {
   if (!this.running) {
     return;
   }
-  logStat(this.name + '.' + label, offset(this));
+  logStat(this.name + '.' + label, this.getMeasurement());
+};
+
+/**
+ * Calculates the time measurement for the given timer
+ *
+ * @return {Number}      Time Measurement
+ */
+Timer.prototype.getMeasurement = function () {
+  const rightNow = now();
+  const offset = this.adjust + rightNow - this.startTime;
   if (!this.absoluteTime) {
-    this.startTime = now();
+    this.startTime = rightNow;
   }
+  return offset;
 };
 
 /**
