@@ -8,6 +8,10 @@ const logger = require('../utils/logger');
  *  2. Return Value
  *  3. Execution Time
  *
+ *  @param {String} fnName Function name
+ *  @param {Function} fn Function
+ *  @returns {Function} Instrumented Function
+ *
  *  @example
  *  var myFunc = function() { return 4; };
  *  var myFuncInstrumented = instrumentedFunction('myFunc', myFunc);
