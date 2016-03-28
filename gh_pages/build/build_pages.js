@@ -1,3 +1,4 @@
+/* eslint-env node */
 'use strict';
 
 var markdownCompiler = require('./markdown_compiler');

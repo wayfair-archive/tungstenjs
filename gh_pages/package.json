@@ -19,6 +19,7 @@
     "purecss": "^0.6.0",
     "todomvc-app-css": "^2.0.3",
     "uglify-js": "^2.6.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "webpack": "^1.12.14"
   }
 }

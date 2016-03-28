@@ -1,3 +1,5 @@
+/* eslint-env node */
+/* eslint-disable no-console */
 var fs = require('fs');
 var path = require('path');
 var flags = require('./build/flags');
@@ -14,13 +16,15 @@ function doBuild(logSeparator) {
   var s = Date.now();
   console.log('Starting build...');
   var bundleMap = require('./build/build_bundles')();
-  require('./build/build_pages')(bundleMap);
+  // require('./build/build_pages')(bundleMap);
+  require('./build/build_examples')(bundleMap);
   console.log('Completed build: ' + (Date.now() - s) + 'ms');
 }
 
+var config;
 function readConfig() {
   try {
-    global.config = JSON.parse(fs.readFileSync(path.join(__dirname, './config.json')));
+    config = global.config = JSON.parse(fs.readFileSync(path.join(__dirname, './config.json')));
   } catch (ex) {
     console.error('Config file unable to be parsed: ' + ex.message);
   }
