@@ -12,7 +12,7 @@ function itemIsHidden(item, filter) {
   return false;
 }
 
-var Collection = require('tungstenjs/adaptors/backbone').Collection;
+var Collection = require('tungstenjs').Collection;
 var ItemComponent = require('../../components/todo_item');
 
 var ItemCollection = Collection.extend({

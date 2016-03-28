@@ -4,7 +4,7 @@
 'use strict';
 
 import { TodoItemModel } from '../models/todo_item_model.js';
-import { Collection } from 'tungstenjs/adaptors/backbone';
+import { Collection } from 'tungstenjs';
 import { model } from '../decorators.js';
 
 function itemIsHidden(item, filter) {

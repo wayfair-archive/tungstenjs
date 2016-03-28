@@ -1,6 +1,6 @@
 'use strict';
 
-var Model = require('tungstenjs/adaptors/backbone').Model;
+var Model = require('tungstenjs').Model;
 var FilterCollection = require('./filter_collection');
 var ItemModel = Model.extend({
   exposedFunctions: ['selectFilter'],

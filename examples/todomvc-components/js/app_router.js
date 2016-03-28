@@ -4,7 +4,7 @@
 'use strict';
 
 var app, router;
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var TodoRouter = TungstenBackboneBase.Backbone.Router.extend({
   routes: {
     '*filter': 'setFilter'

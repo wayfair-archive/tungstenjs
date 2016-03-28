@@ -3,7 +3,7 @@
  */
 'use strict';
 
-import { Model } from 'tungstenjs/adaptors/backbone';
+import { Model } from 'tungstenjs';
 import { TodoItemCollection } from '../collections/todo_item_collection.js';
 import { TodoFilterCollection } from '../collections/todo_filter_collection.js';
 import { relations, defaults, derived } from '../decorators.js';

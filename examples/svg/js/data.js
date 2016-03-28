@@ -1,4 +1,10 @@
 (function() {
+  var moment;
+  if (typeof window === 'undefined') {
+    moment = require('moment');
+  } else {
+    moment = window.moment;
+  }
   function getTicks(numTicks) {
     var ticks = new Array(numTicks);
     for (var i = numTicks; i--;) {
@@ -9,31 +15,30 @@
     return ticks;
   }
 
-  var datetime = new Date();
   var clock = {
     major: getTicks(12),
     minor: getTicks(60),
     datetime: new Date(),
-    hourRotation: function() {
+    hourRotation: (function() {
       var datetime = this.get ? this.get('datetime') : new Date();
       return 30 * datetime.getHours() + datetime.getMinutes() / 2;
-    },
-    minuteRotation: function() {
+    })(),
+    minuteRotation: (function() {
       var datetime = this.get ? this.get('datetime') : new Date();
       return 6 * datetime.getMinutes() + datetime.getSeconds() / 10;
-    },
-    secondRotation: function() {
+    })(),
+    secondRotation: (function() {
       var datetime = this.get ? this.get('datetime') : new Date();
       return 6 * datetime.getSeconds();
-    },
-    formattedDay: function() {
+    })(),
+    formattedDay: (function() {
       var datetime = this.get ? this.get('datetime') : new Date();
       return moment(datetime).format('dddd MMMM Do YYYY');
-    },
-    formattedTime: function() {
+    })(),
+    formattedTime: (function() {
       var datetime = this.get ? this.get('datetime') : new Date();
       return moment(datetime).format('h:mm:ss a')
-    }
+    })()
   };
 
   /*******************************************************************/
@@ -72,7 +77,7 @@
           yPos: yScale(temp.high),
           label: formatTemperature(temp.high, type)
         }
-      }
+      };
     }
     return temperatures;
   }
@@ -90,8 +95,12 @@
     return result;
   }
 
-  function getHighPoint ( month ) { return month.high; }
-  function getLowPoint ( month ) { return month.low; }
+  function getHighPoint ( month ) {
+    return month.high;
+  }
+  function getLowPoint ( month ) {
+    return month.low;
+  }
   function formatPoints(temperatures) {
     var high = plotPoints( temperatures.map( getHighPoint ) );
     var low = plotPoints( temperatures.map( getLowPoint ) );
@@ -132,14 +141,12 @@
   var active = chart.getCity(chart.cities[chart.selectedCityIndex].temperatures, chart.degreeType);
   chart.temperatures = active.temperatures;
   chart.points = active.points;
-  console.log(active);
 
   var data = {
     clock: clock,
     chart: chart
-  }
+  };
   if (typeof window === 'undefined') {
-    global.moment = require('moment');
     module.exports = data;
   } else {
     window.data = data;
