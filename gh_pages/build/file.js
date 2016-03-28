@@ -19,6 +19,10 @@ function outputPath(file) {
 
 module.exports.outputPath = outputPath;
 
+module.exports.exists = function(filename) {
+  return glob.sync(filename).length > 0;
+};
+
 module.exports.find = function(pattern) {
   return glob.sync(path.join(__dirname, '..', pattern));
 };
