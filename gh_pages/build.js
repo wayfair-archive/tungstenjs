@@ -16,9 +16,10 @@ function doBuild(logSeparator) {
   var s = Date.now();
   console.log('Starting build...');
   var bundleMap = require('./build/build_bundles')();
-  // require('./build/build_pages')(bundleMap);
-  require('./build/build_examples')(bundleMap);
-  console.log('Completed build: ' + (Date.now() - s) + 'ms');
+  require('./build/build_examples')(bundleMap).then(function() {
+    require('./build/build_pages')(bundleMap);
+    console.log('Completed build: ' + (Date.now() - s) + 'ms');
+  });
 }
 
 var config;
