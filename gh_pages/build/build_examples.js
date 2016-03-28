@@ -103,15 +103,6 @@ module.exports = function(bundleMap) {
       }
     });
 
-
-
-    // var data = _.extend({}, global.config.pageData, page, {
-    //   content: content,
-    //   js: bundleMap[page.js],
-    //   css: bundleMap[page.css]
-    // });
-    // file.writeHtml('examples.html', compiledTemplates[global.config.pageTemplate].toString(data));
-
     console.log('all Examples built!');
   });
 };
