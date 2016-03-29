@@ -21,17 +21,12 @@
     "build-plugins": "webpack --config ./webpack.plugins.js",
     "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev=true",
     "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
-    "build-ampersand-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=ampersand --dev=true",
-    "build-ampersand-dist": "webpack --config ./webpack.standalone.js --adaptor=ampersand",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
     "bump-tag": "node ./test/bump-tag.js",
-    "release": "npm run bump-tag && npm run build-plugins && npm run build-bb-dist && npm run build-ampersand-dist && npm run build-bb-dist-dev && npm run build-ampersand-dist-dev"
+    "release": "npm run bump-tag && npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev && publish-please"
   },
   "dependencies": {
-    "ampersand-collection": "^1.4.5",
-    "ampersand-model": "^5.0.3",
-    "ampersand-view": "^7.3.0",
     "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
     "babel-plugin-transform-es2015-parameters": "^6.3.13",
     "babel-plugin-transform-es2015-shorthand-properties": "^6.3.13",
