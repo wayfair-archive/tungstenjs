@@ -449,9 +449,10 @@ BaseModel.prototype.reset = function(attrs, options) {
 };
 
 BaseModel.prototype.bindExposedEvent = function(event, prop, childComponent) {
-  this.listenTo(childComponent.model, event, () => {
+  var self = this;
+  this.listenTo(childComponent.model, event, function() {
     var args = Array.prototype.slice.call(arguments);
-    eventTrigger.bubbleEvent(this, prop, [event].concat(args));
+    eventTrigger.bubbleEvent(self, prop, [event].concat(args));
   });
 };
 
