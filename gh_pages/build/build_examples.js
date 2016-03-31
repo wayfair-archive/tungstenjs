@@ -63,7 +63,7 @@ module.exports = function(bundleMap) {
     webpackConfig.entry = path.relative(here, webpackEntry);
     webpackConfig.output.path = file.outputPath(exampleOutputFolder);
     // Force tungsten alias to the Debug build
-    webpackConfig.resolve.alias.tungstenjs = webpackConfig.resolve.alias.tungstenjs.replace('tungsten.backbone.js', 'tungsten.backbone.debug.js');
+    webpackConfig.resolve.alias.tungstenjs = webpackConfig.resolve.alias.tungstenjs.replace('tungsten.backbone.web.js', 'tungsten.backbone.debug.web.js');
 
     var pageData = {
       name: name,

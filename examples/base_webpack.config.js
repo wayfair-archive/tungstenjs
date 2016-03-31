@@ -28,9 +28,9 @@ function processArgs() {
 module.exports = function (root) {
   'use strict';
   var args = processArgs();
-  var tungstenPath = '../dist/tungsten.backbone.js';
+  var tungstenPath = '../dist/tungsten.backbone.web.js';
   if (args.hasOwnProperty('--dev')) {
-    tungstenPath = '../dist/tungsten.backbone.debug.js';
+    tungstenPath = '../dist/tungsten.backbone.debug.web.js';
   }
 
   return {
