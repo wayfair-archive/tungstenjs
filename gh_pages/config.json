@@ -1,6 +1,7 @@
 {
   "outputDir": "../output",
   "pageTemplate": "layout",
+  "examplesTemplate": "examples",
   "pages": {
     "index": {"src": "../readme.md", "css": "css/all.css", "js": "js/all.js"},
     "views": {"src": "../docs/views.md", "css": "css/all.css", "js": "js/all.js"},
@@ -9,6 +10,13 @@
     "components": {"src": "../docs/components.md", "css": "css/all.css", "js": "js/all.js"},
     "debugger": {"src": "../docs/debugger.md", "css": "css/all.css", "js": "js/all.js"},
     "tutorials": {"css": "css/tutorials.css", "js": "js/tutorials.js", "pageClass": "tutorials_page"}
+  },
+  "examples": {
+    "DBMonster": "dbmonster-component",
+    "Drag & Drop": "drag-and-drop",
+    "Lambdas with Content": "lambda-content",
+    "SVG": "svg",
+    "TodoMVC": "todomvc"
   },
   "pageData": {
     "site-title": "Tungsten.js",

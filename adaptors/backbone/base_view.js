@@ -147,6 +147,13 @@ var BaseView = Backbone.View.extend({
    */
   postInitialize: function() {},
 
+  updateVtree: function() {
+    if (this.childViews && _.size(this.childViews) > 0) {
+      throw 'Views with childViews cannot be updated with this method.';
+    }
+    this.vtree = this.compiledTemplate.toVdom(this.serialize());
+  },
+
   validateVdom: function() {
     // If the vtree or element hasn't been set for any reason, bail out of validation
     if (!this.vtree || !this.vtree.children || !this.el || !this.el.childNodes) {

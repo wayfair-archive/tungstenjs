@@ -1,6 +1,6 @@
 'use strict';
 
-var Model = require('tungstenjs/adaptors/backbone').Model;
+var Model = require('tungstenjs').Model;
 var ItemModel = Model.extend({
   exposedEvents: ['change:completed'],
   toggle: function() {

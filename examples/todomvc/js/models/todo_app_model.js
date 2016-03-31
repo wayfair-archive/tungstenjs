@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 
 var Model = TungstenBackboneBase.Model;
 var TodoItemCollection = require('../collections/todo_item_collection.js');

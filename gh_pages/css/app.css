@@ -113,6 +113,11 @@ body {
   border: 0 !important;
 }
 
+.top-menu {
+  max-height: calc(100vh - 200px);
+  overflow: auto;
+}
+
 .bottom-menu {
   position: absolute;
   bottom: 10px;
@@ -137,4 +142,15 @@ a, a:visited {
 
 button:focus + .solution {
   display: block;
+}
+
+.example_page .content {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  max-width: none;
+}
+.example_page iframe {
+  width: calc(100vw - 225px);
+  height: 100vh;
 }

@@ -4,7 +4,7 @@
 'use strict';
 
 
-import { View } from 'tungstenjs/adaptors/backbone';
+import { View } from 'tungstenjs';
 import { on } from '../decorators';
 
 const ENTER_KEY = 13;

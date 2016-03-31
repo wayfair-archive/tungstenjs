@@ -3,7 +3,7 @@
 */
 'use strict';
 
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var MainView = require('./main_view');
 var DrawerView = require('./drawer_view');
 

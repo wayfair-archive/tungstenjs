@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var Collection = require('tungstenjs/adaptors/backbone').Collection;
+var Collection = require('tungstenjs').Collection;
 var FilterCollection = Collection.extend({
   selectFilter: function(filterBy) {
     for (var i = this.length; i--;) {

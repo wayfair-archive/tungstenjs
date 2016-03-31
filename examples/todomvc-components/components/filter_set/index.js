@@ -1,7 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
-var ComponentWidget = require('tungstenjs/adaptors/backbone').ComponentWidget;
+var ComponentWidget = require('tungstenjs').ComponentWidget;
 
 var Model = require('./model');
 var View = require('./view');

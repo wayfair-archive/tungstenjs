@@ -1,6 +1,6 @@
 'use strict';
 
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var BaseView = TungstenBackboneBase.View;
 var BaseModel = TungstenBackboneBase.Model;
 var BaseCollection = TungstenBackboneBase.Collection;

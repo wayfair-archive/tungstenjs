@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 
 var Model = TungstenBackboneBase.Model;
 var AppModel = Model.extend({

@@ -13,7 +13,7 @@ function itemIsHidden(item, filter) {
 }
 
 var Model = require('../models/todo_item_model.js');
-var Collection = require('tungstenjs/adaptors/backbone').Collection;
+var Collection = require('tungstenjs').Collection;
 var ItemCollection = Collection.extend({
   model: Model,
   filterItems: function(filterBy) {

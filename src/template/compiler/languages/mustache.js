@@ -112,7 +112,7 @@ function processLine(opts) {
     let obj = lineBuffer[i];
     let len = obj.length;
     if (typeof obj === 'string') {
-      if (inDynamicAttribute) {
+      if (inDynamicAttribute || opts.processingHTML === false) {
         stack.createObject(obj);
       } else {
         errorInParser = true;
