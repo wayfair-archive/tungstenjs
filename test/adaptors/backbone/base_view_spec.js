@@ -27,7 +27,7 @@ describe('base_view.js public api', function() {
       BaseView.extend(data);
       jasmineExpect(validate.childViews).toHaveBeenCalledWith(data.childViews);
     });
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     it('should prevent initialize from being overwritten', function() {
       spyOn(logger, 'warn');
       spyOn(BaseView.prototype, 'initialize');
@@ -83,7 +83,7 @@ describe('base_view.js public api', function() {
       jasmineExpect(logger.warn).toHaveBeenCalled();
       expect(logger.warn.calls.argsFor(0)[0]).to.contain(' for view "FOOBAR"');
     });
-    /* develblock:end */
+    }
   });
 
   describe('tungstenView', function() {
@@ -375,7 +375,7 @@ describe('base_view.js constructed api', function() {
     });
   });
 
-  /* develblock:start */
+  if (TUNGSTENJS_DEBUG_MODE) {
 
   // Debug methods:
   describe('initDebug', function() {
@@ -611,7 +611,7 @@ describe('base_view.js constructed api', function() {
       expect(result).to.equal('FOOBAR1');
     });
   });
-  /* develblock:end */
+  }
 
   /**
    * Some backbone view specs modified from backbone.js:

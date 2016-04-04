@@ -17,9 +17,9 @@ var eventTrigger = require('./event_trigger');
 var BaseModel = Backbone.Model.extend({
   tungstenModel: true,
   initialize: function(attributes, options) {
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     this.initDebug();
-    /* develblock:end */
+    }
     var derived = _.result(this, 'derived');
     var relations = _.result(this, 'relations') || {};
     if (derived) {
@@ -48,166 +48,11 @@ var BaseModel = Backbone.Model.extend({
     }
     this.postInitialize(attributes, options);
   },
-
-  /* develblock:start */
-
-  /** @type {string} Override cidPrefix to avoid confusion with Collections */
-  cidPrefix: 'model',
-
-  /**
-   * Bootstraps all debug functionality
-   */
-  initDebug: function() {
-    tungsten.debug.registry.register(this);
-    _.bindAll(this, 'getDebugName', 'getChildren');
-  },
-
-  /**
-   * Debug name of this object, using declared debugName, falling back to cid
-   *
-   * @return {string} Debug name
-   */
-  getDebugName: function() {
-    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('model', '') : this.cid;
-  },
-
-  toString: function() {
-    return '[' + this.getDebugName() + ']';
-  },
-
-  /**
-   * Gets children of this object
-   *
-   * @return {Array} Whether this object has children
-   */
-  getChildren: function() {
-    var results = [];
-    _.each(this.relations, (constructor, key) => {
-      if (this.has(key)) {
-        var value = this.get(key);
-        // Pull out component models
-        if (value && value.type === 'Widget' && value.model) {
-          value = value.model;
-        }
-        results.push(value);
-      }
-    });
-    return results;
-  },
-
-  /**
-   * Get a list of all trackable functions for this view instance
-   * Ignores certain base and debugging functions
-   *
-   * @param  {Object}        trackedFunctions     Object to track state
-   * @param  {Function}      getTrackableFunction Callback to get wrapper function
-   *
-   * @return {Array<Object>}                      List of trackable functions
-   */
-  getFunctions: function(trackedFunctions, getTrackableFunction) {
-    // Debug functions shouldn't be debuggable
-    var blacklist = {
-      constructor: true,
-      initialize: true,
-      set: true,
-      postInitialize: true,
-      initDebug: true,
-      getFunctions: true,
-      getVdomTemplate: true,
-      isParent: true,
-      getChildren: true,
-      getDebugName: true,
-      toString: true
-    };
-    var getFunctions = require('../shared/get_functions');
-    return getFunctions(trackedFunctions, getTrackableFunction, this, BaseModel.prototype, blacklist);
-  },
-
-  /**
-   * Get array of attributes, so it can be iterated on
-   *
-   * @return {Array<Object>} List of attribute key/values
-   */
-  getPropertiesArray: function() {
-    var properties = {
-      normal: [],
-      relational: [],
-      derived: []
-    };
-    var privateProps = this._private || {};
-    var relations = _.result(this, 'relations') || {};
-    var derived = _.result(this, 'derived') || {};
-
-    var isEditable = function(value) {
-      if (!_.isObject(value)) {
-        return true;
-      } else if (_.isArray(value)) {
-        var result = true;
-        _.each(value, function(i) {
-          result = result && isEditable(i);
-        });
-        return result;
-      } else {
-        try {
-          JSON.stringify(value);
-          return true;
-        } catch (ex) {
-          return false;
-        }
-      }
-    };
-
-    _.each(this.attributes, function(value, key) {
-      if (privateProps[key]) {
-        return;
-      }
-      var prop;
-      if (relations && relations[key]) {
-        properties.relational.push({
-          key: key,
-          data: {
-            isRelation: true,
-            name: value.getDebugName()
-          }
-        });
-      } else if (derived && derived[key]) {
-        properties.derived.push({
-          key: key,
-          data: {
-            isDerived: derived[key],
-            value: value,
-            displayValue: isEditable(value) ? JSON.stringify(value) : Object.prototype.toString.call(value)
-          }
-        });
-      } else {
-        prop = {
-          key: key,
-          data: {
-            isEditable: isEditable(value),
-            isEditing: false,
-            isRemovable: true,
-            value: value
-          }
-        };
-
-        prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
-        properties.normal.push(prop);
-      }
-    });
-
-    properties.normal = _.sortBy(properties.normal, 'key');
-    properties.relational = _.sortBy(properties.relational, 'key');
-    properties.derived = _.sortBy(properties.derived, 'key');
-
-    return properties;
-  },
-  /* develblock:end */
-
   // Empty default function
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps, specialProps) {
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     // Certain methods of BaseModel should be unable to be overridden
     var methods = ['initialize'];
 
@@ -217,6 +62,7 @@ var BaseModel = Backbone.Model.extend({
         second.apply(this, arguments);
       };
     }
+
     for (let i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Model.' + methods[i] + ' may not be overridden';
@@ -228,7 +74,7 @@ var BaseModel = Backbone.Model.extend({
         protoProps[methods[i]] = wrapOverride(BaseModel.prototype[methods[i]], protoProps[methods[i]]);
       }
     }
-    /* develblock:end */
+    }
 
     // Allow certain properties to be listed under items in an attributes
     // hash These sub-properties will be pulled from the items in the
@@ -274,6 +120,167 @@ var BaseModel = Backbone.Model.extend({
     return Backbone.Model.extend.call(this, protoProps, staticProps);
   }
 });
+
+if (TUNGSTENJS_DEBUG_MODE) {
+  BaseModel = BaseModel.extend({
+    /** @type {string} Override cidPrefix to avoid confusion with Collections */
+    cidPrefix: 'model',
+
+    /**
+     * Bootstraps all debug functionality
+     */
+    initDebug: function() {
+      tungsten.debug.registry.register(this);
+      _.bindAll(this, 'getDebugName', 'getChildren');
+    }
+
+    ,
+
+    /**
+     * Debug name of this object, using declared debugName, falling back to cid
+     *
+     * @return {string} Debug name
+     */
+    getDebugName: function() {
+      return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('model', '') : this.cid;
+    }
+    ,
+
+    toString: function() {
+      return '[' + this.getDebugName() + ']';
+    }
+    ,
+
+    /**
+     * Gets children of this object
+     *
+     * @return {Array} Whether this object has children
+     */
+    getChildren: function() {
+      var results = [];
+      _.each(this.relations, (constructor, key) => {
+        if (this.has(key)) {
+          var value = this.get(key);
+          // Pull out component models
+          if (value && value.type === 'Widget' && value.model) {
+            value = value.model;
+          }
+          results.push(value);
+        }
+      });
+      return results;
+    }
+    ,
+
+    /**
+     * Get a list of all trackable functions for this view instance
+     * Ignores certain base and debugging functions
+     *
+     * @param  {Object}        trackedFunctions     Object to track state
+     * @param  {Function}      getTrackableFunction Callback to get wrapper function
+     *
+     * @return {Array<Object>}                      List of trackable functions
+     */
+    getFunctions: function(trackedFunctions, getTrackableFunction) {
+      // Debug functions shouldn't be debuggable
+      var blacklist = {
+        constructor: true,
+        initialize: true,
+        set: true,
+        postInitialize: true,
+        initDebug: true,
+        getFunctions: true,
+        getVdomTemplate: true,
+        isParent: true,
+        getChildren: true,
+        getDebugName: true,
+        toString: true
+      };
+      var getFunctions = require('../shared/get_functions');
+      return getFunctions(trackedFunctions, getTrackableFunction, this, BaseModel.prototype, blacklist);
+    }
+    ,
+
+    /**
+     * Get array of attributes, so it can be iterated on
+     *
+     * @return {Array<Object>} List of attribute key/values
+     */
+    getPropertiesArray: function() {
+      var properties = {
+        normal: [],
+        relational: [],
+        derived: []
+      };
+      var privateProps = this._private || {};
+      var relations = _.result(this, 'relations') || {};
+      var derived = _.result(this, 'derived') || {};
+
+      var isEditable = function(value) {
+        if (!_.isObject(value)) {
+          return true;
+        } else if (_.isArray(value)) {
+          var result = true;
+          _.each(value, function(i) {
+            result = result && isEditable(i);
+          });
+          return result;
+        } else {
+          try {
+            JSON.stringify(value);
+            return true;
+          } catch (ex) {
+            return false;
+          }
+        }
+      };
+
+      _.each(this.attributes, function(value, key) {
+        if (privateProps[key]) {
+          return;
+        }
+        var prop;
+        if (relations && relations[key]) {
+          properties.relational.push({
+            key: key,
+            data: {
+              isRelation: true,
+              name: value.getDebugName()
+            }
+          });
+        } else if (derived && derived[key]) {
+          properties.derived.push({
+            key: key,
+            data: {
+              isDerived: derived[key],
+              value: value,
+              displayValue: isEditable(value) ? JSON.stringify(value) : Object.prototype.toString.call(value)
+            }
+          });
+        } else {
+          prop = {
+            key: key,
+            data: {
+              isEditable: isEditable(value),
+              isEditing: false,
+              isRemovable: true,
+              value: value
+            }
+          };
+
+          prop.data.displayValue = prop.data.isEditable ? JSON.stringify(value) : Object.prototype.toString.call(value);
+          properties.normal.push(prop);
+        }
+      });
+
+      properties.normal = _.sortBy(properties.normal, 'key');
+      properties.relational = _.sortBy(properties.relational, 'key');
+      properties.derived = _.sortBy(properties.derived, 'key');
+
+      return properties;
+    }
+  });
+}
 
 /**
  * Backbone Nested - Functions to add nested model and collection support. *
@@ -456,7 +463,7 @@ BaseModel.prototype.bindExposedEvent = function(event, prop, childComponent) {
   });
 };
 
-BaseModel.prototype.validateProperty = function (propTypeDesc, propValue) {
+BaseModel.prototype.validateProperty = function(propTypeDesc, propValue) {
   var validDescAttrs = ['required', 'type'];
   var propValueType = typeof propValue;
   var isRequired = propTypeDesc.required;
@@ -497,7 +504,7 @@ BaseModel.prototype.validateProperty = function (propTypeDesc, propValue) {
   }
 
   // validate property type only when it was specified and is a string
-  if (typeof type !== 'string' || typeof typeValidators[type] !== 'function' ) {
+  if (typeof type !== 'string' || typeof typeValidators[type] !== 'function') {
     return {msg: 'unsupported property type of `' + JSON.stringify(type) + '`.'};
   }
 
@@ -542,7 +549,7 @@ BaseModel.prototype.set = function(key, val, options) {
     }
   });
 
-  /* develblock:start */
+  if (TUNGSTENJS_DEBUG_MODE) {
 
   // In order to compare server vs. client data, save off the initial data
   if (!this.initialData) {
@@ -560,7 +567,7 @@ BaseModel.prototype.set = function(key, val, options) {
     }
   }
 
-  /* develblock:end */
+  }
 
   // Run validation.
   if (!this._validate(attrs, options)) {
@@ -595,11 +602,11 @@ BaseModel.prototype.set = function(key, val, options) {
 
       // Inject in the relational lookup
       var opts = options;
-      /* develblock:start */
+      if (TUNGSTENJS_DEBUG_MODE) {
       opts = _.extend({
         initialData: val
       }, options);
-      /* develblock:end */
+      }
       val = this.setRelation(attr, val, opts);
 
       if (!_.isEqual(current[attr], val)) {

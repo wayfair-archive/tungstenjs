@@ -44,7 +44,7 @@ HTMLCommentWidget.prototype.update = function update(prev, elem) {
   }
 };
 
-/* develblock:start */
+if (TUNGSTENJS_DEBUG_MODE) {
 HTMLCommentWidget.prototype.templateToString = function(escaped) {
   if (escaped) {
     return '<span class="TemplateString_comment">&lt;!-- ' + this.text + ' --&gt;</span>';
@@ -52,6 +52,6 @@ HTMLCommentWidget.prototype.templateToString = function(escaped) {
     return '<!-- ' + this.text + ' -->';
   }
 };
-/* develblock:end */
+}
 
 module.exports = HTMLCommentWidget;

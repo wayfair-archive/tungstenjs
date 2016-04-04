@@ -12,7 +12,7 @@ describe('template_context.js public API', function() {
     it('should return null when receiving a comment block', function() {
       expect(testContext.lookup('!text')).to.equal(null);
     });
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     it('should be able to log using debug helpers', function() {
       spyOn(logger, 'log');
       testContext.lookup('!w/context');
@@ -21,6 +21,6 @@ describe('template_context.js public API', function() {
       testContext.lookup('!w/debug/debugstring');
       expect(logger.log.calls.count()).to.equal(4);
     });
-    /* develblock:end */
+    }
   });
 });

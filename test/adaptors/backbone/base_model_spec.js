@@ -22,7 +22,7 @@ describe('base_model.js static api', function() {
       BaseModel.extend({});
       jasmineExpect(Backbone.Model.extend).toHaveBeenCalled();
     });
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     it('should prevent initialize from being overwritten', function() {
       spyOn(logger, 'warn');
       spyOn(BaseModel.prototype, 'initialize');
@@ -53,7 +53,7 @@ describe('base_model.js static api', function() {
       jasmineExpect(logger.warn).toHaveBeenCalled();
       expect(logger.warn.calls.argsFor(0)[0]).to.contain(' for model "FOOBAR"');
     });
-    /* develblock:end */
+    }
   });
 });
 
@@ -149,7 +149,7 @@ describe('base_model.js constructed api', function() {
     });
   });
 
-  /* develblock:start */
+  if (TUNGSTENJS_DEBUG_MODE) {
   describe('initDebug', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.initDebug).to.be.a('function');
@@ -309,7 +309,7 @@ describe('base_model.js constructed api', function() {
       expect(properties.derived).to.eql(expectedDerived);
     });
   });
-  /* develblock:end */
+  }
 });
 
 /**
@@ -887,9 +887,9 @@ describe('base_model.js backbone functionality', function() {
     model = new BaseModel();
     // In debugger the default cidPrefix is overrridden
     var prefix = 'c';
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     prefix = BaseModel.prototype.cidPrefix;
-    /* develblock:end */
+    }
     equal(model.cid.substr(0, prefix.length), prefix);
     var Collection = Backbone.Collection.extend({
       model: Model
@@ -2187,7 +2187,7 @@ describe('base_model.js propTypes functionality', function() {
   afterEach(function() {
     BookModel = null;
   });
-  /* develblock:start */
+  if (TUNGSTENJS_DEBUG_MODE) {
   it('should throw error when PropTypes is not an object', function() {
     BookModel = BaseModel.extend({
       propTypes: {
@@ -2401,5 +2401,5 @@ describe('base_model.js propTypes functionality', function() {
       });
     }).throw('PropTypes.year unsupported property type of `null`.');
   });
-  /* develblock:end */
+  }
 });

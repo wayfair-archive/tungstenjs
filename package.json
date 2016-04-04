@@ -43,7 +43,6 @@
     "purecss": "^0.6.0",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
-    "webpack-strip-block": "0.0.1",
     "x-is-array": "^0.1.0"
   },
   "devDependencies": {

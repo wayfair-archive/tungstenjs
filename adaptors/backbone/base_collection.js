@@ -21,9 +21,9 @@ var BaseModel = require('./base_model');
 var BaseCollection = Backbone.Collection.extend({
   tungstenCollection: true,
   initialize: function() {
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     this.initDebug();
-    /* develblock:end */
+    }
     this.postInitialize();
   },
 
@@ -89,83 +89,11 @@ var BaseCollection = Backbone.Collection.extend({
     }
     Backbone.Collection.prototype._removeReference.call(this, model, options);
   },
-
-  /* develblock:start */
-
-  /**
-   * Bootstraps all debug functionality
-   */
-  initDebug: function() {
-    tungsten.debug.registry.register(this);
-    _.bindAll(this, 'getDebugName', 'getChildren');
-  },
-
-  /**
-   * Debug name of this object, using declared debugName, falling back to cid
-   *
-   * @return {string} Debug name
-   */
-  getDebugName: function() {
-    if (!this.cid) {
-      this.cid = _.uniqueId('collection');
-    }
-    return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('collection', '') : this.cid;
-  },
-
-  toString: function() {
-    return '[' + this.getDebugName() + ']';
-  },
-
-  /**
-   * Gets children of this object
-   *
-   * @return {Array} Whether this object has children
-   */
-  getChildren: function() {
-    return _.map(this.models, function(model) {
-      // Pull out component models
-      if (model.type === 'Widget' && model.model) {
-        return model.model;
-      } else {
-        return model;
-      }
-    });
-  },
-
-  /**
-   * Get a list of all trackable functions for this view instance
-   * Ignores certain base and debugging functions
-   *
-   * @param  {Object}        trackedFunctions     Object to track state
-   * @param  {Function}      getTrackableFunction Callback to get wrapper function
-   *
-   * @return {Array<Object>}                      List of trackable functions
-   */
-  getFunctions: function(trackedFunctions, getTrackableFunction) {
-    // Debug functions shouldn't be debuggable
-    var blacklist = {
-      constructor: true,
-      initialize: true,
-      postInitialize: true,
-      model: true,
-      initDebug: true,
-      getFunctions: true,
-      getVdomTemplate: true,
-      isParent: true,
-      getChildren: true,
-      getDebugName: true,
-      toString: true
-    };
-    var getFunctions = require('../shared/get_functions');
-    return getFunctions(trackedFunctions, getTrackableFunction, this, BaseCollection.prototype, blacklist);
-  },
-  /* develblock:end */
-
   // Empty default function
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps) {
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     // Certain methods of BaseCollection should be unable to be overridden
     var methods = ['initialize'];
 
@@ -175,6 +103,7 @@ var BaseCollection = Backbone.Collection.extend({
         second.apply(this, arguments);
       };
     }
+
     for (let i = 0; i < methods.length; i++) {
       if (protoProps[methods[i]]) {
         var msg = 'Collection.' + methods[i] + ' may not be overridden';
@@ -186,11 +115,83 @@ var BaseCollection = Backbone.Collection.extend({
         protoProps[methods[i]] = wrapOverride(BaseCollection.prototype[methods[i]], protoProps[methods[i]]);
       }
     }
-    /* develblock:end */
+    }
 
     return Backbone.Collection.extend.call(this, protoProps, staticProps);
   }
 });
+
+if (TUNGSTENJS_DEBUG_MODE) {
+  BaseCollection = BaseCollection.extend({
+    /**
+     * Bootstraps all debug functionality
+     */
+    initDebug: function() {
+      tungsten.debug.registry.register(this);
+      _.bindAll(this, 'getDebugName', 'getChildren');
+    },
+
+    /**
+     * Debug name of this object, using declared debugName, falling back to cid
+     *
+     * @return {string} Debug name
+     */
+    getDebugName: function() {
+      if (!this.cid) {
+        this.cid = _.uniqueId('collection');
+      }
+      return this.constructor.debugName ? this.constructor.debugName + this.cid.replace('collection', '') : this.cid;
+    },
+
+    toString: function() {
+      return '[' + this.getDebugName() + ']';
+    },
+
+    /**
+     * Gets children of this object
+     *
+     * @return {Array} Whether this object has children
+     */
+    getChildren: function() {
+      return _.map(this.models, function(model) {
+        // Pull out component models
+        if (model.type === 'Widget' && model.model) {
+          return model.model;
+        } else {
+          return model;
+        }
+      });
+    },
+
+    /**
+     * Get a list of all trackable functions for this view instance
+     * Ignores certain base and debugging functions
+     *
+     * @param  {Object}        trackedFunctions     Object to track state
+     * @param  {Function}      getTrackableFunction Callback to get wrapper function
+     *
+     * @return {Array<Object>}                      List of trackable functions
+     */
+    getFunctions: function(trackedFunctions, getTrackableFunction) {
+      // Debug functions shouldn't be debuggable
+      var blacklist = {
+        constructor: true,
+        initialize: true,
+        postInitialize: true,
+        model: true,
+        initDebug: true,
+        getFunctions: true,
+        getVdomTemplate: true,
+        isParent: true,
+        getChildren: true,
+        getDebugName: true,
+        toString: true
+      };
+      var getFunctions = require('../shared/get_functions');
+      return getFunctions(trackedFunctions, getTrackableFunction, this, BaseCollection.prototype, blacklist);
+    }
+  });
+}
 
 /**
  * Backbone Nested - Functions to add nested model and collection support. *
@@ -232,7 +233,7 @@ BaseCollection.prototype.trigger = eventTrigger.newTrigger;
 
 BaseCollection.prototype.reset = function(models, options = {}) {
   var i, l;
-  /* develblock:start */
+  if (TUNGSTENJS_DEBUG_MODE) {
   if (!this.initialData) {
     // Using JSON to get a deep clone to avoid any overlapping object references
     var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : models);
@@ -249,7 +250,7 @@ BaseCollection.prototype.reset = function(models, options = {}) {
       logger.warn('Collection expected array of objects but got: ' + initialStr);
     }
   }
-  /* develblock:end */
+  }
   for (i = 0, l = this.models.length; i < l; i++) {
     this._removeReference(this.models[i]);
   }

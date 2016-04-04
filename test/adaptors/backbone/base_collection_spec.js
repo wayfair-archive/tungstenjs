@@ -30,7 +30,7 @@ describe('base_collection.js static api', function() {
       BaseCollection.extend({}, {});
       jasmineExpect(Backbone.Collection.extend).toHaveBeenCalled();
     });
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     it('should prevent initialize from being overwritten', function() {
       spyOn(logger, 'warn');
       spyOn(BaseCollection.prototype, 'initialize');
@@ -61,7 +61,7 @@ describe('base_collection.js static api', function() {
       jasmineExpect(logger.warn).toHaveBeenCalled();
       expect(logger.warn.calls.argsFor(0)[0]).to.contain(' for collection "FOOBAR"');
     });
-    /* develblock:end */
+    }
   });
 });
 
@@ -275,7 +275,7 @@ describe('base_collection.js constructed api', function() {
       expect(args[1]).to.equal(component.exposedEvents[1]);
     });
   });
-  /* develblock:start */
+  if (TUNGSTENJS_DEBUG_MODE) {
   describe('initDebug', function() {
     it('should be a function', function() {
       expect(BaseCollection.prototype.initDebug).to.be.a('function');
@@ -333,5 +333,5 @@ describe('base_collection.js constructed api', function() {
       expect(BaseCollection.prototype.getFunctions).to.have.length(2);
     });
   });
-  /* develblock:end */
+  }
 });

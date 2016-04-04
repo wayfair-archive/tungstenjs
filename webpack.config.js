@@ -29,9 +29,6 @@ module.exports = {
     })
   ],
   module: {
-    preLoaders: [
-      {test: /\.js$/, loader: 'webpack-strip-block'}
-    ],
     loaders: [
       {
         test: /\.js$/,

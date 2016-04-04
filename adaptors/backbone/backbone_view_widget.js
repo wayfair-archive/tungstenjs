@@ -140,7 +140,7 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
   }
 };
 
-/* develblock:start */
+if (TUNGSTENJS_DEBUG_MODE) {
 /**
  * Function to allow the Widget to control how it is viewed on the debug panel
  * ChildViews are displayed as a clickable link
@@ -154,6 +154,6 @@ BackboneViewWidget.prototype.templateToString = function() {
   var name = this.view.getDebugName();
   return '<span class="js-view-list-item u-clickable u-underlined" data-id="' + name + '">[' + name + ']</span>';
 };
-/* develblock:end */
+}
 
 module.exports = BackboneViewWidget;

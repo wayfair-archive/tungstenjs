@@ -49,9 +49,9 @@ function processArgs() {
  */
 module.exports = function(config) {
   config.resolveLoader = config.resolveLoader || {};
-  config.resolveLoader.modulesDirectories = config.resolveLoader.modulesDirectories || [];
+  config.resolveLoader.modules = config.resolveLoader.modules || [];
 
-  config.resolveLoader.modulesDirectories.push(path.join(__dirname, 'precompile'));
+  config.resolveLoader.modules.push(path.join(__dirname, 'precompile'));
 
   config.module = config.module || {};
   config.module.loaders = config.module.loaders || [];
@@ -72,7 +72,7 @@ module.exports.compileSource = function(config, dev, test) {
   config = module.exports(config, dev, test);
 
   config.resolveLoader = config.resolveLoader || {};
-  config.resolveLoader.modulesDirectories.push(path.join(__dirname, 'node_modules'));
+  config.resolveLoader.modules.push(path.join(__dirname, 'node_modules'));
 
   var args = processArgs();
   // If dev is not explicitly set to a boolean, check for the command line flag
@@ -86,7 +86,8 @@ module.exports.compileSource = function(config, dev, test) {
   config.plugins = config.plugins || [];
   config.plugins.push(new webpack.DefinePlugin({
     TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version),
-    TUNGSTENJS_IS_TEST: test
+    TUNGSTENJS_IS_TEST: test,
+    TUNGSTENJS_DEBUG_MODE: dev
   }));
 
   // Babel should be run on our code, but not node_modules
@@ -98,9 +99,6 @@ module.exports.compileSource = function(config, dev, test) {
   var babelRegexStr = '^(' + folders.join('|') + ')$';
   ensureLoader(config.module.loaders, new RegExp(babelRegexStr), 'babel');
 
-  if (!dev) {
-    ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
-  }
 
   return config;
 };

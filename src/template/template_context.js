@@ -66,7 +66,7 @@ Context.prototype.isModel = function(object) {
   return object && (object.tungstenModel || object.isComponent);
 };
 
-/* develblock:start */
+if (TUNGSTENJS_DEBUG_MODE) {
 /**
  * Debug Helpers for determining context
  */
@@ -91,7 +91,7 @@ var debugHelpers = {
     }
   }
 };
-/* develblock:end */
+}
 
 /**
  * Creates a new context using the given view with this context
@@ -117,14 +117,14 @@ Context.prototype.lookup = function(name, handleLambda) {
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
-    /* develblock:start */
+    if (TUNGSTENJS_DEBUG_MODE) {
     var debugName = name.substr(1).split('/');
     if (debugName[0] === 'w' && debugHelpers[debugName[1]]) {
       var fn = debugHelpers[debugName[1]];
       debugName = debugName.slice(2);
       return fn.apply(this, debugName);
     }
-    /* develblock:end */
+    }
     return null;
   }
 
@@ -174,12 +174,12 @@ Context.prototype.lookup = function(name, handleLambda) {
           // Check that the found function takes in at least one argument
           // Used to avoid conflicts with computed properties until those can be deprecated
           var arity = value.length;
-          /* develblock:start */
+          if (TUNGSTENJS_DEBUG_MODE) {
           // Trackable functions can be wrapped, so check orignal's arity
           if (value.original) {
             arity = value.original.length;
           }
-          /* develblock:end */
+          }
           if (handleLambda && arity >= 1) {
             handleLambda(value, fnContext);
             return;
