@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.12.1",
+  "version": "0.12.0",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -27,8 +27,8 @@
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
     "bump-tag": "node ./test/bump-tag.js",
-    "prerelease": "npm run clean && npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev && npm run build-bb-dist-node && npm run build-bb-dist-node-dev",
-    "release": "npm run bump-tag && npm run prerelease && publish-please"
+    "dist": "npm run clean && npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev && npm run build-bb-dist-node && npm run build-bb-dist-node-dev",
+    "release": "npm run bump-tag && npm run dist && publish-please"
   },
   "dependencies": {
     "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
