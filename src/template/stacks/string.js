@@ -2,6 +2,7 @@
 
 var DefaultStack = require('./default');
 var htmlParser = require('../html_parser');
+var escapeString = require('../../utils/escape_string');
 
 function StringStack(attributesOnly, noParse) {
   DefaultStack.call(this, attributesOnly);
@@ -18,6 +19,8 @@ StringStack.prototype.createObject = function(obj, options) {
     } else {
       this._closeElem(obj);
     }
+  } else if (this.noParse && typeof obj === 'string' && options && options.escape) {
+    this._closeElem(escapeString(obj));
   } else {
     this._closeElem(obj);
   }

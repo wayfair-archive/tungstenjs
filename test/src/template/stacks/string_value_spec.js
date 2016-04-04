@@ -44,15 +44,34 @@ describe('debug_value spec', function() {
     };
     expect(fn).to.throw();
   });
-  it('should not error if a html is not encountered inside a unescaped interpolator', function() {
+  it('should not error if html is not encountered inside a unescaped interpolator', function() {
     var compiledTemplate = compiler('{{{ foo }}} & {{{ bar }}}');
     var data = {
       foo: 'bar < foo',
       bar: 'foo < bar'
     };
+    var stack = new StringStack();
     var fn = function() {
-      compiledTemplate.template._iterate(null, data, null, null, new StringStack());
+      compiledTemplate.template._iterate(null, data, null, null, stack);
     };
     expect(fn).not.to.throw();
+    expect(stack.getOutput()).to.equal(data.foo + ' & ' + data.bar);
+  });
+  it('should escape', function() {
+    var compiledTemplate = compiler('{{foo}}');
+    var data = { foo: '&' };
+    // if noParse is left false, it's being used to render static attribute values and should not escape anything
+    var output = compiledTemplate.template._render(null, data, null, null, new StringStack());
+    expect(output).to.equal('&');
+
+    // if noParse is set to true, it's being used to render dynamic attribute values and should escape
+    output = compiledTemplate.template._render(null, data, null, null, new StringStack(true, true));
+    expect(output).to.equal('&amp;');
+  });
+  it('should parse', function() {
+    var compiledTemplate = compiler('{{{foo}}}');
+    var data = { foo: '&' };
+    var output = compiledTemplate.template._render(null, data, null, null, new StringStack());
+    expect(output).to.equal('&');
   });
 });
