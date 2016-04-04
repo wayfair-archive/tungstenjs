@@ -19,8 +19,8 @@
     "tests": "node ./test/build.js && npm run jasmine",
     "tests-debug": "node ./test/build.js && npm run jasmine-debug",
     "build-plugins": "webpack --config ./webpack.plugins.js",
-    "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev=true",
-    "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
+    "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --env.adaptor=backbone --env.dev=true",
+    "build-bb-dist": "webpack --config ./webpack.standalone.js --env.adaptor=backbone",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
     "prepublish": "npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev"
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "babel-core": "6.3.26",
-    "babel-loader": "6.2.1",
+    "babel-loader": "6.2.4",
     "babel-plugin-transform-es2015-block-scoping": "^6.1.18",
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "chai": "^2.2.0",
@@ -62,7 +62,7 @@
     "loader-utils": "^0.2.11",
     "mkdirp": "~0.5.0",
     "opener": "^1.4.1",
-    "webpack": "^1.5.1",
+    "webpack": "2.1.0-beta.4",
     "webpack-dev-middleware": "^1.2.0"
   },
   "engines": {
