@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.11.7",
+  "version": "0.12.0",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
@@ -9,7 +9,8 @@
     "url": "https://github.com/wayfair/tungstenjs.git"
   },
   "bugs": "https://github.com/wayfair/tungstenjs/issues",
-  "main": "./dist/tungsten.backbone.js",
+  "main": "./dist/tungsten.backbone.node.js",
+  "browser": "./dist/tungsten.backbone.web.js",
   "scripts": {
     "clean": "rm dist/*.js",
     "jasmine": "node test/jasmine.js",
@@ -21,9 +22,11 @@
     "build-plugins": "webpack --config ./webpack.plugins.js",
     "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev=true",
     "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
+    "build-bb-dist-node-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --env=node --dev=true",
+    "build-bb-dist-node": "webpack --config ./webpack.standalone.js --adaptor=backbone --env=node",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
-    "prepublish": "npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev"
+    "prepublish": "npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev && npm run build-bb-dist-node && npm run build-bb-dist-node-dev"
   },
   "dependencies": {
     "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
@@ -51,6 +54,7 @@
     "babel-loader": "6.2.1",
     "babel-plugin-transform-es2015-block-scoping": "^6.1.18",
     "babel-plugin-transform-es2015-constants": "^6.1.4",
+    "babel-plugin-transform-es2015-template-literals": "^6.6.5",
     "chai": "^2.2.0",
     "coveralls": "^2.11.4",
     "eslint": "2.2.0",
