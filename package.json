@@ -26,7 +26,9 @@
     "build-bb-dist-node": "webpack --config ./webpack.standalone.js --adaptor=backbone --env=node",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
-    "prepublish": "npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev && npm run build-bb-dist-node && npm run build-bb-dist-node-dev"
+    "bump-tag": "node ./test/bump-tag.js",
+    "prerelease": "npm run clean && npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev && npm run build-bb-dist-node && npm run build-bb-dist-node-dev",
+    "release": "npm run bump-tag && npm run prerelease && publish-please"
   },
   "dependencies": {
     "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
@@ -50,23 +52,28 @@
     "x-is-array": "^0.1.0"
   },
   "devDependencies": {
+    "async": "^1.5.2",
     "babel-core": "6.3.26",
     "babel-loader": "6.2.1",
     "babel-plugin-transform-es2015-block-scoping": "^6.1.18",
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "babel-plugin-transform-es2015-template-literals": "^6.6.5",
     "chai": "^2.2.0",
+    "chalk": "^1.1.1",
     "coveralls": "^2.11.4",
     "eslint": "2.2.0",
     "express": "^4.13.3",
     "glob": "^4.3.5",
     "hogan-express": "^0.5.2",
+    "inquirer": "^0.12.0",
     "isparta-loader": "^0.2.0",
     "istanbul": "^0.3.19",
     "jasmine": "^2.3.1",
     "loader-utils": "^0.2.11",
     "mkdirp": "~0.5.0",
     "opener": "^1.4.1",
+    "publish-please": "^1.1.0",
+    "semver": "^5.1.0",
     "webpack": "^1.5.1",
     "webpack-dev-middleware": "^1.2.0"
   },
