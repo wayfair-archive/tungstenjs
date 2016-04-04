@@ -60,7 +60,12 @@ describe('debug_value spec', function() {
   it('should escape', function() {
     var compiledTemplate = compiler('{{foo}}');
     var data = { foo: '&' };
+    // if noParse is left false, it's being used to render static attribute values and should not escape anything
     var output = compiledTemplate.template._render(null, data, null, null, new StringStack());
+    expect(output).to.equal('&');
+
+    // if noParse is set to true, it's being used to render dynamic attribute values and should escape
+    output = compiledTemplate.template._render(null, data, null, null, new StringStack(true, true));
     expect(output).to.equal('&amp;');
   });
   it('should parse', function() {
