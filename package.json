@@ -12,7 +12,7 @@
   "main": "./dist/tungsten.backbone.node.js",
   "browser": "./dist/tungsten.backbone.web.js",
   "scripts": {
-    "clean": "rm dist/*.js",
+    "clean": "rm -f dist/*.js",
     "jasmine": "node test/jasmine.js",
     "jasmine-debug": "node debug test/jasmine.js",
     "pretest": "npm run eslint",
@@ -28,7 +28,8 @@
     "cover": "node ./test/build.js --coverage && npm run jasmine",
     "bump-tag": "node ./test/bump-tag.js",
     "dist": "npm run clean && npm run build-plugins && npm run build-bb-dist && npm run build-bb-dist-dev && npm run build-bb-dist-node && npm run build-bb-dist-node-dev",
-    "release": "npm run bump-tag && npm run dist && publish-please"
+    "release": "npm run bump-tag && npm run dist && publish-please && npm run revert-package",
+    "revert-package": "git checkout -- package.json"
   },
   "dependencies": {
     "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
