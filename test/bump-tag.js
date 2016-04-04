@@ -39,7 +39,7 @@ var questions = [{
 }, {
   type: 'confirm',
   name: 'toUseBump',
-  message: 'Current version: ' + chalk.bold.green("v" + packageInfo.version) + '. Do you want to use bump words =>',
+  message: 'Current version: ' + chalk.bold.green('v' + packageInfo.version) + '. Do you want to use bump words =>',
   default: true,
   when: function(answers) {
     return answers.toAddNewTag;
@@ -81,7 +81,7 @@ var questions = [{
   name: 'tagMessage',
   message: 'Enter tag message =>',
   validate: function(value) {
-    return !!value ? true : 'Please enter a new tag message!'
+    return value ? true : 'Please enter a new tag message!';
   },
   when: function(answers) {
     return answers.toAddNewTag && (answers.bumpWord || answers.rawBump);
