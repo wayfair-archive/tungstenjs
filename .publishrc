@@ -1,0 +1,5 @@
+{
+  "checkUncommitted": false,
+  "checkUntracked": false,
+  "sensitiveDataAudit": true
+}

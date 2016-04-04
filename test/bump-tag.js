@@ -39,7 +39,7 @@ var questions = [{
 }, {
   type: 'confirm',
   name: 'toUseBump',
-  message: 'Do you want to use bump words =>',
+  message: 'Current version: ' + chalk.bold.green('v' + packageInfo.version) + '. Do you want to use bump words =>',
   default: true,
   when: function(answers) {
     return answers.toAddNewTag;
@@ -63,7 +63,7 @@ var questions = [{
     return answers.toAddNewTag && !answers.toUseBump;
   },
   filter: function(value) {
-    return 'v' + value;
+    return value[0] === 'v' ? value : 'v' + value;
   },
   // checks if entered version is valid and greater then version in package.json
   validate: function(value) {
@@ -80,6 +80,9 @@ var questions = [{
   type: 'input',
   name: 'tagMessage',
   message: 'Enter tag message =>',
+  validate: function(value) {
+    return value ? true : 'Please enter a new tag message!';
+  },
   when: function(answers) {
     return answers.toAddNewTag && (answers.bumpWord || answers.rawBump);
   }
