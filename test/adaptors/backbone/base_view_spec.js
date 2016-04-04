@@ -751,6 +751,49 @@ describe('base_view.js constructed api', function() {
         done();
       }, 1);
     });
+    describe('updateVtree', function() {
+      var model, template, view;
+      beforeEach(function() {
+        model = {};
+        template = {
+          toVdom: jasmine.createSpy('toVdom')
+        };
+        view = {
+          compiledTemplate: template,
+          serialize: function() {
+            return model;
+          }
+        };
+      });
+      afterEach(function() {
+        model = template = view = null;
+      });
+
+      it('should be allowed to call with no childViews', function() {
+        expect(function() {
+          BaseView.prototype.updateVtree.call(view);
+        }).not.to.throw();
+        jasmineExpect(template.toVdom).toHaveBeenCalledWith(model);
+      });
+
+      it('should be allowed to call with an empty childViews', function() {
+        view.childViews = {};
+        expect(function() {
+          BaseView.prototype.updateVtree.call(view);
+        }).not.to.throw();
+        jasmineExpect(template.toVdom).toHaveBeenCalledWith(model);
+      });
+
+      it('should not be allowed to call with a populated childViews', function() {
+        view.childViews = {
+          'js-foo': _.noop
+        };
+        expect(function() {
+          BaseView.prototype.updateVtree.call(view);
+        }).to.throw();
+        jasmineExpect(template.toVdom).not.toHaveBeenCalled();
+      });
+    });
   });
 
 });

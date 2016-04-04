@@ -1,11 +1,10 @@
+/* eslint-env node */
 'use strict';
 
 var markdownCompiler = require('./markdown_compiler');
 var _ = require('underscore');
 var compiledTemplates = require('./get_mustache_templates');
 var file = require('./file');
-
-var doctype = '<!doctype html>';
 
 module.exports = function(bundleMap) {
   _.each(global.config.pages, function(page, name) {
@@ -19,6 +18,6 @@ module.exports = function(bundleMap) {
       js: bundleMap[page.js],
       css: bundleMap[page.css]
     });
-    file.write(name + '.html', doctype + compiledTemplates[global.config.pageTemplate].toString(data));
+    file.writeHtml(name + '.html', compiledTemplates[global.config.pageTemplate].toString(data));
   });
 };

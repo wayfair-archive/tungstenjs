@@ -449,10 +449,71 @@ BaseModel.prototype.reset = function(attrs, options) {
 };
 
 BaseModel.prototype.bindExposedEvent = function(event, prop, childComponent) {
-  this.listenTo(childComponent.model, event, () => {
+  var self = this;
+  this.listenTo(childComponent.model, event, function() {
     var args = Array.prototype.slice.call(arguments);
-    eventTrigger.bubbleEvent(this, prop, [event].concat(args));
+    eventTrigger.bubbleEvent(self, prop, [event].concat(args));
   });
+};
+
+BaseModel.prototype.validateProperty = function (propTypeDesc, propValue) {
+  var validDescAttrs = ['required', 'type'];
+  var propValueType = typeof propValue;
+  var isRequired = propTypeDesc.required;
+  var type = propTypeDesc.type;
+  var typeValidators = {
+    string: (value) => typeof value === 'string',
+    number: (value) => typeof value === 'number',
+    boolean: (value) => typeof value === 'boolean',
+    object: (value) => typeof value === 'object',
+    custom: (value) => typeof value === 'function',
+    symbol: (value) => typeof value === 'symbol',
+    array: (value) => _.isArray(value)
+  };
+
+  /**
+   * Checks if target object has at least one attribute from attrs array.
+   *
+   * @param  {Object}   target  Object to check for attributes
+   * @param  {Array}    attrs   Array of attributes
+   *
+   * @return {Boolean}
+   */
+  function hasAtLeastOneKey(target, attrs) {
+    var attrsLen = attrs.length;
+    var i = 0;
+    var counter = 0;
+    for (; i < attrsLen; i++) {
+      if (target[attrs[i]] !== undefined) {
+        counter++;
+      }
+    }
+    return !!counter;
+  }
+
+  // check if propTypeDesc is an object and has at least one valid attribute
+  if (typeof propTypeDesc !== 'object' || !hasAtLeastOneKey(propTypeDesc, validDescAttrs)) {
+    return {msg: 'invalid property descriptor.'};
+  }
+
+  // validate property type only when it was specified and is a string
+  if (typeof type !== 'string' || typeof typeValidators[type] !== 'function' ) {
+    return {msg: 'unsupported property type of `' + JSON.stringify(type) + '`.'};
+  }
+
+  if (isRequired) {
+    if (propValue === undefined) {
+      return {msg: 'was required, but never specified.'};
+    }
+    if (type && !typeValidators[type](propValue)) {
+      return {msg: 'expected property type of `' + type + '`, but got `' + propValueType + '`.'};
+    }
+  } else {
+    if (propValue && type && !typeValidators[type](propValue)) {
+      return {msg: 'expected property type of `' + type + '`, but got `' + propValueType + '`.'};
+    }
+  }
+  return true;
 };
 
 BaseModel.prototype.set = function(key, val, options) {
@@ -470,8 +531,19 @@ BaseModel.prototype.set = function(key, val, options) {
   }
 
   options = options || {};
+  var propTypes = _.result(this, 'propTypes') || {};
+
+  // iterate though properties and check if valid
+  _.each(propTypes, (propType, propName) => {
+    var propValue = attrs[propName];
+    var validationResult = this.validateProperty(propType, propValue);
+    if (validationResult !== true) {
+      throw new TypeError('PropTypes.' + propName + ' ' + validationResult.msg);
+    }
+  });
 
   /* develblock:start */
+
   // In order to compare server vs. client data, save off the initial data
   if (!this.initialData) {
     // Using JSON to get a deep clone to avoid any overlapping object references
@@ -487,6 +559,7 @@ BaseModel.prototype.set = function(key, val, options) {
       logger.warn('Model expected object of attributes but got: ' + initialStr);
     }
   }
+
   /* develblock:end */
 
   // Run validation.

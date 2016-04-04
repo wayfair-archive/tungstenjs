@@ -3,11 +3,11 @@
  */
 'use strict';
 
-import { View } from 'tungstenjs/adaptors/backbone';
+import { View } from 'tungstenjs';
 import { NewItemView } from './todo_new_item_view';
 import { TodoItemView } from './todo_item_view';
 import {childViews, on} from '../decorators';
-import _ from 'underscore';
+import { _ } from 'tungstenjs';
 
 @childViews({
   'js-new-todo': NewItemView,

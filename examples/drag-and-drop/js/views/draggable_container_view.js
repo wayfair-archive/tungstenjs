@@ -1,8 +1,8 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('tungstenjs')._;
 var dragula = require('dragula');
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var BaseView = TungstenBackboneBase.View;
 
 var DraggableContainerView = BaseView.extend({

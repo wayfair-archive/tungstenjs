@@ -1,5 +1,5 @@
 'use strict';
-var _ = require('underscore');
+var _ = require('tungstenjs')._;
 var films = [
   {'title': 'Gladiator', 'year': '2000'},
   {'title': 'A Beautiful Mind', 'year': '2001'},

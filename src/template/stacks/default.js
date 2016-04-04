@@ -122,7 +122,10 @@ DefaultStack.prototype._closeElem = function(obj) {
     pushingTo = this.result;
   }
 
-  // Combine adjacent strings
+  this.appendItem(pushingTo, obj);
+};
+
+DefaultStack.prototype.appendItem = function(pushingTo, obj) {
   if (typeof obj === 'string' && typeof pushingTo[pushingTo.length - 1] === 'string') {
     pushingTo[pushingTo.length - 1] += obj;
   } else {

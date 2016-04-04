@@ -1,4 +1,4 @@
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var BaseView = TungstenBackboneBase.View;
 var DraggableContainerView = require('./draggable_container_view');
 

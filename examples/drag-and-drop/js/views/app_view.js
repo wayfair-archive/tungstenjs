@@ -1,7 +1,7 @@
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var BaseView = TungstenBackboneBase.View;
 var FilmsView = require('./films_view');
-var _ = require('underscore');
+var _ = require('tungstenjs')._;
 
 var AppView = BaseView.extend({
   childViews: {

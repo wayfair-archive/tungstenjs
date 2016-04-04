@@ -5,7 +5,6 @@
  */
 'use strict';
 
-var _ = require('underscore');
 var templateAdaptor = require('./adaptor');
 var Context = require('./template_context');
 
@@ -121,7 +120,7 @@ Template.prototype.attachView = function(view, widgetWrapper) {
     widgetConstructor = widgetWrapper;
   }
   var templateObj = templateAdaptor.attach(
-    _.clone(this.templateObj),
+    this.templateObj,
     view,
     createChildView,
     this.getPartials()

@@ -1,7 +1,7 @@
 'use strict';
 
 
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var View = TungstenBackboneBase.View;
 var ENTER_KEY = 13;
 var ESC_KEY = 27;

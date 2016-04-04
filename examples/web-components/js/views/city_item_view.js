@@ -3,7 +3,7 @@
 */
 'use strict';
 
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 var View = TungstenBackboneBase.View;
 
 var CityItemView = View.extend({

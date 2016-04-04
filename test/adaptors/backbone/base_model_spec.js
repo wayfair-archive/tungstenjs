@@ -2182,3 +2182,224 @@ describe('base_model.js special properties', function() {
     expect(bar.toJSON()).to.deep.equal({name: 'hi'});
   });
 });
+describe('base_model.js propTypes functionality', function() {
+  var BookModel;
+  afterEach(function() {
+    BookModel = null;
+  });
+  /* develblock:start */
+  it('should throw error when PropTypes is not an object', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        foo: 100,
+        bar: '100',
+        baz: function() {}
+      }
+    });
+    expect(function() {
+      return new BookModel({
+        author: 'Eric Maria Remarque'
+      });
+    }).throw('PropTypes.foo invalid property descriptor.');
+  });
+  it('should not throw an error on initialization for correct simple propTypes', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        title: {
+          type: 'string',
+          required: true
+        },
+        author: {
+          type: 'string'
+        },
+        pages: {
+          type: 'number'
+        },
+        available: {
+          type: 'boolean',
+          required: true
+        },
+        id: {
+          type: 'number',
+          required: false
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({
+        title: 'Midsummer Night\'s Dream',
+        author: 'William Shakespeare',
+        pages: 123,
+        available: true
+      });
+    }).not.throw();
+  });
+  it('should not throw error when property is not required and not passsed.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: {
+          type: 'number',
+          bar: 'baz',
+          foo: 42
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).not.throw();
+  });
+  it('should throw an error on initialization when setting string to propType number', function() {
+    var attrs = {
+      title: 'Midsummer Night\'s Dream'
+    };
+    BookModel = BaseModel.extend({
+      propTypes: {
+        title: {
+          type: 'number'
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel(attrs);
+    }).throw('PropTypes.title expected property type of `number`, but got `string`.');
+  });
+  it('should throw an error on initialization when setting number to propType string', function() {
+    var attrs = {
+      pages: 100
+    };
+    BookModel = BaseModel.extend({
+      propTypes: {
+        pages: {
+          type: 'string'
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel(attrs);
+    }).throw('PropTypes.pages expected property type of `string`, but got `number`.');
+  });
+  it('should throw an error when declaring an invalid propType', function() {
+    var attrs = {
+      pages: 100
+    };
+    BookModel = BaseModel.extend({
+      propTypes: {
+        pages: {
+          type: 'BloomFilter'
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel(attrs);
+    }).throw('PropTypes.pages unsupported property type of `"BloomFilter"`.');
+  });
+  it('should throw an error when declaring required property in propType but not passing it.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: {
+          type: 'number',
+          required: true
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).throw('PropTypes.year was required, but never specified.');
+  });
+  it('should throw an error when passing not supported type in propType.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: {
+          type: null
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).throw('PropTypes.year unsupported property type of `null`.');
+  });
+  it('should throw an error when passing not supported type in propType.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: {
+          type: []
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).throw('PropTypes.year unsupported property type of `[]`.');
+  });
+  it('should throw an error when passing not supported type in propType.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: {
+          type: {}
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).throw('PropTypes.year unsupported property type of `{}`.');
+  });
+  it('should throw an error when passing not supported type in propType.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: {
+          type: undefined
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).throw('PropTypes.year invalid property descriptor.');
+  });
+  it('should throw an error when passing not supported type in propType.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: {
+          type: ''
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).throw('PropTypes.year unsupported property type of `""`.');
+  });
+  it('should throw an error when passing invalid propTypeDesc in propType.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: 'foo'
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).throw('PropTypes.year invalid property descriptor.');
+  });
+  it('should throw an error when passing invalid propTypeDesc in propType.', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: 'foo'
+      }
+    });
+    expect(function() {
+      return new BookModel({});
+    }).throw('PropTypes.year invalid property descriptor.');
+  });
+  it('should throw error when property is not required but was passsed with wrong type', function() {
+    BookModel = BaseModel.extend({
+      propTypes: {
+        year: {
+          type: null,
+          required: false
+        }
+      }
+    });
+    expect(function() {
+      return new BookModel({
+        year: '42'
+      });
+    }).throw('PropTypes.year unsupported property type of `null`.');
+  });
+  /* develblock:end */
+});

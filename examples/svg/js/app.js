@@ -1,12 +1,52 @@
 var template = require('../templates/svg_view.mustache');
 
-var TungstenBackboneBase = require('tungstenjs/adaptors/backbone');
+var TungstenBackboneBase = require('tungstenjs');
 
 var elem = document.getElementById('appwrapper');
 
+var moment = window.moment;
+
 var DemoModel = TungstenBackboneBase.Model.extend({
   relations: {
-    clock: TungstenBackboneBase.Model,
+    clock: TungstenBackboneBase.Model.extend({
+      derived: {
+        hourRotation: {
+          deps: ['datetime'],
+          fn: function() {
+            var datetime = this.get('datetime');
+            return 30 * datetime.getHours() + datetime.getMinutes() / 2;
+          }
+        },
+        minuteRotation: {
+          deps: ['datetime'],
+          fn: function() {
+            var datetime = this.get('datetime');
+            return 6 * datetime.getMinutes() + datetime.getSeconds() / 10;
+          }
+        },
+        secondRotation: {
+          deps: ['datetime'],
+          fn: function() {
+            var datetime = this.get('datetime');
+            return 6 * datetime.getSeconds();
+          }
+        },
+        formattedDay: {
+          deps: ['datetime'],
+          fn: function() {
+            var datetime = this.get('datetime');
+            return moment(datetime).format('dddd MMMM Do YYYY');
+          }
+        },
+        formattedTime: {
+          deps: ['datetime'],
+          fn: function() {
+            var datetime = this.get('datetime');
+            return moment(datetime).format('h:mm:ss a')
+          }
+        }
+      }
+    }),
     chart: TungstenBackboneBase.Model.extend({
       relations: {
         temperatures: TungstenBackboneBase.Collection
