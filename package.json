@@ -1,6 +1,6 @@
 {
   "name": "tungstenjs",
-  "version": "0.11.7",
+  "version": "0.12.0",
   "description": "A modular framework for creating web UIs with high-performance rendering on both server and client.",
   "author": "Matt DeGennaro <mdegennaro@wayfair.com>",
   "license": "Apache-2.0",
