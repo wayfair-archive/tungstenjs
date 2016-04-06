@@ -10,7 +10,6 @@ var nonTransformedProperties = {
   'async': true,
   'autocapitalize': true,
   'autocomplete': true,
-  'autocorrect': true,
   'autoplay': true,
   'checked': true,
   'content': true,
