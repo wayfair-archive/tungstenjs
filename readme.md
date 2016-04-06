@@ -47,7 +47,7 @@ Dependencies are bundled in the build.  It exposes [underscore] and [backbone]
 as `tungstenjs._` and `tungstenjs.Backbone` to be used globally if necessary.
 
 To compile templates, use
-`tungsten._template.compileTemplates({myTemplate: 'Hello {{name}.'})`.
+`tungsten.templateHelper.compileTemplates({myTemplate: 'Hello {{name}.'})`.
 Ordinarily this is done on the server at build time.
 
 An client-side only example of a Tungsten.js app using the UMD build is
@@ -59,8 +59,7 @@ available in the [examples].
 
 ### Bundler (e.g., webpack)
 
-The recommended method of adding Tungsten.js to your application is via a module bundler such as [webpack](http://webpack.github.io/).  Because Backbone expects `jQuery` to be present, Tungsten.js includes a jQuery-less shim, `src/polyfill/jquery`, which is included in the default build.
-
+Tungsten.js can be built for your application using a module bundler such as [webpack](http://webpack.github.io/).  Because Backbone expects `jQuery` to be present, Tungsten.js includes a jQuery-less shim, `src/polyfill/jquery`, which is included in the default build.
 
 ### Requirements
 

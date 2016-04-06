@@ -42,7 +42,7 @@
     };
 
     // Compile templates; usually this is done at build time.
-    var compiledTemplates = window.ct = tungsten._template.compileTemplates(rawTemplates);
+    var compiledTemplates = window.ct = tungsten.templateHelper.compileTemplates(rawTemplates);
 
     var Model = tungsten.Model;
     var AppView = tungsten.View.extend({
