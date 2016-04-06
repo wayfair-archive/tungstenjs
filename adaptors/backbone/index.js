@@ -29,7 +29,8 @@ module.exports = {
   Template: require('../../src/template/template'),
   addEventPlugin: tungsten.addEventPlugin,
   _core: tungsten,
-  _template: require('../../precompile/tungsten_template/template_helper'),
-  compiler: require('../../precompile/tungsten_template'),
+  templateHelper: require('../../precompile/tungsten_template/template_helper'),
+  precompiler: require('../../precompile/tungsten_template'),
+  compiler: require('../../src/template/compiler'),
   _Context: Context
 };

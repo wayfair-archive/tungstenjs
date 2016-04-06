@@ -98,7 +98,7 @@
     app: '<div class="pure-g js-main"> {{#tutorial}} <div class="pure-u-1-2 page-section description"> <ol class="steps"> {{#steps}} <li class="js-step-select pure-button {{#selected}}pure-button-active{{/selected}}">{{{index}}}</li> {{/steps}} </ol> <button class="pure-button js-run run" id="run">Run</button>{{#step}} <hr/><h4 class="step_name">{{name}}</h4><div class="step_description">{{{description_html}}}{{#solution_html}}<button class="pure-button">Show Solution</button><div class="solution">{{{.}}}</div>{{/solution_html}}</div> {{/step}} </div> <div class="pure-u-1-2 page-section">{{{template}}}</div> <div class="pure-u-1-2 page-section"> <div id="result"> <div id="app"></div> </div> </div> <div class="last-editor-section pure-u-1-2 page-section">{{{js}}}</div> {{/tutorial}} </div>',
     codeMirror: ''
   };
-  var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);
+  var compiledTemplates = tungsten.templateHelper.compileTemplates(rawTemplates);
 
   var CodeMirrorComponent = {
     View: View.extend({
@@ -241,7 +241,7 @@
       }
     },
     run: function() {
-      var boilerplate = 'var rawTemplates = { app_view: ' + JSON.stringify(this.model.get('template').doSerialize()) + ' };var compiledTemplates = tungsten._template.compileTemplates(rawTemplates);';
+      var boilerplate = 'var rawTemplates = { app_view: ' + JSON.stringify(this.model.get('template').doSerialize()) + ' };var compiledTemplates = tungsten.templateHelper.compileTemplates(rawTemplates);';
       var evalNoContext = eval.bind(null);
       // Destroy any views that were created in the last run to ensure a fresh runtime
       _.invoke(runtimeObjects, 'stopListening');
