@@ -36,7 +36,7 @@ A [webpack](http://webpack.github.io/) loader, `tungsten_template`, is provided 
 module.exports = {
   // [...]
   resolveLoader: {
-    modulesDirectories: ['node_modules', 'node_modules/tungstenjs/precompile']
+    modules: [path.join(__dirname, 'node_modules'), path.join(__dirname, 'node_modules/tungstenjs/precompile')]
   },
   module: {
     loaders: [

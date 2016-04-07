@@ -14,29 +14,7 @@ function ensureLoader(loaders, test, loader) {
     loader: loader
   });
 }
-function processArg(arg) {
-  var parts = arg.split('=');
-  var data = {
-    name: parts[0]
-  };
-  if (parts[1]) {
-    data.value = parts[1];
-  }
-  return data;
-}
 
-function processArgs() {
-  var argData = {};
-  var args = process.argv;
-  for (var i = 0; i < args.length; i++) {
-    // Only process flags
-    if (args[i] && args[i].substr(0, 1) === '-') {
-      var arg = processArg(args[i]);
-      argData[arg.name] = arg.value;
-    }
-  }
-  return argData;
-}
 
 /**
  * Extends an existing webpack config with necessary loaders for Tungsten
@@ -49,9 +27,9 @@ function processArgs() {
  */
 module.exports = function(config) {
   config.resolveLoader = config.resolveLoader || {};
-  config.resolveLoader.modulesDirectories = config.resolveLoader.modulesDirectories || [];
+  config.resolveLoader.modules = config.resolveLoader.modules || [];
 
-  config.resolveLoader.modulesDirectories.push(path.join(__dirname, 'precompile'));
+  config.resolveLoader.modules.push(path.join(__dirname, 'precompile'));
 
   config.module = config.module || {};
   config.module.loaders = config.module.loaders || [];
@@ -72,21 +50,17 @@ module.exports.compileSource = function(config, dev, test) {
   config = module.exports(config, dev, test);
 
   config.resolveLoader = config.resolveLoader || {};
-  config.resolveLoader.modulesDirectories.push(path.join(__dirname, 'node_modules'));
-
-  var args = processArgs();
-  // If dev is not explicitly set to a boolean, check for the command line flag
-  if (dev !== Boolean(dev)) {
-    dev = args.hasOwnProperty('--dev');
-  }
-  // If test is not explicitly set to a boolean, check for the command line flag
-  if (test !== Boolean(test)) {
-    test = args.hasOwnProperty('--test');
-  }
+  config.resolveLoader.modules.push(path.join(__dirname, 'node_modules'));
   config.plugins = config.plugins || [];
+  if (!dev) {
+    config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+      mangle: false
+    }));
+  }
   config.plugins.push(new webpack.DefinePlugin({
     TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version),
-    TUNGSTENJS_IS_TEST: test
+    TUNGSTENJS_IS_TEST: test,
+    TUNGSTENJS_DEBUG_MODE: dev
   }));
 
   // Babel should be run on our code, but not node_modules
@@ -98,9 +72,6 @@ module.exports.compileSource = function(config, dev, test) {
   var babelRegexStr = '^(' + folders.join('|') + ')$';
   ensureLoader(config.module.loaders, new RegExp(babelRegexStr), 'babel');
 
-  if (!dev) {
-    ensureLoader(config.module.preLoaders, /\.js$/, 'webpack-strip-block');
-  }
 
   return config;
 };

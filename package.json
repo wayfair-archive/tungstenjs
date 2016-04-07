@@ -20,10 +20,10 @@
     "tests": "node ./test/build.js && npm run jasmine",
     "tests-debug": "node ./test/build.js && npm run jasmine-debug",
     "build-plugins": "webpack --config ./webpack.plugins.js",
-    "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --dev=true",
-    "build-bb-dist": "webpack --config ./webpack.standalone.js --adaptor=backbone",
-    "build-bb-dist-node-dev": "webpack --config ./webpack.standalone.js --adaptor=backbone --env=node --dev=true",
-    "build-bb-dist-node": "webpack --config ./webpack.standalone.js --adaptor=backbone --env=node",
+    "build-bb-dist-dev": "webpack --config ./webpack.standalone.js --env.adaptor=backbone --env.dev=true",
+    "build-bb-dist": "webpack --config ./webpack.standalone.js --env.adaptor=backbone",
+    "build-bb-dist-node-dev": "webpack --config ./webpack.standalone.js --env.adaptor=backbone --env.env=node --env.dev=true",
+    "build-bb-dist-node": "webpack --config ./webpack.standalone.js --env.adaptor=backbone --env.env=node",
     "eslint": "node node_modules/eslint/bin/eslint src adaptors test precompile",
     "cover": "node ./test/build.js --coverage && npm run jasmine",
     "bump-tag": "node ./test/bump-tag.js",
@@ -49,13 +49,12 @@
     "purecss": "^0.6.0",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
-    "webpack-strip-block": "0.0.1",
     "x-is-array": "^0.1.0"
   },
   "devDependencies": {
     "async": "^1.5.2",
-    "babel-core": "6.3.26",
-    "babel-loader": "6.2.1",
+    "babel-core": "6.4.5",
+    "babel-loader": "6.2.4",
     "babel-plugin-transform-es2015-block-scoping": "^6.1.18",
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "babel-plugin-transform-es2015-template-literals": "^6.6.5",
@@ -75,8 +74,8 @@
     "opener": "^1.4.1",
     "publish-please": "^1.1.0",
     "semver": "^5.1.0",
-    "webpack": "^1.5.1",
-    "webpack-dev-middleware": "^1.2.0"
+    "webpack": "2.1.0-beta.4",
+    "webpack-dev-middleware": "1.5.1"
   },
   "engines": {
     "node": ">=4.0.0"

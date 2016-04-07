@@ -2,57 +2,34 @@ var webpack = require('webpack');
 var webpackSettings = require('./webpack-helper');
 var path = require('path');
 
-function processArg(arg) {
-  var parts = arg.split('=');
-  var data = {
-    name: parts[0]
-  };
-  if (parts[1]) {
-    data.value = parts[1];
-  }
-  return data;
-}
-function processArgs() {
-  var argData = {};
-  var args = process.argv;
-  for (var i = 0; i < args.length; i++) {
-    // Only process flags
-    if (args[i] && args[i].substr(0, 1) === '-') {
-      var arg = processArg(args[i]);
-      argData[arg.name] = arg.value;
+module.exports = function(options) {
+  // set adaptor with --adaptor=adaptor_name
+  // set debug mode with --dev=true
+  // default is backbone
+  var adaptor = options.adaptor || 'backbone';
+  var devStr = options.dev ? '.debug' : '';
+
+  // Target environment (eg: web browsers, nodejs)
+  // https://webpack.github.io/docs/configuration.html#target
+  var envStr = options.env || 'web';
+  return webpackSettings.compileSource({
+    entry: './adaptors/' + adaptor,
+    output: {
+      filename: './dist/tungsten.' + adaptor + devStr + '.' + envStr + '.js',
+      libraryTarget: 'umd',
+      library: 'tungsten'
+    },
+    target: envStr,
+    resolve: {
+      alias: {
+        jquery: path.join(__dirname, './src/polyfill/jquery')
+      }
+    },
+    resolveLoader: {
+      modules: [path.join(__dirname, 'node_modules')]
+    },
+    module: {
+      loaders: []
     }
-  }
-  return argData;
-}
-var args = processArgs();
-
-// set adaptor with --adaptor=adaptor_name
-// set debug mode with --dev=true
-// default is backbone
-var adaptor = args['--adaptor'] || 'backbone';
-var devStr = args['--dev'] ? '.debug' : '';
-
-// Target environment (eg: web browsers, nodejs)
-// https://webpack.github.io/docs/configuration.html#target
-var envStr = args['--env'] || 'web';
-
-module.exports = webpackSettings.compileSource({
-  entry: './adaptors/' + adaptor,
-  output: {
-    filename: './dist/tungsten.' + adaptor + devStr + '.' + envStr + '.js',
-    libraryTarget: 'umd',
-    library: 'tungsten'
-  },
-  target: envStr,
-  resolve: {
-    alias: {
-      jquery: path.join(__dirname, './src/polyfill/jquery')
-    }
-  },
-  resolveLoader: {
-    modulesDirectories: ['node_modules']
-  },
-  module: {
-    loaders: []
-  }
-});
+  }, options.dev, options.test)
+};

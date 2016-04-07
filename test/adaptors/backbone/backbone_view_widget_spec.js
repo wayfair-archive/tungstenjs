@@ -263,29 +263,29 @@ describe('backbone_view_widget public api', function() {
       expect(ctx.view).to.equal(expectedView);
     });
   });
-  /* develblock:start */
-  describe('templateToString', function() {
-    it('should be a function', function() {
-      expect(BackboneViewWidget.prototype.templateToString).to.be.a('function');
-      expect(BackboneViewWidget.prototype.templateToString).to.have.length(0);
+  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    describe('templateToString', function() {
+      it('should be a function', function() {
+        expect(BackboneViewWidget.prototype.templateToString).to.be.a('function');
+        expect(BackboneViewWidget.prototype.templateToString).to.have.length(0);
+      });
+      it('should return nothing if view is not set', function() {
+        var output = BackboneViewWidget.prototype.templateToString.call({});
+        expect(output).to.be.undefined;
+      });
+      it('should return a string with the debug name', function() {
+        var debugName = 'FOOBAR';
+        var view = {
+          getDebugName: jasmine.createSpy('getDebugName').and.returnValue(debugName)
+        };
+        var widget = {
+          view: view
+        };
+        var output = BackboneViewWidget.prototype.templateToString.call(widget);
+        expect(output).to.be.a('string');
+        expect(output).to.contain(debugName);
+        jasmineExpect(view.getDebugName).toHaveBeenCalled();
+      });
     });
-    it('should return nothing if view is not set', function() {
-      var output = BackboneViewWidget.prototype.templateToString.call({});
-      expect(output).to.be.undefined;
-    });
-    it('should return a string with the debug name', function() {
-      var debugName = 'FOOBAR';
-      var view = {
-        getDebugName: jasmine.createSpy('getDebugName').and.returnValue(debugName)
-      };
-      var widget = {
-        view: view
-      };
-      var output = BackboneViewWidget.prototype.templateToString.call(widget);
-      expect(output).to.be.a('string');
-      expect(output).to.contain(debugName);
-      jasmineExpect(view.getDebugName).toHaveBeenCalled();
-    });
-  });
-  /* develblock:end */
+  }
 });

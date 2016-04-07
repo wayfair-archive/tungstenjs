@@ -32,7 +32,7 @@ var debugConfig = webpackHelper.compileSource({
     libraryTarget: 'commonjs2'
   },
   resolveLoader: {
-    modulesDirectories: [
+    modules: [
       path.join(__dirname, './_loaders')
     ]
   },
@@ -53,7 +53,7 @@ var prodConfig = webpackHelper.compileSource({
     libraryTarget: 'commonjs2'
   },
   resolveLoader: {
-    modulesDirectories: [
+    modules: [
       path.join(__dirname, './_loaders')
     ]
   },

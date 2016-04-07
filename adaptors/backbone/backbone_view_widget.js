@@ -140,20 +140,20 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
   }
 };
 
-/* develblock:start */
+if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
 /**
  * Function to allow the Widget to control how it is viewed on the debug panel
  * ChildViews are displayed as a clickable link
  *
  * @return {string} Debug panel version of this widget
  */
-BackboneViewWidget.prototype.templateToString = function() {
-  if (!this.view) {
-    return;
-  }
-  var name = this.view.getDebugName();
-  return '<span class="js-view-list-item u-clickable u-underlined" data-id="' + name + '">[' + name + ']</span>';
-};
-/* develblock:end */
+  BackboneViewWidget.prototype.templateToString = function() {
+    if (!this.view) {
+      return;
+    }
+    var name = this.view.getDebugName();
+    return '<span class="js-view-list-item u-clickable u-underlined" data-id="' + name + '">[' + name + ']</span>';
+  };
+}
 
 module.exports = BackboneViewWidget;

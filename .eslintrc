@@ -29,7 +29,8 @@
   },
   "globals": {
     "require": true,
-    "module": true
+    "module": true,
+    "TUNGSTENJS_DEBUG_MODE": true
   },
   "extends": "eslint:recommended"
 }

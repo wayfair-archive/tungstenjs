@@ -22,38 +22,38 @@ describe('base_model.js static api', function() {
       BaseModel.extend({});
       jasmineExpect(Backbone.Model.extend).toHaveBeenCalled();
     });
-    /* develblock:start */
-    it('should prevent initialize from being overwritten', function() {
-      spyOn(logger, 'warn');
-      spyOn(BaseModel.prototype, 'initialize');
-      var initFn = jasmine.createSpy();
-      var testFn = function() {};
-      var TestModel = BaseModel.extend({
-        initialize: initFn,
-        test: testFn
-      });
-      expect(TestModel.prototype.initialize).not.to.equal(initFn);
-      expect(TestModel.prototype.test).to.equal(testFn);
-      jasmineExpect(logger.warn).toHaveBeenCalled();
-      expect(logger.warn.calls.argsFor(0)[0]).to.contain('may not be overridden');
+    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+      it('should prevent initialize from being overwritten', function() {
+        spyOn(logger, 'warn');
+        spyOn(BaseModel.prototype, 'initialize');
+        var initFn = jasmine.createSpy();
+        var testFn = function() {};
+        var TestModel = BaseModel.extend({
+          initialize: initFn,
+          test: testFn
+        });
+        expect(TestModel.prototype.initialize).not.to.equal(initFn);
+        expect(TestModel.prototype.test).to.equal(testFn);
+        jasmineExpect(logger.warn).toHaveBeenCalled();
+        expect(logger.warn.calls.argsFor(0)[0]).to.contain('may not be overridden');
 
-      var args = {};
-      TestModel.prototype.initialize(args);
-      jasmineExpect(BaseModel.prototype.initialize).toHaveBeenCalledWith(args);
-      jasmineExpect(initFn).toHaveBeenCalledWith(args);
-    });
-    it('should error with debugName if available', function() {
-      spyOn(logger, 'warn');
-      var initFn = function() {};
-      BaseModel.extend({
-        initialize: initFn
-      }, {
-        debugName: 'FOOBAR'
+        var args = {};
+        TestModel.prototype.initialize(args);
+        jasmineExpect(BaseModel.prototype.initialize).toHaveBeenCalledWith(args);
+        jasmineExpect(initFn).toHaveBeenCalledWith(args);
       });
-      jasmineExpect(logger.warn).toHaveBeenCalled();
-      expect(logger.warn.calls.argsFor(0)[0]).to.contain(' for model "FOOBAR"');
-    });
-    /* develblock:end */
+      it('should error with debugName if available', function() {
+        spyOn(logger, 'warn');
+        var initFn = function() {};
+        BaseModel.extend({
+          initialize: initFn
+        }, {
+          debugName: 'FOOBAR'
+        });
+        jasmineExpect(logger.warn).toHaveBeenCalled();
+        expect(logger.warn.calls.argsFor(0)[0]).to.contain(' for model "FOOBAR"');
+      });
+    }
   });
 });
 
@@ -149,167 +149,167 @@ describe('base_model.js constructed api', function() {
     });
   });
 
-  /* develblock:start */
-  describe('initDebug', function() {
-    it('should be a function', function() {
-      expect(BaseModel.prototype.initDebug).to.be.a('function');
-      expect(BaseModel.prototype.initDebug).to.have.length(0);
-    });
-  });
-  describe('getDebugName', function() {
-    it('should be a function', function() {
-      expect(BaseModel.prototype.getDebugName).to.be.a('function');
-      expect(BaseModel.prototype.getDebugName).to.have.length(0);
-    });
-    it('should return the cid if debugName is not available', function() {
-      var result = BaseModel.prototype.getDebugName.call({
-        cid: 'model1'
+  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    describe('initDebug', function() {
+      it('should be a function', function() {
+        expect(BaseModel.prototype.initDebug).to.be.a('function');
+        expect(BaseModel.prototype.initDebug).to.have.length(0);
       });
+    });
+    describe('getDebugName', function() {
+      it('should be a function', function() {
+        expect(BaseModel.prototype.getDebugName).to.be.a('function');
+        expect(BaseModel.prototype.getDebugName).to.have.length(0);
+      });
+      it('should return the cid if debugName is not available', function() {
+        var result = BaseModel.prototype.getDebugName.call({
+          cid: 'model1'
+        });
 
-      expect(result).to.equal('model1');
-    });
-    it('should return the debugName', function() {
-      var result = BaseModel.prototype.getDebugName.call({
-        cid: 'model1',
-        constructor: {
-          debugName: 'FOOBAR'
-        }
+        expect(result).to.equal('model1');
       });
-
-      expect(result).to.equal('FOOBAR1');
-    });
-  });
-  describe('getChildren', function() {
-    it('should be a function', function() {
-      expect(BaseModel.prototype.getChildren).to.be.a('function');
-      expect(BaseModel.prototype.getChildren).to.have.length(0);
-    });
-    it('should return the model\'s children and collections', function() {
-      var TestModel = BaseModel.extend({
-        defaults: {
-          cl1: [],
-          cl2: [],
-          ch1: {},
-          ch2: {}
-        },
-        relations: {
-          'cl1': BaseCollection,
-          'cl2': BaseCollection,
-          'ch1': BaseModel,
-          'ch2': BaseModel
-        }
-      });
-      var model = new TestModel();
-      var children = model.getChildren();
-      expect(children).to.have.length(4);
-      expect(children).to.include.members([model.get('cl1'), model.get('cl2'), model.get('ch1'), model.get('ch2')]);
-    });
-  });
-  describe('getFunctions', function() {
-    it('should be a function', function() {
-      expect(BaseModel.prototype.getFunctions).to.be.a('function');
-      expect(BaseModel.prototype.getFunctions).to.have.length(2);
-    });
-  });
-  describe('getPropertiesArray', function() {
-    it('should be a function', function() {
-      expect(BaseModel.prototype.getPropertiesArray).to.be.a('function');
-      expect(BaseModel.prototype.getPropertiesArray).to.have.length(0);
-    });
-    it('should return an object of property types', function() {
-      var TestModel = BaseModel.extend({
-        defaults: {
-          cl1: [],
-          ch1: {}
-        },
-        derived: {
-          d1: {
-            deps: [],
-            fn: function() {
-              return ['derived'];
-            }
+      it('should return the debugName', function() {
+        var result = BaseModel.prototype.getDebugName.call({
+          cid: 'model1',
+          constructor: {
+            debugName: 'FOOBAR'
           }
-        },
-        relations: {
-          'cl1': BaseCollection,
-          'ch1': BaseModel
-        }
+        });
+
+        expect(result).to.equal('FOOBAR1');
       });
-      var model = new TestModel({
-        prop: 'test'
-      });
-      var serializable = {};
-      var unserializable = {
-        toJSON: function() {
-          throw 'cannot serialize';
-        }
-      };
-      model.set({
-        'serializable': serializable,
-        'unserializable': unserializable
-      });
-
-      spyOn(model.get('ch1'), 'getDebugName').and.returnValue('ModelName');
-      spyOn(model.get('cl1'), 'getDebugName').and.returnValue('CollectionName');
-
-      var properties = model.getPropertiesArray();
-      var expectedRelations = [{
-        key: 'ch1',
-        data: {
-          isRelation: true,
-          name: 'ModelName'
-        }
-      }, {
-        key: 'cl1',
-        data: {
-          isRelation: true,
-          name: 'CollectionName'
-        }
-      }];
-      var expectedDerived = [{
-        key: 'd1',
-        data: {
-          isDerived: model.derived.d1,
-          value: ['derived'],
-          displayValue: '["derived"]'
-        }
-      }];
-
-      var expectedProperties = [{
-        key: 'prop',
-        data: {
-          isRemovable: true,
-          isEditable: true,
-          isEditing: false,
-          value: 'test',
-          displayValue: '"test"'
-        }
-      }, {
-        key: 'serializable',
-        data: {
-          isRemovable: true,
-          isEditable: true,
-          isEditing: false,
-          value: serializable,
-          displayValue: '{}'
-        }
-      }, {
-        key: 'unserializable',
-        data: {
-          isRemovable: true,
-          isEditable: false,
-          isEditing: false,
-          value: unserializable,
-          displayValue: '[object Object]'
-        }
-      }];
-
-      expect(properties.normal).to.eql(expectedProperties);
-      expect(properties.relational).to.eql(expectedRelations);
-      expect(properties.derived).to.eql(expectedDerived);
     });
-  });
-  /* develblock:end */
+    describe('getChildren', function() {
+      it('should be a function', function() {
+        expect(BaseModel.prototype.getChildren).to.be.a('function');
+        expect(BaseModel.prototype.getChildren).to.have.length(0);
+      });
+      it('should return the model\'s children and collections', function() {
+        var TestModel = BaseModel.extend({
+          defaults: {
+            cl1: [],
+            cl2: [],
+            ch1: {},
+            ch2: {}
+          },
+          relations: {
+            'cl1': BaseCollection,
+            'cl2': BaseCollection,
+            'ch1': BaseModel,
+            'ch2': BaseModel
+          }
+        });
+        var model = new TestModel();
+        var children = model.getChildren();
+        expect(children).to.have.length(4);
+        expect(children).to.include.members([model.get('cl1'), model.get('cl2'), model.get('ch1'), model.get('ch2')]);
+      });
+    });
+    describe('getFunctions', function() {
+      it('should be a function', function() {
+        expect(BaseModel.prototype.getFunctions).to.be.a('function');
+        expect(BaseModel.prototype.getFunctions).to.have.length(2);
+      });
+    });
+    describe('getPropertiesArray', function() {
+      it('should be a function', function() {
+        expect(BaseModel.prototype.getPropertiesArray).to.be.a('function');
+        expect(BaseModel.prototype.getPropertiesArray).to.have.length(0);
+      });
+      it('should return an object of property types', function() {
+        var TestModel = BaseModel.extend({
+          defaults: {
+            cl1: [],
+            ch1: {}
+          },
+          derived: {
+            d1: {
+              deps: [],
+              fn: function() {
+                return ['derived'];
+              }
+            }
+          },
+          relations: {
+            'cl1': BaseCollection,
+            'ch1': BaseModel
+          }
+        });
+        var model = new TestModel({
+          prop: 'test'
+        });
+        var serializable = {};
+        var unserializable = {
+          toJSON: function() {
+            throw 'cannot serialize';
+          }
+        };
+        model.set({
+          'serializable': serializable,
+          'unserializable': unserializable
+        });
+
+        spyOn(model.get('ch1'), 'getDebugName').and.returnValue('ModelName');
+        spyOn(model.get('cl1'), 'getDebugName').and.returnValue('CollectionName');
+
+        var properties = model.getPropertiesArray();
+        var expectedRelations = [{
+          key: 'ch1',
+          data: {
+            isRelation: true,
+            name: 'ModelName'
+          }
+        }, {
+          key: 'cl1',
+          data: {
+            isRelation: true,
+            name: 'CollectionName'
+          }
+        }];
+        var expectedDerived = [{
+          key: 'd1',
+          data: {
+            isDerived: model.derived.d1,
+            value: ['derived'],
+            displayValue: '["derived"]'
+          }
+        }];
+
+        var expectedProperties = [{
+          key: 'prop',
+          data: {
+            isRemovable: true,
+            isEditable: true,
+            isEditing: false,
+            value: 'test',
+            displayValue: '"test"'
+          }
+        }, {
+          key: 'serializable',
+          data: {
+            isRemovable: true,
+            isEditable: true,
+            isEditing: false,
+            value: serializable,
+            displayValue: '{}'
+          }
+        }, {
+          key: 'unserializable',
+          data: {
+            isRemovable: true,
+            isEditable: false,
+            isEditing: false,
+            value: unserializable,
+            displayValue: '[object Object]'
+          }
+        }];
+
+        expect(properties.normal).to.eql(expectedProperties);
+        expect(properties.relational).to.eql(expectedRelations);
+        expect(properties.derived).to.eql(expectedDerived);
+      });
+    });
+  }
 });
 
 /**
@@ -887,9 +887,9 @@ describe('base_model.js backbone functionality', function() {
     model = new BaseModel();
     // In debugger the default cidPrefix is overrridden
     var prefix = 'c';
-    /* develblock:start */
-    prefix = BaseModel.prototype.cidPrefix;
-    /* develblock:end */
+    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+      prefix = BaseModel.prototype.cidPrefix;
+    }
     equal(model.cid.substr(0, prefix.length), prefix);
     var Collection = Backbone.Collection.extend({
       model: Model
@@ -2187,219 +2187,219 @@ describe('base_model.js propTypes functionality', function() {
   afterEach(function() {
     BookModel = null;
   });
-  /* develblock:start */
-  it('should throw error when PropTypes is not an object', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        foo: 100,
-        bar: '100',
-        baz: function() {}
-      }
-    });
-    expect(function() {
-      return new BookModel({
-        author: 'Eric Maria Remarque'
+  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    it('should throw error when PropTypes is not an object', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          foo: 100,
+          bar: '100',
+          baz: function() {}
+        }
       });
-    }).throw('PropTypes.foo invalid property descriptor.');
-  });
-  it('should not throw an error on initialization for correct simple propTypes', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        title: {
-          type: 'string',
-          required: true
-        },
-        author: {
-          type: 'string'
-        },
-        pages: {
-          type: 'number'
-        },
-        available: {
-          type: 'boolean',
-          required: true
-        },
-        id: {
-          type: 'number',
-          required: false
-        }
-      }
+      expect(function() {
+        return new BookModel({
+          author: 'Eric Maria Remarque'
+        });
+      }).throw('PropTypes.foo invalid property descriptor.');
     });
-    expect(function() {
-      return new BookModel({
-        title: 'Midsummer Night\'s Dream',
-        author: 'William Shakespeare',
-        pages: 123,
-        available: true
+    it('should not throw an error on initialization for correct simple propTypes', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          title: {
+            type: 'string',
+            required: true
+          },
+          author: {
+            type: 'string'
+          },
+          pages: {
+            type: 'number'
+          },
+          available: {
+            type: 'boolean',
+            required: true
+          },
+          id: {
+            type: 'number',
+            required: false
+          }
+        }
       });
-    }).not.throw();
-  });
-  it('should not throw error when property is not required and not passsed.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: {
-          type: 'number',
-          bar: 'baz',
-          foo: 42
+      expect(function() {
+        return new BookModel({
+          title: 'Midsummer Night\'s Dream',
+          author: 'William Shakespeare',
+          pages: 123,
+          available: true
+        });
+      }).not.throw();
+    });
+    it('should not throw error when property is not required and not passsed.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: {
+            type: 'number',
+            bar: 'baz',
+            foo: 42
+          }
         }
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).not.throw();
-  });
-  it('should throw an error on initialization when setting string to propType number', function() {
-    var attrs = {
-      title: 'Midsummer Night\'s Dream'
-    };
-    BookModel = BaseModel.extend({
-      propTypes: {
-        title: {
-          type: 'number'
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel(attrs);
-    }).throw('PropTypes.title expected property type of `number`, but got `string`.');
-  });
-  it('should throw an error on initialization when setting number to propType string', function() {
-    var attrs = {
-      pages: 100
-    };
-    BookModel = BaseModel.extend({
-      propTypes: {
-        pages: {
-          type: 'string'
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel(attrs);
-    }).throw('PropTypes.pages expected property type of `string`, but got `number`.');
-  });
-  it('should throw an error when declaring an invalid propType', function() {
-    var attrs = {
-      pages: 100
-    };
-    BookModel = BaseModel.extend({
-      propTypes: {
-        pages: {
-          type: 'BloomFilter'
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel(attrs);
-    }).throw('PropTypes.pages unsupported property type of `"BloomFilter"`.');
-  });
-  it('should throw an error when declaring required property in propType but not passing it.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: {
-          type: 'number',
-          required: true
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).throw('PropTypes.year was required, but never specified.');
-  });
-  it('should throw an error when passing not supported type in propType.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: {
-          type: null
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).throw('PropTypes.year unsupported property type of `null`.');
-  });
-  it('should throw an error when passing not supported type in propType.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: {
-          type: []
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).throw('PropTypes.year unsupported property type of `[]`.');
-  });
-  it('should throw an error when passing not supported type in propType.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: {
-          type: {}
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).throw('PropTypes.year unsupported property type of `{}`.');
-  });
-  it('should throw an error when passing not supported type in propType.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: {
-          type: undefined
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).throw('PropTypes.year invalid property descriptor.');
-  });
-  it('should throw an error when passing not supported type in propType.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: {
-          type: ''
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).throw('PropTypes.year unsupported property type of `""`.');
-  });
-  it('should throw an error when passing invalid propTypeDesc in propType.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: 'foo'
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).throw('PropTypes.year invalid property descriptor.');
-  });
-  it('should throw an error when passing invalid propTypeDesc in propType.', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: 'foo'
-      }
-    });
-    expect(function() {
-      return new BookModel({});
-    }).throw('PropTypes.year invalid property descriptor.');
-  });
-  it('should throw error when property is not required but was passsed with wrong type', function() {
-    BookModel = BaseModel.extend({
-      propTypes: {
-        year: {
-          type: null,
-          required: false
-        }
-      }
-    });
-    expect(function() {
-      return new BookModel({
-        year: '42'
       });
-    }).throw('PropTypes.year unsupported property type of `null`.');
-  });
-  /* develblock:end */
+      expect(function() {
+        return new BookModel({});
+      }).not.throw();
+    });
+    it('should throw an error on initialization when setting string to propType number', function() {
+      var attrs = {
+        title: 'Midsummer Night\'s Dream'
+      };
+      BookModel = BaseModel.extend({
+        propTypes: {
+          title: {
+            type: 'number'
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel(attrs);
+      }).throw('PropTypes.title expected property type of `number`, but got `string`.');
+    });
+    it('should throw an error on initialization when setting number to propType string', function() {
+      var attrs = {
+        pages: 100
+      };
+      BookModel = BaseModel.extend({
+        propTypes: {
+          pages: {
+            type: 'string'
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel(attrs);
+      }).throw('PropTypes.pages expected property type of `string`, but got `number`.');
+    });
+    it('should throw an error when declaring an invalid propType', function() {
+      var attrs = {
+        pages: 100
+      };
+      BookModel = BaseModel.extend({
+        propTypes: {
+          pages: {
+            type: 'BloomFilter'
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel(attrs);
+      }).throw('PropTypes.pages unsupported property type of `"BloomFilter"`.');
+    });
+    it('should throw an error when declaring required property in propType but not passing it.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: {
+            type: 'number',
+            required: true
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel({});
+      }).throw('PropTypes.year was required, but never specified.');
+    });
+    it('should throw an error when passing not supported type in propType.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: {
+            type: null
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel({});
+      }).throw('PropTypes.year unsupported property type of `null`.');
+    });
+    it('should throw an error when passing not supported type in propType.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: {
+            type: []
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel({});
+      }).throw('PropTypes.year unsupported property type of `[]`.');
+    });
+    it('should throw an error when passing not supported type in propType.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: {
+            type: {}
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel({});
+      }).throw('PropTypes.year unsupported property type of `{}`.');
+    });
+    it('should throw an error when passing not supported type in propType.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: {
+            type: undefined
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel({});
+      }).throw('PropTypes.year invalid property descriptor.');
+    });
+    it('should throw an error when passing not supported type in propType.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: {
+            type: ''
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel({});
+      }).throw('PropTypes.year unsupported property type of `""`.');
+    });
+    it('should throw an error when passing invalid propTypeDesc in propType.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: 'foo'
+        }
+      });
+      expect(function() {
+        return new BookModel({});
+      }).throw('PropTypes.year invalid property descriptor.');
+    });
+    it('should throw an error when passing invalid propTypeDesc in propType.', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: 'foo'
+        }
+      });
+      expect(function() {
+        return new BookModel({});
+      }).throw('PropTypes.year invalid property descriptor.');
+    });
+    it('should throw error when property is not required but was passsed with wrong type', function() {
+      BookModel = BaseModel.extend({
+        propTypes: {
+          year: {
+            type: null,
+            required: false
+          }
+        }
+      });
+      expect(function() {
+        return new BookModel({
+          year: '42'
+        });
+      }).throw('PropTypes.year unsupported property type of `null`.');
+    });
+  }
 });

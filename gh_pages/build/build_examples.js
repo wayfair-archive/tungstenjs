@@ -58,7 +58,7 @@ module.exports = function(bundleMap) {
     if (!file.exists(webpackConfigPath)) {
       throw 'No webpack.config.js at "' + webpackConfigPath + '"';
     }
-    var webpackConfig = require(webpackConfigPath);
+    var webpackConfig = require(webpackConfigPath)();
     var webpackEntry = path.join(exampleFolder, webpackConfig.entry);
     webpackConfig.entry = path.relative(here, webpackEntry);
     webpackConfig.output.path = file.outputPath(exampleOutputFolder);
