@@ -27,7 +27,7 @@ if (!exampleRoot) {
 var webpackConfig = require(path.join(exampleRoot, './webpack.config.js'));
 
 
-var compiler = webpack(webpackConfig);
+var compiler = webpack(webpackConfig());
 
 var app = express();
 
