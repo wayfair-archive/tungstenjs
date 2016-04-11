@@ -6,9 +6,9 @@ var logger = require('../../src/utils/logger');
 var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize'];
 var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
 
-/* develblock:start */
-modelFunctionsToMap.push('getDebugName');
-/* develblock:end */
+if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  modelFunctionsToMap.push('getDebugName');
+}
 
 /**
  * Similar to BackboneViewWidget, but more simplistic
@@ -24,11 +24,11 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.template = template;
   this.key = key || _.uniqueId('w_component');
   this.model.session = (this.model.session || []).concat(['content', 'yield']);
-  /* develblock:start */
-  this.model._private = {
-    content: true, yield: true
-  };
-  /* develblock:end */
+  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    this.model._private = {
+      content: true, yield: true
+    };
+  }
 
   // Start with generic model functions
   var methodsToExpose = modelFunctionsToMap;
@@ -178,20 +178,20 @@ ComponentWidget.isComponent = function(obj) {
   return false;
 };
 
-/* develblock:start */
+if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
 /**
  * Function to allow the Widget to control how it is viewed on the debug panel
  * ChildViews are displayed as a clickable link
  *
  * @return {string} Debug panel version of this widget
  */
-ComponentWidget.prototype.templateToString = function() {
-  if (!this.view) {
-    return;
-  }
-  var name = this.view.getDebugName();
-  return '<span class="js-view-list-item u-clickable u-underlined" data-id="' + name + '">[' + name + ']</span>';
-};
-/* develblock:end */
+  ComponentWidget.prototype.templateToString = function() {
+    if (!this.view) {
+      return;
+    }
+    var name = this.view.getDebugName();
+    return '<span class="js-view-list-item u-clickable u-underlined" data-id="' + name + '">[' + name + ']</span>';
+  };
+}
 
 module.exports = ComponentWidget;

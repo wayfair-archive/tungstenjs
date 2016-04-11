@@ -387,12 +387,12 @@ function reverseAttributeString(templates, join, forDebugger, context) {
   }
   var output = [];
   var stack;
-  /* develblock:start */
-  if (forDebugger) {
-    var HighlightedHtmlString = require('./stacks/highlighted_html_string');
-    stack = new HighlightedHtmlString();
+  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (forDebugger) {
+      var HighlightedHtmlString = require('./stacks/highlighted_html_string');
+      stack = new HighlightedHtmlString();
+    }
   }
-  /* develblock:end */
   if (!stack) {
     stack = new HtmlString(true);
   }
@@ -409,12 +409,12 @@ function toSource(template, forDebugger) {
     template = template.f;
   }
   var stack;
-  /* develblock:start */
-  if (forDebugger) {
-    var HighlightedHtmlString = require('./stacks/highlighted_html_string');
-    stack = new HighlightedHtmlString();
+  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (forDebugger) {
+      var HighlightedHtmlString = require('./stacks/highlighted_html_string');
+      stack = new HighlightedHtmlString();
+    }
   }
-  /* develblock:end */
   if (!stack) {
     stack = new HtmlString(true);
   }

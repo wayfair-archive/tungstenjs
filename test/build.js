@@ -28,11 +28,12 @@ function getLoader(extension) {
 var debugConfig = webpackHelper.compileSource({
   entry: path.join(__dirname, '/test_target'),
   output: {
-    filename: path.join(__dirname, '/testbuild.debug.js'),
+    path: __dirname,
+    filename: 'testbuild.debug.js',
     libraryTarget: 'commonjs2'
   },
   resolveLoader: {
-    modulesDirectories: [
+    modules: [
       path.join(__dirname, './_loaders')
     ]
   },
@@ -49,11 +50,12 @@ var debugConfig = webpackHelper.compileSource({
 var prodConfig = webpackHelper.compileSource({
   entry: path.join(__dirname, '/test_target'),
   output: {
-    filename: path.join(__dirname, '/testbuild.prod.js'),
+    path: __dirname,
+    filename: 'testbuild.prod.js',
     libraryTarget: 'commonjs2'
   },
   resolveLoader: {
-    modulesDirectories: [
+    modules: [
       path.join(__dirname, './_loaders')
     ]
   },

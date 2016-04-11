@@ -66,32 +66,32 @@ Context.prototype.isModel = function(object) {
   return object && (object.tungstenModel || object.isComponent);
 };
 
-/* develblock:start */
+if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
 /**
  * Debug Helpers for determining context
  */
-var debugHelpers = {
-  context: function() {
-    if (arguments.length) {
-      logger.log('W/CONTEXT:', this, arguments);
-    } else {
-      logger.log('W/CONTEXT:', this);
+  var debugHelpers = {
+    context: function() {
+      if (arguments.length) {
+        logger.log('W/CONTEXT:', this, arguments);
+      } else {
+        logger.log('W/CONTEXT:', this);
+      }
+    },
+    lastModel: function() {
+      logger.log('W/LASTMODEL:', this.lastModel);
+    },
+    lastModelForDebugger: function() {
+      return this.lastModel;
+    },
+    debug: function() {
+      var self = this;
+      for (var i = 0; i < arguments.length; i++) {
+        logger.log('W/DEBUG:', arguments[i], '=>', self.lookup(arguments[i]));
+      }
     }
-  },
-  lastModel: function() {
-    logger.log('W/LASTMODEL:', this.lastModel);
-  },
-  lastModelForDebugger: function() {
-    return this.lastModel;
-  },
-  debug: function() {
-    var self = this;
-    for (var i = 0; i < arguments.length; i++) {
-      logger.log('W/DEBUG:', arguments[i], '=>', self.lookup(arguments[i]));
-    }
-  }
-};
-/* develblock:end */
+  };
+}
 
 /**
  * Creates a new context using the given view with this context
@@ -117,14 +117,14 @@ Context.prototype.lookup = function(name, handleLambda) {
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
-    /* develblock:start */
-    var debugName = name.substr(1).split('/');
-    if (debugName[0] === 'w' && debugHelpers[debugName[1]]) {
-      var fn = debugHelpers[debugName[1]];
-      debugName = debugName.slice(2);
-      return fn.apply(this, debugName);
+    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+      var debugName = name.substr(1).split('/');
+      if (debugName[0] === 'w' && debugHelpers[debugName[1]]) {
+        var fn = debugHelpers[debugName[1]];
+        debugName = debugName.slice(2);
+        return fn.apply(this, debugName);
+      }
     }
-    /* develblock:end */
     return null;
   }
 
@@ -174,12 +174,12 @@ Context.prototype.lookup = function(name, handleLambda) {
           // Check that the found function takes in at least one argument
           // Used to avoid conflicts with computed properties until those can be deprecated
           var arity = value.length;
-          /* develblock:start */
+          if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
           // Trackable functions can be wrapped, so check orignal's arity
-          if (value.original) {
-            arity = value.original.length;
+            if (value.original) {
+              arity = value.original.length;
+            }
           }
-          /* develblock:end */
           if (handleLambda && arity >= 1) {
             handleLambda(value, fnContext);
             return;

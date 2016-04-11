@@ -1,35 +1,11 @@
 /* eslint-env node */
 var path = require('path');
 
-function processArg(arg) {
-  var parts = arg.split('=');
-  var data = {
-    name: parts[0]
-  };
-  if (parts[1]) {
-    data.value = parts[1];
-  }
-  return data;
-}
-
-function processArgs() {
-  var argData = {};
-  var args = process.argv;
-  for (var i = 0; i < args.length; i++) {
-    // Only process flags
-    if (args[i] && args[i].substr(0, 1) === '-') {
-      var arg = processArg(args[i]);
-      argData[arg.name] = arg.value;
-    }
-  }
-  return argData;
-}
-
-module.exports = function (root) {
+module.exports = function (root, options) {
   'use strict';
-  var args = processArgs();
+
   var tungstenPath = '../dist/tungsten.backbone.web.js';
-  if (args.hasOwnProperty('--dev')) {
+  if (options && options.dev) {
     tungstenPath = '../dist/tungsten.backbone.debug.web.js';
   }
 
@@ -51,7 +27,7 @@ module.exports = function (root) {
       }
     },
     resolveLoader: {
-      modulesDirectories: [path.join(root, 'node_modules')]
+      modules: [path.join(root, 'node_modules')]
     },
     module: {
       loaders: [{

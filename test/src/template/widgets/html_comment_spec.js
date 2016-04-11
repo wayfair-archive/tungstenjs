@@ -51,21 +51,21 @@ describe('html_comment.js public API', function() {
         expect(elem.nodeValue).to.equal(oldValue);
       });
     });
-    /* develblock:start */
-    describe('HtmlComment.templateToString', function() {
-      it('should have a templateToString function', function() {
-        expect(comment.templateToString).to.be.a('function');
-        expect(comment.templateToString).to.have.length(1);
-        expect(comment.templateToString).to.equal(HTMLCommentWidget.prototype.templateToString);
-      });
-      it('should be able to create an escaped string', function() {
-        expect(comment.templateToString(true)).to.equal('<span class="TemplateString_comment">&lt;!-- ' + text + ' --&gt;</span>');
-      });
-      it('should be able to create an unescaped string', function() {
-        expect(comment.templateToString(false)).to.equal('<!-- ' + text + ' -->');
+    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+      describe('HtmlComment.templateToString', function() {
+        it('should have a templateToString function', function() {
+          expect(comment.templateToString).to.be.a('function');
+          expect(comment.templateToString).to.have.length(1);
+          expect(comment.templateToString).to.equal(HTMLCommentWidget.prototype.templateToString);
+        });
+        it('should be able to create an escaped string', function() {
+          expect(comment.templateToString(true)).to.equal('<span class="TemplateString_comment">&lt;!-- ' + text + ' --&gt;</span>');
+        });
+        it('should be able to create an unescaped string', function() {
+          expect(comment.templateToString(false)).to.equal('<!-- ' + text + ' -->');
 
+        });
       });
-    });
-    /* develblock:end */
+    }
   });
 });

@@ -49,13 +49,13 @@ function updateTree(container, initialTree, newTree) {
   };
 }
 
-/* develblock:start */
-exports.debug = require('./debug');
+if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  exports.debug = require('./debug');
 // Override toJSON for DOM nodes to prevent circular references in debug mode
-window.Element.prototype.toJSON = function() {
-  return null;
-};
-/* develblock:end */
+  window.Element.prototype.toJSON = function() {
+    return null;
+  };
+}
 
 exports.parseString = function (htmlString) {
   var VdomStack = require('./template/stacks/vdom');
