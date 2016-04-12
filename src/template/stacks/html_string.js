@@ -35,6 +35,11 @@ HtmlStringStack.prototype.processObject = function(obj) {
       if (typeof value === 'boolean') {
         htmlStr += ' ' + name;
       } else if (value != null) {
+        if (typeof value === 'string') {
+          // Virtual-dom or the DOM normally handles escaping attribute values
+          // but that doesn't come into play here, so we need to escape ourselves
+          value = escapeString(value);
+        }
         htmlStr += ' ' + name + '="' + value + '"';
       }
     });
