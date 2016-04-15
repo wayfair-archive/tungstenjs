@@ -27,7 +27,7 @@ module.exports = function(options) {
     plugins: [
       new webpack.DefinePlugin({
         TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version),
-        TUNGSTENJS_DEBUG_MODE: options.dev,
+        TUNGSTENJS_DEBUG_MODE: options.dev || undefined,
         TUNGSTENJS_IS_TEST: options.test
       })
     ],
