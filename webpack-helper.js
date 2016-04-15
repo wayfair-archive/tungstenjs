@@ -60,7 +60,7 @@ module.exports.compileSource = function(config, dev, test) {
   config.plugins.push(new webpack.DefinePlugin({
     TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version),
     TUNGSTENJS_IS_TEST: test,
-    TUNGSTENJS_DEBUG_MODE: dev
+    TUNGSTENJS_DEBUG_MODE: dev || undefined
   }));
 
   // Babel should be run on our code, but not node_modules
