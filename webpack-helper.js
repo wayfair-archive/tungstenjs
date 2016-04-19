@@ -28,7 +28,7 @@ function ensureLoader(loaders, test, loader) {
  * @return {Object}         Updated webpack config object
  */
 module.exports = function(config, dev, test, modulesProp) {
-
+  modulesProp = modulesProp || 'modules';
   config.resolveLoader = config.resolveLoader || {};
   config.resolveLoader[modulesProp] = config.resolveLoader[modulesProp] || [];
 
