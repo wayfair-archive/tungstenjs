@@ -22,14 +22,17 @@ function ensureLoader(loaders, test, loader) {
  * @param  {Object}  config Base webpack config
  * @param  {Boolean} dev    Whether to render in Dev mode (debugger, improved errors, etc)
  * @param  {Boolean} test   Whether to render in Test mode (additional exposed functionality for tests)
+ * @param  {String} modulesProp the webpack config prop for 'modules' (determined
+ *                              by whether to use the webpack 1.x config style)
  *
  * @return {Object}         Updated webpack config object
  */
-module.exports = function(config) {
-  config.resolveLoader = config.resolveLoader || {};
-  config.resolveLoader.modules = config.resolveLoader.modules || [];
+module.exports = function(config, dev, test, modulesProp) {
 
-  config.resolveLoader.modules.push(path.join(__dirname, 'precompile'));
+  config.resolveLoader = config.resolveLoader || {};
+  config.resolveLoader[modulesProp] = config.resolveLoader[modulesProp] || [];
+
+  config.resolveLoader[modulesProp].push(path.join(__dirname, 'precompile'));
 
   config.module = config.module || {};
   config.module.loaders = config.module.loaders || [];
@@ -46,11 +49,15 @@ module.exports = function(config) {
   return config;
 };
 
-module.exports.compileSource = function(config, dev, test) {
-  config = module.exports(config, dev, test);
+module.exports.compileSource = function(config, dev, test, legacyWebpack) {
+  var modulesProp = 'modules';
+  if (legacyWebpack) {
+    modulesProp = 'modulesDirectories';
+  }
+  config = module.exports(config, dev, test, modulesProp);
 
   config.resolveLoader = config.resolveLoader || {};
-  config.resolveLoader.modules.push(path.join(__dirname, 'node_modules'));
+  config.resolveLoader[modulesProp].push(path.join(__dirname, 'node_modules'));
   config.plugins = config.plugins || [];
   if (!dev) {
     config.plugins.push(new webpack.optimize.UglifyJsPlugin({
