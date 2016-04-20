@@ -10,6 +10,11 @@ var isWidget = virtualDomImplementation.isWidget;
 var isVNode = virtualDomImplementation.isVNode;
 var compiler = require('./compiler');
 
+var widgets = {};
+function registerWidget(name, constructor) {
+  widgets[name] = constructor;
+}
+
 var htmlParser = require('./html_parser');
 
 var whitespaceOnlyRegex = /^\s*$/;
@@ -342,6 +347,17 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
     }
   }
 
+  // Occurs after child recursion to ensure any childViews are properly bound
+  if (template.t === types.SECTION && widgets[template.r] && typeof widgets[template.r] === 'function' && widgets.hasOwnProperty(template.r)) {
+    var Widget = widgets[template.r];
+    template = createWidget(null, {
+        t: types.ELEMENT,
+        e: Widget.tagName,
+        f: template.f
+      }, partials);
+    template.constructor = Widget;
+  }
+
   return template;
 };
 
@@ -455,7 +471,7 @@ function _toSource(stack, template, forDebugger, context) {
       _toSource(stack, template[i], forDebugger, context);
     }
   } else if (template.type === 'WidgetConstructor') {
-    if (forDebugger) {
+    if (forDebugger && template.childView) {
       var debugName = template.childView.debugName || template.childView.prototype.debugName;
       debugName = '[' + debugName + ']';
       if (stack.createChildView) {
@@ -543,5 +559,6 @@ module.exports = {
   render: render,
   attach: attach,
   wrap: wrap,
-  toSource: toSource
+  toSource: toSource,
+  registerWidget: registerWidget
 };

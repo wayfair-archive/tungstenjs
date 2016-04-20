@@ -50,10 +50,18 @@ Context.ComponentWidget = function() {
   throw 'ComponentWidget not set';
 };
 
+var lambdas = {};
+Context.registerLambda = function(name, fn) {
+  lambdas[name] = fn;
+};
+
 /**
  * Internal lookup function to intercept interesting lookups
  */
 Context.prototype._lookupValue = function(view, name) {
+  if (lambdas[name] && typeof lambdas[name] === 'function' && lambdas.hasOwnProperty(name)) {
+    return lambdas[name];
+  }
   return this.lookupValue(view, name);
 };
 

@@ -31,6 +31,8 @@ Template.prototype.setPartials = function(partials) {
   this.partials = partials;
 };
 
+Template.registerWidget = templateAdaptor.registerWidget;
+
 /**
  * Registers a template as a named partial
  * @param  {String} partialName Name to register the partial as
