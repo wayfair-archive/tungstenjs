@@ -8,6 +8,18 @@ Foo
 {{/fancy}}
 Bar
 
+{{#portal_test}}
+Aperture
+<div class="portal blue-portal">
+  {{#_portal}}
+  <div class="portal orange-portal">
+    {{portal}}
+  </div>
+  {{/_portal}}
+</div>
+{{/portal_test}}
+
+
 <h4>Function</h4>
 <select>
   {{#options}}
