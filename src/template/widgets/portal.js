@@ -14,28 +14,42 @@ var _ = require('underscore');
 var tungsten = require('tungstenjs')._core;
 
 /**
- * VTree representing the empty initial state used for init
- * @type {Object}
+ * The tagName it should be wrapped by
+ * @type {String}
  */
-var EMPTY_TREE = tungsten.parseString('<div></div>');
+var tagName = 'div';
 
 /**
  * Wrapper Widget for child views
  * @param {String} text    Text of comment
  */
-function PortalWidget(template, view, context) {
+function PortalWidget(template, view, context, parentView) {
   this.template = template;
+  this.template.view = parentView;
   this.context = context;
+  // In case we need DOM events to bubble out of the portal
+  // Change eventCore's bubbling to allow for a custom function/property
+  // aside from parentNode that can link this.el to this.placeholder
   this.placeholder = null;
   this.el = null;
   this.vtree = null;
 }
 
 /**
- * Exports the tagName it should be wrapped by
- * @type {String}
+ * Maps the Section tag into an element wrapper
+ * @param  {Object} template Original template rooted at section
+ * @return {Object}          Template for widget
  */
-PortalWidget.tagName = 'div';
+PortalWidget.getTemplate = function(template) {
+  return {
+    t: 7,
+    e: tagName,
+    f: template.f,
+    a: {
+      'class': 'portal_output'
+    }
+  };
+};
 
 /**
  * Type indicator for Virtual-Dom
@@ -50,7 +64,8 @@ PortalWidget.prototype.type = 'Widget';
 PortalWidget.prototype.init = function init() {
   this.id = _.uniqueId('w_portal');
   this.vtree = this.template.toVdom(this.context);
-  var result = tungsten.updateTree(document.createElement(PortalWidget.tagName), EMPTY_TREE, this.vtree);
+  var emptyTree = tungsten.parseString('<' + tagName + '></' + tagName + '>');
+  var result = tungsten.updateTree(document.createElement(tagName), emptyTree, this.vtree);
   this.el = result.elem;
   this.el.id = this.id;
   document.body.appendChild(this.el);
@@ -68,7 +83,7 @@ PortalWidget.prototype.init = function init() {
  * @param  {PortalWidget} prev Widget instance from old VTree
  * @param  {Element}      elem DOM node to act upon
  */
-PortalWidget.prototype.update = function update(prev, elem) {
+PortalWidget.prototype.update = function update(prev) {
   this.id = prev.id;
   this.el = prev.el;
   this.placeholder = prev.placeholder;
@@ -94,6 +109,36 @@ PortalWidget.prototype.attach = function attach(elem) {
   this.id = elem.getAttribute('data-id');
   this.el = document.getElementById(this.id);
   this.vtree = this.template.toVdom(this.context);
+};
+/**
+ * Function to allow the Widget to control how it is viewed on the debug panel
+ * ChildViews are displayed as a clickable link
+ *
+ * @param {Function} recurse Function to render child nodes
+ *
+ * @return {string} Debug panel version of this widget
+ */
+PortalWidget.prototype.templateToString = function(recurse) {
+  return '&lt;<span class="TemplateString_tag">Portal</span>&gt;' +
+    recurse(this.vtree, this.el) +
+  '&lt;/<span class="TemplateString_tag">Portal</span>&gt;';
+};
+
+/**
+ * Function to allow the Widget to control how its DOM/VDOM diff is computed
+ *
+ * @param  {Element}  elem    DOM node being diffed
+ * @param  {Function} recurse Function to compute child diff
+ *
+ * @return {String}
+ */
+PortalWidget.prototype.diff = function(elem, recurse) {
+  var templateStr = this.templateToString(recurse);
+  if (elem === this.placeholder) {
+    return templateStr;
+  } else {
+    return '<del>' + templateStr + '</del>' + recurse(null, elem);
+  }
 };
 
 module.exports = PortalWidget;

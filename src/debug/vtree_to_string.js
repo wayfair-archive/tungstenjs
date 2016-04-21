@@ -52,7 +52,7 @@ function toString(vtree, escaped) {
     }
   } else if (virtualDomImplementation.isWidget(vtree)) {
     if (typeof vtree.templateToString === 'function') {
-      output += vtree.templateToString(escaped);
+      output += vtree.templateToString(toString);
     } else {
       logger.warn('Widget type: ' + vtree.constructor.name + ' has no templateToString function, falling back to DOM');
       var elem = vdom.create(virtualHyperscript('div', {}, vtree));

@@ -163,7 +163,7 @@ function recursiveDiff(vtree, elem) {
     } else if (vtree && vtree.view) {
       widgetName = vtree.view.getDebugName();
       if (typeof vtree.templateToString === 'function') {
-        widgetName = vtree.templateToString(true);
+        widgetName = vtree.templateToString(recursiveDiff);
       }
       if (vtree.view.el !== elem) {
         // If the view at this position isn't bound to elem, something has gone terribly wrong
@@ -171,6 +171,8 @@ function recursiveDiff(vtree, elem) {
       } else {
         output += widgetName;
       }
+    } else if (vtree && typeof vtree.diff === 'function') {
+      output += vtree.diff(elem, recursiveDiff);
     } else {
       output += '<del>[Uninitialized child view]</del>';
       output += '<ins>' + utils.elementToString(elem, chars) + '</ins>';

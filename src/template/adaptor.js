@@ -10,8 +10,21 @@ var isWidget = virtualDomImplementation.isWidget;
 var isVNode = virtualDomImplementation.isVNode;
 var compiler = require('./compiler');
 
+/** @type {Object} Container for registered widget functions */
 var widgets = {};
+
+/**
+ * Public function to register Widgets for the template
+ * These are similiar to child views, but don't have their own views or models
+ * These are transformed on the template during the attach phase
+ *
+ * @param  {String}   name        Mustache key to intercept
+ * @param  {Function} constructor Widget constructor to inject
+ */
 function registerWidget(name, constructor) {
+  if (typeof name !== 'string' || typeof constructor !== 'function' || typeof constructor.getTemplate !== 'function') {
+    throw 'Invalid arguments passed for registerWidget';
+  }
   widgets[name] = constructor;
 }
 
@@ -350,11 +363,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
   // Occurs after child recursion to ensure any childViews are properly bound
   if (template.t === types.SECTION && widgets[template.r] && typeof widgets[template.r] === 'function' && widgets.hasOwnProperty(template.r)) {
     var Widget = widgets[template.r];
-    template = createWidget(null, {
-        t: types.ELEMENT,
-        e: Widget.tagName,
-        f: template.f
-      }, partials);
+    template = createWidget(null, Widget.getTemplate(template), partials);
     template.constructor = Widget;
   }
 

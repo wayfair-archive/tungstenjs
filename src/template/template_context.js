@@ -50,8 +50,21 @@ Context.ComponentWidget = function() {
   throw 'ComponentWidget not set';
 };
 
+/** @type {Object} Container for registered lambda functions */
 var lambdas = {};
+
+/**
+ * Public function to register lambdas without overriding lookupValue
+ * Allows for global lambdas to be caught in first lookup rather than
+ * going upstream until hitting the top level scope
+ *
+ * @param  {String}   name Mustache key to intercept
+ * @param  {Function} fn   Lambda function to run
+ */
 Context.registerLambda = function(name, fn) {
+  if (typeof name !== 'string' || typeof fn !== 'function') {
+    throw 'Invalid arguments passed for registerLambda';
+  }
   lambdas[name] = fn;
 };
 
