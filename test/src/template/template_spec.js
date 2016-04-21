@@ -32,6 +32,7 @@
 
 var vdomToDom = require('../../../src/tungsten').toDOM;
 var Context = require('../../../src/template/template_context');
+var Template = require('../../../src/template/template');
 var compiler = require('../../../precompile/tungsten_template/inline');
 var types = require('../../../src/template/types');
 
@@ -146,10 +147,10 @@ toHtmlViaString.compile = compileOnly;
 toHtmlViaDom.compile = compileOnly;
 toHtmlViaVdom.compile = compileOnly;
 
-var specs = require('./get_template_spec_for_renderer');
-specs(toHtmlViaString);
-specs(toHtmlViaDom);
-specs(toHtmlViaVdom);
+// var specs = require('./get_template_spec_for_renderer');
+// specs(toHtmlViaString);
+// specs(toHtmlViaDom);
+// specs(toHtmlViaVdom);
 
 describe('html comments', function() {
   var HtmlCommentWidget = require('../../../src/template/widgets/html_comment');
@@ -245,5 +246,49 @@ describe('attachView', function() {
     expect(output4.templateObj[0].f[0][0].f[0].type).to.equal('WidgetConstructor');
     expect(template4.templateObj[0].f[0].t).to.equal(types.PARTIAL);
     expect(template4Partial.templateObj[0].f[0].t).to.equal(types.ELEMENT);
+  });
+});
+describe('registerWidget', function() {
+  var testWidget, noop;
+  beforeEach(function() {
+    noop = function() {};
+    testWidget = function() {};
+    testWidget.getTemplate = noop;
+    testWidget.prototype.type = 'Widget';
+  });
+  afterEach(function() {
+    testWidget = noop = undefined;
+  });
+  it('should be a function', function() {
+    expect(Template.registerWidget).to.be.a('function');
+    expect(Template.registerWidget).to.have.length(2);
+  });
+  it('validates its inputs', function() {
+    function invalidName() {
+      // First parameter must be a string
+      Template.registerWidget(5, function() {});
+    }
+    function invalidFunction1() {
+      // Second parameter must be a function
+      Template.registerWidget('baz', 'bar');
+    }
+    function invalidFunction2() {
+      // Second parameter must have a getTemplate property
+      Template.registerWidget('baz', function() {});
+    }
+    function invalidFunction3() {
+      // Second parameter must have a type property on its prototype
+      var badWidget = function() {};
+      badWidget.getTemplate = noop;
+      Template.registerWidget('baz', badWidget);
+    }
+    function validFunction() {
+      Template.registerWidget('baz', testWidget);
+    }
+    expect(invalidName).to.throw();
+    expect(invalidFunction1).to.throw();
+    expect(invalidFunction2).to.throw();
+    expect(invalidFunction3).to.throw();
+    expect(validFunction).not.to.throw();
   });
 });

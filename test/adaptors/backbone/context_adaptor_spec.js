@@ -64,4 +64,53 @@ describe('context_adaptor.js public api', function() {
       expect(callLookup(collection, 'baz')).to.be.null;
     });
   });
+  describe('registerLambda', function() {
+    it('should be a function', function() {
+      expect(Context.registerLambda).to.be.a('function');
+      expect(Context.registerLambda).to.have.length(2);
+    });
+    it('validates its inputs', function() {
+      function invalidName() {
+        Context.registerLambda(5, function(text) {
+          text += 'foo';
+        });
+      }
+      function invalidFunction1() {
+        Context.registerLambda('baz', 'bar');
+      }
+      function invalidFunction2() {
+        Context.registerLambda('baz', function() {});
+      }
+      function validFunction() {
+        Context.registerLambda('baz', function(text) {
+          return text + '';
+        });
+      }
+      expect(invalidName).to.throw();
+      expect(invalidFunction1).to.throw();
+      expect(invalidFunction2).to.throw();
+      expect(validFunction).not.to.throw();
+    });
+    it('can registerLambdas', function() {
+      var ctx = new Context({});
+      var actual = null;
+      ctx.lookup('foo', function(value) {
+        actual = value;
+      });
+      expect(actual).to.be.null;
+      // At least one argument must be set to be a lambda vs computed property
+      var fooFunction = function(text) {
+        // using text to avoid sniffs
+        text += 'foo';
+      };
+      Context.registerLambda('foo', fooFunction);
+      // Creating a new context to avoid cache
+      ctx = new Context({});
+      actual = null;
+      ctx.lookup('foo', function(value) {
+        actual = value;
+      });
+      expect(actual).to.equal(fooFunction);
+    });
+  });
 });
