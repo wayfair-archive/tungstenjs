@@ -5,12 +5,6 @@ var TungstenBackboneBase = require('tungstenjs');
 var BaseView = TungstenBackboneBase.View;
 var BaseModel = TungstenBackboneBase.Model;
 
-
-
-var PortalWidget = require('../../../src/template/widgets/portal');
-TungstenBackboneBase.Template.registerWidget('_portal', PortalWidget);
-
-
 var AppModel = BaseModel.extend({
   relations: {
     fancy: BorderedComponent
@@ -61,8 +55,6 @@ var data = {
   fancy: {
     prop: 'Component'
   },
-  portal_test: true,
-  portal: 'Science',
   selected_value: options[1].value,
   options: options,
   selected: function(template, render) {
