@@ -1,0 +1,26 @@
+<h4>Modal Example</h4>
+
+<div class="optionWrapper">
+  {{#options}}
+    {{> _option }}
+  {{/options}}
+
+  {{#modal_without_portal}}
+    <div class="optionWrapper">
+      {{#options}}
+        {{> _option }}
+      {{/options}}
+    </div>
+  {{/modal_without_portal}}
+
+  {{#modal}}
+    <div class="optionWrapper">
+      {{#options}}
+        {{> _option }}
+      {{/options}}
+    </div>
+  {{/modal}}
+</div>
+
+<button class="js-show-modal">Show Modal With Portal</button>
+<button class="js-show-modal-without-portal">Show Modal Without Portal</button>

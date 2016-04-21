@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tungsten.js + Portal Widget for Modals</title>
+  <style>
+    .modalOverlay {position: absolute;top: 0;bottom: 0;left: 0;right: 0;background: rgba(170,170,170,0.6)}
+    .modal {position:absolute;top:50%;left:50%;transform:translate(-50%, -50%); border: 1px solid #000; background: #fff; padding: 25px;}
+    .modalClose {border: 0px; padding: 5px; height: 30px; width: 30px; border-radius: 30px; position: absolute; top: -15px; right: -15px; background-color: purple; color: #fff; cursor: pointer;}
+    .optionWrapper {position:relative;width:100%;height:400px}
+    .modal .optionWrapper {width:400px}
+    .option {position: absolute;}
+    .modal .option {color:purple;}
+  </style>
+</head>
+<body>
+<div id="appwrapper"></div>
+<script src="js/app.min.js"></script>
+</body>
+</html>
