@@ -22,7 +22,10 @@ var widgets = {};
  * @param  {Function} constructor Widget constructor to inject
  */
 function registerWidget(name, constructor) {
-  if (typeof name !== 'string' || typeof constructor !== 'function' || typeof constructor.getTemplate !== 'function') {
+  if (typeof name !== 'string' ||
+    typeof constructor !== 'function' ||
+    typeof constructor.getTemplate !== 'function' ||
+    constructor.prototype.type !== 'Widget') {
     throw 'Invalid arguments passed for registerWidget';
   }
   widgets[name] = constructor;

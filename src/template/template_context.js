@@ -62,7 +62,7 @@ var lambdas = {};
  * @param  {Function} fn   Lambda function to run
  */
 Context.registerLambda = function(name, fn) {
-  if (typeof name !== 'string' || typeof fn !== 'function') {
+  if (typeof name !== 'string' || typeof fn !== 'function' || fn.length < 1) {
     throw 'Invalid arguments passed for registerLambda';
   }
   lambdas[name] = fn;
