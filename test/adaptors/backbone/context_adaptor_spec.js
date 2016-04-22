@@ -76,13 +76,13 @@ describe('context_adaptor.js public api', function() {
         });
       }
       function invalidFunction1() {
-        Context.registerLambda('baz', 'bar');
+        Context.registerLambda('__baz__', 'bar');
       }
       function invalidFunction2() {
-        Context.registerLambda('baz', function() {});
+        Context.registerLambda('__baz__', function() {});
       }
       function validFunction() {
-        Context.registerLambda('baz', function(text) {
+        Context.registerLambda('__baz__', function(text) {
           return text + '';
         });
       }
@@ -94,20 +94,20 @@ describe('context_adaptor.js public api', function() {
     it('can registerLambdas', function() {
       var ctx = new Context({});
       var actual = null;
-      ctx.lookup('foo', function(value) {
+      ctx.lookup('__foo__', function(value) {
         actual = value;
       });
       expect(actual).to.be.null;
       // At least one argument must be set to be a lambda vs computed property
       var fooFunction = function(text) {
         // using text to avoid sniffs
-        text += 'foo';
+        text += '__foo__';
       };
-      Context.registerLambda('foo', fooFunction);
+      Context.registerLambda('__foo__', fooFunction);
       // Creating a new context to avoid cache
       ctx = new Context({});
       actual = null;
-      ctx.lookup('foo', function(value) {
+      ctx.lookup('__foo__', function(value) {
         actual = value;
       });
       expect(actual).to.equal(fooFunction);
