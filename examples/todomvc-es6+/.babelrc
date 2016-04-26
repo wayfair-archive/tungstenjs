@@ -1,4 +1,4 @@
 {
-  "presets": ["es2015", "stage-1"],
+  "presets": ["es2015-webpack", "stage-1"],
   "plugins": ["transform-decorators-legacy", "syntax-flow", "transform-flow-strip-types"]
 }

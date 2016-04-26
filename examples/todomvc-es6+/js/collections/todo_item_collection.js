@@ -5,7 +5,7 @@
 
 import { TodoItemModel } from '../models/todo_item_model.js';
 import { Collection } from 'tungstenjs';
-import { model } from '../decorators.js';
+import { model, debugName } from '../decorators.js';
 
 function itemIsHidden(item, filter) {
   if (filter === 'active') {
@@ -16,6 +16,7 @@ function itemIsHidden(item, filter) {
   return false;
 }
 
+@debugName('TodoItemCollection')
 @model(TodoItemModel)
 export class TodoItemCollection extends Collection {
   filterItems(filterBy) {

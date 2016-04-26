@@ -15,7 +15,7 @@ var AppView = View.extend({
     'js-todo-item': TodoItemView
   },
   events: {
-    'click .js-toggle-all': 'handleClickToggleAll',
+    'change .js-toggle-all': 'handleChangeToggleAll',
     'click .js-clear-completed': 'handleClickClearCompleted'
   },
   postInitialize: function() {
@@ -27,7 +27,7 @@ var AppView = View.extend({
     _.invoke(this.model.get('todoItems').where({completed: true}), 'destroy');
     return false;
   },
-  handleClickToggleAll: function(e) {
+  handleChangeToggleAll: function(e) {
     var completed = e.currentTarget.checked;
     this.model.get('todoItems').each(function(item) {
       item.set('completed', completed);

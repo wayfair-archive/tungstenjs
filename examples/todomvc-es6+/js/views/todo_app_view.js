@@ -6,9 +6,10 @@
 import { View } from 'tungstenjs';
 import { NewItemView } from './todo_new_item_view';
 import { TodoItemView } from './todo_item_view';
-import {childViews, on} from '../decorators';
+import {childViews, on, debugName} from '../decorators';
 import { _ } from 'tungstenjs';
 
+@debugName('TodoAppView')
 @childViews({
   'js-new-todo': NewItemView,
   'js-todo-item': TodoItemView

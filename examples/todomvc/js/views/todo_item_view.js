@@ -3,7 +3,6 @@
 */
 'use strict';
 
-
 var TungstenBackboneBase = require('tungstenjs');
 var View = TungstenBackboneBase.View;
 var ENTER_KEY = 13;
@@ -11,7 +10,7 @@ var ESC_KEY = 27;
 var TodoItemView = View.extend({
   events: {
     'blur .js-todo-edit': 'handleBlurTodoEdit',
-    'click .js-toggle': 'handleClickToggle',
+    'change .js-toggle': 'handleChangeToggle',
     'click .js-destroy': 'handleClickDestroy',
     'dblclick .js-todo-title': 'handleDblClickTodoTitle',
     'keydown .js-todo-edit': 'handleKeyDownTodoEdit',
@@ -26,8 +25,8 @@ var TodoItemView = View.extend({
   handleClickDestroy: function() {
     this.model.destroy();
   },
-  handleClickToggle: function() {
-    this.model.toggle();
+  handleChangeToggle: function() {
+    this.model.set('completed', !this.model.get('completed'));
   },
   handleDblClickTodoTitle: function(e) {
     this.model.set('editing', true);

@@ -14,7 +14,7 @@ function itemIsHidden(item, filter) {
 
 var Model = require('../models/todo_item_model.js');
 var Collection = require('tungstenjs').Collection;
-var ItemCollection = Collection.extend({
+var TodoItemCollection = Collection.extend({
   model: Model,
   filterItems: function(filterBy) {
     for (var i = this.length; i--;) {
@@ -22,5 +22,5 @@ var ItemCollection = Collection.extend({
       model.set('hidden', itemIsHidden(model, filterBy));
     }
   }
-});
-module.exports = ItemCollection;
+}, {debugName: 'TodoItemCollection'});
+module.exports = TodoItemCollection;
