@@ -1,0 +1,11 @@
+{
+  "name": "tungstenjs-modal-example",
+  "version": "0.2.0",
+  "private": true,
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node ../../node_modules/webpack/bin/webpack.js -d",
+    "start": "node ../examples_server.js --example=\"modal\""
+  }
+}

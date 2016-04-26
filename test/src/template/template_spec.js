@@ -32,6 +32,7 @@
 
 var vdomToDom = require('../../../src/tungsten').toDOM;
 var Context = require('../../../src/template/template_context');
+var Template = require('../../../src/template/template');
 var compiler = require('../../../precompile/tungsten_template/inline');
 var types = require('../../../src/template/types');
 
@@ -245,5 +246,70 @@ describe('attachView', function() {
     expect(output4.templateObj[0].f[0][0].f[0].type).to.equal('WidgetConstructor');
     expect(template4.templateObj[0].f[0].t).to.equal(types.PARTIAL);
     expect(template4Partial.templateObj[0].f[0].t).to.equal(types.ELEMENT);
+  });
+});
+describe('registerWidget', function() {
+  var testWidget, noop;
+  beforeEach(function() {
+    noop = function() {};
+    testWidget = function() {};
+    testWidget.getTemplate = function(t) {
+      return t.f;
+    };
+    testWidget.prototype.type = 'Widget';
+  });
+  afterEach(function() {
+    testWidget = noop = undefined;
+  });
+  it('should be a function', function() {
+    expect(Template.registerWidget).to.be.a('function');
+    expect(Template.registerWidget).to.have.length(2);
+  });
+  it('validates its inputs', function() {
+    function invalidName() {
+      // First parameter must be a string
+      Template.registerWidget(5, function() {});
+    }
+    function invalidFunction1() {
+      // Second parameter must be a function
+      Template.registerWidget('__baz__', 'bar');
+    }
+    function invalidFunction2() {
+      // Second parameter must have a getTemplate property
+      Template.registerWidget('__baz__', function() {});
+    }
+    function invalidFunction3() {
+      // Second parameter must have a type property on its prototype
+      var badWidget = function() {};
+      badWidget.getTemplate = noop;
+      Template.registerWidget('__baz__', badWidget);
+    }
+    function validFunction() {
+      Template.registerWidget('__baz__', testWidget);
+    }
+    expect(invalidName).to.throw();
+    expect(invalidFunction1).to.throw();
+    expect(invalidFunction2).to.throw();
+    expect(invalidFunction3).to.throw();
+    expect(validFunction).not.to.throw();
+  });
+  it('attaches to a template', function() {
+    var templateStr = '{{#__foo__}}test{{/__foo__}}';
+    var template = getTemplate(templateStr);
+    var view = {el: false};
+    var fakeWidgetConstructor = function() {
+      return {};
+    };
+    var output = template.attachView(view, fakeWidgetConstructor);
+    expect(output.templateObj[0].t).to.equal(types.SECTION);
+
+    Template.registerWidget('__foo__', testWidget);
+    var widgetOutput = template.attachView(view, fakeWidgetConstructor);
+    expect(widgetOutput.templateObj[0].t).not.to.equal(types.SECTION);
+    expect(widgetOutput.templateObj[0].type).to.equal('WidgetConstructor');
+    expect(widgetOutput.templateObj[0].constructor).to.equal(testWidget);
+    expect(widgetOutput.templateObj[0].template).to.be.instanceof(Template);
+    expect(widgetOutput.templateObj[0].template.templateObj).to.deep.equal(output.templateObj[0].f);
+
   });
 });

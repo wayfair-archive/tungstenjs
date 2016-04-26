@@ -50,10 +50,31 @@ Context.ComponentWidget = function() {
   throw 'ComponentWidget not set';
 };
 
+/** @type {Object} Container for registered lambda functions */
+var lambdas = {};
+
+/**
+ * Public function to register lambdas without overriding lookupValue
+ * Allows for global lambdas to be caught in first lookup rather than
+ * going upstream until hitting the top level scope
+ *
+ * @param  {String}   name Mustache key to intercept
+ * @param  {Function} fn   Lambda function to run
+ */
+Context.registerLambda = function(name, fn) {
+  if (typeof name !== 'string' || typeof fn !== 'function' || fn.length < 1) {
+    throw 'Invalid arguments passed for registerLambda';
+  }
+  lambdas[name] = fn;
+};
+
 /**
  * Internal lookup function to intercept interesting lookups
  */
 Context.prototype._lookupValue = function(view, name) {
+  if (lambdas[name] && typeof lambdas[name] === 'function' && lambdas.hasOwnProperty(name)) {
+    return lambdas[name];
+  }
   return this.lookupValue(view, name);
 };
 
