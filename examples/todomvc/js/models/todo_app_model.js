@@ -73,5 +73,5 @@ var AppModel = Model.extend({
       }
     }
   }
-});
+}, {debugName: 'TodoAppModel'});
 module.exports = AppModel;

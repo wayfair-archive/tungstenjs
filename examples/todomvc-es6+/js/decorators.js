@@ -34,6 +34,12 @@ export function defaults(value) {
   }
 }
 
+export function debugName(value) {
+  return function decorator(target) {
+    target.debugName = value;
+  }
+}
+
 // Modified from https://gist.github.com/StevenLangbroek/6bd28d8201839434b843
 export function on(eventName){
   return function(target, name, descriptor){

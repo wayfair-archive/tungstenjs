@@ -4,6 +4,7 @@
 'use strict';
 
 import { Collection } from 'tungstenjs';
+import { debugName, model } from '../decorators';
 
 function itemIsHidden(item, filter) {
   if (filter === 'active') {
@@ -14,6 +15,7 @@ function itemIsHidden(item, filter) {
   return false;
 }
 
+@debugName('TodoFilterCollection')
 export class TodoFilterCollection extends Collection {
   selectFilter(filterBy) {
     for (var i = this.length; i--;) {

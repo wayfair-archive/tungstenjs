@@ -5,9 +5,10 @@
 
 
 import { View } from 'tungstenjs';
-import { on } from '../decorators';
+import { on, debugName } from '../decorators';
 
 const ENTER_KEY = 13;
+@debugName('TodoNewItemView')
 export class NewItemView extends View {
   @on('keyup')
   handleKeyup(e) {

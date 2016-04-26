@@ -5,10 +5,11 @@
 
 
 import { View } from 'tungstenjs';
-import { on } from '../decorators';
+import { on, debugName } from '../decorators';
 
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
+@debugName('TodoItemView')
 export class TodoItemView extends View {
   @on('blur .js-todo-edit')
   handleBlurTodoEdit(e) {
@@ -23,7 +24,7 @@ export class TodoItemView extends View {
   }
   @on('click .js-toggle')
   handleClickToggle() {
-    this.model.toggle();
+    this.model.set('completed', !this.model.get('completed'));
   }
   @on('dblclick .js-todo-title')
   handleDblClickTodoTitle(e) {

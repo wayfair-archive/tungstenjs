@@ -6,8 +6,9 @@
 import { Model } from 'tungstenjs';
 import { TodoItemCollection } from '../collections/todo_item_collection.js';
 import { TodoFilterCollection } from '../collections/todo_filter_collection.js';
-import { relations, defaults, derived } from '../decorators.js';
+import { relations, defaults, derived, debugName } from '../decorators.js';
 
+@debugName('TodoAppModel')
 @relations({
   todoItems: TodoItemCollection,
   filters: TodoFilterCollection

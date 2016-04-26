@@ -4,10 +4,6 @@
 'use strict';
 
 import { Model } from 'tungstenjs';
-export class TodoItemModel extends Model {
-  toggle() {
-    this.set({
-      completed: !this.get('completed')
-    });
-  }
-}
+import {debugName} from '../decorators';
+@debugName('TodoItemModel')
+export class TodoItemModel extends Model {}
