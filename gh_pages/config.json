@@ -9,7 +9,8 @@
     "templates": {"src": "../docs/templates.md", "css": "css/all.css", "js": "js/all.js"},
     "components": {"src": "../docs/components.md", "css": "css/all.css", "js": "js/all.js"},
     "debugger": {"src": "../docs/debugger.md", "css": "css/all.css", "js": "js/all.js"},
-    "tutorials": {"css": "css/tutorials.css", "js": "js/tutorials.js", "pageClass": "tutorials_page"}
+    "tutorials": {"css": "css/tutorials.css", "js": "js/tutorials.js", "pageClass": "tutorials_page"},
+    "sandbox": {"css": "css/tutorials.css", "js": "js/sandbox.js"}
   },
   "examples": {
     "DBMonster": "dbmonster-component",
@@ -55,6 +56,24 @@
     ],
     "js/all.js": [
       "./node_modules/underscore/underscore-min.js"
+    ],
+    "js/sandbox.js": [
+      "./node_modules/underscore/underscore-min.js",
+      "../dist/tungsten.backbone.debug.web.js",
+      "../dist/tungsten.event.all.js",
+      "./node_modules/codemirror/lib/codemirror.js",
+      "./node_modules/codemirror/addon/lint/lint.js",
+      "./node_modules/codemirror/addon/fold/foldcode.js",
+      "./node_modules/codemirror/addon/fold/foldgutter.js",
+      "./node_modules/codemirror/addon/fold/brace-fold.js",
+      "./node_modules/codemirror/addon/fold/comment-fold.js",
+      "./node_modules/codemirror/addon/fold/xml-fold.js",
+      "./node_modules/codemirror/addon/fold/indent-fold.js",
+      "./node_modules/codemirror/addon/mode/overlay.js",
+      "./node_modules/codemirror/mode/xml/xml.js",
+      "./node_modules/codemirror/mode/javascript/javascript.js",
+      "./js/eslint.js",
+      "./js/sandbox_app.js"
     ],
     "js/tutorials.js": [
       "./node_modules/underscore/underscore-min.js",
