@@ -73,6 +73,8 @@
       "./node_modules/codemirror/mode/xml/xml.js",
       "./node_modules/codemirror/mode/javascript/javascript.js",
       "./js/eslint.js",
+      "./js/codemirror_lint.js",
+      "./js/helpers.js",
       "./js/sandbox_app.js"
     ],
     "js/tutorials.js": [
@@ -92,6 +94,7 @@
       "./node_modules/codemirror/mode/javascript/javascript.js",
       "./js/eslint.js",
       "./js/codemirror_lint.js",
+      "./js/helpers.js",
       "./js/tutorials/hello.js",
       "./js/tutorials/views.js",
       "./js/tutorials/todo.js",

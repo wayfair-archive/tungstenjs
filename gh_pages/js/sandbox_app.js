@@ -1,104 +1,22 @@
-(function(CodeMirror, _, tungsten) {
+(function(CodeMirror, _, tungsten, helpers) {
   'use strict';
-  tungsten.plugins.event.all.forEach(tungsten.addEventPlugin);
-  var runtimeObjects = [];
-  tungsten.View.prototype._initialize = tungsten.View.prototype.initialize;
-  tungsten.View.prototype.initialize = function(opts) {
-    if (!opts.parentView && !this.sandboxObj) {
-      runtimeObjects.push(this);
-    }
-    this._initialize(opts);
-  };
-  tungsten.Model.prototype._initialize = tungsten.Model.prototype.initialize;
-  tungsten.Model.prototype.initialize = function(attributes, opts) {
-    opts = opts || {};
-    if (!this.sandboxObj) {
-      runtimeObjects.push(this);
-    }
-    this._initialize(opts);
-  };
-  tungsten.Collection.prototype._initialize = tungsten.Collection.prototype.initialize;
-  tungsten.Collection.prototype.initialize = function(models, opts) {
-    opts = opts || {};
-    if (!this.sandboxObj) {
-      runtimeObjects.push(this);
-    }
-    this._initialize(opts);
-  };
+  var tungstenEnv = helpers.initTungsten(tungsten, _);
+  var runtimeObjects = tungstenEnv.runtimeObjects;
+  var View = tungstenEnv.View;
+  var Model = tungstenEnv.Model;
+  var Collection = tungstenEnv.Collection;
+  var ComponentWidget = tungstenEnv.ComponentWidget;
 
-  var View = tungsten.View.extend({
-    initDebug: _.noop,
-    _setElement: tungsten.Backbone.View.prototype._setElement,
-    sandboxObj: true
-  });
-  var Model = tungsten.Model.extend({
-    initDebug: _.noop,
-    sandboxObj: true
-  });
-  var Collection = tungsten.Collection.extend({
-    initDebug: _.noop,
-    sandboxObj: true
-  });
-  var ComponentWidget = tungsten.ComponentWidget;
+  helpers.initMustacheCode(CodeMirror);
 
-  // Code Mirror Extensions and options
-  CodeMirror.defineMode('mustache', function(config, parserConfig) {
-    var mustacheOverlay = {
-      token: function(stream) {
-        var ch;
-        if (stream.match('{{')) {
-          while ((ch = stream.next()) != null) {
-            if (ch == '}' && stream.next() == '}') {
-              stream.eat('}');
-              return 'mustache';
-            }
-          }
-        }
-        while (stream.next() != null && !stream.match('{{', false)) {
-        }
-        return null;
-      }
-    };
-    return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || 'text/html'), mustacheOverlay);
-  });
-
-  var codeOptions = {
-    lineNumbers: true,
-    lineWrapping: true,
-    extraKeys: {
-      'Ctrl-Alt-Q': function(cm) { cm.foldCode(cm.getCursor()); },
-      'Ctrl-Alt-F': function(cm) {
-        cm.operation(function() {
-          for (var l = cm.firstLine(); l <= cm.lastLine(); ++l) {
-            cm.foldCode({
-              line: l,
-              ch: 0
-            }, null, 'fold');
-          }
-        });
-      },
-      'Ctrl-Alt-U': function(cm) {
-        cm.operation(function() {
-          for (var l = cm.firstLine(); l <= cm.lastLine(); ++l) {
-            cm.foldCode({
-              line: l,
-              ch: 0
-            }, null, 'unfold');
-          }
-        });
-      }
-    },
-    foldGutter: true,
-    lint: true,
-    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers']
-  };
+  var codeOptions = helpers.codeOptions;
 
   // Views and Template
   var rawTemplates = {
-    app: '<div class="pure-g js-main">' +
-    '<div class="pure-u-1-2 page-section"><div class="page-section"><div class="sandbox_section">{{{template}}}</div></div><div class="page-section"><div class="sandbox_section">{{{js}}}</div></div></div>' +
-    '<div class="pure-u-1-2 page-section sandbox"><button class="pure-button js-run run sandbox_button" id="run">Run</button> <div id="result"> <div id="app"></div> </div></div>' +
-      '' +
+    app:
+    '<div class="pure-g js-main">' +
+        '<div class="pure-u-1-2 page-section"><div class="page-section"><div class="sandbox_section">{{{template}}}</div></div><div class="page-section"><div class="sandbox_section">{{{js}}}</div></div></div>' +
+        '<div class="pure-u-1-2 page-section sandbox"><button class="pure-button js-run run sandbox_button" id="run">Run</button> <div id="result"> <div id="app"></div> </div></div>' +
     '</div>',
     codeMirror: ''
   };
@@ -111,7 +29,7 @@
         'input': 'quietUpdate'
       },
       postInitialize: function() {
-        this.listenTo(this.model, 'change:clean_value', function(model, value) {
+        this.listenTo(this.model, 'change:value', function(model, value) {
           this.codeMirror.setValue(value);
           this.setHighlights();
           this.codeMirror.setCursor(0, 0);
@@ -119,20 +37,8 @@
           this.codeMirror.scrollTo(0, 1);
           this.codeMirror.scrollTo(0, 0);
         });
-        this.listenTo(this.model, 'change:highlights', this.setHighlights);
       },
-      setHighlights: function() {
-        var codeMirror = this.codeMirror;
-        // Clear all current marks
-        _.invoke(codeMirror.getAllMarks(), 'clear');
 
-        _.each(this.model.get('highlights'), function(highlight) {
-          codeMirror.markText(highlight.start, highlight.end, {
-            className: 'styled-background',
-            clearOnEnter: true
-          });
-        });
-      },
       quietUpdate: function() {
         this.model.set('value', this.codeMirror.getValue(), {silent: true});
       },
@@ -146,10 +52,9 @@
         if (!this.codeMirror) {
           setTimeout(function() {
             self.codeMirror = CodeMirror(self.el, _.extend({
-              value: self.model.get('clean_value'),
+              value: self.model.get('value'),
               mode: self.model.get('mode')
             }, codeOptions));
-            self.setHighlights();
           });
         }
       }
@@ -158,14 +63,6 @@
       exposedEvents: ['change'],
       serialize: function(data) {
         return data.value.replace(/``/g, '');
-      },
-      derived: {
-        clean_value: {
-          deps: ['value'],
-          fn: function() {
-            return this.get('value').replace(/``/g, '');
-          }
-        }
       }
     }, {debugName: 'CodeMirrorComponentModel'}),
     template: compiledTemplates.codeMirror,
@@ -187,23 +84,7 @@
       'click .js-run': 'run',
       'keydown': 'handleKeydown'
     },
-    handleKeydown: function(e) {
-      // shift + enter
-      if (e.shiftKey && e.which === 13) {
-        this.run();
-        return false;
-      }
-      // ctrl + s
-      if (e.ctrlKey && e.which === 83) {
-        this.run();
-        return false;
-      }
-      // meta + s
-      if (e.metaKey && e.which === 83) {
-        this.run();
-        return false;
-      }
-    },
+    handleKeydown: helpers.editorKeydown,
     run: function() {
       var boilerplate = 'var rawTemplates = { app_view: ' + JSON.stringify(this.model.get('template').doSerialize()) + ' };var compiledTemplates = tungsten.templateHelper.compileTemplates(rawTemplates);';
       var evalNoContext = eval.bind(null);
@@ -221,13 +102,7 @@
         document.getElementById('app').innerHTML = '<br><span style="color: red;">ERROR: ' + e.toString() + '</span>';
       }
     },
-    toggleFold: function(cm, fold) {
-      cm.operation(function() {
-        for (var l = cm.firstLine(); l <= cm.lastLine(); ++l) {
-          cm.foldCode({line: l, ch: 0}, null, fold ? 'fold' : unfold);
-        }
-      });
-    },
+    toggleFold: helpers.toggleFold,
     postInitialize: function() {
       var self = this;
       var debouncedRun = _.debounce(this.run, 200);
@@ -244,9 +119,6 @@
       js: CodeMirrorComponent.constructor,
       template: CodeMirrorComponent.constructor,
       sandbox: Model
-    },
-    postInitialize: function() {
-
     }
   });
 
@@ -259,13 +131,12 @@
   });
 
   // Start app
-  var app = window.app = new AppView({
+  var app = new AppView({
     el: document.getElementById('appwrapper'),
     template: compiledTemplates.app,
     model: appModel,
     dynamicInitialize: true
   });
-  window.app = app;
 
 
-})(CodeMirror, _, tungsten);
+})(CodeMirror, _, tungsten, helpers);
