@@ -3,7 +3,7 @@
 ## Build and Publish
 
 ```
-# Run `npm install` on the main tungstenjs directory
+# run `npm install && npm run dist` on the main tungstenjs directory
 npm install
 npm run build
 # built site will be at `../output`
