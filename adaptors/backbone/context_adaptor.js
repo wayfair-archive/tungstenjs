@@ -65,7 +65,7 @@ var lookupValue = function(view, name) {
     return view.at(name);
   }
   // Fall back to a property check
-  if (view.hasOwnPropery(name)) {
+  if (view.hasOwnProperty(name)) {
     if (view.tungstenCollection && blockedCollectionProperties[name]) {
       return null;
     }
