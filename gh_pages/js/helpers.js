@@ -77,55 +77,5 @@ var helpers = {
         this.run();
         return false;
       }
-    },
-    // fn for initializing tungsten app environment for sandbox/tutorial pages
-    initTungsten: function(tungsten, _) {
-      tungsten.plugins.event.all.forEach(tungsten.addEventPlugin);
-      var runtimeObjects = [];
-      tungsten.View.prototype._initialize = tungsten.View.prototype.initialize;
-      tungsten.View.prototype.initialize = function(opts) {
-        if (!opts.parentView && !this.appObj) {
-          runtimeObjects.push(this);
-        }
-        this._initialize(opts);
-      };
-      tungsten.Model.prototype._initialize = tungsten.Model.prototype.initialize;
-      tungsten.Model.prototype.initialize = function(attributes, opts) {
-        opts = opts || {};
-        if (!this.appObj) {
-          runtimeObjects.push(this);
-        }
-        this._initialize(opts);
-      };
-      tungsten.Collection.prototype._initialize = tungsten.Collection.prototype.initialize;
-      tungsten.Collection.prototype.initialize = function(models, opts) {
-        opts = opts || {};
-        if (!this.appObj) {
-          runtimeObjects.push(this);
-        }
-        this._initialize(opts);
-      };
-
-      var View = tungsten.View.extend({
-        initDebug: _.noop,
-        _setElement: tungsten.Backbone.View.prototype._setElement,
-        appObj: true
-      });
-      var Model = tungsten.Model.extend({
-        initDebug: _.noop,
-        appObj: true
-      });
-      var Collection = tungsten.Collection.extend({
-        initDebug: _.noop,
-        appObj: true
-      });
-      var ComponentWidget = tungsten.ComponentWidget;
-      return {
-        runtimeObjects: runtimeObjects,
-        View: View,
-        Model: Model,
-        Collection: Collection,
-        ComponentWidget: ComponentWidget
-      };
     }
   };
