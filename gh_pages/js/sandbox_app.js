@@ -1,11 +1,45 @@
 (function(CodeMirror, _, tungsten, helpers) {
   'use strict';
-  var tungstenEnv = helpers.initTungsten(tungsten, _);
-  var runtimeObjects = tungstenEnv.runtimeObjects;
-  var View = tungstenEnv.View;
-  var Model = tungstenEnv.Model;
-  var Collection = tungstenEnv.Collection;
-  var ComponentWidget = tungstenEnv.ComponentWidget;
+  tungsten.plugins.event.all.forEach(tungsten.addEventPlugin);
+  var runtimeObjects = [];
+  tungsten.View.prototype._initialize = tungsten.View.prototype.initialize;
+  tungsten.View.prototype.initialize = function(opts) {
+    if (!opts.parentView && !this.tutorialObj) {
+      runtimeObjects.push(this);
+    }
+    this._initialize(opts);
+  };
+  tungsten.Model.prototype._initialize = tungsten.Model.prototype.initialize;
+  tungsten.Model.prototype.initialize = function(attributes, opts) {
+    opts = opts || {};
+    if (!this.tutorialObj) {
+      runtimeObjects.push(this);
+    }
+    this._initialize(opts);
+  };
+  tungsten.Collection.prototype._initialize = tungsten.Collection.prototype.initialize;
+  tungsten.Collection.prototype.initialize = function(models, opts) {
+    opts = opts || {};
+    if (!this.tutorialObj) {
+      runtimeObjects.push(this);
+    }
+    this._initialize(opts);
+  };
+
+  var View = tungsten.View.extend({
+    initDebug: _.noop,
+    _setElement: tungsten.Backbone.View.prototype._setElement,
+    tutorialObj: true
+  });
+  var Model = tungsten.Model.extend({
+    initDebug: _.noop,
+    tutorialObj: true
+  });
+  var Collection = tungsten.Collection.extend({
+    initDebug: _.noop,
+    tutorialObj: true
+  });
+  var ComponentWidget = tungsten.ComponentWidget;
 
   helpers.initMustacheCode(CodeMirror);
 
