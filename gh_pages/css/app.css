@@ -61,6 +61,21 @@ body {
   overflow-y: auto;
 }
 
+.page-section.sandbox {
+  max-height: 98vh;
+}
+
+.page-section.sandbox_top {
+  max-height: 2vh;
+}
+
+.page-section button.sandbox_button {
+  margin-top: 20px;
+  margin-right: 20px;
+}
+
+
+
 .page-section {
   padding-left: 1%;
   max-height: 48vh;
@@ -76,6 +91,15 @@ body {
   border-left: 1px solid white;
   border-bottom: 1px solid white;
   height: 50vh;
+}
+
+.sandbox #result {
+  height: 98vh;
+}
+
+.sandbox_section {
+  height: 48vh;
+  overflow-y: scroll;
 }
 
 .last-editor-section {
