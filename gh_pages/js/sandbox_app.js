@@ -131,7 +131,8 @@
         evalNoContext(boilerplate + '\n;' + this.model.get('js').doSerialize());
         var templateStr = this.model.get('template') ? 't=' + encodeURIComponent(this.model.get('template').doSerialize()) : '';
         var jsStr = this.model.get('js') ? 'js=' + encodeURIComponent(this.model.get('js').doSerialize()) : '';
-        window.history.pushState({}, window.document.title, window.location.protocol + '//' + window.location.host + '/sandbox.html' + '?' + jsStr + '&' + templateStr);
+        var sandboxPage = 'sandbox.html';
+        window.history.pushState({}, window.document.title, window.location.href.substr(0, window.location.href.indexOf(sandboxPage))+ sandboxPage + '?' + jsStr + '&' + templateStr);
       } catch (e) {
         document.getElementById('app').innerHTML = '<br><span style="color: red;">ERROR: ' + e.toString() + '</span>';
       }
