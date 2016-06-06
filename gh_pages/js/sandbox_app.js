@@ -129,8 +129,8 @@
       document.getElementById('app').innerHTML = '';
       try {
         evalNoContext(boilerplate + '\n;' + this.model.get('js').doSerialize());
-        var templateStr = this.model.get('template') ? 't=' + encodeURIComponent(this.model.get('template').doSerialize()) : '';
-        var jsStr = this.model.get('js') ? 'js=' + encodeURIComponent(this.model.get('js').doSerialize()) : '';
+        var templateStr = this.model.get('template') ? 't=' + btoa(this.model.get('template').doSerialize()) : '';
+        var jsStr = this.model.get('js') ? 'js=' + btoa(this.model.get('js').doSerialize()) : '';
         var sandboxPage = 'sandbox.html';
         window.history.pushState({}, window.document.title, window.location.href.substr(0, window.location.href.indexOf(sandboxPage))+ sandboxPage + '?' + jsStr + '&' + templateStr);
       } catch (e) {
@@ -144,7 +144,6 @@
       this.listenTo(this.model, 'change:js change:template', debouncedRun);
       self.model.get('sandbox').set('js', this.model.get('js'));
       self.model.get('sandbox').set('template', this.model.get('template'));
-      this.run();
     }
   });
 
@@ -161,8 +160,8 @@
 
   var appModel = new AppModel({
     sandbox: {js: '', template: ''},
-    js: { mode: 'javascript', value:  urlParams.js ? window.decodeURIComponent(urlParams.js) : "var BaseView = tungsten.View, BaseModel = tungsten.Model, BaseCollection = tungsten.Collection;\nnew BaseView({\n  el: document.getElementById('app'),\n  template: compiledTemplates.app_view,\n  model: new BaseModel({name: 'world'}),\n  dynamicInitialize: true \n});" },
-    template: { mode: 'mustache', value: urlParams.t ? window.decodeURIComponent(urlParams.t) : '<div>Hello, {{name}}</div>' }
+    js: { mode: 'javascript', value:  urlParams.js ? atob(urlParams.js) : "var BaseView = tungsten.View, BaseModel = tungsten.Model, BaseCollection = tungsten.Collection;\nnew BaseView({\n  el: document.getElementById('app'),\n  template: compiledTemplates.app_view,\n  model: new BaseModel({name: 'world'}),\n  dynamicInitialize: true \n});" },
+    template: { mode: 'mustache', value: urlParams.t ? atob(urlParams.t) : '<div>Hello, {{name}}</div>' }
   });
 
   // Start app
