@@ -29,7 +29,9 @@ export class TodoItemView extends View {
   @on('dblclick .js-todo-title')
   handleDblClickTodoTitle(e) {
     this.model.set('editing', true);
-    e.currentTarget.focus();
+    this.listenToOnce(this, 'rendered', function() {
+      this.el.querySelector('.js-todo-edit').focus();
+    });
   }
   @on('keydown .js-todo-edit')
   handleKeyDownTodoEdit(e) {
