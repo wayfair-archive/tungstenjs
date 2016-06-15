@@ -28,7 +28,9 @@ var TodoItemView = View.extend({
   },
   handleDblClickTodoTitle: function(e) {
     this.model.set('editing', true);
-    e.currentTarget.focus();
+    this.listenToOnce(this, 'rendered', function() {
+      this.el.querySelector('.js-todo-edit').focus();
+    });
   },
   handleKeyDownTodoEdit: function(e) {
     if (e.which === ESC_KEY) {
