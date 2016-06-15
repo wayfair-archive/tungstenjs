@@ -41,6 +41,10 @@
   });
   var ComponentWidget = tungsten.ComponentWidget;
 
+  if (window.location.href.indexOf('powermode=true') !== -1) {
+    helpers.activatePowerMode();
+  }
+
   // Code Mirror Extensions and options
   helpers.initMustacheCode(CodeMirror);
 
