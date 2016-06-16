@@ -15,7 +15,6 @@
   "examples": {
     "DBMonster": "dbmonster-component",
     "Drag & Drop": "drag-and-drop",
-    "Lambdas with Content": "lambda-content",
     "SVG": "svg",
     "TodoMVC": "todomvc"
   },
