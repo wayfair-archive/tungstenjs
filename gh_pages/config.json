@@ -16,6 +16,7 @@
     "DBMonster": "dbmonster-component",
     "Drag & Drop": "drag-and-drop",
     "SVG": "svg",
+    "Web Components": "web-components",
     "TodoMVC": "todomvc"
   },
   "pageData": {
