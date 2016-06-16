@@ -28,7 +28,7 @@ module.exports = function(bundleMap) {
 
   var debuggerButton = '<button ' +
     'onclick="window._launchDebuggerFromEvent()" ' +
-    'style="width:100%;background:#8D4377;color:#fff;padding:7px 0;margin-bottom:15px;cursor:pointer;border:none">' +
+    'style="width:100%;z-index: 1000;background:#8D4377;color:#fff;padding:7px 0;margin-bottom:15px;cursor:pointer;border:none">' +
     'Launch Debugger' +
   '</button>';
 
@@ -48,7 +48,7 @@ module.exports = function(bundleMap) {
       var matchItem = assetPattern.exec(match);
       var file = matchItem[1] || matchItem[2];
       assetPattern.lastIndex = 0;
-      if (file !== 'js/app.min.js') {
+      if (file !== 'js/app.min.js' && file.indexOf('http') === -1) {
         files.push(file);
       }
     });

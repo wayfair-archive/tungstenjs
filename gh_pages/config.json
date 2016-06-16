@@ -17,6 +17,7 @@
     "Drag & Drop": "drag-and-drop",
     "Lambdas with Content": "lambda-content",
     "SVG": "svg",
+    "Web Components": "web-components",
     "TodoMVC": "todomvc"
   },
   "pageData": {
