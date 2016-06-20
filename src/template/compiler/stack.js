@@ -215,6 +215,12 @@ templateStack.processObject = function(obj) {
 templateStack._closeElem = function(obj) {
   let i;
 
+  if (obj.isOpen) {
+    logger.exception('Tag is closed before open tag is completed. Check for unpaired quotes.');
+    // Close the element off to avoid other errors
+    obj.close();
+  }
+
   if (obj.children && obj.children.length) {
     // Process child nodes
     let children = [];
