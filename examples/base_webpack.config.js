@@ -13,7 +13,7 @@ module.exports = function (root, options) {
     entry: './js/app',
     output: {
       filename: './js/app.min.js',
-      path: path.resolve('.')
+      path: root
     },
     resolve: {
       alias: {
