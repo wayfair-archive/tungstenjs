@@ -1,0 +1,14 @@
+<h2>Text inputs</h2>
+{{#inputs}}
+<label>{{name}} <input type="text" value="{{value}}" name="{{name}}" class="js-input"></label>
+{{/inputs}}
+
+<h2>Textboxes</h2>
+{{#textareas}}
+  <label>{{name}} <textarea name="{{name}}" class="js-textarea">{{value}}</textarea></label>
+{{/textareas}}
+
+<h2>Checkboxes</h2>
+{{#checkboxes}}
+<label>{{name}} <input type="checkbox" name="{{name}}" {{#checked}}checked{{/checked}} class="js-checkbox"></label>
+{{/checkboxes}}

@@ -9,6 +9,7 @@ var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
 var isWidget = virtualDomImplementation.isWidget;
 var isVNode = virtualDomImplementation.isVNode;
 var compiler = require('./compiler');
+var InputWrapperWidget = require('./widgets/input_wrapper');
 
 /** @type {Object} Container for registered widget functions */
 var widgets = {};
@@ -311,6 +312,14 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
 
   template = _.clone(template);
 
+  var needsInputWidget = false;
+  if (template.t === types.ELEMENT) {
+    var tagName = template.e.toUpperCase();
+    if (tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') {
+      needsInputWidget = true;
+    }
+  }
+
   /* eslint-disable dot-notation */
   // If the view has childViews and this isn't the root, attempt to attach Widget
   if (!template.root && view.childViews) {
@@ -333,6 +342,15 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
           break;
         }
       }
+    }
+  }
+
+  if (needsInputWidget) {
+    if (template.t === types.ELEMENT) {
+      template = createWidget(null, template, partials);
+      template.constructor = InputWrapperWidget;
+    } else {
+      template.constructor = InputWrapperWidget.wrapExistingWidget(template.constructor);
     }
   }
   /* eslint-enable dot-notation */
