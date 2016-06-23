@@ -134,11 +134,13 @@ module.exports = function processProperties(properties, options) {
     var lowerPropName = propName.toLowerCase();
     var transformedName = transformPropertyName(lowerPropName);
 
-    if (opts.useHooks && typeof opts.useHooks[lowerPropName] === 'function') {
-      propValue = opts.useHooks[lowerPropName](propValue);
-    }
-
-    if (transformedName === false) {
+    if (lowerPropName === 'key') {
+      // key is a special case
+      result.key = propValue;
+    } else if (opts.useHooks && typeof opts.useHooks[lowerPropName] === 'function') {
+      // Hooks need to be set as properties, so ignore any other lookups
+      result[lowerPropName] = opts.useHooks[lowerPropName](propValue);
+    } else if (transformedName === false) {
       if (!result.attributes) {
         result.attributes = {};
       }

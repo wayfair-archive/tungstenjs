@@ -62,6 +62,7 @@ function InputWrapperWidget(template, childView, context, parentView, OtherWidge
   this.context = context;
   this.updateValue = _.bind(this.updateValue, this);
   if (OtherWidget) {
+    template.templateObj.input_wrapper = true;
     this.otherWidget = new OtherWidget(template, childView, context, parentView);
   }
 }
@@ -103,7 +104,14 @@ InputWrapperWidget.prototype.update = function update(prev, elem) {
   }
   this.el = elem;
   var prop = getRelevantPropertyForElement(this.el);
+
   this.vtree = this.template.toVdom(this.context);
+  var prevVtree;
+  if (this.otherWidget) {
+    prevVtree = prev.otherWidget.getVtree();
+  } else {
+    prevVtree = prev.vtree;
+  }
   if (this.value == null) {
     this.value = prev.value;
   }
@@ -117,28 +125,25 @@ InputWrapperWidget.prototype.update = function update(prev, elem) {
 
   if (prev.value === this.value) {
     // update the compared value to the current DOM value (as that's what it should represent)
-    prev.vtree.properties[prop] = elem[prop];
+    prevVtree.properties[prop] = elem[prop];
   } else {
-    if (prev.vtree.properties[prop] === this.vtree.properties[prop]) {
+    if (prevVtree.properties[prop] === this.vtree.properties[prop]) {
       // if the VDOM didn't change, just mask it so that virtual-dom doesn't change the prop
-      prev.vtree.properties[prop] = this.value;
-      this.vtree.properties[prop] = this.value;
+      prevVtree.properties[prop] = this.vtree.properties[prop];
     } else {
       // If the DOM changed AND the VDOM changed, assume the VDOM will be right
-      prev.vtree.properties[prop] = this.value;
+      prevVtree.properties[prop] = this.value;
     }
   }
 
-  tungsten.updateTree(elem, prev.vtree, this.vtree);
+  if (this.otherWidget) {
+    this.otherWidget.update(prev.otherWidget, elem);
+  } else {
+    tungsten.updateTree(elem, prevVtree, this.vtree);
+  }
 
   // Update value to ze DOM
   this.value = elem[prop];
-
-  if (this.otherWidget) {
-    // Don't let the View widget handle any DOM operations here, just fake it
-    this.otherWidget.postRender();
-    this.otherWidget.trigger('rendered');
-  }
 };
 
 /**

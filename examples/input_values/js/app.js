@@ -4,6 +4,33 @@ var View = TungstenBackboneBase.View;
 var Model = TungstenBackboneBase.Model;
 var Collection = TungstenBackboneBase.Collection;
 
+var ValueView = View.extend({
+  events: {
+    change: 'updateValue',
+    keyup: 'updateValue',
+    focus: 'setFocus',
+    blur: 'unsetFocus'
+  },
+  updateValue: function(e) {
+    this.model.set('value', e.target.value);
+  },
+  setFocus: function() {
+    this.model.set('focused', true, {silent: true});
+  },
+  unsetFocus: function() {
+    this.model.set('focused', false, {silent: true});
+  }
+});
+
+var CheckView = View.extend({
+  events: {
+    change: 'updateValue'
+  },
+  updateValue: function(e) {
+    this.model.set('checked', e.target.checked);
+  }
+});
+
 var AppView = View.extend({
   events: {
     'change .js-input': function(e) {
@@ -16,6 +43,11 @@ var AppView = View.extend({
       this.model.get('checkboxes').findWhere({name: e.target.name}).set('checked', e.target.checked);
     }
   }
+  // childViews: {
+  //   'js-input': ValueView,
+  //   'js-textarea': ValueView,
+  //   'js-checkbox': CheckView
+  // }
 });
 
 var ShufflingCollection = Collection.extend({

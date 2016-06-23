@@ -140,6 +140,10 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
   }
 };
 
+BackboneViewWidget.prototype.getVtree = function() {
+  return this.view.vtree;
+};
+
 if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
 /**
  * Function to allow the Widget to control how it is viewed on the debug panel

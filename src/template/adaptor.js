@@ -313,7 +313,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
   template = _.clone(template);
 
   var needsInputWidget = false;
-  if (template.t === types.ELEMENT) {
+  if (template.t === types.ELEMENT && !template.input_wrapper) {
     var tagName = template.e.toUpperCase();
     if (tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') {
       needsInputWidget = true;

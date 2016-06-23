@@ -1,14 +1,20 @@
 <h2>Text inputs</h2>
-{{#inputs}}
-<label>{{name}} <input type="text" value="{{value}}" name="{{name}}" class="js-input"></label>
-{{/inputs}}
+<div>
+  {{#inputs}}
+  <label>{{name}} <input type="text" value="{{value}}" name="{{name}}" class="js-input" {{#focused}}autofocus="true"{{/focused}}></label>
+  {{/inputs}}
+</div>
 
 <h2>Textboxes</h2>
-{{#textareas}}
-  <label>{{name}} <textarea name="{{name}}" class="js-textarea">{{value}}</textarea></label>
-{{/textareas}}
+<div>
+  {{#textareas}}
+    <label>{{name}} <textarea name="{{name}}" class="js-textarea">{{value}}</textarea {{#focused}}autofocus="true"{{/focused}}></label>
+  {{/textareas}}
+</div>
 
 <h2>Checkboxes</h2>
-{{#checkboxes}}
-<label>{{name}} <input type="checkbox" name="{{name}}" {{#checked}}checked{{/checked}} class="js-checkbox"></label>
-{{/checkboxes}}
+<div>
+  {{#checkboxes}}
+  <label>{{name}} <input type="checkbox" name="{{name}}" {{#checked}}checked{{/checked}} class="js-checkbox"></label>
+  {{/checkboxes}}
+</div>
