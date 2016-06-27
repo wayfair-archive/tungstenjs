@@ -126,14 +126,9 @@ InputWrapperWidget.prototype.update = function update(prev, elem) {
   if (prev.value === this.value) {
     // update the compared value to the current DOM value (as that's what it should represent)
     prevVtree.properties[prop] = elem[prop];
-  } else {
-    if (prevVtree.properties[prop] === this.vtree.properties[prop]) {
-      // if the VDOM didn't change, just mask it so that virtual-dom doesn't change the prop
-      prevVtree.properties[prop] = this.vtree.properties[prop];
-    } else {
-      // If the DOM changed AND the VDOM changed, assume the VDOM will be right
-      prevVtree.properties[prop] = this.value;
-    }
+  } else if (prevVtree.properties[prop] !== this.vtree.properties[prop]) {
+    // If the DOM changed AND the VDOM changed, assume the VDOM will be right
+    prevVtree.properties[prop] = this.value;
   }
 
   if (this.otherWidget) {
