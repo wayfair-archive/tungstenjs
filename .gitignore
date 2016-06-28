@@ -6,6 +6,7 @@ test/testbuild.prod.js
 test/coverage/
 examples/**/*.js.map
 examples/**/*.min.js
+examples/**/bower_components/*
 .DS_Store
 output/
 npm-debug.log
