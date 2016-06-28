@@ -55,9 +55,11 @@
       "./css/app.css"
     ],
     "js/all.js": [
+      "./js/app.js",
       "./node_modules/underscore/underscore-min.js"
     ],
     "js/sandbox.js": [
+      "./js/app.js",
       "./node_modules/underscore/underscore-min.js",
       "../dist/tungsten.backbone.debug.web.js",
       "../dist/tungsten.event.all.js",
@@ -78,6 +80,7 @@
       "./js/sandbox_app.js"
     ],
     "js/tutorials.js": [
+      "./js/app.js",
       "./node_modules/underscore/underscore-min.js",
       "../dist/tungsten.backbone.debug.web.js",
       "../dist/tungsten.event.all.js",
@@ -106,3 +109,4 @@
     ]
   }
 }
+
