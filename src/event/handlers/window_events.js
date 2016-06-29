@@ -4,6 +4,7 @@
 'use strict';
 
 var window = require('global/window');
+var document = require('global/document');
 var eventsCore = require('../events_core');
 var eventWrapper = require('../tungsten_event');
 
@@ -12,9 +13,10 @@ var eventWrapper = require('../tungsten_event');
  * @return {Object}       Scroll properties of element
  */
 var getScrollData = function() {
+  var doc = document.documentElement;
   return {
-    x: window.scrollX,
-    y: window.scrollY
+    x: (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0),
+    y: (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0)
   };
 };
 
