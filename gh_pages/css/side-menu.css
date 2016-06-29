@@ -34,15 +34,6 @@ This is the parent `<div>` that contains the menu and the content area.
   padding-left: 0;
 }
 
-#layout.active #menu {
-  left: 150px;
-  width: 150px;
-}
-
-#layout.active .menu-link {
-  left: 150px;
-}
-
 /*
 The content `<div>` is where all your content goes.
 */
@@ -221,17 +212,40 @@ Hides the menu at `48em`, but modify this based on your app's needs.
   display: none;
 }
 
-#layout.active .menu-link {
-  left: 225px;
+.menu_toggle {
+  float: right;
+  width: 50px;
+  text-align: center;
+  height: 37px;
+  display: inline-block;
+  line-height: 37px;
+  margin-top: -0.6em;
 }
 
-/* Only apply this when the window is small. Otherwise, the following
-case results in extra padding on the left:
-    * Make the window small.
-    * Tap the menu to trigger the active state.
-    * Make the window large again.
-*/
+.menu_toggle:after {
+  display: inline-block;
+  /* \0000AB = &laquo; */
+  content: '\0000AB';
+}
+
 #layout.active {
-  position: relative;
-  left: 150px;
+  padding-left: 0;
+}
+
+#layout.active .menu_toggle {
+  width: 25px;
+}
+
+#layout.active .menu_toggle:after {
+  /* \0000BB = &raquo; */
+  content: '\0000BB';
+}
+
+#layout.active #menu {
+  left: 25px;
+  background: transparent;
+}
+
+#layout.active .pure-menu-list {
+  left: -25px;
 }
