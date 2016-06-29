@@ -3,8 +3,14 @@
 var _ = require('underscore');
 var logger = require('../../src/utils/logger');
 
-var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize'];
+var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize', 'save', 'fetch', 'sync', 'validate', 'isValid'];
 var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
+
+var getDummyFunction = function(fn) {
+  return function() {
+    logger.warn('Component.' + fn + ' may not be called directly.');
+  };
+};
 
 if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
   modelFunctionsToMap.push('getDebugName');
@@ -71,7 +77,7 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   // Other model functions should be present, but noops
   for (i = 0; i < modelFunctionsToDummy.length; i++) {
     fn = modelFunctionsToDummy[i];
-    this[fn] = _.noop;
+    this[fn] = getDummyFunction(fn);
   }
   // Setting some values for Collection use
   this.idAttribute = 'key';
