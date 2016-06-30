@@ -27,16 +27,16 @@ module.exports = {
   extend: extend,
 
   childViewWasPassedAsObjectWithoutAScopeProperty: () => 'ChildView was passed as object without a scope property',
-  collectionMethodMayNotBeOverridden: function(methodName, debugName = null) {
+  collectionMethodMayNotBeOverridden: function(methodName, debugName) {
     return `Collection.${methodName} may not be overridden` + (debugName ? ` for collection "${debugName}"` : '');
   },
   collectionExpectedArrayOfObjectsButGot: (initialStr) => `Collection expected array of objects but got: ${initialStr}`,
-  modelMethodMayNotBeOverridden: function(methodName, debugName = null) {
+  modelMethodMayNotBeOverridden: function(methodName, debugName) {
     return `Model.${methodName} may not be overridden` + (debugName ? ` for model "${debugName}"` : '');
   },
   modelExpectedObjectOfAttributesButGot: (initialStr) => `Model expected object of attributes but got: ${initialStr}`,
   domDoesNotMatchVDOMForView: (debugName) => `DOM does not match VDOM for view "${debugName}". Use debug panel to see differences`,
-  viewMethodMayNotBeOverridden: function(methodName, debugName = null) {
+  viewMethodMayNotBeOverridden: function(methodName, debugName) {
     return `View.${methodName} may not be overridden` + (debugName ? ` for view "${debugName}"` : '');
   },
   componentFunctionMayNotBeCalledDirectly: (fn) => `Component.${fn} may not be called directly`,
