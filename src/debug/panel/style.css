@@ -239,6 +239,16 @@ body, .pure-g [class *="pure-u"] {
 .Tree_item.is-highlighted > .Tree_item_hover .glyphicon:hover {
   color: #DDD
 }
+.icon-component {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  stroke-width: 1px;
+  stroke: #B54B95;
+  fill: #DEADCF;
+  vertical-align: -22%;
+  float: right;
+}
 
 /*******************
  * Tree Options bar

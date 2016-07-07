@@ -2,6 +2,8 @@
   <%= w.styles %>
 </style>
 
+<%= w.partials['_icon_component'](w, {variable: w}) %>
+
 <div class="js-app">
   <nav class="AppHeader pure-menu pure-menu-horizontal pure-menu-fixed">
     <div class="pure-menu-heading">

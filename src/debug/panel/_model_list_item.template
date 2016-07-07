@@ -1,9 +1,14 @@
 <%
   if (w.model) {
     var liClass = '';
-      if (w.model.selected) {
-        liClass = 'is-highlighted';
-      }
+    if (w.model.selected) {
+      liClass = 'is-highlighted';
+    }
+
+    var componentIcon = '';
+    if (w.model.obj && w.model.obj.isComponentModel) {
+      componentIcon = '<svg class="icon icon-component"><use xlink:href="#icon-component"></use></svg>';
+    }
 
     var spanClass = '';
     var modelIsParent = w.model.isParent();
@@ -16,6 +21,7 @@
   <div class="Tree_item_hover">
     <span class="toggle-caret glyphicon <%= spanClass %>"></span>
     <a class="js-more-model-info Tree_item_link" href="#"><%= w.model.debugName %></a>
+    <%= componentIcon %>
   </div>
   <% if (!w.model.collapsed) { %>
     <% if (modelIsParent) { %>
