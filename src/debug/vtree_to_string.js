@@ -7,6 +7,7 @@
 
 var _ = require('underscore');
 var logger = require('../utils/logger');
+var errors = require('../utils/errors');
 var syntaxHighlight = require('./syntax_highlight');
 
 var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
@@ -54,7 +55,7 @@ function toString(vtree, escaped) {
     if (typeof vtree.templateToString === 'function') {
       output += vtree.templateToString(toString);
     } else {
-      logger.warn('Widget type: ' + vtree.constructor.name + ' has no templateToString function, falling back to DOM');
+      logger.warn(errors.widgetTypeHasNoTemplateToStringFunctionFallingBackToDOM(vtree.constructor.name));
       var elem = vdom.create(virtualHyperscript('div', {}, vtree));
       output += elem.innerHTML;
     }

@@ -4,6 +4,7 @@ var dataset = require('data-set');
 var eventWrapper = require('./tungsten_event');
 var _ = require('underscore');
 var logger = require('../utils/logger');
+var errors = require('../utils/errors');
 
 module.exports = {};
 
@@ -136,10 +137,10 @@ module.exports.removeEvent = function(evt) {
     } else if (evt.length === 4) {
       removeElementEvents(evt[0], evt[1], evt[2], evt[3]);
     } else {
-      logger.warn('Object does not meet expected event spec', evt);
+      logger.warn(errors.objectDoesNotMeetExpectedEventSpec(), evt);
     }
   } else {
-    logger.warn('Object does not meet expected event spec', evt);
+    logger.warn(errors.objectDoesNotMeetExpectedEventSpec(), evt);
   }
 };
 

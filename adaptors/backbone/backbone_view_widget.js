@@ -12,6 +12,7 @@
 'use strict';
 
 var logger = require('../../src/utils/logger');
+var errors = require('../../src/utils/errors');
 
 /**
  * Wrapper Widget for child views
@@ -46,7 +47,7 @@ function BackboneViewWidget(template, childView, context, parentView) {
       // Any other value is treated as a parent model lookup
       this.model = parentView.model.getDeep(scope);
     } else {
-      logger.warn('ChildView was passed as object without a scope property');
+      logger.warn(errors.childViewWasPassedAsObjectWithoutAScopeProperty());
     }
   }
 }

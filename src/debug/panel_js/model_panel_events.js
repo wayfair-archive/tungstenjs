@@ -3,6 +3,7 @@
 var window = require('global/window');
 var _ = require('underscore');
 var logger = require('../../utils/logger');
+var errors = require('../../utils/errors');
 var utils = require('./utils');
 var appData = require('./app_data');
 
@@ -81,9 +82,7 @@ module.exports = function() {
       appData.selectedModel.obj.set(key, value);
       appData.updateSelectedModel();
     } catch (ex) {
-      var message = 'Unable to parse "' + e.currentTarget.value + '" to a valid value. Input must match JSON format';
-      utils.alert(message);
-      logger.warn(message);
+      utils.alert(errors.unableToParseToAValidValueMustMatchJSONFormat(e.currentTarget.value));
       utils.selectElements('js-model-property-value')[0].focus();
     }
   });

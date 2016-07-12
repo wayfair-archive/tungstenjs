@@ -10,6 +10,7 @@
 
 var _ = require('underscore');
 var logger = require('../utils/logger');
+var errors = require('../utils/errors');
 
 /** @type {Object} storage to prevent repeated warnings about the same computed property */
 var computedPropertyWarnings = {};
@@ -207,7 +208,7 @@ Context.prototype.lookup = function(name, handleLambda) {
           } else {
             if (computedPropertyWarnings[name] !== true) {
               computedPropertyWarnings[name] = true;
-              logger.warn('Computed properties are now deprecated and will be removed soon. Please change "' + name + '" to a derived property');
+              logger.warn(errors.computedPropertiesAreNowDeprecatedPleaseChange(name));
             }
             value = value.call(fnContext);
           }

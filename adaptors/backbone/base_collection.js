@@ -7,6 +7,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
 var logger = require('../../src/utils/logger');
+var errors = require('../../src/utils/errors');
 
 var eventTrigger = require('./event_trigger');
 var ComponentWidget = require('./component_widget');
@@ -106,12 +107,12 @@ var BaseCollection = Backbone.Collection.extend({
 
       for (let i = 0; i < methods.length; i++) {
         if (protoProps[methods[i]]) {
-          var msg = 'Collection.' + methods[i] + ' may not be overridden';
           if (staticProps && staticProps.debugName) {
-            msg += ' for collection "' + staticProps.debugName + '"';
+            logger.warn(errors.collectionMethodMayNotBeOverridden(methods[i], staticProps.debugName));
+          } else {
+            logger.warn(errors.collectionMethodMayNotBeOverridden(methods[i]));
           }
-          logger.warn(msg);
-        // Replace attempted override with base version
+          // Replace attempted override with base version
           protoProps[methods[i]] = wrapOverride(BaseCollection.prototype[methods[i]], protoProps[methods[i]]);
         }
       }
@@ -247,7 +248,7 @@ BaseCollection.prototype.reset = function(models, options = {}) {
         }
       }
       if (!allObjects || !_.isArray(this.initialData)) {
-        logger.warn('Collection expected array of objects but got: ' + initialStr);
+        logger.warn(errors.collectionExpectedArrayOfObjectsButGot(initialStr));
       }
     }
   }

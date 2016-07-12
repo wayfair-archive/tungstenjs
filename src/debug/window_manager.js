@@ -6,6 +6,7 @@ var _ = require('underscore');
 var utils = require('./panel_js/utils');
 var appData = require('./panel_js/app_data');
 var logger = require('../utils/logger');
+var errors = require('../utils/errors');
 var highlighter = require('./highlighter');
 
 var isNode = require('./is_node');
@@ -26,7 +27,7 @@ function getWindow() {
   // Launch panel
   debugWindow = window.open('', 'TungstenDebugger', 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,width=800,height=640');
   if (!debugWindow) {
-    logger.error('Unable to launch debug panel. You may need to allow the popup or run "window.launchDebugger()" from your console');
+    logger.error(errors.unableToLaunchDebugPanel());
   } else {
     debugWindow.document.title = 'DEBUG: ' + window.document.title;
     debugWindow.onerror = collectError;

@@ -4,6 +4,7 @@ const Parser = require('htmlparser2/lib/Parser');
 const types = require('../types');
 const stack = require('./stack');
 const logger = require('./compiler_logger');
+const errors = require('../../utils/errors');
 const decoder = require('./decoder');
 
 // Taken from https://github.com/fb55/htmlparser2/blob/master/lib/Parser.js#L59
@@ -147,7 +148,7 @@ MustacheParser.prototype.onclosetag = function(name) {
   }
 
   if (name in voidElements) {
-    logger.warn(name + ' is a void element so does not need a closing tag');
+    logger.warn(errors.elementIsAVoidElementSoDoesNotNeedAClosingTag(name));
     return;
   }
 
@@ -160,10 +161,10 @@ MustacheParser.prototype.onclosetag = function(name) {
       }
     } else {
       let current = this._stack[this._stack.length - 1];
-      logger.exception('</' + name + '> where a </' + current + '> should be.');
+      logger.exception(errors.wrongClosingElementType(name, current));
     }
   } else {
-    logger.exception('</' + name + '> with no paired <' + name + '>');
+    logger.exception(errors.closingHTMLElementWithNoPair(name));
   }
 };
 

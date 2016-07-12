@@ -5,6 +5,7 @@ const _ = require('underscore');
 const parser = require('./parser');
 const stack = require('./stack');
 const logger = require('./compiler_logger');
+const errors = require('../../utils/errors');
 const processTemplate = require('./languages/mustache');
 
 /**
@@ -43,7 +44,7 @@ function getTemplate(template, options) {
   let output = {};
 
   if (stack.stack.length > 0) {
-    logger.exception('Not all tags were closed properly', stack.stack);
+    logger.exception(errors.notAllTagsWereClosedProperly(), stack.stack);
   }
 
   parser.end();
