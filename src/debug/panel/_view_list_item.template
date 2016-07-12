@@ -4,8 +4,13 @@
     liClass = 'is-highlighted';
   }
 
-  var viewIsParent = w.view.isParent();
+    var componentIcon = '';
+    if (w.view.obj && w.view.obj.isComponentView) {
+      componentIcon = '<svg class="icon icon-component"><use xlink:href="#icon-component"></use></svg>';
+    }
+
   var spanClass = '';
+  var viewIsParent = w.view.isParent();
   if (viewIsParent) {
     spanClass = 'js-toggle-view-children glyphicon-chevron-';
     spanClass += w.view.collapsed ? 'right' : 'down';
@@ -21,6 +26,7 @@
   <div class="Tree_item_hover">
     <span class="toggle-caret glyphicon <%= spanClass %>"></span>
     <a class="js-more-view-info Tree_item_link" href="#"><%= w.view.debugName %></a>
+    <%= componentIcon %>
   </div>
   <% if (!w.view.collapsed) { %>
     <% if (viewIsParent) { %>

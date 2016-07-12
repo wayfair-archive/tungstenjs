@@ -27,6 +27,7 @@ if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
 function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.ViewConstructor = ViewConstructor;
   this.model = model;
+  this.model.isComponentModel = true;
   this.template = template;
   this.key = key || _.uniqueId('w_component');
   this.model.session = (this.model.session || []).concat(['content', 'yield']);
