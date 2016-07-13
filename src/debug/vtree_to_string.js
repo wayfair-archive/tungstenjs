@@ -6,7 +6,6 @@
  */
 
 var _ = require('underscore');
-var logger = require('../utils/logger');
 var errors = require('../utils/errors');
 var syntaxHighlight = require('./syntax_highlight');
 
@@ -55,7 +54,7 @@ function toString(vtree, escaped) {
     if (typeof vtree.templateToString === 'function') {
       output += vtree.templateToString(toString);
     } else {
-      logger.warn(errors.widgetTypeHasNoTemplateToStringFunctionFallingBackToDOM(vtree.constructor.name));
+      errors.widgetTypeHasNoTemplateToStringFunctionFallingBackToDOM(vtree.constructor.name);
       var elem = vdom.create(virtualHyperscript('div', {}, vtree));
       output += elem.innerHTML;
     }

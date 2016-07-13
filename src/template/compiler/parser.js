@@ -148,7 +148,7 @@ MustacheParser.prototype.onclosetag = function(name) {
   }
 
   if (name in voidElements) {
-    logger.warn(errors.elementIsAVoidElementSoDoesNotNeedAClosingTag(name));
+    errors.elementIsAVoidElementSoDoesNotNeedAClosingTag(name);
     return;
   }
 
@@ -161,10 +161,10 @@ MustacheParser.prototype.onclosetag = function(name) {
       }
     } else {
       let current = this._stack[this._stack.length - 1];
-      logger.exception(errors.wrongClosingElementType(name, current));
+      errors.wrongClosingElementType(name, current);
     }
   } else {
-    logger.exception(errors.closingHTMLElementWithNoPair(name));
+    errors.closingHTMLElementWithNoPair(name);
   }
 };
 

@@ -44,7 +44,8 @@ function getTemplate(template, options) {
   let output = {};
 
   if (stack.stack.length > 0) {
-    logger.exception(errors.notAllTagsWereClosedProperly(), stack.stack);
+    errors.notAllTagsWereClosedProperly();
+    logger.exception(stack.stack);
   }
 
   parser.end();

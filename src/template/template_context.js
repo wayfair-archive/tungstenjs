@@ -208,7 +208,7 @@ Context.prototype.lookup = function(name, handleLambda) {
           } else {
             if (computedPropertyWarnings[name] !== true) {
               computedPropertyWarnings[name] = true;
-              logger.warn(errors.computedPropertiesAreNowDeprecatedPleaseChange(name));
+              errors.computedPropertiesAreNowDeprecatedPleaseChange(name);
             }
             value = value.call(fnContext);
           }

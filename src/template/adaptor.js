@@ -3,7 +3,6 @@
 var _ = require('underscore');
 var ToString = require('./stacks/string');
 var Context = require('./template_context');
-var logger = require('./../utils/logger');
 var errors = require('./../utils/errors');
 var types = require('./types');
 var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
@@ -162,7 +161,7 @@ function render(stack, template, context, partials, parentView) {
         }
       } else {
         // @TODO, perhaps return this string as the partial result so it renders to the page?
-        logger.warn(errors.warningNoPartialRegisteredWithTheName(partialName));
+        errors.warningNoPartialRegisteredWithTheName(partialName);
       }
       break;
 
@@ -347,7 +346,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
   if (template.t === types.PARTIAL) {
     var partialName = template.r;
     if (!partials[partialName]) {
-      logger.warn(errors.warningNoPartialRegisteredWithTheName(partialName));
+      errors.warningNoPartialRegisteredWithTheName(partialName);
       return null;
     } else {
       var partialTemplate = partials[partialName];

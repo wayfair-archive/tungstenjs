@@ -27,7 +27,7 @@ function getWindow() {
   // Launch panel
   debugWindow = window.open('', 'TungstenDebugger', 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,width=800,height=640');
   if (!debugWindow) {
-    logger.error(errors.unableToLaunchDebugPanel());
+    errors.unableToLaunchDebugPanel();
   } else {
     debugWindow.document.title = 'DEBUG: ' + window.document.title;
     debugWindow.onerror = collectError;

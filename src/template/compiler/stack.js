@@ -105,7 +105,7 @@ templateStack.openElement = function(type, value) {
     if (prev && this.htmlValidationMode) {
       let isValid = htmlHelpers.validation.isValidChild(prev, value, this.htmlValidationMode === 'strict');
       if (isValid !== true) {
-        logger.warn(errors.cannotPlaceThisTagWithinAPreviousTag(value, prev.tagName, isValid));
+        errors.cannotPlaceThisTagWithinAPreviousTag(value, prev.tagName, isValid);
       }
     }
     elem.childTags = {};
@@ -217,7 +217,7 @@ templateStack._closeElem = function(obj) {
   let i;
 
   if (obj.isOpen) {
-    logger.exception(errors.tagIsClosedBeforeOpenTagIsCompletedCheckForUnpairedQuotes());
+    errors.tagIsClosedBeforeOpenTagIsCompletedCheckForUnpairedQuotes();
     // Close the element off to avoid other errors
     obj.close();
   }
@@ -309,7 +309,7 @@ templateStack.closeElement = function(closingElem) {
       } else {
         actualTag = '{{/' + closingElem.value + '}}';
       }
-      logger.exception(errors.differentTagThanExpected(actualTag, expectedTag));
+      errors.differentTagThanExpected(actualTag, expectedTag);
     } else {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
@@ -317,9 +317,9 @@ templateStack.closeElement = function(closingElem) {
   } else {
     if (closingElem.tagName) {
       // Something has gone terribly wrong
-      logger.exception(errors.closingHTMLElementWithNoPair(closingElem.tagName));
+      errors.closingHTMLElementWithNoPair(closingElem.tagName);
     } else {
-      logger.exception(errors.closingMustacheElementWithNoPair(closingElem.value));
+      errors.closingMustacheElementWithNoPair(closingElem.value);
     }
   }
 };
@@ -327,7 +327,8 @@ templateStack.closeElement = function(closingElem) {
 templateStack.getOutput = function() {
   // If any items are left on the stack, they weren't closed by the template
   if (this.stack.length) {
-    logger.warn(errors.templateContainsUnclosedItems(), this.stack);
+    errors.templateContainsUnclosedItems();
+    logger.warn(this.stack);
   }
   // Always return the array
   return this.result;
@@ -388,7 +389,8 @@ function processAttributeArray(attrArray) {
       // Ensure there are no tokens in a non-dynamic attribute name
       for (let j = 0; j < name.length; j++) {
         if (typeof name[j] !== 'string') {
-          logger.warn(errors.mustacheTokenCannotBeInAttributeNames(), name[j]);
+          errors.mustacheTokenCannotBeInAttributeNames();
+          logger.warn(name[j]);
         }
       }
 
@@ -417,7 +419,8 @@ function processAttributeArray(attrArray) {
     } else if (pushingTo === name) {
       if (name.length === 0) {
         if (item.type === types.INTERPOLATOR) {
-          logger.warn(errors.doubleCurlyInterpolatorsCannotBeInAttributes(), item.value);
+          errors.doubleCurlyInterpolatorsCannotBeInAttributes();
+          logger.warn(item.value);
         } else if (item.type === types.SECTION) {
           attrs.dynamic.push(templateStack.processObject(item));
           continue;

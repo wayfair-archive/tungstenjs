@@ -137,10 +137,12 @@ module.exports.removeEvent = function(evt) {
     } else if (evt.length === 4) {
       removeElementEvents(evt[0], evt[1], evt[2], evt[3]);
     } else {
-      logger.warn(errors.objectDoesNotMeetExpectedEventSpec(), evt);
+      errors.objectDoesNotMeetExpectedEventSpec();
+      logger.warn(evt);
     }
   } else {
-    logger.warn(errors.objectDoesNotMeetExpectedEventSpec(), evt);
+    errors.objectDoesNotMeetExpectedEventSpec();
+    logger.warn(evt);
   }
 };
 

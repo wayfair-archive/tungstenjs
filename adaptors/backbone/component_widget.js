@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('underscore');
-var logger = require('../../src/utils/logger');
 var errors = require('../../src/utils/errors');
 
 var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize', 'save', 'fetch', 'sync', 'validate', 'isValid'];
@@ -9,7 +8,7 @@ var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
 
 var getDummyFunction = function(fn) {
   return function() {
-    logger.warn(errors.componentFunctionMayNotBeCalledDirectly(fn));
+    errors.componentFunctionMayNotBeCalledDirectly(fn);
   };
 };
 
@@ -58,7 +57,7 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
       if (typeof this[fn] === 'undefined') {
         this[fn] = _.bind(model[fn], model);
       } else {
-        logger.warn(errors.cannotOverwriteComponentMethod(fn));
+        errors.cannotOverwriteComponentMethod(fn);
       }
     }
   }
