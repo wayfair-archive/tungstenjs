@@ -33,10 +33,7 @@ var messages = {
     widgetTypeHasNoTemplateToStringFunctionFallingBackToDOM: (name) => `Widget type: ${name} has no templateToString function, falling back to DOM`,
     objectDoesNotMeetExpectedEventSpec: () => 'Object does not meet expected event spec',
     warningNoPartialRegisteredWithTheName: (partialName) => `Warning: no partial registered with the name ${partialName}`,
-    elementIsAVoidElementSoDoesNotNeedAClosingTag: (name) => `${name} is a void element so does not need a closing tag`,
     cannotPlaceThisTagWithinAPreviousTag: (value, prevTagName, isValid) => `Cannot place this ${value} tag within a ${prevTagName} tag. ${isValid}`,
-    templateContainsUnclosedItems: () => 'Template contains unclosed items',
-    mustacheTokenCannotBeInAttributeNames: () => 'Mustache token cannot be in attribute names',
     doubleCurlyInterpolatorsCannotBeInAttributes: () => 'Double curly interpolators cannot be in attributes',
     tagsImproperlyPairedClosing: (tagName, openID, id) => `${tagName} tags improperly paired, closing ${openID} with close tag from ${id}`,
     closingElementWhenTheStackWasEmpty: (id) => `Closing element ${id} when the stack was empty`,
@@ -46,12 +43,6 @@ var messages = {
     unableToLaunchDebugPanel: () => 'Unable to launch debug panel. You may need to allow the popup or run "window.launchDebugger()" from your console'
   },
   exception: {
-    notAllTagsWereClosedProperly: () => 'Not all tags were closed properly',
-    wrongClosingElementType: (name, current) => `</${name}> where a </${current}> should be`,
-    tagIsClosedBeforeOpenTagIsCompletedCheckForUnpairedQuotes: () => 'Tag is closed before open tag is completed. Check for unpaired quotes',
-    differentTagThanExpected: (actualTag, expectedTag) => `${actualTag} where a ${expectedTag} should be`,
-    closingHTMLElementWithNoPair: (closingElemTagName) => `</${closingElemTagName}> with no paired <${closingElemTagName}>`,
-    closingMustacheElementWithNoPair: (closingElemValue) => `{{/${closingElemValue}}} with no paired {{#${closingElemValue}}}`
   }
 };
 // For each log type, loggerize each message and add it to module.exports
@@ -72,7 +63,6 @@ for (let type in messages) {
  * @param  {string} customMsg The custom message to append to the generic error message.
  */
 function extend(errorName, customMsg) {
-
   // Find our error message
   for (let type in messages) {
     if (messages[type].hasOwnProperty(errorName)) {
@@ -93,14 +83,14 @@ function extend(errorName, customMsg) {
 
 /**
  * Returns a logger call with the provided message and type
- * @param  {function} msg  function that returns our message
+ * @param  {function} message  function that returns our message
  * @param  {string} type The type of log to make (warning, error, exception, etc...)
  * @return {function}      Function that calls logger with the provided message and type
  */
-function loggerize(msg, type) {
+function loggerize(message, type) {
   return function() {
-    logger[type](msg());
+    logger[type](message());
     // Return the message in case it's needed. (I.E. for utils.alert)
-    return msg();
+    return message();
   };
 }
