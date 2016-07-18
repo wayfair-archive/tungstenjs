@@ -64,6 +64,7 @@ function InputWrapperWidget(template, childView, context, parentView, OtherWidge
   if (OtherWidget) {
     template.templateObj.input_wrapper = true;
     this.otherWidget = new OtherWidget(template, childView, context, parentView);
+    this.view = this.otherWidget.view;
   }
 }
 
@@ -81,13 +82,12 @@ InputWrapperWidget.prototype.init = function init() {
   var el;
   if (this.otherWidget) {
     el = this.otherWidget.init();
+    this.view = this.otherWidget.view;
   } else {
     this.vtree = this.template.toVdom(this.context);
     el = this.template.toDom(this.context);
   }
   this.el = el;
-  var prop = getRelevantPropertyForElement(el);
-  this.value = el[prop];
   this.bindListeners();
   return el;
 };
@@ -98,11 +98,9 @@ InputWrapperWidget.prototype.init = function init() {
  * @param  {Element}            elem DOM node to act upon
  */
 InputWrapperWidget.prototype.update = function update(prev, elem) {
-  if (elem !== prev.el) {
-    prev.unbindListeners();
-    this.bindListeners();
-  }
   this.el = elem;
+  prev.unbindListeners();
+  this.bindListeners();
   var prop = getRelevantPropertyForElement(this.el);
 
   this.vtree = this.template.toVdom(this.context);
@@ -112,33 +110,28 @@ InputWrapperWidget.prototype.update = function update(prev, elem) {
   } else {
     prevVtree = prev.vtree;
   }
-  if (this.value == null) {
-    this.value = prev.value;
-  }
 
   /*
-   !DOM & !VDOM => VDOM->VDOM
-    DOM & !VDOM => DOM->DOM
+   !DOM & !VDOM => NOOP
+    DOM & !VDOM => NOOP
    !DOM &  VDOM => DOM->VDOM
     DOM &  VDOM => DOM->VDOM
   */
 
-  if (prev.value === this.value) {
-    // update the compared value to the current DOM value (as that's what it should represent)
-    prevVtree.properties[prop] = elem[prop];
-  } else if (prevVtree.properties[prop] !== this.vtree.properties[prop]) {
+  if (prevVtree.properties[prop] !== this.vtree.properties[prop]) {
     // If the DOM changed AND the VDOM changed, assume the VDOM will be right
-    prevVtree.properties[prop] = this.value;
+    prevVtree.properties[prop] = prev.value;
+  } else if (prev.value != null && prop === 'checked') {
+    // update the compared value to the current DOM value (as that's what it should represent)
+    prevVtree.properties[prop] = prev.value;
   }
 
   if (this.otherWidget) {
     this.otherWidget.update(prev.otherWidget, elem);
+    this.view = this.otherWidget.view;
   } else {
     tungsten.updateTree(elem, prevVtree, this.vtree);
   }
-
-  // Update value to ze DOM
-  this.value = elem[prop];
 };
 
 /**
@@ -161,11 +154,10 @@ InputWrapperWidget.prototype.attach = function attach(elem) {
   this.el = elem;
   if (this.otherWidget) {
     this.otherWidget.attach(elem);
+    this.view = this.otherWidget.view;
   } else {
     this.vtree = this.template.toVdom(this.context);
   }
-  var prop = getRelevantPropertyForElement(elem);
-  this.value = elem[prop];
   this.bindListeners();
 };
 
@@ -177,18 +169,14 @@ InputWrapperWidget.prototype.updateValue = function() {
 var eventsToListenOn = ['keyup', 'change', 'input'];
 
 InputWrapperWidget.prototype.bindListeners = function() {
-  var el = this.el;
-  var updateValue = this.updateValue;
-  _.each(eventsToListenOn, function(evt) {
-    addListener(el, evt, updateValue);
+  _.each(eventsToListenOn, (evt) => {
+    addListener(this.el, evt, this.updateValue);
   });
 };
 
 InputWrapperWidget.prototype.unbindListeners = function() {
-  var el = this.el;
-  var updateValue = this.updateValue;
-  _.each(eventsToListenOn, function(evt) {
-    removeListener(el, evt, updateValue);
+  _.each(eventsToListenOn, (evt) => {
+    removeListener(this.el, evt, this.updateValue);
   });
 };
 

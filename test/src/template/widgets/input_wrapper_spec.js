@@ -45,6 +45,9 @@ describe('input_wrapper.js public API', function() {
       prevContext = new Context({value: 'old value'});
       instance = new InputWrapper(template, null, context, null);
     });
+    afterEach(function() {
+      template = context = prevContext = instance = null;
+    });
     it('should have a property type', function() {
       expect(instance.type).to.equal('Widget');
     });
@@ -81,6 +84,12 @@ describe('input_wrapper.js public API', function() {
       });
 
       // DOM VDOM
+      it('!DOM !VDOM', function() {
+        var prev = new InputWrapper(template, null, context, null);
+        var elem = prev.init();
+        instance.update(prev, elem);
+        expect(elem.value).to.equal(context.lookup('value'));
+      });
       it('DOM !VDOM', function() {
         var prev = new InputWrapper(template, null, context, null);
         var elem = prev.init();
