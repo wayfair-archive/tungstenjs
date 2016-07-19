@@ -76,9 +76,9 @@ describe('events_core.js public API', function() {
         console.warn.calls.reset();
         eventsCore.removeEvent(evt);
         jasmineExpect(console.warn).toHaveBeenCalledWith(
-          'Object does not meet expected event spec',
-          evt
+          'Object does not meet expected event spec'
         );
+        jasmineExpect(console.warn).toHaveBeenCalledWith(evt);
       }
       faultyCall([null, null, null]);
       faultyCall({});

@@ -7,9 +7,7 @@
 
 const logger = require('./logger');
 
-module.exports = {
-  extend: extend
-};
+module.exports = {};
 
 // Error messages, categorized by type. (logger.warn, logger.error, etc...)
 var messages = {
@@ -33,7 +31,6 @@ var messages = {
     widgetTypeHasNoTemplateToStringFunctionFallingBackToDOM: (name) => `Widget type: ${name} has no templateToString function, falling back to DOM`,
     objectDoesNotMeetExpectedEventSpec: () => 'Object does not meet expected event spec',
     warningNoPartialRegisteredWithTheName: (partialName) => `Warning: no partial registered with the name ${partialName}`,
-    cannotPlaceThisTagWithinAPreviousTag: (value, prevTagName, isValid) => `Cannot place this ${value} tag within a ${prevTagName} tag. ${isValid}`,
     doubleCurlyInterpolatorsCannotBeInAttributes: () => 'Double curly interpolators cannot be in attributes',
     tagsImproperlyPairedClosing: (tagName, openID, id) => `${tagName} tags improperly paired, closing ${openID} with close tag from ${id}`,
     closingElementWhenTheStackWasEmpty: (id) => `Closing element ${id} when the stack was empty`,
@@ -45,15 +42,19 @@ var messages = {
   exception: {
   }
 };
-// For each log type, loggerize each message and add it to module.exports
-for (let type in messages) {
-  if (messages.hasOwnProperty(type)) {
-    for (let msgName in messages[type]) {
-      if (messages[type].hasOwnProperty(msgName)) {
-        module.exports[msgName] = loggerize(messages[type][msgName], type);
-      }
-    }
-  }
+
+/**
+ * Returns a logger call with the provided message and type
+ * @param  {function} message  function that returns our message
+ * @param  {string} type The type of log to make (warning, error, exception, etc...)
+ * @return {function}      Function that calls logger with the provided message and type
+ */
+function loggerize(message, type) {
+  return function() {
+    logger[type](message.apply(message, arguments));
+    // Return the message in case it's needed. (I.E. for utils.alert)
+    return message.apply(message, arguments);
+  };
 }
 
 /**
@@ -81,16 +82,16 @@ function extend(errorName, customMsg) {
   logger.warn(`Tried to extend a nonexistent error message: ${errorName}`);
 }
 
-/**
- * Returns a logger call with the provided message and type
- * @param  {function} message  function that returns our message
- * @param  {string} type The type of log to make (warning, error, exception, etc...)
- * @return {function}      Function that calls logger with the provided message and type
- */
-function loggerize(message, type) {
-  return function() {
-    logger[type](message());
-    // Return the message in case it's needed. (I.E. for utils.alert)
-    return message();
-  };
+module.exports.extend = extend;
+
+// For each log type, loggerize each message and add it to module.exports
+for (let type in messages) {
+  if (messages.hasOwnProperty(type)) {
+    for (let msgName in messages[type]) {
+      if (messages[type].hasOwnProperty(msgName)) {
+        module.exports[msgName] = loggerize(messages[type][msgName], type);
+      }
+    }
+  }
 }
+
