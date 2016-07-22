@@ -6,6 +6,7 @@
 'use strict';
 
 const logger = require('./logger');
+const _ = require('underscore');
 
 module.exports = {};
 
@@ -29,7 +30,7 @@ var messages = {
     cannotOverwriteComponentMethod: (fn) => `Cannot overwrite component method: ${fn}`,
     unableToParseToAValidValueMustMatchJSONFormat: (value) => `Unable to parse "${value}" to a valid value. Input must match JSON format`,
     widgetTypeHasNoTemplateToStringFunctionFallingBackToDOM: (name) => `Widget type: ${name} has no templateToString function, falling back to DOM`,
-    objectDoesNotMeetExpectedEventSpec: () => 'Object does not meet expected event spec',
+    objectDoesNotMeetExpectedEventSpec: (evt) => ['Object does not meet expected event spec', evt],
     warningNoPartialRegisteredWithTheName: (partialName) => `Warning: no partial registered with the name ${partialName}`,
     doubleCurlyInterpolatorsCannotBeInAttributes: () => 'Double curly interpolators cannot be in attributes',
     tagsImproperlyPairedClosing: (tagName, openID, id) => `${tagName} tags improperly paired, closing ${openID} with close tag from ${id}`,
@@ -45,15 +46,21 @@ var messages = {
 
 /**
  * Returns a logger call with the provided message and type
- * @param  {function} message  function that returns our message
+ * @param  {function} message  function that returns a string, or an array containing
+ *                             a string and additional arguments for logger.
  * @param  {string} type The type of log to make (warning, error, exception, etc...)
  * @return {function}      Function that calls logger with the provided message and type
  */
 function loggerize(message, type) {
   return function() {
-    logger[type](message.apply(message, arguments));
+    let output = message.apply(message, arguments);
+    if (_.isArray(output)) {
+      logger[type].apply(logger, output);
+    } else {
+      logger[type](output);
+    }
     // Return the message in case it's needed. (I.E. for utils.alert)
-    return message.apply(message, arguments);
+    return output;
   };
 }
 
@@ -66,12 +73,22 @@ function loggerize(message, type) {
 function extend(errorName, customMsg) {
   // Find our error message
   for (let type in messages) {
-    if (messages[type].hasOwnProperty(errorName)) {
+    if (messages[type][errorName]) {
       // Extend the error message
       let origError = messages[type][errorName];
-      messages[type][errorName] = function() {
-        return `${origError.apply(origError, arguments)}. ${customMsg}`;
-      };
+      // If origError returns multiple arguments, access the first (the error message) and append to it.
+      if (_.isArray(origError())) {
+        messages[type][errorName] = function() {
+          let errorMessage = origError.apply(origError, arguments);
+          errorMessage[0] = `${errorMessage[0]}. ${customMsg}`;
+          return errorMessage;
+        };
+      } else {
+        // Otherwise, simply append to the message.
+        messages[type][errorName] = function() {
+          return `${origError.apply(origError, arguments)}. ${customMsg}`;
+        };
+      }
       // Loggerize the message and add it to module.exports.
       module.exports[errorName] = loggerize(messages[type][errorName], type);
       return;
@@ -86,7 +103,7 @@ module.exports.extend = extend;
 
 // For each log type, loggerize each message and add it to module.exports
 for (let type in messages) {
-  if (messages.hasOwnProperty(type)) {
+  if (messages[type]) {
     for (let msgName in messages[type]) {
       if (messages[type].hasOwnProperty(msgName)) {
         module.exports[msgName] = loggerize(messages[type][msgName], type);

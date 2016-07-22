@@ -2,6 +2,7 @@
 
 const errors = require('../../../src/utils/errors');
 const logger = require('../../../src/utils/logger');
+const _ = require('underscore');
 
 describe('errors.js public API', function() {
   describe('warnings', function() {
@@ -122,8 +123,8 @@ describe('errors.js public API', function() {
           expect(errors.objectDoesNotMeetExpectedEventSpec).to.be.a('function');
         });
         it('should log the correct error message', function() {
-          errors.objectDoesNotMeetExpectedEventSpec();
-          jasmineExpect(logger.warn).toHaveBeenCalledWith('Object does not meet expected event spec');
+          errors.objectDoesNotMeetExpectedEventSpec({});
+          jasmineExpect(logger.warn).toHaveBeenCalledWith('Object does not meet expected event spec', {});
         });
       });
       describe('warningNoPartialRegisteredWithTheName', function() {
@@ -210,6 +211,13 @@ describe('errors.js public API', function() {
       spyOn(logger, 'warn');
       errors.extend(nonexistentError, customHint);
       jasmineExpect(logger.warn).toHaveBeenCalledWith(`Tried to extend a nonexistent error message: ${nonexistentError}`);
+    });
+    it('should support extension of an error message that passes multiple arguments to logger', function() {
+      let responseArray = errors.objectDoesNotMeetExpectedEventSpec({});
+      const extension = 'test extension';
+      responseArray[0] = responseArray[0] + `. ${extension}`;
+      errors.extend('objectDoesNotMeetExpectedEventSpec', extension);
+      jasmineExpect(_.isEqual(errors.objectDoesNotMeetExpectedEventSpec({}), responseArray)).toEqual(true);
     });
   });
 });
