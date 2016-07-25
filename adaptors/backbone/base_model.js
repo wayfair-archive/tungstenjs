@@ -5,7 +5,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var logger = require('../../src/utils/logger');
 var errors = require('../../src/utils/errors');
 var ComponentWidget = require('./component_widget');
 var eventTrigger = require('./event_trigger');
@@ -564,7 +563,7 @@ BaseModel.prototype.set = function(key, val, options) {
       delete options.initialData;
       this.initialData = JSON.parse(initialStr || '{}');
       if (!_.isObject(this.initialData) || _.isArray(this.initialData)) {
-        logger.warn(errors.modelExpectedObjectOfAttributesButGot(initialStr));
+        errors.modelExpectedObjectOfAttributesButGot(initialStr);
       }
     }
 

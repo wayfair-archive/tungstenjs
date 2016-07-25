@@ -3,7 +3,7 @@
 const _ = require('underscore');
 const types = require('../types');
 const htmlHelpers = require('../html_helpers');
-const logger = require('./compiler_logger');
+const compilerErrors = require('./compiler_errors');
 
 // Keys to use for the outputted array
 const templateKeys = {
@@ -104,7 +104,7 @@ templateStack.openElement = function(type, value) {
     if (prev && this.htmlValidationMode) {
       let isValid = htmlHelpers.validation.isValidChild(prev, value, this.htmlValidationMode === 'strict');
       if (isValid !== true) {
-        logger.warn(`Cannot place this ${value} tag within a ${prev.tagName} tag. ${isValid}`);
+        compilerErrors.cannotPlaceThisTagWithinAPreviousTag(value, prev.tagName, isValid);
       }
     }
     elem.childTags = {};
@@ -216,7 +216,7 @@ templateStack._closeElem = function(obj) {
   let i;
 
   if (obj.isOpen) {
-    logger.exception('Tag is closed before open tag is completed. Check for unpaired quotes');
+    compilerErrors.tagIsClosedBeforeOpenTagIsCompletedCheckForUnpairedQuotes();
     // Close the element off to avoid other errors
     obj.close();
   }
@@ -308,7 +308,7 @@ templateStack.closeElement = function(closingElem) {
       } else {
         actualTag = '{{/' + closingElem.value + '}}';
       }
-      logger.exception(`${actualTag} where a ${expectedTag} should be`);
+      compilerErrors.differentTagThanExpected(actualTag, expectedTag);
     } else {
       // If they match, everything lines up
       this._closeElem(this.stack.pop());
@@ -316,9 +316,9 @@ templateStack.closeElement = function(closingElem) {
   } else {
     if (closingElem.tagName) {
       // Something has gone terribly wrong
-      logger.exception(`</${closingElem.tagName}> with no paired <${closingElem.tagName}>`);
+      compilerErrors.closingHTMLElementWithNoPair(closingElem.tagName);
     } else {
-      logger.exception(`{{/${closingElem.value}}} with no paired {{#${closingElem.value}}}`);
+      compilerErrors.closingMustacheElementWithNoPair(closingElem.value);
     }
   }
 };
@@ -326,7 +326,7 @@ templateStack.closeElement = function(closingElem) {
 templateStack.getOutput = function() {
   // If any items are left on the stack, they weren't closed by the template
   if (this.stack.length) {
-    logger.warn('Template contains unclosed items', this.stack);
+    compilerErrors.templateContainsUnclosedItems(this.stack);
   }
   // Always return the array
   return this.result;
@@ -387,7 +387,7 @@ function processAttributeArray(attrArray) {
       // Ensure there are no tokens in a non-dynamic attribute name
       for (let j = 0; j < name.length; j++) {
         if (typeof name[j] !== 'string') {
-          logger.warn('Mustache token cannot be in attribute names', name[j]);
+          compilerErrors.mustacheTokenCannotBeInAttributeNames(name[j]);
         }
       }
 
@@ -416,7 +416,7 @@ function processAttributeArray(attrArray) {
     } else if (pushingTo === name) {
       if (name.length === 0) {
         if (item.type === types.INTERPOLATOR) {
-          logger.warn('Double curly interpolators cannot be in attributes', item.value);
+          compilerErrors.doubleCurlyInterpolatorsCannotBeInAttributes(item.value);
         } else if (item.type === types.SECTION) {
           attrs.dynamic.push(templateStack.processObject(item));
           continue;

@@ -11,6 +11,7 @@ const _ = require('underscore');
 module.exports = {};
 
 // Error messages, categorized by type. (logger.warn, logger.error, etc...)
+// First element in any returned array should be a string.
 var messages = {
   warn: {
     childViewWasPassedAsObjectWithoutAScopeProperty: () => 'ChildView was passed as object without a scope property',
