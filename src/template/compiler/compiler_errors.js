@@ -94,11 +94,7 @@ module.exports.extend = extend;
 
 // For each log type, loggerize each message and add it to module.exports
 for (let type in messages) {
-  if (messages[type]) {
-    for (let msgName in messages[type]) {
-      if (messages[type].hasOwnProperty(msgName)) {
-        module.exports[msgName] = compilerLoggerize(messages[type][msgName], type);
-      }
-    }
+  for (let msgName in messages[type]) {
+    module.exports[msgName] = compilerLoggerize(messages[type][msgName], type);
   }
 }

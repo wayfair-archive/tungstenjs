@@ -10,8 +10,11 @@ const _ = require('underscore');
 
 module.exports = {};
 
-// Error messages, categorized by type. (logger.warn, logger.error, etc...)
-// First element in any returned array should be a string.
+/**
+ * Compiler error messages, categorized by type.
+ * Each message must be in a function. This function must return either a string, or an array whose first element is a string
+ * @type {Object}
+ */
 var messages = {
   warn: {
     childViewWasPassedAsObjectWithoutAScopeProperty: () => 'ChildView was passed as object without a scope property',
@@ -104,12 +107,8 @@ module.exports.extend = extend;
 
 // For each log type, loggerize each message and add it to module.exports
 for (let type in messages) {
-  if (messages[type]) {
-    for (let msgName in messages[type]) {
-      if (messages[type].hasOwnProperty(msgName)) {
-        module.exports[msgName] = loggerize(messages[type][msgName], type);
-      }
-    }
+  for (let msgName in messages[type]) {
+    module.exports[msgName] = loggerize(messages[type][msgName], type);
   }
 }
 
