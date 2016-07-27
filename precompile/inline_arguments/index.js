@@ -35,5 +35,7 @@ module.exports = function(contents) {
     return 'require("lazy_initializer?constructorFn=true&request=' + absolutePath + '!' + requiring + '")';
   });
 
-  return replacedContents + ';if (!global.counter) {global.counter=0}console.log(' + JSON.stringify(this.resourcePath) + ', "loaded", ++global.counter);';
+  // loading output for startup_time.js
+  // replacedContents = replacedContents +  + ';if (!global.counter) {global.counter=0}console.log(' + JSON.stringify(this.resourcePath) + ', "loaded", ++global.counter);';
+  return replacedContents;
 };
