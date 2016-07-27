@@ -5,8 +5,6 @@
  */
 'use strict';
 
-console.log('here?'); // eslint-disable-line no-console
-console.trace(); // eslint-disable-line no-console
 var templateAdaptor = lazyRequire('./adaptor');
 var Context = require('./template_context');
 
