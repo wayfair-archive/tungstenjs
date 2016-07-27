@@ -11,8 +11,8 @@
 
 'use strict';
 
-var logger = require('lazy_initializer!../../src/utils/logger');
-var errors = require('lazy_initializer!../../src/utils/errors');
+var logger = lazyRequire('../../src/utils/logger');
+var errors = lazyRequire('../../src/utils/errors');
 
 /**
  * Wrapper Widget for child views

@@ -12,10 +12,10 @@
 'use strict';
 var document = require('global/document');
 var window = require('global/window');
-var globalEvents = require('lazy_initializer!./event/global_events');
-var virtualDOM = require('lazy_initializer!./vdom/virtual_dom_implementation');
-var virtualHyperscript = require('lazy_initializer!./vdom/virtual_hyperscript');
-var htmlParser = require('lazy_initializer!./template/html_parser');
+var globalEvents = lazyRequire('./event/global_events');
+var virtualDOM = lazyRequire('./vdom/virtual_dom_implementation');
+var virtualHyperscript = lazyRequire('./vdom/virtual_hyperscript');
+var htmlParser = lazyRequire('./template/html_parser');
 
 var exports = {};
 

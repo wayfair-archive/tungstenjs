@@ -2,10 +2,10 @@
 
 var _ = require('underscore');
 var Context = require('./template_context');
-var ToString = require('lazy_initializer?fn!./stacks/string');
-var compiler = require('lazy_initializer?fn!./compiler');
-var logger = require('lazy_initializer!./../utils/logger');
-var errors = require('lazy_initializer!./../utils/errors');
+var ToString = lazyRequireConstructor('./stacks/string');
+var compiler = lazyRequireFn('./compiler');
+var logger = lazyRequire('./../utils/logger');
+var errors = lazyRequire('./../utils/errors');
 var types = require('./types');
 var isWidget;
 var isVNode;
@@ -291,12 +291,21 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
 
   // If cached version hasn't been passed down, parse childViews into an array of class names
   if (!childClasses) {
-    childClasses = {};
-    childClasses.flat = Object.keys(view.childViews);
-    childClasses.padded = childClasses.flat.map(function(key) {
-      return ' ' + key + ' ';
-    });
-    childClasses.length = childClasses.flat.length;
+    childClasses;
+    if (view.childViews) {
+      childClasses = {};
+      childClasses.flat = Object.keys(view.childViews);
+      childClasses.padded = childClasses.flat.map(function(key) {
+        return ' ' + key + ' ';
+      });
+      childClasses.length = childClasses.flat.length;
+    } else {
+      childClasses = {
+        flat: [],
+        padded: [],
+        length: 0
+      };
+    }
   }
 
   // String is a dead-end
@@ -333,8 +342,8 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
           if (typeof obj === 'string') {
             memo += ' ' + obj;
           }
-        }, '');
-        className = className.join(' ');
+          return memo;
+        }, '') + ' ';
       }
       // Pad with spaces for better hasClass-ing
       className = ' ' + className + ' ';

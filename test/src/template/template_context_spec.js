@@ -12,7 +12,7 @@ describe('template_context.js public API', function() {
     it('should return null when receiving a comment block', function() {
       expect(testContext.lookup('!text')).to.equal(null);
     });
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       it('should be able to log using debug helpers', function() {
         spyOn(logger, 'log');
         testContext.lookup('!w/context');

@@ -27,7 +27,7 @@ describe('base_view.js public api', function() {
       BaseView.extend(data);
       jasmineExpect(validate.childViews).toHaveBeenCalledWith(data.childViews);
     });
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       it('should prevent initialize from being overwritten', function() {
         spyOn(logger, 'warn');
         spyOn(BaseView.prototype, 'initialize');
@@ -375,7 +375,7 @@ describe('base_view.js constructed api', function() {
     });
   });
 
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
 
   // Debug methods:
     describe('initDebug', function() {

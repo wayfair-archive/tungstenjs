@@ -263,7 +263,7 @@ describe('backbone_view_widget public api', function() {
       expect(ctx.view).to.equal(expectedView);
     });
   });
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
     describe('templateToString', function() {
       it('should be a function', function() {
         expect(BackboneViewWidget.prototype.templateToString).to.be.a('function');

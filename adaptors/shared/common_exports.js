@@ -19,10 +19,10 @@ module.exports = {
   Template: Template,
   _core: tungsten,
   templateHelper: {
-    compileTemplates: require('lazy_initializer?fn!../../precompile/tungsten_template/template_helper')
+    compileTemplates: lazyRequireFn('../../precompile/tungsten_template/template_helper')
   },
   precompiler: require('../../precompile/tungsten_template'),
-  compiler: require('lazy_initializer?fn!../../src/template/compiler'),
+  compiler: lazyRequireFn('../../src/template/compiler'),
   _Context: Context,
   addEventPlugin: tungsten.addEventPlugin,
   registerLambda: Context.registerLambda,

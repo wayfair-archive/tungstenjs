@@ -7,7 +7,7 @@
 
 console.log('here?'); // eslint-disable-line no-console
 console.trace(); // eslint-disable-line no-console
-var templateAdaptor = require('lazy_initializer!./adaptor');
+var templateAdaptor = lazyRequire('./adaptor');
 var Context = require('./template_context');
 
 /**

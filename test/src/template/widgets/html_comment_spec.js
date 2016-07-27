@@ -51,7 +51,7 @@ describe('html_comment.js public API', function() {
         expect(elem.nodeValue).to.equal(oldValue);
       });
     });
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       describe('HtmlComment.templateToString', function() {
         it('should have a templateToString function', function() {
           expect(comment.templateToString).to.be.a('function');

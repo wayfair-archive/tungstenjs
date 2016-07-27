@@ -29,8 +29,11 @@ describe('tungsten.js public API', function() {
       expect(tungsten.addEventPlugin).to.be.a('function');
       expect(tungsten.addEventPlugin).to.have.length(1);
     });
-    it('should be globalEvents.addEventPlugin', function() {
-      expect(tungsten.addEventPlugin).to.equal(globalEvents.addEventPlugin);
+    it('should pass through to globalEvents.addEventPlugin', function() {
+      spyOn(globalEvents, 'addEventPlugin');
+      var handler = function() {};
+      tungsten.addEventPlugin(handler);
+      jasmineExpect(globalEvents.addEventPlugin).toHaveBeenCalledWith(handler);
     });
   });
   describe('bindEvent', function() {
@@ -79,7 +82,10 @@ describe('tungsten.js public API', function() {
       expect(tungsten.unbindEvent).to.have.length(1);
     });
     it('should be globalEvents.unbindVirtualEvent', function() {
-      expect(tungsten.unbindEvent).to.equal(globalEvents.unbindVirtualEvent);
+      spyOn(globalEvents, 'unbindVirtualEvent');
+      var evt = {};
+      tungsten.unbindEvent(evt);
+      jasmineExpect(globalEvents.unbindVirtualEvent).toHaveBeenCalledWith(evt);
     });
   });
 

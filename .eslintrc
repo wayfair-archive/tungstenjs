@@ -32,7 +32,9 @@
     "module": true,
     "TUNGSTENJS_DEBUG_MODE": true,
     "INLINE_ARGUMENTS": true,
-    "lazyRequire": true
+    "lazyRequire": true,
+    "lazyRequireFn": true,
+    "lazyRequireConstructor": true
   },
   "extends": "eslint:recommended"
 }

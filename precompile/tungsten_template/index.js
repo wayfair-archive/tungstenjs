@@ -11,7 +11,7 @@
 'use strict';
 
 var path = require('path');
-var compilerFn = require('lazy_initializer!../../src/template/compiler');
+var compilerFn = lazyRequire('../../src/template/compiler');
 
 /**
  * Compiles given templates

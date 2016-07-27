@@ -2,7 +2,7 @@
 
 const OBJECT_QUEUED = '__raf_queued__';
 
-const animFrame = require('lazy_initializer!./animation_frame');
+const animFrame = lazyRequire('./animation_frame');
 const _queue = [];
 function renderQueue() {
   for (let i = 0; i < _queue.length; i++) {

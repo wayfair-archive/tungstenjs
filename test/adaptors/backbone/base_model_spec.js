@@ -22,7 +22,7 @@ describe('base_model.js static api', function() {
       BaseModel.extend({});
       jasmineExpect(Backbone.Model.extend).toHaveBeenCalled();
     });
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       it('should prevent initialize from being overwritten', function() {
         spyOn(logger, 'warn');
         spyOn(BaseModel.prototype, 'initialize');
@@ -149,7 +149,7 @@ describe('base_model.js constructed api', function() {
     });
   });
 
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
     describe('initDebug', function() {
       it('should be a function', function() {
         expect(BaseModel.prototype.initDebug).to.be.a('function');
@@ -887,7 +887,7 @@ describe('base_model.js backbone functionality', function() {
     model = new BaseModel();
     // In debugger the default cidPrefix is overrridden
     var prefix = 'c';
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       prefix = BaseModel.prototype.cidPrefix;
     }
     equal(model.cid.substr(0, prefix.length), prefix);
@@ -2187,7 +2187,7 @@ describe('base_model.js propTypes functionality', function() {
   afterEach(function() {
     BookModel = null;
   });
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
     it('should throw error when PropTypes is not an object', function() {
       BookModel = BaseModel.extend({
         propTypes: {

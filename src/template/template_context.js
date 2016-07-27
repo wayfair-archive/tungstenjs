@@ -9,8 +9,8 @@
 'use strict';
 
 const _ = require('underscore');
-const logger = require('lazy_initializer!../utils/logger');
-const errors = require('lazy_initializer!../utils/errors');
+const logger = lazyRequire('../utils/logger');
+const errors = lazyRequire('../utils/errors');
 
 /** @type {Object} storage to prevent repeated warnings about the same computed property */
 const computedPropertyWarnings = {};

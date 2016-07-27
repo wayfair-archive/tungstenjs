@@ -1,8 +1,8 @@
 'use strict';
 
 var _ = require('underscore');
-var logger = require('lazy_initializer!../../src/utils/logger');
-var errors = require('lazy_initializer!../../src/utils/errors');
+var logger = lazyRequire('../../src/utils/logger');
+var errors = lazyRequire('../../src/utils/errors');
 
 var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize', 'save', 'fetch', 'sync', 'validate', 'isValid'];
 var modelFunctionsToDummy = ['on', 'off', 'listenTo'];

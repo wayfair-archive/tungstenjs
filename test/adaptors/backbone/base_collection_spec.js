@@ -30,7 +30,7 @@ describe('base_collection.js static api', function() {
       BaseCollection.extend({}, {});
       jasmineExpect(Backbone.Collection.extend).toHaveBeenCalled();
     });
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       it('should prevent initialize from being overwritten', function() {
         spyOn(logger, 'warn');
         spyOn(BaseCollection.prototype, 'initialize');
@@ -275,7 +275,7 @@ describe('base_collection.js constructed api', function() {
       expect(args[1]).to.equal(component.exposedEvents[1]);
     });
   });
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
     describe('initDebug', function() {
       it('should be a function', function() {
         expect(BaseCollection.prototype.initDebug).to.be.a('function');

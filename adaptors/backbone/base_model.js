@@ -5,8 +5,8 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var logger = require('lazy_initializer!../../src/utils/logger');
-var errors = require('lazy_initializer!../../src/utils/errors');
+var logger = lazyRequire('../../src/utils/logger');
+var errors = lazyRequire('../../src/utils/errors');
 var ComponentWidget = require('./component_widget');
 var eventTrigger = require('./event_trigger');
 /**
