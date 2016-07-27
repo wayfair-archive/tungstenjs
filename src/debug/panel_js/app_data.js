@@ -1,5 +1,4 @@
 'use strict';
-/* global TUNGSTENJS_VERSION */
 var window = require('global/window');
 var isNode = require('../is_node');
 var _ = require('underscore');
@@ -16,7 +15,7 @@ var bgData = {
 };
 var appData = window.appData = module.exports = {
   styles: styles,
-  tungstenVersion: typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null,
+  tungstenVersion: TUNGSTENJS_VERSION,
   tabs: {
     tabs: [{
       name: 'View',

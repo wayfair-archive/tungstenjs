@@ -8,7 +8,6 @@
  * @author Matt DeGennaro <mdegennaro@wayfair.com>
  * @license Apache-2.0
  */
-/* global TUNGSTENJS_VERSION */
 'use strict';
 var document = require('global/document');
 var window = require('global/window');
@@ -19,7 +18,7 @@ var htmlParser = lazyRequire('./template/html_parser');
 
 var exports = {};
 
-exports.VERSION = typeof TUNGSTENJS_VERSION !== 'undefined' ? TUNGSTENJS_VERSION : null;
+exports.VERSION = TUNGSTENJS_VERSION;
 
 exports.IS_DEV = false;
 

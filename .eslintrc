@@ -30,7 +30,9 @@
   "globals": {
     "require": true,
     "module": true,
+    "TUNGSTENJS_VERSION": true,
     "TUNGSTENJS_DEBUG_MODE": true,
+    "TUNGSTENJS_IS_TEST": true,
     "INLINE_ARGUMENTS": true,
     "lazyRequire": true,
     "lazyRequireFn": true,

@@ -27,16 +27,13 @@ var eventNameMap = {
   'focus': 'focusin'
 };
 
-/* global TUNGSTENJS_IS_TEST */
-var TEST_MODE = typeof TUNGSTENJS_IS_TEST !== 'undefined' && TUNGSTENJS_IS_TEST;
-
 module.exports = function(el, eventName, selector, method, options, bindVirtualEvent) {
-  if (TEST_MODE ? module.exports.nativeFocusin : nativeFocusin && eventNameMap[eventName]) {
+  if (TUNGSTENJS_IS_TEST ? module.exports.nativeFocusin : nativeFocusin && eventNameMap[eventName]) {
     // Rename the event and pass through to the default handler
     return bindVirtualEvent(el, eventNameMap[eventName], selector, method, options);
   }
 };
-if (TEST_MODE) {
+if (TUNGSTENJS_IS_TEST) {
   // Exposing value so that it can be overridden for testing
   module.exports.nativeFocusin = nativeFocusin;
 }

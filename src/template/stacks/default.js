@@ -77,10 +77,6 @@ DefaultStack.prototype.processObject = function(obj) {
   return obj;
 };
 
-/* global TUNGSTENJS_IS_TEST */
-var TEST_MODE = typeof TUNGSTENJS_IS_TEST !== 'undefined' && TUNGSTENJS_IS_TEST;
-
-
 /**
  * When an element is resolved, push it to the result or the parent item on the stack
  * @param  {Object} obj Text / Widget / or Tungsten node
@@ -90,7 +86,7 @@ DefaultStack.prototype._closeElem = function(obj) {
   var i;
   // if this is an element, create a VNode now so that count is set properly
   if (obj.type === 'node') {
-    if (!(TEST_MODE ? module.exports.supportsWhitespaceTextNodes : supportsWhitespaceTextNodes)) {
+    if (!(TUNGSTENJS_IS_TEST ? module.exports.supportsWhitespaceTextNodes : supportsWhitespaceTextNodes)) {
       var children = [];
       for (i = 0; i < obj.children.length; i++) {
         if (typeof obj.children[i] !== 'string') {
