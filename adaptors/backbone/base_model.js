@@ -5,8 +5,8 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var logger = require('../../src/utils/logger');
-var errors = require('../../src/utils/errors');
+var logger = require('lazy_initializer!../../src/utils/logger');
+var errors = require('lazy_initializer!../../src/utils/errors');
 var ComponentWidget = require('./component_widget');
 var eventTrigger = require('./event_trigger');
 /**
@@ -18,7 +18,7 @@ var eventTrigger = require('./event_trigger');
 var BaseModel = Backbone.Model.extend({
   tungstenModel: true,
   initialize: function(attributes, options) {
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       this.initDebug();
     }
     var derived = _.result(this, 'derived');
@@ -53,23 +53,17 @@ var BaseModel = Backbone.Model.extend({
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps, specialProps) {
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
     // Certain methods of BaseModel should be unable to be overridden
       var methods = ['initialize'];
-
-      var wrapOverride = function(first, second) {
-        return function() {
-          first.apply(this, arguments);
-          second.apply(this, arguments);
-        };
-      };
+      var wrapOverride = require('../shared/wrap_function');
 
       for (let i = 0; i < methods.length; i++) {
         if (protoProps[methods[i]]) {
           if (staticProps && staticProps.debugName) {
-            logger.warn(errors.modelMethodMayNotBeOverridden(methods[i], staticProps.debugName));
+            logger().warn(errors().modelMethodMayNotBeOverridden(methods[i], staticProps.debugName));
           } else {
-            logger.warn(errors.modelMethodMayNotBeOverridden(methods[i]));
+            logger().warn(errors().modelMethodMayNotBeOverridden(methods[i]));
           }
           // Replace attempted override with base version
           protoProps[methods[i]] = wrapOverride(BaseModel.prototype[methods[i]], protoProps[methods[i]]);
@@ -122,7 +116,7 @@ var BaseModel = Backbone.Model.extend({
   }
 });
 
-if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+if (TUNGSTENJS_DEBUG_MODE) {
   BaseModel = BaseModel.extend({
     /** @type {string} Override cidPrefix to avoid confusion with Collections */
     cidPrefix: 'model',
@@ -459,7 +453,7 @@ BaseModel.prototype.reset = function(attrs, options) {
 BaseModel.prototype.bindExposedEvent = function(event, prop, childComponent) {
   var self = this;
   this.listenTo(childComponent.model, event, function() {
-    var args = Array.prototype.slice.call(arguments);
+    let args = INLINE_ARGUMENTS;
     eventTrigger.bubbleEvent(self, prop, [event].concat(args));
   });
 };
@@ -550,7 +544,7 @@ BaseModel.prototype.set = function(key, val, options) {
     }
   });
 
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
 
   // In order to compare server vs. client data, save off the initial data
     if (!this.initialData) {
@@ -564,7 +558,7 @@ BaseModel.prototype.set = function(key, val, options) {
       delete options.initialData;
       this.initialData = JSON.parse(initialStr || '{}');
       if (!_.isObject(this.initialData) || _.isArray(this.initialData)) {
-        logger.warn(errors.modelExpectedObjectOfAttributesButGot(initialStr));
+        logger().warn(errors().modelExpectedObjectOfAttributesButGot(initialStr));
       }
     }
 
@@ -603,7 +597,7 @@ BaseModel.prototype.set = function(key, val, options) {
 
       // Inject in the relational lookup
       var opts = options;
-      if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+      if (TUNGSTENJS_DEBUG_MODE) {
         opts = _.extend({
           initialData: val
         }, options);

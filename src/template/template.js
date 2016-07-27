@@ -5,7 +5,9 @@
  */
 'use strict';
 
-var templateAdaptor = require('./adaptor');
+console.log('here?'); // eslint-disable-line no-console
+console.trace(); // eslint-disable-line no-console
+var templateAdaptor = require('lazy_initializer!./adaptor');
 var Context = require('./template_context');
 
 /**
@@ -31,7 +33,9 @@ Template.prototype.setPartials = function(partials) {
   this.partials = partials;
 };
 
-Template.registerWidget = templateAdaptor.registerWidget;
+Template.registerWidget = function(name, constructor) {
+  return templateAdaptor().registerWidget(name, constructor);
+};
 
 /**
  * Registers a template as a named partial
@@ -47,7 +51,7 @@ Template.prototype._iterate = function(template, data, view, partials, stack) {
   if (this.context) {
     context = this.context.push(context);
   }
-  templateAdaptor.render(
+  templateAdaptor().render(
     stack,
     template || this.templateObj,
     context,
@@ -97,7 +101,7 @@ Template.prototype.toVdom = function(data) {
  * @return {Object}         Wrapped template
  */
 Template.prototype.wrap = function(tagName) {
-  return new Template(templateAdaptor.wrap(this.templateObj, tagName), this.partials, this.view, this.context);
+  return new Template(templateAdaptor().wrap(this.templateObj, tagName), this.partials, this.view, this.context);
 };
 
 var widgetConstructor;
@@ -121,7 +125,7 @@ Template.prototype.attachView = function(view, widgetWrapper) {
   if (widgetWrapper !== undefined) {
     widgetConstructor = widgetWrapper;
   }
-  var templateObj = templateAdaptor.attach(
+  var templateObj = templateAdaptor().attach(
     this.templateObj,
     view,
     createChildView,
@@ -136,7 +140,7 @@ Template.prototype.attachView = function(view, widgetWrapper) {
  * @return {String}
  */
 Template.prototype.toSource = function(forDebugger) {
-  return templateAdaptor.toSource(this.templateObj, forDebugger);
+  return templateAdaptor().toSource(this.templateObj, forDebugger);
 };
 
 module.exports = Template;

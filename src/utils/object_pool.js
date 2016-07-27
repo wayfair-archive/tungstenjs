@@ -52,7 +52,8 @@ ObjectPool.prototype.allocate = function() {
     // If we don't have any preallocated ones available, make a new one
     temp = _.create(this.constructorFunc.prototype);
   }
-  this.constructorFunc.apply(temp, arguments);
+  let args = INLINE_ARGUMENTS;
+  this.constructorFunc.apply(temp, args);
   return temp;
 };
 

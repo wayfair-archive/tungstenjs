@@ -1,19 +1,19 @@
 'use strict';
 
 var _ = require('underscore');
-var logger = require('../../src/utils/logger');
-var errors = require('../../src/utils/errors');
+var logger = require('lazy_initializer!../../src/utils/logger');
+var errors = require('lazy_initializer!../../src/utils/errors');
 
 var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize', 'save', 'fetch', 'sync', 'validate', 'isValid'];
 var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
 
 var getDummyFunction = function(fn) {
   return function() {
-    logger.warn(errors.componentFunctionMayNotBeCalledDirectly(fn));
+    logger().warn(errors().componentFunctionMayNotBeCalledDirectly(fn));
   };
 };
 
-if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+if (TUNGSTENJS_DEBUG_MODE) {
   modelFunctionsToMap.push('getDebugName');
 }
 
@@ -32,7 +32,7 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.template = template;
   this.key = key || _.uniqueId('w_component');
   this.model.session = (this.model.session || []).concat(['content', 'yield']);
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
     this.model._private = {
       content: true, yield: true
     };
@@ -58,7 +58,7 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
       if (typeof this[fn] === 'undefined') {
         this[fn] = _.bind(model[fn], model);
       } else {
-        logger.warn(errors.cannotOverwriteComponentMethod(fn));
+        logger().warn(errors().cannotOverwriteComponentMethod(fn));
       }
     }
   }
@@ -186,7 +186,7 @@ ComponentWidget.isComponent = function(obj) {
   return false;
 };
 
-if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+if (TUNGSTENJS_DEBUG_MODE) {
 /**
  * Function to allow the Widget to control how it is viewed on the debug panel
  * ChildViews are displayed as a clickable link

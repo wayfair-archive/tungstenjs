@@ -35,7 +35,7 @@ var vnodePool = new ObjectPool(2000, vdomImpl.VNode, 'vdom');
 vnodePool.preallocate(100);
 // vtext only has one property that's guaranteed to be overwritten by the constructor
 var vtextPool = new ObjectPool(1000, vdomImpl.VText);
-vnodePool.preallocate(20);
+vtextPool.preallocate(20);
 
 function isChild(x) {
   return vdomImpl.isVNode(x) || vdomImpl.isVText(x) || vdomImpl.isWidget(x);

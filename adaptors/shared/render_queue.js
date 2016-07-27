@@ -2,7 +2,7 @@
 
 const OBJECT_QUEUED = '__raf_queued__';
 
-const animFrame = require('./animation_frame');
+const animFrame = require('lazy_initializer!./animation_frame');
 const _queue = [];
 function renderQueue() {
   for (let i = 0; i < _queue.length; i++) {
@@ -19,7 +19,7 @@ function queue(obj, fn) {
   obj[OBJECT_QUEUED] = true;
   // If the queue is currently empty request an animation frame
   if (!_queue.length) {
-    animFrame.request(renderQueue);
+    animFrame().request(renderQueue);
   }
   _queue.push([obj, fn]);
 }

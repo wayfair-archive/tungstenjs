@@ -30,7 +30,9 @@
   "globals": {
     "require": true,
     "module": true,
-    "TUNGSTENJS_DEBUG_MODE": true
+    "TUNGSTENJS_DEBUG_MODE": true,
+    "INLINE_ARGUMENTS": true,
+    "lazyRequire": true
   },
   "extends": "eslint:recommended"
 }

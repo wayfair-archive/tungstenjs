@@ -8,12 +8,12 @@
  */
 'use strict';
 
-var _ = require('underscore');
-var logger = require('../utils/logger');
-var errors = require('../utils/errors');
+const _ = require('underscore');
+const logger = require('lazy_initializer!../utils/logger');
+const errors = require('lazy_initializer!../utils/errors');
 
 /** @type {Object} storage to prevent repeated warnings about the same computed property */
-var computedPropertyWarnings = {};
+const computedPropertyWarnings = {};
 
 /**
  * Represents a rendering context by wrapping a view object and
@@ -47,12 +47,8 @@ Context.prototype.lookupValue = function() {
   throw 'Lookup function not set.';
 };
 
-Context.ComponentWidget = function() {
-  throw 'ComponentWidget not set';
-};
-
 /** @type {Object} Container for registered lambda functions */
-var lambdas = {};
+const lambdas = {};
 
 /**
  * Public function to register lambdas without overriding lookupValue
@@ -88,20 +84,21 @@ Context.prototype.isModel = function(object) {
   return object && (object.tungstenModel || object.isComponent);
 };
 
-if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
-/**
- * Debug Helpers for determining context
- */
+if (TUNGSTENJS_DEBUG_MODE) {
+  /**
+   * Debug Helpers for determining context
+   */
   var debugHelpers = {
     context: function() {
       if (arguments.length) {
-        logger.log('W/CONTEXT:', this, arguments);
+        var args = INLINE_ARGUMENTS;
+        logger().log('W/CONTEXT:', this, args);
       } else {
-        logger.log('W/CONTEXT:', this);
+        logger().log('W/CONTEXT:', this);
       }
     },
     lastModel: function() {
-      logger.log('W/LASTMODEL:', this.lastModel);
+      logger().log('W/LASTMODEL:', this.lastModel);
     },
     lastModelForDebugger: function() {
       return this.lastModel;
@@ -109,7 +106,8 @@ if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
     debug: function() {
       var self = this;
       for (var i = 0; i < arguments.length; i++) {
-        logger.log('W/DEBUG:', arguments[i], '=>', self.lookup(arguments[i]));
+        var arg = arguments[i];
+        logger().log('W/DEBUG:', arg, '=>', self.lookup(arg));
       }
     }
   };
@@ -124,14 +122,6 @@ Context.prototype.push = function(view) {
 };
 
 /**
- * Creates a new context using the given view with this context
- * as the parent.
- */
-Context.prototype.partial = function() {
-  return new Context(this.view);
-};
-
-/**
  * Returns the value of the given name in this context, traversing
  * up the context hierarchy if the value is absent in this context's view.
  */
@@ -139,7 +129,7 @@ Context.prototype.lookup = function(name, handleLambda) {
   // Sometimes comment blocks get registered as interpolators
   // Just return empty string and nothing will render anyways
   if (name.substr(0, 1) === '!') {
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       var debugName = name.substr(1).split('/');
       if (debugName[0] === 'w' && debugHelpers[debugName[1]]) {
         var fn = debugHelpers[debugName[1]];
@@ -196,8 +186,8 @@ Context.prototype.lookup = function(name, handleLambda) {
           // Check that the found function takes in at least one argument
           // Used to avoid conflicts with computed properties until those can be deprecated
           var arity = value.length;
-          if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
-          // Trackable functions can be wrapped, so check orignal's arity
+          if (TUNGSTENJS_DEBUG_MODE) {
+            // Trackable functions can be wrapped, so check orignal's arity
             if (value.original) {
               arity = value.original.length;
             }
@@ -208,7 +198,7 @@ Context.prototype.lookup = function(name, handleLambda) {
           } else {
             if (computedPropertyWarnings[name] !== true) {
               computedPropertyWarnings[name] = true;
-              logger.warn(errors.computedPropertiesAreNowDeprecatedPleaseChange(name));
+              logger().warn(errors().computedPropertiesAreNowDeprecatedPleaseChange(name));
             }
             value = value.call(fnContext);
           }
@@ -264,9 +254,6 @@ Context.setAdapterFunctions = function(adaptor) {
   }
   if (typeof adaptor.lookupValue === 'function') {
     Context.prototype.lookupValue = adaptor.lookupValue;
-  }
-  if (typeof adaptor.ComponentWidget === 'function') {
-    Context.ComponentWidget = adaptor.ComponentWidget;
   }
 };
 

@@ -19,7 +19,8 @@ function extend(error, customMsg) {
   }
   let origError = this[error];
   this[error] = function() {
-    return `${origError.apply(origError, arguments)}. ${customMsg}`;
+    let args = INLINE_ARGUMENTS;
+    return `${origError.apply(origError, args)}. ${customMsg}`;
   };
 }
 

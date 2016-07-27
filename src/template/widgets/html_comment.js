@@ -44,7 +44,7 @@ HTMLCommentWidget.prototype.update = function update(prev, elem) {
   }
 };
 
-if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+if (TUNGSTENJS_DEBUG_MODE) {
   HTMLCommentWidget.prototype.templateToString = function() {
     return '<span class="TemplateString_comment">&lt;!-- ' + this.text + ' --&gt;</span>';
   };

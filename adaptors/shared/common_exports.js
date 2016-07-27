@@ -18,9 +18,11 @@ module.exports = {
   _: require('underscore'),
   Template: Template,
   _core: tungsten,
-  templateHelper: require('../../precompile/tungsten_template/template_helper'),
+  templateHelper: {
+    compileTemplates: require('lazy_initializer?fn!../../precompile/tungsten_template/template_helper')
+  },
   precompiler: require('../../precompile/tungsten_template'),
-  compiler: require('../../src/template/compiler'),
+  compiler: require('lazy_initializer?fn!../../src/template/compiler'),
   _Context: Context,
   addEventPlugin: tungsten.addEventPlugin,
   registerLambda: Context.registerLambda,

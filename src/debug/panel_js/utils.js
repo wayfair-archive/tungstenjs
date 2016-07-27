@@ -68,7 +68,7 @@ function selectElements(className, docToSearch) {
 function addEventListener(elem, eventName, handler) {
   if (elem.addEventListener) {
     elem.addEventListener(eventName, handler);
-  } else {
+  } else if (elem.attachEvent) {
     elem.attachEvent('on' + eventName.toLowerCase(), handler);
   }
 }
@@ -103,7 +103,8 @@ function closest(elem, className) {
 
 function getListener(objName, eventName) {
   return function() {
-    logger.log(objName + ':' + eventName, arguments);
+    let args = INLINE_ARGUMENTS;
+    logger.log(objName + ':' + eventName, args);
   };
 }
 

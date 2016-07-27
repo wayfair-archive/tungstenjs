@@ -5,8 +5,6 @@
  */
 'use strict';
 
-var _ = require('underscore');
-
 /**
  * Gets a bound console method, falls back to log for unavailable functions
  * @param  {String}   name Name of the method to get
@@ -20,7 +18,8 @@ function getDefaultConsole() {
     return function() {
       // Console isn't available until dev tools is open in old IE, so keep checking
       if (console && typeof console.log === 'function') {
-        console.log.apply(console, arguments);
+        let args = INLINE_ARGUMENTS;
+        console.log.apply(console, args);
       }
     };
   }
@@ -30,7 +29,7 @@ var defaultConsole = getDefaultConsole();
 
 var getConsoleMethod = function(name) {
   var func = typeof console[name] === 'function' ? console[name] : defaultConsole;
-  return _.bind(func, console);
+  return func.bind(console);
 };
 /* eslint-enable no-console */
 

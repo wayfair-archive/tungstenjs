@@ -52,12 +52,12 @@ var bubbleEvent = function(parent, parentProp, args) {
 
 var originalTrigger = Backbone.Events.trigger;
 var newTrigger = function() {
-  originalTrigger.apply(this, arguments);
+  let args = INLINE_ARGUMENTS;
+  originalTrigger.apply(this, args);
   // Collections naturally get events from their models so this only bubbles through relations
   if (this.parentProp && this.parent) {
-    bubbleEvent(this.parent, this.parentProp, Array.prototype.slice.call(arguments));
-  }
-};
+    bubbleEvent(this.parent, this.parentProp, args);
+  }};
 
 module.exports = {
   bubbleEvent,

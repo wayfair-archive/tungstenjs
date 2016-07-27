@@ -1,7 +1,6 @@
 /**
  * Forked from https://github.com/fb55/entities
  */
-
 var decodeCodePoint = require('entities/lib/decode_codepoint.js');
 var entityMap = require('entities/maps/entities.json');
 var types = require('../types');

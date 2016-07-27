@@ -11,8 +11,8 @@
 
 'use strict';
 
-var logger = require('../../src/utils/logger');
-var errors = require('../../src/utils/errors');
+var logger = require('lazy_initializer!../../src/utils/logger');
+var errors = require('lazy_initializer!../../src/utils/errors');
 
 /**
  * Wrapper Widget for child views
@@ -47,7 +47,7 @@ function BackboneViewWidget(template, childView, context, parentView) {
       // Any other value is treated as a parent model lookup
       this.model = parentView.model.getDeep(scope);
     } else {
-      logger.warn(errors.childViewWasPassedAsObjectWithoutAScopeProperty());
+      logger().warn(errors().childViewWasPassedAsObjectWithoutAScopeProperty());
     }
   }
 }
@@ -141,7 +141,7 @@ BackboneViewWidget.prototype.update = function update(prev, elem) {
   }
 };
 
-if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+if (TUNGSTENJS_DEBUG_MODE) {
 /**
  * Function to allow the Widget to control how it is viewed on the debug panel
  * ChildViews are displayed as a clickable link

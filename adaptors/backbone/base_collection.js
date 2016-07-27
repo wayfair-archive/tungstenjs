@@ -6,8 +6,8 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var logger = require('../../src/utils/logger');
-var errors = require('../../src/utils/errors');
+var logger = require('lazy_initializer!../../src/utils/logger');
+var errors = require('lazy_initializer!../../src/utils/errors');
 
 var eventTrigger = require('./event_trigger');
 var ComponentWidget = require('./component_widget');
@@ -22,7 +22,7 @@ var BaseModel = require('./base_model');
 var BaseCollection = Backbone.Collection.extend({
   tungstenCollection: true,
   initialize: function() {
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       this.initDebug();
     }
     this.postInitialize();
@@ -30,7 +30,7 @@ var BaseCollection = Backbone.Collection.extend({
 
   bindExposedEvent: function(event, childComponent) {
     this.listenTo(childComponent.model, event, function() {
-      var args = Array.prototype.slice.call(arguments);
+      let args = INLINE_ARGUMENTS;
       this.trigger.apply(this, [event].concat(args));
       if (event.substr(0, 7) === 'change:') {
         this.trigger('change', this);
@@ -48,7 +48,7 @@ var BaseCollection = Backbone.Collection.extend({
    * @return {Boolean}
    */
   _isModel: function(model) {
-    return Backbone.Collection.prototype._isModel(model) || model instanceof ComponentWidget;
+    return Backbone.Collection.prototype._isModel(model) || ComponentWidget.isComponent(model);
   },
 
   /**
@@ -94,23 +94,17 @@ var BaseCollection = Backbone.Collection.extend({
   postInitialize: function() {}
 }, {
   extend: function(protoProps, staticProps) {
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
     // Certain methods of BaseCollection should be unable to be overridden
       var methods = ['initialize'];
-
-      var wrapOverride = function(first, second) {
-        return function() {
-          first.apply(this, arguments);
-          second.apply(this, arguments);
-        };
-      };
+      var wrapOverride = require('../shared/wrap_function');
 
       for (let i = 0; i < methods.length; i++) {
         if (protoProps[methods[i]]) {
           if (staticProps && staticProps.debugName) {
-            logger.warn(errors.collectionMethodMayNotBeOverridden(methods[i], staticProps.debugName));
+            logger().warn(errors().collectionMethodMayNotBeOverridden(methods[i], staticProps.debugName));
           } else {
-            logger.warn(errors.collectionMethodMayNotBeOverridden(methods[i]));
+            logger().warn(errors().collectionMethodMayNotBeOverridden(methods[i]));
           }
           // Replace attempted override with base version
           protoProps[methods[i]] = wrapOverride(BaseCollection.prototype[methods[i]], protoProps[methods[i]]);
@@ -122,7 +116,7 @@ var BaseCollection = Backbone.Collection.extend({
   }
 });
 
-if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+if (TUNGSTENJS_DEBUG_MODE) {
   BaseCollection = BaseCollection.extend({
     /**
      * Bootstraps all debug functionality
@@ -234,7 +228,7 @@ BaseCollection.prototype.trigger = eventTrigger.newTrigger;
 
 BaseCollection.prototype.reset = function(models, options = {}) {
   var i, l;
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
     if (!this.initialData) {
     // Using JSON to get a deep clone to avoid any overlapping object references
       var initialStr = JSON.stringify(_.has(options, 'initialData') ? options.initialData : models);
@@ -248,7 +242,7 @@ BaseCollection.prototype.reset = function(models, options = {}) {
         }
       }
       if (!allObjects || !_.isArray(this.initialData)) {
-        logger.warn(errors.collectionExpectedArrayOfObjectsButGot(initialStr));
+        logger().warn(errors().collectionExpectedArrayOfObjectsButGot(initialStr));
       }
     }
   }

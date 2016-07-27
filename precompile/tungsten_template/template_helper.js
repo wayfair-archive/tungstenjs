@@ -1,8 +1,9 @@
 'use strict';
 
 var _ = require('underscore');
-var compiler = require('../../src/template/compiler');
+var compilerFn = require('lazy_initializer!../../src/template/compiler');
 function compileTemplates(rawTemplates) {
+  var compiler = compilerFn();
   if (typeof rawTemplates === 'string') {
     return compiler(rawTemplates).template;
   }

@@ -1,15 +1,24 @@
 'use strict';
 
 var _ = require('underscore');
-var ToString = require('./stacks/string');
 var Context = require('./template_context');
-var logger = require('./../utils/logger');
-var errors = require('./../utils/errors');
+var ToString = require('lazy_initializer?fn!./stacks/string');
+var compiler = require('lazy_initializer?fn!./compiler');
+var logger = require('lazy_initializer!./../utils/logger');
+var errors = require('lazy_initializer!./../utils/errors');
 var types = require('./types');
-var virtualDomImplementation = require('../vdom/virtual_dom_implementation');
-var isWidget = virtualDomImplementation.isWidget;
-var isVNode = virtualDomImplementation.isVNode;
-var compiler = require('./compiler');
+var isWidget;
+var isVNode;
+
+function isVChild(obj) {
+  if (!isWidget) {
+    var virtualDom = require('../vdom/virtual_dom_implementation');
+    isWidget = virtualDom.isWidget;
+    isVNode = virtualDom.isVNode;
+  }
+
+  return isWidget(obj) || isVNode(obj);
+}
 
 /** @type {Object} Container for registered widget functions */
 var widgets = {};
@@ -129,7 +138,7 @@ function render(stack, template, context, partials, parentView) {
       value = context.lookup(template.r);
       if (value != null) {
         // If value is already a widget or vnode, add it wholesale
-        if (template.t === types.TRIPLE && (isWidget(value) || isVNode(value))) {
+        if (template.t === types.TRIPLE && isVChild(value)) {
           stack.createObject(value);
         } else if (template.t === types.TRIPLE && value.type === 'Template') {
           var ctx = value.context || context;
@@ -162,7 +171,7 @@ function render(stack, template, context, partials, parentView) {
         }
       } else {
         // @TODO, perhaps return this string as the partial result so it renders to the page?
-        logger.warn(errors.warningNoPartialRegisteredWithTheName(partialName));
+        logger().warn(errors().warningNoPartialRegisteredWithTheName(partialName));
       }
       break;
 
@@ -283,8 +292,8 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
   // If cached version hasn't been passed down, parse childViews into an array of class names
   if (!childClasses) {
     childClasses = {};
-    childClasses.flat = _.keys(view.childViews);
-    childClasses.padded = _.map(childClasses.flat, function(key) {
+    childClasses.flat = Object.keys(view.childViews);
+    childClasses.padded = childClasses.flat.map(function(key) {
       return ' ' + key + ' ';
     });
     childClasses.length = childClasses.flat.length;
@@ -310,7 +319,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
     return clone;
   }
 
-  template = _.clone(template);
+  template = _.extend({}, template);
 
   /* eslint-disable dot-notation */
   // If the view has childViews and this isn't the root, attempt to attach Widget
@@ -320,9 +329,11 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
       var className = template.a['class'];
       // If className has dynamic values, filter them out to just the static ones
       if (typeof className !== 'string') {
-        className = _.filter(className, function(obj) {
-          return typeof obj === 'string';
-        });
+        className = className.reduce(function(memo, obj) {
+          if (typeof obj === 'string') {
+            memo += ' ' + obj;
+          }
+        }, '');
         className = className.join(' ');
       }
       // Pad with spaces for better hasClass-ing
@@ -347,7 +358,7 @@ var attachView = function(view, template, createWidget, partials, childClasses) 
   if (template.t === types.PARTIAL) {
     var partialName = template.r;
     if (!partials[partialName]) {
-      logger.warn(errors.warningNoPartialRegisteredWithTheName(partialName));
+      logger().warn(errors().warningNoPartialRegisteredWithTheName(partialName));
       return null;
     } else {
       var partialTemplate = partials[partialName];
@@ -416,7 +427,7 @@ function reverseAttributeString(templates, join, forDebugger, context) {
   }
   var output = [];
   var stack;
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
     if (forDebugger) {
       var HighlightedHtmlString = require('./stacks/highlighted_html_string');
       stack = new HighlightedHtmlString();
@@ -438,7 +449,7 @@ function toSource(template, forDebugger) {
     template = template.f;
   }
   var stack;
-  if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+  if (TUNGSTENJS_DEBUG_MODE) {
     if (forDebugger) {
       var HighlightedHtmlString = require('./stacks/highlighted_html_string');
       stack = new HighlightedHtmlString();

@@ -17,13 +17,18 @@ var BackboneAdaptor = require('./context_adaptor');
 
 Context.setAdapterFunctions(BackboneAdaptor);
 
-var _ = require('underscore');
-
-module.exports = _.defaults({
+var adaptor = {
   Collection: require('./base_collection'),
   Model: require('./base_model'),
   View: require('./base_view'),
   Backbone: require('backbone'),
   ViewWidget: require('./backbone_view_widget'),
   ComponentWidget: require('./component_widget')
-}, require('../shared/common_exports'));
+};
+
+var shared = require('../shared/common_exports');
+for (var prop in shared) {
+  adaptor[prop] = shared[prop];
+}
+
+module.exports = adaptor;

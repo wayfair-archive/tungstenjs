@@ -7,8 +7,8 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var logger = require('../../src/utils/logger');
-var errors = require('../../src/utils/errors');
+var logger = require('lazy_initializer!../../src/utils/logger');
+var errors = require('lazy_initializer!../../src/utils/errors');
 var ViewWidget = require('./backbone_view_widget');
 var ComponentWidget = require('./component_widget');
 
@@ -63,7 +63,7 @@ var BaseView = Backbone.View.extend({
       this.isComponentView = this.options.isComponentView;
     }
 
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       this.initDebug();
     }
 
@@ -83,8 +83,7 @@ var BaseView = Backbone.View.extend({
         while (this.el.firstChild) {
           this.el.removeChild(this.el.firstChild);
         }
-        var tagName = this.el.tagName;
-        this.vtree = tungsten.parseString('<' + tagName + '></' + tagName + '>');
+        this.vtree = tungsten.createVNode(this.el.tagName);
         this.render();
       }
 
@@ -178,11 +177,11 @@ var BaseView = Backbone.View.extend({
         this.el.removeChild(lastNode);
       }
     }
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       // Compare full template against full DOM
       var diff = this.getTemplateDiff();
       if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
-        logger.warn(errors.domDoesNotMatchVDOMForView(this.getDebugName()));
+        logger().warn(errors().domDoesNotMatchVDOMForView(this.getDebugName()));
       }
     }
   },
@@ -407,23 +406,17 @@ var BaseView = Backbone.View.extend({
 }, {
   tungstenView: true,
   extend: function(protoProps, staticProps) {
-    if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+    if (TUNGSTENJS_DEBUG_MODE) {
       // Certain methods of BaseView should be unable to be overridden
       var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
-
-      var wrapOverride = function(first, second) {
-        return function() {
-          first.apply(this, arguments);
-          second.apply(this, arguments);
-        };
-      };
+      var wrapOverride = require('../shared/wrap_function');
 
       for (var i = 0; i < methods.length; i++) {
         if (protoProps[methods[i]]) {
           if (staticProps && staticProps.debugName) {
-            logger.warn(errors.viewMethodMayNotBeOverridden(methods[i], staticProps.debugName));
+            logger().warn(errors().viewMethodMayNotBeOverridden(methods[i], staticProps.debugName));
           } else {
-            logger.warn(errors.viewMethodMayNotBeOverridden(methods[i]));
+            logger().warn(errors().viewMethodMayNotBeOverridden(methods[i]));
           }
           // Replace attempted override with base version
           protoProps[methods[i]] = wrapOverride(BaseView.prototype[methods[i]], protoProps[methods[i]]);
@@ -438,7 +431,7 @@ var BaseView = Backbone.View.extend({
     return Backbone.View.extend.call(this, protoProps, staticProps);
   }
 });
-if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
+if (TUNGSTENJS_DEBUG_MODE) {
   BaseView = BaseView.extend({
     /**
      * Bootstraps all debug functionality

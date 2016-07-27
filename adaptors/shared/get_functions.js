@@ -1,5 +1,5 @@
 'use strict';
-module.exports = function(trackedFunctions, getTrackableFunction, obj, parentPrototype, blacklist) {
+module.exports = function getFunction(trackedFunctions, getTrackableFunction, obj, parentPrototype, blacklist) {
   var result = [];
   for (var key in obj) {
     if (typeof obj[key] === 'function' && blacklist[key] !== true) {

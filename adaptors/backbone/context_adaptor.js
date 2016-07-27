@@ -11,8 +11,8 @@ var Context = require('../../src/template/template_context');
 var Backbone = require('backbone');
 
 // List of properties that are allowed to be accessed from template
-var allowedModelProperties = _.invert(['validationError']);
-var allowedCollectionProperties = _.invert([]);
+var allowedModelProperties = {validationError: true};
+var allowedCollectionProperties = {};
 
 // Use prototypeless objects to avoid unnecessary conflicts
 var blockedModelProperties = _.create(null);

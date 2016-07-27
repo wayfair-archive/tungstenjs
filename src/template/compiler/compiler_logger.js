@@ -46,16 +46,12 @@ function logMessage(messageLevel, data) {
 }
 
 module.exports.warn = function() {
-  for (var l = arguments.length, data = Array(l), i = 0; i < l; i++) {
-    data[i] = arguments[i];
-  }
+  let data = INLINE_ARGUMENTS;
   logMessage(ERROR_LEVELS.WARNING, data);
 };
 
 module.exports.exception = function() {
-  for (var l = arguments.length, data = Array(l), i = 0; i < l; i++) {
-    data[i] = arguments[i];
-  }
+  let data = INLINE_ARGUMENTS;
   logMessage(ERROR_LEVELS.EXCEPTION, data);
 };
 

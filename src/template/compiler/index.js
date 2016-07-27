@@ -1,12 +1,12 @@
 'use strict';
 
 const _ = require('underscore');
-
 const parser = require('./parser');
 const stack = require('./stack');
 const logger = require('./compiler_logger');
 const errors = require('../../utils/errors');
 const processTemplate = require('./languages/mustache');
+const Template = require('../template');
 
 /**
  * Processes a template string into a Template
@@ -49,7 +49,6 @@ function getTemplate(template, options) {
 
   parser.end();
   output.templateObj = stack.getOutput();
-  const Template = require('../template');
   output.template = new Template(output.templateObj);
   output.source = template;
   output.tokens = {};

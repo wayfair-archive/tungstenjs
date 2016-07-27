@@ -58,6 +58,7 @@ module.exports.compileSource = function(config, dev, test, legacyWebpack) {
 
   config.resolveLoader = config.resolveLoader || {};
   config.resolveLoader[modulesProp].push(path.join(__dirname, 'node_modules'));
+  config.resolveLoader[modulesProp].push(path.join(__dirname, 'precompile'));
   config.plugins = config.plugins || [];
   if (!dev) {
     config.plugins.push(new webpack.optimize.UglifyJsPlugin({
@@ -67,7 +68,7 @@ module.exports.compileSource = function(config, dev, test, legacyWebpack) {
   config.plugins.push(new webpack.DefinePlugin({
     TUNGSTENJS_VERSION: JSON.stringify(require('./package.json').version),
     TUNGSTENJS_IS_TEST: test,
-    TUNGSTENJS_DEBUG_MODE: dev || undefined
+    TUNGSTENJS_DEBUG_MODE: !!dev
   }));
 
   // Babel should be run on our code, but not node_modules
@@ -76,8 +77,11 @@ module.exports.compileSource = function(config, dev, test, legacyWebpack) {
     var fullpath = path.join(__dirname, folder + '/').replace(/\\/g, '\\\\');
     return fullpath + '.*\.js';
   });
-  var babelRegexStr = '^(' + folders.join('|') + ')$';
-  ensureLoader(config.module.loaders, new RegExp(babelRegexStr), 'babel');
+  var internalJsRegexStr = '^(' + folders.join('|') + ')$';
+  var internalJsRegex = new RegExp(internalJsRegexStr);
+  ensureLoader(config.module.preLoaders, internalJsRegex, 'inline_arguments');
+  ensureLoader(config.module.preLoaders, /lazy!/, 'lazy_initializer');
+  ensureLoader(config.module.loaders, internalJsRegex, 'babel');
 
 
   return config;

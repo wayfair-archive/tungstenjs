@@ -11,8 +11,7 @@
 'use strict';
 
 var path = require('path');
-var _ = require('underscore');
-var compiler = require('../../src/template/compiler');
+var compilerFn = require('lazy_initializer!../../src/template/compiler');
 
 /**
  * Compiles given templates
@@ -20,6 +19,7 @@ var compiler = require('../../src/template/compiler');
  */
 module.exports = function(contents) {
   this.cacheable();
+  var compiler = compilerFn();
   var templateData = compiler(contents);
 
   var templatePath = path.relative(path.dirname(module.dest), __dirname + '/template');
@@ -31,7 +31,7 @@ module.exports = function(contents) {
   var partials = templateData.tokens.partials;
   if (partials.length > 0) {
     output += 'template.setPartials({';
-    output += _.map(partials, function(partial) {
+    output += partials.map(function(partial) {
       return '"' + partial + '":require("./' + partial + '.mustache")';
     }).join(',');
     output += '});';
