@@ -135,10 +135,8 @@ module.exports = function processProperties(properties, options) {
     var transformedName = transformPropertyName(lowerPropName);
 
     if (opts.useHooks && typeof opts.useHooks[lowerPropName] === 'function') {
-      propValue = opts.useHooks[lowerPropName](propValue);
-    }
-
-    if (transformedName === false) {
+      result[lowerPropName] = opts.useHooks[lowerPropName](propValue);
+    } else if (transformedName === false) {
       if (!result.attributes) {
         result.attributes = {};
       }
