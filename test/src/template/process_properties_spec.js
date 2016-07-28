@@ -25,7 +25,7 @@ describe('process_properties.js public API', function() {
         }
       });
       jasmineExpect(autofocusSpy).toHaveBeenCalledWith(value);
-      expect(result.attributes.Autofocus).to.equal(hook);
+      expect(result.autofocus).to.equal(hook);
     });
     it('should transform attribute names to property names when appropriate', function() {
       var result = processProperties({class: 'js-test'});
