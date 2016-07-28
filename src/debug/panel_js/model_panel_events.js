@@ -82,7 +82,7 @@ module.exports = function() {
       appData.selectedModel.obj.set(key, value);
       appData.updateSelectedModel();
     } catch (ex) {
-      utils.alert(errors.unableToParseToAValidValueMustMatchJSONFormat(e.currentTarget.value));
+      errors.unableToParseToAValidValueMustMatchJSONFormat(e.currentTarget.value);
       utils.selectElements('js-model-property-value')[0].focus();
     }
   });

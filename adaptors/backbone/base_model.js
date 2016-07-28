@@ -5,7 +5,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var logger = require('../../src/utils/logger');
 var errors = require('../../src/utils/errors');
 var ComponentWidget = require('./component_widget');
 var eventTrigger = require('./event_trigger');
@@ -67,9 +66,9 @@ var BaseModel = Backbone.Model.extend({
       for (let i = 0; i < methods.length; i++) {
         if (protoProps[methods[i]]) {
           if (staticProps && staticProps.debugName) {
-            logger.warn(errors.modelMethodMayNotBeOverridden(methods[i], staticProps.debugName));
+            errors.modelMethodMayNotBeOverridden(methods[i], staticProps.debugName);
           } else {
-            logger.warn(errors.modelMethodMayNotBeOverridden(methods[i]));
+            errors.modelMethodMayNotBeOverridden(methods[i]);
           }
           // Replace attempted override with base version
           protoProps[methods[i]] = wrapOverride(BaseModel.prototype[methods[i]], protoProps[methods[i]]);
@@ -564,7 +563,7 @@ BaseModel.prototype.set = function(key, val, options) {
       delete options.initialData;
       this.initialData = JSON.parse(initialStr || '{}');
       if (!_.isObject(this.initialData) || _.isArray(this.initialData)) {
-        logger.warn(errors.modelExpectedObjectOfAttributesButGot(initialStr));
+        errors.modelExpectedObjectOfAttributesButGot(initialStr);
       }
     }
 

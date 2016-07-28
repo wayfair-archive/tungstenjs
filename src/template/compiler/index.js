@@ -4,8 +4,8 @@ const _ = require('underscore');
 
 const parser = require('./parser');
 const stack = require('./stack');
-const logger = require('./compiler_logger');
-const errors = require('../../utils/errors');
+const compilerLogger = require('./compiler_logger');
+const compilerErrors = require('./compiler_errors');
 const processTemplate = require('./languages/mustache');
 
 /**
@@ -33,8 +33,8 @@ function getTemplate(template, options) {
   opts.lambdas = lambdas;
   opts.processingHTML = typeof opts.processingHTML === 'boolean' ? opts.processingHTML : true;
 
-  logger.setStrictMode(opts.strict);
-  logger.setOverrides(opts.logger);
+  compilerLogger.setStrictMode(opts.strict);
+  compilerLogger.setOverrides(opts.logger);
   stack.setHtmlValidation(opts.validateHtml);
 
   let templateStr = template.toString();
@@ -44,7 +44,7 @@ function getTemplate(template, options) {
   let output = {};
 
   if (stack.stack.length > 0) {
-    logger.exception(errors.notAllTagsWereClosedProperly(), stack.stack);
+    compilerErrors.notAllTagsWereClosedProperly(stack.stack);
   }
 
   parser.end();

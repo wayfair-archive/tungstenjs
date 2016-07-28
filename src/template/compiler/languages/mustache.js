@@ -3,7 +3,7 @@
 const types = require('../../types');
 const parser = require('../parser');
 const stack = require('../stack');
-const logger = require('../compiler_logger');
+const compilerLogger = require('../compiler_logger');
 
 var templateTypes = {
   '#': types.SECTION,
@@ -196,7 +196,7 @@ function processTemplate(str, opts) {
   };
 
   // Set function to logger to show context around any parsing error
-  logger.setContextFunction(errorContext);
+  compilerLogger.setContextFunction(errorContext);
 
   templateString = str;
   inDynamicAttribute = false;
@@ -288,7 +288,7 @@ function processTemplate(str, opts) {
   processLine(opts);
 
   // Clear logger context function for next run
-  logger.setContextFunction();
+  compilerLogger.setContextFunction();
 }
 
 module.exports = processTemplate;

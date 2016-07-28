@@ -6,7 +6,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var logger = require('../../src/utils/logger');
 var errors = require('../../src/utils/errors');
 
 var eventTrigger = require('./event_trigger');
@@ -108,9 +107,9 @@ var BaseCollection = Backbone.Collection.extend({
       for (let i = 0; i < methods.length; i++) {
         if (protoProps[methods[i]]) {
           if (staticProps && staticProps.debugName) {
-            logger.warn(errors.collectionMethodMayNotBeOverridden(methods[i], staticProps.debugName));
+            errors.collectionMethodMayNotBeOverridden(methods[i], staticProps.debugName);
           } else {
-            logger.warn(errors.collectionMethodMayNotBeOverridden(methods[i]));
+            errors.collectionMethodMayNotBeOverridden(methods[i]);
           }
           // Replace attempted override with base version
           protoProps[methods[i]] = wrapOverride(BaseCollection.prototype[methods[i]], protoProps[methods[i]]);
@@ -248,7 +247,7 @@ BaseCollection.prototype.reset = function(models, options = {}) {
         }
       }
       if (!allObjects || !_.isArray(this.initialData)) {
-        logger.warn(errors.collectionExpectedArrayOfObjectsButGot(initialStr));
+        errors.collectionExpectedArrayOfObjectsButGot(initialStr);
       }
     }
   }

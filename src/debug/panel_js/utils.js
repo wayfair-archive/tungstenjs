@@ -37,7 +37,6 @@ function alert(message) {
   if (debugWindow) {
     debugWindow.alert(message);
   }
-  logger.warn(message);
 }
 
 function selectElements(className, docToSearch) {

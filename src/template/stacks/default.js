@@ -2,7 +2,6 @@
 
 var document = require('global/document');
 var processProperties = require('../process_properties');
-var logger = require('../../utils/logger');
 var errors = require('../../utils/errors');
 
 // IE8 and back don't create whitespace-only nodes from the DOM
@@ -155,7 +154,7 @@ DefaultStack.prototype.closeElement = function(closingElem) {
   if (openElem) {
     var openID = openElem.id;
     if (openID !== id) {
-      logger.warn(errors.tagsImproperlyPairedClosing(tagName, openID, id));
+      errors.tagsImproperlyPairedClosing(tagName, openID, id);
       do {
         openElem = this.stack.pop();
         this._closeElem(openElem);
@@ -170,7 +169,7 @@ DefaultStack.prototype.closeElement = function(closingElem) {
     this.closeElement(this.openElement('p', {}));
   } else {
     // Something has gone terribly wrong
-    logger.warn(errors.closingElementWhenTheStackWasEmpty(id));
+    errors.closingElementWhenTheStackWasEmpty(id);
   }
 };
 

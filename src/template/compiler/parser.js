@@ -3,8 +3,7 @@
 const Parser = require('htmlparser2/lib/Parser');
 const types = require('../types');
 const stack = require('./stack');
-const logger = require('./compiler_logger');
-const errors = require('../../utils/errors');
+const compilerErrors = require('./compiler_errors');
 const decoder = require('./decoder');
 
 // Taken from https://github.com/fb55/htmlparser2/blob/master/lib/Parser.js#L59
@@ -148,7 +147,7 @@ MustacheParser.prototype.onclosetag = function(name) {
   }
 
   if (name in voidElements) {
-    logger.warn(errors.elementIsAVoidElementSoDoesNotNeedAClosingTag(name));
+    compilerErrors.elementIsAVoidElementSoDoesNotNeedAClosingTag(name);
     return;
   }
 
@@ -161,10 +160,10 @@ MustacheParser.prototype.onclosetag = function(name) {
       }
     } else {
       let current = this._stack[this._stack.length - 1];
-      logger.exception(errors.wrongClosingElementType(name, current));
+      compilerErrors.wrongClosingElementType(name, current);
     }
   } else {
-    logger.exception(errors.closingHTMLElementWithNoPair(name));
+    compilerErrors.closingHTMLElementWithNoPair(name);
   }
 };
 

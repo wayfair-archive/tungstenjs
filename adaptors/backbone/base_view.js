@@ -7,7 +7,6 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 var tungsten = require('../../src/tungsten');
-var logger = require('../../src/utils/logger');
 var errors = require('../../src/utils/errors');
 var ViewWidget = require('./backbone_view_widget');
 var ComponentWidget = require('./component_widget');
@@ -182,7 +181,7 @@ var BaseView = Backbone.View.extend({
       // Compare full template against full DOM
       var diff = this.getTemplateDiff();
       if (diff.indexOf('<ins>') + diff.indexOf('<del>') > -2) {
-        logger.warn(errors.domDoesNotMatchVDOMForView(this.getDebugName()));
+        errors.domDoesNotMatchVDOMForView(this.getDebugName());
       }
     }
   },
@@ -421,9 +420,9 @@ var BaseView = Backbone.View.extend({
       for (var i = 0; i < methods.length; i++) {
         if (protoProps[methods[i]]) {
           if (staticProps && staticProps.debugName) {
-            logger.warn(errors.viewMethodMayNotBeOverridden(methods[i], staticProps.debugName));
+            errors.viewMethodMayNotBeOverridden(methods[i], staticProps.debugName);
           } else {
-            logger.warn(errors.viewMethodMayNotBeOverridden(methods[i]));
+            errors.viewMethodMayNotBeOverridden(methods[i]);
           }
           // Replace attempted override with base version
           protoProps[methods[i]] = wrapOverride(BaseView.prototype[methods[i]], protoProps[methods[i]]);
