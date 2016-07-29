@@ -690,7 +690,6 @@ BaseModel.prototype.unset = function(attr, options) {
 
 BaseModel.prototype.toJSON = function() {
   var attrs = this.attributes;
-  var relations = _.result(this, 'relations') || {};
   var derived = _.result(this, 'derived') || {};
   var session = _.invert(_.result(this, 'session') || []);
 
@@ -699,7 +698,7 @@ BaseModel.prototype.toJSON = function() {
     // Skip any derived or session properties
     if (!derived[key] && !session[key]) {
       // Recursively serialize any set relations
-      if (relations[key] && typeof val.doSerialize === 'function') {
+      if (val && typeof val.doSerialize === 'function') {
         data[key] = val.doSerialize();
       } else {
         data[key] = val;
