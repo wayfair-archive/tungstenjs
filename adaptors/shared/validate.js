@@ -2,7 +2,7 @@
 
 module.exports.childViews = function(childViews) {
   for (var selector in childViews) {
-    if (childViews[selector].prototype.el) {
+    if (childViews[selector] && childViews[selector].prototype && childViews[selector].prototype.el) {
       throw new Error('Child views property "el" cannot contain a non-null value');
     }
     if (selector.substr(0, 4) === '.js-') {
