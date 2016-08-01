@@ -30,13 +30,22 @@ Each template and partial should be pre-compiled with the provided wrapper for t
 * Opening and closing HTML tags must be within the same conditional block.
 * `<a>` elements cannot be nested.
 
-A [webpack](http://webpack.github.io/) loader, `tungsten_template`, is provided to pre-compile JS template functions, and can be included like so in the `webpack.config.js`:
+The `precompiler` API can be used to create a [webpack](http://webpack.github.io/) loader. `tungsten.precompiler` is provided to pre-compile JS template functions, and can be used in a webpack configuration like so:
 
+**`loaders/tungsten_template.js`**
+```javascript
+module.exports = require('tungstenjs').precompiler;
+```
+
+**`webpack.config.js`**
 ```javascript
 module.exports = {
   // [...]
   resolveLoader: {
-    modules: [path.join(__dirname, 'node_modules'), path.join(__dirname, 'node_modules/tungstenjs/precompile')]
+    modules: [
+      path.join(__dirname, 'node_modules'),
+      path.join(__dirname, 'loaders')
+    ]
   },
   module: {
     loaders: [
