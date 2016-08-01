@@ -24,5 +24,6 @@ module.exports = {
   _Context: Context,
   addEventPlugin: tungsten.addEventPlugin,
   registerLambda: Context.registerLambda,
-  registerWidget: Template.registerWidget
+  registerWidget: Template.registerWidget,
+  renderQueue: require('./render_queue')
 };
