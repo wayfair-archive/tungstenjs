@@ -112,3 +112,12 @@ for (let type in messages) {
   }
 }
 
+// Temporarily downgrading this error message to an info in the case of 'on'
+module.exports.componentFunctionMayNotBeCalledDirectly = function(fn) {
+  if (fn === 'on') {
+    logger.info('Component.on may not be called directly');
+  } else {
+    logger.warn('Component.' + fn + ' may not be called directly');
+  }
+};
+
