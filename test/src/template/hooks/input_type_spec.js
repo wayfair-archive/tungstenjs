@@ -34,7 +34,7 @@ describe('input_type.js', function() {
             // default type value
             value: 'text',
             setCount: 0,
-            getCallsCount: 0,
+            getCount: 0,
             calledWith: []
           },
           writable: true
@@ -46,7 +46,7 @@ describe('input_type.js', function() {
         'type': {
           enumerable: true,
           get: function() {
-            this.calls.getCallsCount++;
+            this.calls.getCount++;
             return this.calls.value;
           },
           set: function(newType) {
