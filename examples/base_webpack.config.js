@@ -1,4 +1,6 @@
 /* eslint-env node */
+'use strict';
+
 var path = require('path');
 
 module.exports = function (root, options) {
@@ -26,14 +28,11 @@ module.exports = function (root, options) {
         'tungstenjs': path.join(__dirname, tungstenPath)
       }
     },
-    resolveLoader: {
-      modules: [path.join(root, 'node_modules')]
-    },
     module: {
-      loaders: [{
-        test: /\.mustache$/,
-        loader: path.join(__dirname, '../precompile/tungsten_template')
-      }]
+      loaders: [
+        {test: /\.mustache$/, loader: path.join(__dirname, '../precompile/tungsten_template')},
+        {test: /\.js$/, loader: 'babel', exclude: /node_modules/}
+      ]
     }
   };
 };

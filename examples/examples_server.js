@@ -1,3 +1,6 @@
+/* eslint-env node */
+/* eslint-disable no-console */
+
 /**
  * Simple express server for static files
  * Serves to localhost:8000

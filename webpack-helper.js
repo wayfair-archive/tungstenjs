@@ -1,5 +1,7 @@
+/* eslint-env node */
+
 'use strict';
-/* global process, __dirname */
+
 var path = require('path');
 var webpack = require('webpack');
 function ensureLoader(loaders, test, loader) {

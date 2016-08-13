@@ -5,13 +5,20 @@ var HTMLCommentWidget = require('../widgets/html_comment');
 var htmlParser = require('../html_parser');
 var DefaultStack = require('./default');
 var Autofocus = require('../hooks/autofocus');
+var InputType = require('../hooks/input_type');
+var featureDetect = require('../../utils/feature_detect');
 
 function VdomStack(attributesOnly, debugMode) {
   DefaultStack.call(this, attributesOnly, debugMode);
   // Override default property
   this.propertyOpts.useHooks = {
-    'autofocus': Autofocus
+    autofocus: Autofocus
   };
+
+  // if browser is IE - add [type] attribute hook for Input elements
+  if (featureDetect.isIE()) {
+    this.propertyOpts.useHooks.type = InputType;
+  }
 }
 VdomStack.prototype = new DefaultStack();
 VdomStack.prototype.constructor = VdomStack;

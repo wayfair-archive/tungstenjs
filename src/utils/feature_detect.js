@@ -11,5 +11,11 @@ module.exports = {
       return false;
     }
     return /iPhone|iPad|iPod/i.test(window.navigator.userAgent);
+  },
+  isIE: function() {
+    if (!window.navigator) {
+      return false;
+    }
+    return /Edge\/|Trident\/|MSIE/i.test(window.navigator.userAgent);
   }
 };
