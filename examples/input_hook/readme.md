@@ -1,6 +1,6 @@
 ## Internet Explorer type attribute hooks for `Input` element.
 
-Internet Explorer doesn't adhere to the standard when setting not supported input types, and not falling back to `type="text"`.<br>
+Internet Explorer doesn't adhere to the standard when setting unsupported input types and does not fall back to `type="text"`.<br>
 This example will allow setting only supported types for Internet Explorer and falling back to `type="text"`, if type is not supported.
 
 ## Run

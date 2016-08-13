@@ -64,14 +64,14 @@ describe('input_type.js', function() {
     });
 
     it('should fallback to "text" type', function() {
-      // instantiate a hook with not supported input type
+      // instantiate a hook with unsupported input type
       var hook = InputTypeHook('calendar');
       // tell hook to look for [type] attribute
       hook.hook(this.mockInput, 'type');
 
-      // expect input's type to fallback to "text"
+      // expect input type to fall back to "text"
       expect(this.mockInput.type).to.equal('text');
-      // expect one assigment with "text" value
+      // expect one assignment with "text" value
       expect(this.mockInput.calls.setCount).to.equal(1);
       expect(this.mockInput.calls.calledWith).to.deep.equal(['text']);
     });
@@ -82,9 +82,9 @@ describe('input_type.js', function() {
       // tell hook to look for [type] attribute
       hook.hook(this.mockInput, 'type');
 
-      // expect input's type to fallback to "text"
+      // expect input type to fall back to "text"
       expect(this.mockInput.type).to.equal('file');
-      // expect one assigment with "file" value
+      // expect one assignment with "file" value
       expect(this.mockInput.calls.setCount).to.equal(1);
       expect(this.mockInput.calls.calledWith).to.deep.equal(['file']);
     });
@@ -95,9 +95,9 @@ describe('input_type.js', function() {
       // tell hook to look for [type] attribute
       hook.hook(this.mockInput, 'type');
 
-      // expect input's type to stay "text"
+      // expect input type to stay "text"
       expect(this.mockInput.type).to.equal('text');
-      // expect no type assigments
+      // expect no type assignments
       expect(this.mockInput.calls.setCount).to.equal(0);
       expect(this.mockInput.calls.calledWith).to.be.empty;
     });
