@@ -10,7 +10,7 @@ describe('input_type.js', function() {
     expect(InputTypeHook).to.have.length(1);
   });
 
-  it('should have', function() {
+  it('should have correct type', function() {
     expect(InputTypeHook.prototype.type).to.equal('InputTypeHook');
   });
 
