@@ -30,7 +30,7 @@ let AppView = View.extend({
         attributes: true
       });
     }
-    this.model.setBrowser(featureDetect.isIE() ? 'IE' : 'Webkit');
+    this.model.setBrowser(featureDetect.isIE() ? 'IE' : 'Not IE');
   },
   postRender: function() {
     // if MutationObserver is not used, get input's type attribute value after
