@@ -1,4 +1,7 @@
-var webpack = require('webpack');
+/* eslint-env node */
+
+'use strict';
+
 var webpackSettings = require('./webpack-helper');
 var path = require('path');
 
@@ -31,5 +34,5 @@ module.exports = function(options) {
     module: {
       loaders: []
     }
-  }, options.dev, options.test)
+  }, options.dev, options.test);
 };

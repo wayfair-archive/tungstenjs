@@ -1,8 +1,10 @@
+/* eslint-env node */
+
 /*
  * Package plugins in UMD modules.
  */
 
-/* global __dirname */
+'use strict';
 
 var webpackSettings = require('./webpack-helper');
 
