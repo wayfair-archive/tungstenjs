@@ -12,6 +12,7 @@ describe('errors.js public API', function() {
   describe('warnings', function() {
     beforeEach(function() {
       spyOn(logger, 'warn');
+      spyOn(logger, 'info');
     });
     describe('childViewWasPassedAsObjectWithoutAScopeProperty', function() {
       it('should be a function', function() {
@@ -92,6 +93,9 @@ describe('errors.js public API', function() {
       it('should log the correct error message', function() {
         errors.componentFunctionMayNotBeCalledDirectly('initialize');
         jasmineExpect(logger.warn).toHaveBeenCalledWith('Component.initialize may not be called directly');
+        // Test for temporarily downgraded error message
+        errors.componentFunctionMayNotBeCalledDirectly('on');
+        jasmineExpect(logger.info).toHaveBeenCalledWith('Component.on may not be called directly');
       });
     });
     describe('cannotOverwriteComponentMethod', function() {
