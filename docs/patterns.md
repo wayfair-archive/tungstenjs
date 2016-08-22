@@ -98,10 +98,17 @@ The second exception to DOM selection is for selecting height/width, but this sh
 
 ## Let events bubble
 
-## Validation should be done in the model
+Events on child models or collections can be heard by selecting the child model/collection and listening directly on that, e.g. `this.listenTo(this.get('foo'), 'bar', doSomething);`.  This will work, but can be problematic if the child model/collection is removed at some point.  This becomes even more challenging if the child model/collection is nested multiple layers deep.  For these reasons, it's preferable to listen on one's self, and trust that events will bubble up.  So the above example would instead be `this.listenTo(this, 'bar', doSomething);`, or if the event should be namespaced to its property, `this.listenTo(this, 'foo:bar', doSomething);`.
+
+## Validation should handled in the model
+
+
 
 ## Avoid event buses
 
 ## Treat render as an implementation detail
 
+Tungsten.js abstracts DOM rendering by utilizing the virtual-dom engine which decides whether and how to update the DOM when a change to the model occurs.  For this reason, listening to a view's `rendered` event (or using `postRender`) is often unnecessary and can be misleading.  When a render happens can be hard to predict from an application standpoint: often times they can be called more or less than expected.  Instead of listening to render to do something, find the appropriate model event to listen to and respond to that.  The only exception is for edge-cases which need to rely a render occurred to update the DOM, for example, doing something only after an animation has finished.
+
 ## The two-way binding problem
+
