@@ -98,6 +98,7 @@ Detailed documentation on Tungsten.js features can be found in `/docs`:
 * [Models](https://github.com/wayfair/tungstenjs/blob/master/docs/models.md)
 * [Components](https://github.com/wayfair/tungstenjs/blob/master/docs/components.md)
 * [Debugger](https://github.com/wayfair/tungstenjs/blob/master/docs/debugger.md)
+* [Patterns](https://github.com/wayfair/tungstenjs/blob/master/docs/patterns.md)
 
 ## Versioning
 
