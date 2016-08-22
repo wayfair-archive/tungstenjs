@@ -23,7 +23,7 @@ BaseModel.extend({
 
 Events triggered in Tungsten (non-DOM events) "bubble up" through models and collections. Unless stopped, the event will proceed from whatever given nested model triggered it, all the way up to the base model. (This does not include when the event is from a component- there is a specific process for listening to events on a child component. See '[Components](http://wayfair.github.io/tungstenjs/components.html)' for more information.) When an event has finished bubbling, a re-render is triggered.
 
-This bubbling allows for an "events up, methods down" pattern of design. Events can bubble up from child models (containing bespoke data as necessary), and parents can listen for those events and, in response, call the appropriate methods on their children. This is how communication between parents and children in Tungsten should occur. Remember: Events Up, Methods Down!
+This bubbling allows for an "events up, methods down" pattern of design. Events can bubble up from child models (containing bespoke data as necessary), and parents can listen for those events and, in response, call the appropriate methods on their children. This is how communication between parents and children in Tungsten should occur. Remember: **Events Up, Methods Down!**
 
 To prevent an event from bubbling up any further, call `event.stopPropogation`. To prevent an event from bubbling up any further, and to prevent it from triggering any additional listeners on the current element, call `event.stopImmediatePropogation`. (Proper use cases for stopImmediatePropogation are rare- always prefer stopPropogation.)
 
