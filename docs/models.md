@@ -19,6 +19,16 @@ BaseModel.extend({
 });
 ```
 
+## Events
+
+Events triggered in Tungsten (non-DOM events) "bubble up" through models and collections. Unless stopped, the event will proceed from whatever given nested model triggered it, all the way up to the base model. (This includes when the event is from a component- so long as the event is exposed from within the component. See 'Components' for more information.) When an event has finished bubbling, a re-render is triggered.
+
+This bubbling allows for an "events up, methods down" pattern of design. Events can bubble up from child models (containing bespoke data as necessary), and parents can listen for those events and, in response, call the appropriate methods on their children. This is how communication between parents and children in Tungsten should occur. Remember: Events Up, Methods Down!
+
+To prevent an event from bubbling up any further, call .stopPropogation(). To prevent an event from bubbling up any further, and to prevent it from triggering any additional listeners on the current element, call .stopImmediatePropogation(). (Proper use cases for stopImmediatePropogation are rare- always prefer stopPropogation.)
+
+(Behind the scenes, what actually happens is that Tungsten events traverse upwards through the DOM from the element on which they are triggered. Each event keeps a record of the elements it has touched, along with the js- classes on each element. When the event finds a matching event listener on an element, it will iterate through its stored path and check for instances of the js- class(es) targeted by the listener. It will then execute the event listener's method on all of these delegates. Since the structure of a Tungsten application always mirrors the structure of the DOM, events seamlessly "bubble up" through the Tungsten hierarchy of models and collections.)
+
 ## Special Properties
 
 Included with the Backbone adaptor are special model property types which were inspired by [ampersand-state](http://ampersandjs.com/docs#ampersand-state).
