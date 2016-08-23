@@ -26,7 +26,8 @@
       {"name": "Templates", "url_name": "templates.html"},
       {"name": "Models", "url_name": "models.html"},
       {"name": "Components", "url_name": "components.html"},
-      {"name": "Debugger", "url_name": "debugger.html"}
+      {"name": "Debugger", "url_name": "debugger.html"},
+      {"name": "Patterns", "url_name": "patterns.html"}
     ],
     "tutorials": [
       {"name": "Hello World", "url_name": "Hello%20World"},
