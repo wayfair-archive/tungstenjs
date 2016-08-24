@@ -7,7 +7,9 @@ Models in Tungsten.js use the standard Backbone model API, along with support fo
 
 Each Tungsten.js app expects a single data store where the current state of the application is kept.  This data store takes the form of an app model instance.
 
-The root app model, like a standard Backbone model, contains the model's state in a hash of attributes.  This is usually passed from the server, via either a [boostrapped data object](http://backbonejs.org/#FAQ-bootstrap) or an [XHR request](http://backbonejs.org/#Model-fetch).  In addition to standard Backbone behavior, we also provide a nested model functionality based on Bret Little's [backbone-nested-models](https://github.com/blittle/backbone-nested-models).  To define a particular attribute as a reference to a model or collection, set `relations` hash on the model constructor with the key being the attribute name and the value being the nested model/collection constructor:
+The root app model, like a standard Backbone model, contains the model's state in a hash of attributes.  This is usually passed from the server, via either a [boostrapped data object](http://backbonejs.org/#FAQ-bootstrap) or an [XHR request](http://backbonejs.org/#Model-fetch).
+
+In addition to standard Backbone behavior, we also provide a nested model functionality based on Bret Little's [backbone-nested-models](https://github.com/blittle/backbone-nested-models).  To define a particular attribute as a reference to a model or collection, set `relations` hash on the model constructor with the key being the attribute name and the value being the nested model/collection constructor:
 
 ```javascript
 BaseModel.extend({
@@ -18,6 +20,12 @@ BaseModel.extend({
   }
 });
 ```
+
+## Events
+
+Events triggered in Tungsten (non-DOM events) "bubble up" through models and collections. Unless stopped, the event will proceed from whatever given nested model triggered it, all the way up to the base model. (This does not include when the event is from a component- there is a specific process for listening to events on a child component. See '[Components](http://wayfair.github.io/tungstenjs/components.html)' for more information.) When an event has finished bubbling, a re-render is triggered.
+
+This bubbling allows for an "events up, methods down" pattern of design. Events can bubble up from child models (containing bespoke data as necessary), and parents can listen for those events and, in response, call the appropriate methods on their children. This is how communication between parents and children in Tungsten should occur. Remember: **Events Up, Methods Down!**
 
 ## Special Properties
 
