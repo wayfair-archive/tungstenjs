@@ -93,12 +93,12 @@ See the Tungsten.js [TodoMVC](https://github.com/wayfair/tungstenjs/tree/master/
 
 Detailed documentation on Tungsten.js features can be found in `/docs`:
 
-* [Templates](https://github.com/wayfair/tungstenjs/blob/master/docs/templates.md)
-* [Views](https://github.com/wayfair/tungstenjs/blob/master/docs/views.md)
-* [Models](https://github.com/wayfair/tungstenjs/blob/master/docs/models.md)
-* [Components](https://github.com/wayfair/tungstenjs/blob/master/docs/components.md)
-* [Debugger](https://github.com/wayfair/tungstenjs/blob/master/docs/debugger.md)
-* [Patterns](https://github.com/wayfair/tungstenjs/blob/master/docs/patterns.md)
+* [Templates](https://github.com/wayfair/tungstenjs/blob/master/docs_sourcetemplates.md)
+* [Views](https://github.com/wayfair/tungstenjs/blob/master/docs_sourceviews.md)
+* [Models](https://github.com/wayfair/tungstenjs/blob/master/docs_sourcemodels.md)
+* [Components](https://github.com/wayfair/tungstenjs/blob/master/docs_sourcecomponents.md)
+* [Debugger](https://github.com/wayfair/tungstenjs/blob/master/docs_sourcedebugger.md)
+* [Patterns](https://github.com/wayfair/tungstenjs/blob/master/docs_sourcepatterns.md)
 
 ## Versioning
 

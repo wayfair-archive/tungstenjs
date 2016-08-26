@@ -1,0 +1,195 @@
+#clock {
+  height: 250px;
+}
+
+#clock .clock-container {
+  width: 10em;
+  float: left;
+}
+
+#clock p {
+  float: left;
+}
+
+#clock .clock {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+#clock svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+#clock .clock-face {
+  stroke: #333;
+  fill: white;
+}
+
+#clock .minor {
+  stroke: #999;
+  stroke-width: 0.5;
+}
+
+#clock .major {
+  stroke: #333;
+  stroke-width: 1;
+}
+
+#clock .hour {
+  stroke: #333;
+}
+
+#clock .minute {
+  stroke: #666;
+}
+
+#clock .second, .second-counterweight {
+  stroke: rgb(180,0,0);
+}
+
+#clock .second-counterweight {
+  stroke-width: 3;
+}
+
+
+/************************************************************************/
+
+#chart, #chart svg {
+  width: 1000px;
+  height: 500px;
+}
+
+#chart .wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#chart .chart {
+  position: relative;
+  padding: 0 0 3em 0;
+  width: 100%;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#chart .temperature-band {
+  fill-opacity: 0.3;
+  stroke-width: 2;
+}
+
+#chart .freezing {
+  stroke: #ccc;
+  stroke-width: 1;
+}
+
+#chart .freezing-label-bg, .freezing-label {
+  font-family: 'Helvetica Neue', 'Arial';
+  font-size: 0.8em;
+  text-anchor: middle;
+}
+
+#chart .freezing-label-bg {
+  stroke: #fafafa;
+  stroke-width: 4;
+}
+
+#chart .freezing-label {
+  stroke: none;
+  fill: #aaa;
+}
+
+#chart .marker circle {
+  fill: white;
+  stroke: black;
+  stroke-width: 1;
+}
+
+#chart .marker text {
+  text-anchor: middle;
+  font-family: 'Helvetica Neue', 'Arial';
+  font-size: 0.6em;
+  font-weight: bold;
+  fill: #333;
+}
+
+#chart .month-labels {
+  position: absolute;
+  left: 0;
+  bottom: 1em;
+  width: 100%;
+}
+
+#chart .month-labels span {
+  text-align: center;
+  float: left;
+  display: block;
+  font-family: 'Helvetica Neue', 'Arial';
+  font-size: 0.6em;
+}
+
+#chart .temperatures {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 1em 0 0 0;
+  background-color: #fafafa;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#chart .chart-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2em;
+  padding: 0.5em;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#chart .radio-group {
+  display: inline-block;
+  float: right;
+  text-align: right;
+  padding: 0.5em 0 0 0;
+}
+
+#chart .chart-header h3 {
+  font-family: 'Voltaire';
+  font-weight: normal;
+  float: left;
+  margin: 0;
+  border: none;
+}
+
+#chart .chart-header select {
+  position: relative;
+  top: 0.1em;
+  float: left;
+  clear: left;
+  font-size: inherit;
+  font-family: inherit;
+  z-index: 7;
+}
+
+#chart .chart-header label {
+  position: relative;
+  z-index: 7;
+  display: block;
+}
+
+#chart .chart-header p {
+  float: left;
+  clear: left;
+  margin: 0;
+}
