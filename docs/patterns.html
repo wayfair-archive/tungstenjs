@@ -1,0 +1,83 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><title>Tungsten.js</title><link rel="stylesheet" href="css/all.1470806082000.css"/></head><body><div id="layout"><div id="menu"><div class="pure-menu"><a class="pure-menu-heading" href="index.html" id="menu-toggle">Tungsten.js<span class="menu_toggle"></span></a><ul class="pure-menu-list top-menu"><li><a href="index.html" class="pure-menu-link pure-menu-section">Docs</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="views.html" class="pure-menu-link">Views</a></li><li class="pure-menu-item"><a href="templates.html" class="pure-menu-link">Templates</a></li><li class="pure-menu-item"><a href="models.html" class="pure-menu-link">Models</a></li><li class="pure-menu-item"><a href="components.html" class="pure-menu-link">Components</a></li><li class="pure-menu-item"><a href="debugger.html" class="pure-menu-link">Debugger</a></li><li class="pure-menu-item"><a href="patterns.html" class="pure-menu-link">Patterns</a></li></ul></li><li><a href="tutorials.html" class="pure-menu-link pure-menu-section">Tutorials</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="tutorials.html#Hello%20World" class="pure-menu-link js-tutorial-select">Hello World</a></li><li class="pure-menu-item"><a href="tutorials.html#Derived%20Props" class="pure-menu-link js-tutorial-select">Derived Props</a></li><li class="pure-menu-item"><a href="tutorials.html#Debugging" class="pure-menu-link js-tutorial-select">Debugging</a></li><li class="pure-menu-item"><a href="tutorials.html#TodoMVC" class="pure-menu-link js-tutorial-select">TodoMVC</a></li><li class="pure-menu-item"><a href="tutorials.html#Views%20&amp;%20Context" class="pure-menu-link js-tutorial-select">Views &amp; Context</a></li><li class="pure-menu-item"><a href="tutorials.html#Events" class="pure-menu-link js-tutorial-select">Events</a></li><li class="pure-menu-item"><a href="tutorials.html#Components" class="pure-menu-link js-tutorial-select">Components</a></li></ul></li><li><a href="sandbox.html" class="pure-menu-link pure-menu-section">Sandbox</a></li><li><a href="examples.html" class="pure-menu-link pure-menu-section">Examples</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="examples__dbmonster-component.html" class="pure-menu-link js-tutorial-select">DBMonster</a></li><li class="pure-menu-item"><a href="examples__drag-and-drop.html" class="pure-menu-link js-tutorial-select">Drag &amp; Drop</a></li><li class="pure-menu-item"><a href="examples__svg.html" class="pure-menu-link js-tutorial-select">SVG</a></li><li class="pure-menu-item"><a href="examples__web-components.html" class="pure-menu-link js-tutorial-select">Web Components</a></li><li class="pure-menu-item"><a href="examples__todomvc.html" class="pure-menu-link js-tutorial-select">TodoMVC</a></li></ul></li></ul><ul class="pure-menu-list bottom-menu"><li class="pure-menu-item"><a target="_blank" href="https://www.npmjs.com/package/tungstenjs" class="pure-menu-link">npm</a></li><li class="pure-menu-item"><a target="_blank" href="https://github.com/wayfair/tungstenjs" class="pure-menu-link">GitHub</a></li><li class="pure-menu-item"><a target="_blank" href="http://engineering.wayfair.com/" class="pure-menu-link">Wayfair<br>Engineering</a></li></ul></div></div><div class="main" id="appwrapper"><div class="content">
+          <h1 id="patterns-in-tungsten-js-applications">Patterns in Tungsten.js Applications</h1>
+<p>The following are some general patterns and principles for building Tungsten.js applications.  As with all patterns, there are exceptions and they are likely to change over time.  But these are generally good starting points when building an application.</p>
+<h2 id="events-up-methods-down">Events up, methods down</h2>
+<p>The most important principle for dealing with communciation between models in Tungsten.js is this: communication up the model tree should be done via events, communication down the model tree should be done by calling methods on the models.  Events up, methods down.</p>
+<p>What does this mean?  Suppose there are two models in a collection that need to communicate with one another.  Instead of the communication occuring directly between these two sibling models, the communication is going to go through their nearest ancestor, which in this case would be the parent model of the collection.  To do this, one model will trigger an event, e.g., <code>this.trigger(&#39;someEvent&#39;, data);</code> and the parent model will listen to that event and call a method on the second model to communicate the necessary information.  It will find which model in the collection to call the method on likely via a <code>collection.findWhere(attrs)</code> call.  Ideally the event and method should pass through only the information necessary for the communication and no more.  This is a simple case of events up, methods down for communicating between models, but it scales to more complex cases as well.</p>
+<p>In the view&#39;s <code>postInitialize</code>, call <code>this.model.fetch()</code> (or another method that will make the ajax request and set the remaining part of the model).  This needs to be called from the <em>view</em> <code>postInitialize</code>, not the model since the model is likely being instantiated before its attached to the view.  Once the data is set (in the callback from the ajax and set call), toggle the <code>loading</code> boolean on the model, switching to the standard template.</p>
+<h2 id="dom-event-handlers">DOM event handlers</h2>
+<p>The primary purpose of a view is responding to DOM events and calling methods on its model.  DOM events are all set in the <code>events</code> hash using either built in DOM events or one of the special events packaged with Tungsten.js.  A useful practice is to name all of the event handlers with the pattern &quot;handleEventSelector&quot;.  So a plain <code>click</code> event would call the handler function <code>handleClick</code>, and a <code>change .js-foo</code> event would call the handler function <code>handleChangeFoo</code>.</p>
+<p>The event handlers should never be called or referenced outside of the <code>events</code> hash.  Instead, if multiple event handlers need to call the same set of code, that code should be extracted out of the event handlers into its own function which can be called by both, with the minimal amount of data passed in.</p>
+<p>For example, in this case the keyup handler is also calling handleChange and passing through the event object:</p>
+<pre><code class="hljs">BaseView.extend({
+  events: {
+    <span class="hljs-string">'keyup'</span>: <span class="hljs-string">'handleKeyup'</span>,
+    <span class="hljs-string">'change'</span>: <span class="hljs-string">'handleChange'</span>
+  },
+  handleKeyup: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+    doSomething();
+    handleChange(e);
+  },
+  handleChange: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+    doSomethingElse(e.value);
+  }
+});</code></pre><p>Instead, it could be refactored so that the common functionality is extracted into its own function, and the event handler is never called directly.  Additonally, this prevents the entire event object from being passed around.</p>
+<pre><code class="hljs">BaseView.extend({
+  events: {
+    <span class="hljs-string">'keyup'</span>: <span class="hljs-string">'handleKeyup'</span>,
+    <span class="hljs-string">'change'</span>: <span class="hljs-string">'handleChange'</span>
+  },
+  handleKeyup: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+    doSomething();
+    commonFunctionality(e.value);
+  },
+  handleChange: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+    commonFunctionality(e.value);
+  },
+  commonFunctionality: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+    doSomethingElse(data);
+  }
+});</code></pre><h2 id="no-direct-dom-manipulation">No direct DOM manipulation</h2>
+<p>There is never a reason in Tungsten to do direct DOM manipulation.  This includes toggling class names on DOM nodes, changing value properties of DOM nodes, and or changing attributes on DOM nodes.  Doing so will cause a dom/vdom mismatch, and could result in broken functionality in the application (and even if the application works in some cases, it may break in others).</p>
+<p>Instead of changing the DOM node directly, use the template to set a conditional or pass in a value for the part of the DOM that needs to change.  Then, control that by changing the same attribute in the model.</p>
+<h2 id="avoid-non-input-dom-selection">Avoid non-input DOM selection</h2>
+<p>Selection of values in the DOM, except for inputs from the user and (in some low-level, edge cases) for height/width, is never necessary.  Instead, access the data from the model, either by bootstrapping it in the initial data or requesting the data from the server.</p>
+<p>The only exceptions to DOM selection are for user input values, and for occasionaly selecting height/width.</p>
+<p>User inputs need to be accessed via DOM selection.  This can be done one of three ways.  First, user input can be set to the model as the result of a DOM event such as change or input.  In this case, access the value via <code>event.value</code> (or equivilant, depending on the input type) in the event handler.  Second, user input can be set to the model in the special <code>submit-data</code> event type, which passes a form&#39;s serialized data in the second parameter of the submit event handler.  The third (and least ideal) approach to accessing user input is by selecting the DOM node in the view at any point and setting the value to the model.</p>
+<p>The second exception to DOM selection is for selecting height/width, but this should only be done for very particular edge cases where information about the height or width is necessary for changing some dynamic height/width value that can&#39;t be handled via CSS.  Be very careful in these cases, as there may be performance implications for accessing these values.</p>
+<h2 id="avoid-accessing-child-views">Avoid accessing child views</h2>
+<p>Views shouldn&#39;t be aware of their child views once they&#39;re defined.  A parent view should never try to access one or more of its child views.  Instead, if such communication is necessary, it can happen by calling a method on the parent view&#39;s model and letting the model then call a method on a child model related to that child view.</p>
+<h2 id="trigger-and-listen-to-model-not-view-events">Trigger and listen to model, not view, events</h2>
+<p>All custom events should be triggered from, and listened to, from models, not views.  Views are generally only responsible for responding to DOM events and calling methods on the model.  If views need to communicate upwards, that communication should be done through the model instead.  A method can be called on the view&#39;s model to trigger an event that bubbles up from the model.</p>
+<h2 id="avoid-accessing-parents">Avoid accessing parents</h2>
+<p>Parent views and parent models should never be directly accessed.  In both cases, communication should go through events bubbled from the child models.</p>
+<h2 id="let-events-bubble">Let events bubble</h2>
+<p>Events on child models or collections can be heard by selecting the child model/collection and listening directly on that, e.g. <code>this.listenTo(this.get(&#39;foo&#39;), &#39;bar&#39;, doSomething);</code>.  This will work, but can be problematic if the child model/collection is removed at some point.  This becomes even more challenging if the child model/collection is nested multiple layers deep.  For these reasons, it&#39;s preferable to listen on one&#39;s self, and trust that events will bubble up.  So the above example would instead be <code>this.listenTo(this, &#39;bar&#39;, doSomething);</code>, or if the event should be namespaced to its property, <code>this.listenTo(this, &#39;foo:bar&#39;, doSomething);</code>.</p>
+<h2 id="treat-render-as-an-implementation-detail">Treat render as an implementation detail</h2>
+<p>Tungsten.js abstracts DOM rendering by utilizing the virtual-dom engine which decides whether and how to update the DOM when a change to the model occurs.  For this reason, listening to a view&#39;s <code>rendered</code> event (or using <code>postRender</code>) is often unnecessary and can be misleading.  When a render happens can be hard to predict from an application standpoint: often times they can be called more or less than expected.  Instead of listening to render to do something, find the appropriate model event to listen to and respond to that.  The only exception is for edge-cases which need to rely a render occurred to update the DOM, for example, doing something only after an animation has finished.</p>
+<h2 id="deferred-fetch">Deferred fetch</h2>
+<p>A popular UX pattern is showing a light-weight placeholder template before loading in the actual content.  These are sometimes called loading, skeleton, or in-flight templates.  They can be great for providing a boost in perceived performance while the actual content is downloading.</p>
+<p>To do this in Tungsten.js, set a condition in the template for the in-flight template:</p>
+<pre><code class="hljs"><span class="xml"></span><span class="hljs-template-tag">{{#<span class="hljs-name">loading</span>}}</span><span class="xml">
+  </span><span class="hljs-template-variable">{{ &gt; loading_view }}</span><span class="xml">
+</span><span class="hljs-template-tag">{{/<span class="hljs-name">loading</span>}}</span><span class="xml">
+</span><span class="hljs-template-tag">{{^<span class="hljs-name">loading</span>}}</span><span class="xml">
+  </span><span class="hljs-template-variable">{{ &gt; standard_view }}</span><span class="xml">
+</span><span class="hljs-template-tag">{{/<span class="hljs-name">loading</span>}}</span><span class="xml"></span></code></pre><h2 id="the-input-value-problem">The input value problem</h2>
+<p>A challenging case can occur when a text input should update a modela attribute on <code>keyup</code> or <code>input</code>, and also be able to be updated via setting that same property in the model.  The code ends up something like this:</p>
+<pre><code class="hljs"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"</span></span></span><span class="hljs-template-variable">{{val}}</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span>&gt;</span></span></code></pre><pre><code class="hljs">BaseView.extend({
+  events: {
+    <span class="hljs-string">'input .js-input'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+      <span class="hljs-keyword">this</span>.model.set({val: e.currentTarget.value});
+    }
+  }
+});</code></pre><p>However this can result in a focus issue when modifying an existing value in a text input, and potentially a race condition between the JS update and the user input.  To solve this, a silent update may be used in the event handler so that the field does not re-render on user input.  However, on its own this is insufficient, since it would mean an inability to to change the field&#39;s value via the model if it didn&#39;t differ from the initial value (e.g., when re-emptying a field via <code>this.model.set(&#39;val&#39;, &#39;&#39;);</code>).  To get around this, the function <code>view.updateVtree</code> is available to update the view&#39;s vtree in cases where the model was updated without an event.</p>
+<pre><code class="hljs">BaseView.extend({
+  events: {
+    <span class="hljs-string">'input .js-input'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
+      <span class="hljs-keyword">this</span>.model.set({name: e.currentTarget.value}, {silent: <span class="hljs-literal">true</span>});
+      <span class="hljs-keyword">this</span>.updateVtree();
+    }
+  }
+});</code></pre>
+        </div></div></div><script src="js/all.1470083030000.js"></script></body></html>

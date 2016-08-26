@@ -1,14 +1,15 @@
 {
-  "outputDir": "../output",
+  "outputDir": "../docs",
   "pageTemplate": "layout",
   "examplesTemplate": "examples",
   "pages": {
     "index": {"src": "../readme.md", "css": "css/all.css", "js": "js/all.js"},
-    "views": {"src": "../docs/views.md", "css": "css/all.css", "js": "js/all.js"},
-    "models": {"src": "../docs/models.md", "css": "css/all.css", "js": "js/all.js"},
-    "templates": {"src": "../docs/templates.md", "css": "css/all.css", "js": "js/all.js"},
-    "components": {"src": "../docs/components.md", "css": "css/all.css", "js": "js/all.js"},
-    "debugger": {"src": "../docs/debugger.md", "css": "css/all.css", "js": "js/all.js"},
+    "views": {"src": "../docs_source/views.md", "css": "css/all.css", "js": "js/all.js"},
+    "models": {"src": "../docs_source/models.md", "css": "css/all.css", "js": "js/all.js"},
+    "templates": {"src": "../docs_source/templates.md", "css": "css/all.css", "js": "js/all.js"},
+    "components": {"src": "../docs_source/components.md", "css": "css/all.css", "js": "js/all.js"},
+    "debugger": {"src": "../docs_source/debugger.md", "css": "css/all.css", "js": "js/all.js"},
+    "patterns": {"src": "../docs_source/patterns.md", "css": "css/all.css", "js": "js/all.js"},
     "tutorials": {"css": "css/tutorials.css", "js": "js/tutorials.js", "pageClass": "tutorials_page"},
     "sandbox": {"css": "css/tutorials.css", "js": "js/sandbox.js"}
   },
