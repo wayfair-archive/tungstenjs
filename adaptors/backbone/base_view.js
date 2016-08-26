@@ -26,6 +26,22 @@ var BaseView = Backbone.View.extend({
    */
   eventOptions: {},
   renderEvents: 'all',
+
+  complete: function(complete) {
+    var counter = 1;
+    return function(cb) {
+      if (cb) {
+        counter++;
+        return this.complete(cb);
+      }
+
+      counter--;
+      if (counter <= 0) {
+        return complete();
+      }
+    };
+  },
+
   /**
    * Shared init logic
    */
@@ -56,6 +72,9 @@ var BaseView = Backbone.View.extend({
     // Handle to the parent view
     if (this.options.parentView) {
       this.parentView = this.options.parentView;
+      this.complete = this.complete(this.parentView.complete);
+    } else {
+      this.complete = this.complete(_.bind(this.trigger, this, 'complete'));
     }
     // Indicator that this is the view of a component
     if (this.options.isComponentView) {
@@ -102,6 +121,7 @@ var BaseView = Backbone.View.extend({
             this.attachChildViews();
             this.postInitialize();
             this.validateVdom();
+            this.complete();
           }, 1);
         }
       } else {
