@@ -382,7 +382,7 @@ describe('base_view.js constructed api', function() {
       var view = new BaseView();
       spyOn(view, 'trigger').and.callThrough();
       view.listenTo(view, 'complete', function() {
-        jasmineExpect(view.trigger).toHaveBeenCalled();
+        jasmineExpect(view.trigger).toHaveBeenCalledWith('complete');
         done();
       });
       view.complete();
@@ -392,13 +392,13 @@ describe('base_view.js constructed api', function() {
       spyOn(view, 'trigger');
       view.complete = view.complete(view.complete);
       view.complete();
-      jasmineExpect(view.trigger).not.toHaveBeenCalled();
+      jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
     });
     it('should not trigger until all children complete', function(done) {
       var view = new BaseView();
       spyOn(view, 'trigger').and.callThrough();
       view.listenTo(view, 'complete', function() {
-        jasmineExpect(view.trigger).toHaveBeenCalled();
+        jasmineExpect(view.trigger).toHaveBeenCalledWith('complete');
         done();
       });
       // Emulate child views created
@@ -409,20 +409,20 @@ describe('base_view.js constructed api', function() {
         complete: view.complete(view.complete)
       };
       view.complete();
-      jasmineExpect(view.trigger).not.toHaveBeenCalled();
+      jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
 
       childA.complete();
-      jasmineExpect(view.trigger).not.toHaveBeenCalled();
+      jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
 
       // This call should trigger the event and finish the test
-      jasmineExpect(view.trigger).not.toHaveBeenCalled();
+      jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
       childB.complete();
     });
     it('should not trigger until all nested children resolve', function(done) {
       var rootView = new BaseView();
       spyOn(rootView, 'trigger').and.callThrough();
       rootView.listenTo(rootView, 'complete', function() {
-        jasmineExpect(rootView.trigger).toHaveBeenCalled();
+        jasmineExpect(rootView.trigger).toHaveBeenCalledWith('complete');
         done();
       });
       // Emulate child views created
@@ -434,28 +434,24 @@ describe('base_view.js constructed api', function() {
       };
       // Complete the rootView first before any children
       rootView.complete();
-      jasmineExpect(rootView.trigger).not.toHaveBeenCalled();
+      jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
 
       // Emulate childA creating many children.
-      var nestedComplete = [];
-      for (var i = 0; i < 100; i++) {
-        nestedComplete.push(childA.complete(childA.complete));
-      }
+      var nestedComplete = _.map(_.range(0, 100), () => childA.complete(childA.complete));
+
       childA.complete();
-      jasmineExpect(rootView.trigger).not.toHaveBeenCalled();
+      jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
       // This call should trigger the event and finish the test
       childB.complete();
-      jasmineExpect(rootView.trigger).not.toHaveBeenCalled();
+      jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
 
-      _.each(nestedComplete, function(complete) {
-        complete();
-      });
+      _.each(nestedComplete, (complete) => complete());
     });
     it('should trigger if children complete asynchronously', function(done) {
       var rootView = new BaseView();
       spyOn(rootView, 'trigger').and.callThrough();
       rootView.listenTo(rootView, 'complete', function() {
-        jasmineExpect(rootView.trigger).toHaveBeenCalled();
+        jasmineExpect(rootView.trigger).toHaveBeenCalledWith('complete');
         done();
       });
       // Emulate child views created
@@ -467,7 +463,7 @@ describe('base_view.js constructed api', function() {
       };
       // Complete the rootView first before any children
       rootView.complete();
-      jasmineExpect(rootView.trigger).not.toHaveBeenCalled();
+      jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
 
       // Emulate childA creating many children.
       setTimeout(function() {
@@ -475,16 +471,16 @@ describe('base_view.js constructed api', function() {
         setTimeout(() => _.each(nestedComplete, (complete) => setTimeout(complete, 1)), 1);
 
         childA.complete();
-        jasmineExpect(rootView.trigger).not.toHaveBeenCalled();
+        jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
       }, 1);
 
       setTimeout(function() {
         // This call should trigger the event and finish the test
         childB.complete();
-        jasmineExpect(rootView.trigger).not.toHaveBeenCalled();
+        jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
       }, 1);
 
-      jasmineExpect(rootView.trigger).not.toHaveBeenCalled();
+      jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
     });
   });
 
