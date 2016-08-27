@@ -27,17 +27,17 @@ var BaseView = Backbone.View.extend({
   eventOptions: {},
   renderEvents: 'all',
 
-  complete: function(complete) {
+  complete: function complete(trigger) {
     var counter = 1;
-    return function(cb) {
+    return (cb) => {
       if (cb) {
         counter++;
-        return this.complete(cb);
+        return complete(cb);
       }
 
       counter--;
       if (counter <= 0) {
-        return complete();
+        return trigger();
       }
     };
   },
@@ -72,10 +72,15 @@ var BaseView = Backbone.View.extend({
     // Handle to the parent view
     if (this.options.parentView) {
       this.parentView = this.options.parentView;
-      this.complete = this.complete(this.parentView.complete);
-    } else {
-      this.complete = this.complete(_.bind(this.trigger, this, 'complete'));
     }
+
+    // Initialize complete callback or block the parent 'complete' event
+    if (this.options.parentView && typeof this.options.parentView === 'function') {
+      this.complete = this.parentView.complete(this.parentView.complete);
+    } else {
+      this.complete = this.complete(() => this.trigger('complete'));
+    }
+
     // Indicator that this is the view of a component
     if (this.options.isComponentView) {
       this.isComponentView = this.options.isComponentView;
