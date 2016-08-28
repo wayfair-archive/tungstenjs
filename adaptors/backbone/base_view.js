@@ -27,7 +27,6 @@ var BaseView = Backbone.View.extend({
   eventOptions: {},
   renderEvents: 'all',
 
-
   /**
    * Shared init logic
    */
