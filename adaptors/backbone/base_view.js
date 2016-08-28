@@ -445,7 +445,7 @@ var BaseView = Backbone.View.extend({
 }, {
 
   /**
-   * Calling 'complete(true)' may seem strange so using a constant so that it is clear what is happening
+   * Calling 'complete(true)' may seem strange. Using a constant to make behavior clear
    *
    * @constant {Boolean} true
    */
