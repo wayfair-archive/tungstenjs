@@ -65,7 +65,11 @@ var BaseView = Backbone.View.extend({
       this.complete = this.parentView.complete(BaseView.BLOCK_COMPLETION);
     } else {
       // Create callback
-      this.complete = this.complete(() => this.trigger('complete'));
+      this.complete = this.complete(() => {
+        // Clean-up
+        this.complete = null;
+        this.trigger('complete');
+      });
     }
 
     // Indicator that this is the view of a component

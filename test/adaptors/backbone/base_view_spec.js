@@ -387,13 +387,38 @@ describe('base_view.js constructed api', function() {
       });
       view.complete();
     });
-    it('should allow child views to block', function() {
+    it('should block when called by a child', function() {
       var view = new BaseView();
       spyOn(view, 'trigger');
       // Emulate a child view creating a block
       view.complete = view.complete(BaseView.BLOCK_COMPLETION);
       view.complete();
       jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
+    });
+    it('should be called by child views to add a block', function() {
+      var parentView = {
+        complete: function() {}
+      };
+      spyOn(parentView, 'complete');
+      new BaseView({
+        parentView: parentView
+      });
+      jasmineExpect(parentView.complete).toHaveBeenCalledWith(BaseView.BLOCK_COMPLETION);
+    });
+    it('should trigger only once per lifetime of a view', function() {
+      var parentView = new BaseView();
+      spyOn(parentView, 'trigger');
+      parentView.complete();
+      // Create a new 'child' after the view completes
+      var childView = new BaseView({parentView: parentView});
+      spyOn(childView, 'trigger').and.callThrough();
+      // Make sure view clears its complete callback after called once
+      expect(parentView.complete).to.equal(null);
+      expect(childView.complete).to.be.a('function');
+      childView.complete();
+      expect(parentView.trigger.calls.count()).to.equal(1);
+      // Parent already completed, child view should trigger its own event
+      jasmineExpect(childView.trigger).toHaveBeenCalledWith('complete');
     });
     it('should not trigger until all children complete', function(done) {
       var view = new BaseView();
