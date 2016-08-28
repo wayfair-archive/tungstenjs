@@ -27,20 +27,6 @@ var BaseView = Backbone.View.extend({
   eventOptions: {},
   renderEvents: 'all',
 
-  complete: function complete(trigger) {
-    var counter = 1;
-    return (cb) => {
-      if (cb) {
-        counter++;
-        return complete(cb);
-      }
-
-      counter--;
-      if (counter <= 0) {
-        return trigger();
-      }
-    };
-  },
 
   /**
    * Shared init logic
@@ -75,9 +61,11 @@ var BaseView = Backbone.View.extend({
     }
 
     // Initialize complete callback or block the parent 'complete' event
-    if (this.options.parentView && typeof this.options.parentView === 'function') {
-      this.complete = this.parentView.complete(this.parentView.complete);
+    if (this.options.parentView && typeof this.options.parentView.complete === 'function') {
+      // Block
+      this.complete = this.parentView.complete(true);
     } else {
+      // Create callback
       this.complete = this.complete(() => this.trigger('complete'));
     }
 
@@ -427,6 +415,32 @@ var BaseView = Backbone.View.extend({
       model = model.getDeep(propParts.join(':'));
     }
     model.unset(prop);
+  },
+
+  /**
+   * Returns a function to propagate down to children views. Each child can
+   * block the completion of parent until all children call complete()
+   *
+   * @param rootCallback The callback to trigger once everything completes
+   *
+   * @returns {Function} Closure around the block counter
+   */
+  complete: function(rootCallback) {
+    var blocks = 1;
+
+    function blockComplete(block) {
+      if (block) {
+        blocks++;
+        return blockComplete;
+      }
+
+      blocks--;
+      if (blocks < 1) {
+        return rootCallback();
+      }
+    }
+
+    return blockComplete;
   }
 }, {
   tungstenView: true,
