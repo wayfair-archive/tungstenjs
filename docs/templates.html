@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><title>Tungsten.js</title><link rel="stylesheet" href="css/all.1470806082000.css"/></head><body><div id="layout"><div id="menu"><div class="pure-menu"><a class="pure-menu-heading" href="index.html" id="menu-toggle">Tungsten.js<span class="menu_toggle"></span></a><ul class="pure-menu-list top-menu"><li><a href="index.html" class="pure-menu-link pure-menu-section">Docs</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="views.html" class="pure-menu-link">Views</a></li><li class="pure-menu-item"><a href="templates.html" class="pure-menu-link">Templates</a></li><li class="pure-menu-item"><a href="models.html" class="pure-menu-link">Models</a></li><li class="pure-menu-item"><a href="components.html" class="pure-menu-link">Components</a></li><li class="pure-menu-item"><a href="debugger.html" class="pure-menu-link">Debugger</a></li><li class="pure-menu-item"><a href="patterns.html" class="pure-menu-link">Patterns</a></li></ul></li><li><a href="tutorials.html" class="pure-menu-link pure-menu-section">Tutorials</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="tutorials.html#Hello%20World" class="pure-menu-link js-tutorial-select">Hello World</a></li><li class="pure-menu-item"><a href="tutorials.html#Derived%20Props" class="pure-menu-link js-tutorial-select">Derived Props</a></li><li class="pure-menu-item"><a href="tutorials.html#Debugging" class="pure-menu-link js-tutorial-select">Debugging</a></li><li class="pure-menu-item"><a href="tutorials.html#TodoMVC" class="pure-menu-link js-tutorial-select">TodoMVC</a></li><li class="pure-menu-item"><a href="tutorials.html#Views%20&amp;%20Context" class="pure-menu-link js-tutorial-select">Views &amp; Context</a></li><li class="pure-menu-item"><a href="tutorials.html#Events" class="pure-menu-link js-tutorial-select">Events</a></li><li class="pure-menu-item"><a href="tutorials.html#Components" class="pure-menu-link js-tutorial-select">Components</a></li></ul></li><li><a href="sandbox.html" class="pure-menu-link pure-menu-section">Sandbox</a></li><li><a href="examples.html" class="pure-menu-link pure-menu-section">Examples</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="examples__dbmonster-component.html" class="pure-menu-link js-tutorial-select">DBMonster</a></li><li class="pure-menu-item"><a href="examples__drag-and-drop.html" class="pure-menu-link js-tutorial-select">Drag &amp; Drop</a></li><li class="pure-menu-item"><a href="examples__svg.html" class="pure-menu-link js-tutorial-select">SVG</a></li><li class="pure-menu-item"><a href="examples__web-components.html" class="pure-menu-link js-tutorial-select">Web Components</a></li><li class="pure-menu-item"><a href="examples__todomvc.html" class="pure-menu-link js-tutorial-select">TodoMVC</a></li></ul></li></ul><ul class="pure-menu-list bottom-menu"><li class="pure-menu-item"><a target="_blank" href="https://www.npmjs.com/package/tungstenjs" class="pure-menu-link">npm</a></li><li class="pure-menu-item"><a target="_blank" href="https://github.com/wayfair/tungstenjs" class="pure-menu-link">GitHub</a></li><li class="pure-menu-item"><a target="_blank" href="http://engineering.wayfair.com/" class="pure-menu-link">Wayfair<br>Engineering</a></li></ul></div></div><div class="main" id="appwrapper"><div class="content">
+          <h1 id="templates">Templates</h1>
+<p>The markup for Tungsten.js views are described by mustache templates which are shared for both server-side and client-side rendering.</p>
+<h2 id="server-side-rendering">Server Side Rendering</h2>
+<p>By default, Tungsten.js expects that on page load the HTML for the initial state will be rendered from the server using the same data and template that was used to bootstrap the application.  This means that Tungsten.js will not re-render on the application on page load.  This default behavior, however, can be overridden by setting the <code>dynamicInitialize</code> property when initializing the app view:</p>
+<pre><code class="hljs"><span class="hljs-built_in">module</span>.exports = <span class="hljs-keyword">new</span> AppView({
+  el: <span class="hljs-string">'#app'</span>,
+  template: template,
+  model: <span class="hljs-keyword">new</span> AppModel(<span class="hljs-built_in">window</span>.data),
+  <span class="hljs-comment">// Set the following line for client-side only rendering</span>
+  dynamicInitialize: <span class="hljs-literal">true</span>
+});</code></pre><p><code>dynamicInitialize</code> should only be set when the application won&#39;t be rendered from the server and will instead be client-side rendered only.</p>
+<p>Tungsten.js is agnostic to the server technology used to render the template.  The only restriction is that the output of the server-side rendered template mustache match the output of the bootstrapped data and client-side template.  There are implementations of mustache rendering engines available in a variety of server-side technologies, including <a href="https://github.com/raycmorgan/Mu">Node.js</a>, <a href="https://github.com/spullara/mustache.java">Java</a>, <a href="https://github.com/mrtazz/plustache">C++</a>, <a href="https://github.com/bobthecow/mustache.php">PHP</a>, and <a href="https://github.com/hoisie/mustache">Go</a>.</p>
+<h2 id="pre-compiled-templates">Pre-compiled Templates</h2>
+<p>Each template and partial should be pre-compiled with the provided wrapper for the Ractive-based pre-compiler. A webpack loader, <code>tungsten_template</code>, is provided for this purpose.  With this template pre-compiling, there are a few edge cases which depart from standard mustache rules:</p>
+<ul>
+<li>All HTML attributes must have a value, including <code>disabled</code>, <code>selected</code>, <code>novalidate</code>, etc.<ul>
+<li>Breaks: <code>&lt;select {{#some_bool}}disabled{{/some_bool}} ...</code></li>
+<li>Works: <code>&lt;select class=&quot;foo&quot; {{#some_bool}}disabled=&quot;disabled&quot;{{/some_bool}} ...</code></li>
+</ul>
+</li>
+<li>Opening and closing HTML tags must be within the same conditional block.</li>
+<li><code>&lt;a&gt;</code> elements cannot be nested.</li>
+</ul>
+<p>The <code>precompiler</code> API can be used to create a <a href="http://webpack.github.io/">webpack</a> loader. <code>tungsten.precompiler</code> is provided to pre-compile JS template functions, and can be used in a webpack configuration like so:</p>
+<p><strong><code>loaders/tungsten_template.js</code></strong></p>
+<pre><code class="hljs"><span class="hljs-built_in">module</span>.exports = <span class="hljs-built_in">require</span>(<span class="hljs-string">'tungstenjs'</span>).precompiler;</code></pre><p><strong><code>webpack.config.js</code></strong></p>
+<pre><code class="hljs"><span class="hljs-built_in">module</span>.exports = {
+  <span class="hljs-comment">// [...]</span>
+  resolveLoader: {
+    modules: [
+      path.join(__dirname, <span class="hljs-string">'node_modules'</span>),
+      path.join(__dirname, <span class="hljs-string">'loaders'</span>)
+    ]
+  },
+  <span class="hljs-built_in">module</span>: {
+    loaders: [
+      { test: <span class="hljs-regexp">/\.mustache$/</span>, loader: <span class="hljs-string">'tungsten_template'</span> }
+    ]
+  }
+}</code></pre>
+        </div></div></div><script src="js/all.1470083030000.js"></script></body></html>

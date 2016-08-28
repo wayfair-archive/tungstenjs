@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><title>Tungsten.js</title><link rel="stylesheet" href="css/all.1470806082000.css"/></head><body><div id="layout"><div id="menu"><div class="pure-menu"><a class="pure-menu-heading" href="index.html" id="menu-toggle">Tungsten.js<span class="menu_toggle"></span></a><ul class="pure-menu-list top-menu"><li><a href="index.html" class="pure-menu-link pure-menu-section">Docs</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="views.html" class="pure-menu-link">Views</a></li><li class="pure-menu-item"><a href="templates.html" class="pure-menu-link">Templates</a></li><li class="pure-menu-item"><a href="models.html" class="pure-menu-link">Models</a></li><li class="pure-menu-item"><a href="components.html" class="pure-menu-link">Components</a></li><li class="pure-menu-item"><a href="debugger.html" class="pure-menu-link">Debugger</a></li><li class="pure-menu-item"><a href="patterns.html" class="pure-menu-link">Patterns</a></li></ul></li><li><a href="tutorials.html" class="pure-menu-link pure-menu-section">Tutorials</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="tutorials.html#Hello%20World" class="pure-menu-link js-tutorial-select">Hello World</a></li><li class="pure-menu-item"><a href="tutorials.html#Derived%20Props" class="pure-menu-link js-tutorial-select">Derived Props</a></li><li class="pure-menu-item"><a href="tutorials.html#Debugging" class="pure-menu-link js-tutorial-select">Debugging</a></li><li class="pure-menu-item"><a href="tutorials.html#TodoMVC" class="pure-menu-link js-tutorial-select">TodoMVC</a></li><li class="pure-menu-item"><a href="tutorials.html#Views%20&amp;%20Context" class="pure-menu-link js-tutorial-select">Views &amp; Context</a></li><li class="pure-menu-item"><a href="tutorials.html#Events" class="pure-menu-link js-tutorial-select">Events</a></li><li class="pure-menu-item"><a href="tutorials.html#Components" class="pure-menu-link js-tutorial-select">Components</a></li></ul></li><li><a href="sandbox.html" class="pure-menu-link pure-menu-section">Sandbox</a></li><li><a href="examples.html" class="pure-menu-link pure-menu-section">Examples</a><ul class="pure-menu-list"><li class="pure-menu-item"><a href="examples__dbmonster-component.html" class="pure-menu-link js-tutorial-select">DBMonster</a></li><li class="pure-menu-item"><a href="examples__drag-and-drop.html" class="pure-menu-link js-tutorial-select">Drag &amp; Drop</a></li><li class="pure-menu-item"><a href="examples__svg.html" class="pure-menu-link js-tutorial-select">SVG</a></li><li class="pure-menu-item"><a href="examples__web-components.html" class="pure-menu-link js-tutorial-select">Web Components</a></li><li class="pure-menu-item"><a href="examples__todomvc.html" class="pure-menu-link js-tutorial-select">TodoMVC</a></li></ul></li></ul><ul class="pure-menu-list bottom-menu"><li class="pure-menu-item"><a target="_blank" href="https://www.npmjs.com/package/tungstenjs" class="pure-menu-link">npm</a></li><li class="pure-menu-item"><a target="_blank" href="https://github.com/wayfair/tungstenjs" class="pure-menu-link">GitHub</a></li><li class="pure-menu-item"><a target="_blank" href="http://engineering.wayfair.com/" class="pure-menu-link">Wayfair<br>Engineering</a></li></ul></div></div><div class="main" id="appwrapper"><div class="content">
+          <h1 id="-tungsten-js-https-cdn-rawgit-com-wayfair-tungstenjs-master-extra-tungstenjs_logo-svg-"><img src="https://cdn.rawgit.com/wayfair/tungstenjs/master/extra/tungstenjs_logo.svg" alt="Tungsten.js"></h1>
+<p><a href="https://travis-ci.org/wayfair/tungstenjs"><img src="https://travis-ci.org/wayfair/tungstenjs.svg?branch=master" alt="Build Status"></a>
+<a href="https://www.npmjs.com/package/tungstenjs"><img src="https://badge.fury.io/js/tungstenjs.svg" alt="npm version"></a>
+<a href="https://codecov.io/github/wayfair/tungstenjs?branch=master"><img src="https://codecov.io/github/wayfair/tungstenjs/coverage.svg?branch=master" alt="code coverage"></a></p>
+<p>Tungsten.js is a modular framework for creating web UIs with high-performance rendering on both server and client.</p>
+<p><a href="https://wayfair.github.io/tungstenjs/">wayfair.github.io/tungstenjs/</a></p>
+<h2 id="what-tungsten-js-provides">What Tungsten.js Provides</h2>
+<ul>
+<li>High-performance virtual DOM updates powered by <a href="https://github.com/Matt-Esch/virtual-dom">virtual-dom</a></li>
+<li>Use of mustache templates, with HTML parsed by <a href="https://github.com/fb55/htmlparser2">htmlparser2</a>, which render to virtual DOM objects</li>
+<li>Event system which binds and delegates each event type to the document root</li>
+<li>Adaptor for <a href="https://github.com/jashkenas/backbone">Backbone.js</a> views and models</li>
+</ul>
+<h2 id="motivation">Motivation</h2>
+<p>Tungsten.js was built as an alternative to existing front-end JavaScript libraries because we needed a library with:</p>
+<ul>
+<li>Fast, first-class server-side rendering across multiple platforms</li>
+<li>Fast client-side DOM updates with support back to IE8</li>
+<li>Modular interfaces to swap out library components as necessary</li>
+</ul>
+<h2 id="how-tungsten-js-works">How Tungsten.js Works</h2>
+<p>In Tungsten.js, the initial page loaded is rendered with <a href="http://mustache.github.io/">Mustache</a> templates on the server (in, say, <a href="https://github.com/mrtazz/plustache">C++</a>, <a href="https://github.com/bobthecow/mustache.php">PHP</a>, or <a href="https://github.com/hoisie/mustache">Go</a>) then rehydrated by Tungsten.js on the client.  Subsequent DOM updates are made with those same mustache templates which have been <a href="precompile/tungsten_template/index.js">pre-compiled</a> to functions which return virtual DOM objects used by <a href="https://github.com/Matt-Esch/virtual-dom">virtual-dom</a> to diff and patch the existing DOM.</p>
+<p>An adaptor layer is used to connect with Tungsten.js with a preferred modular client-side framework to handle data and view management.  The default adaptor is a thin layer on top of <a href="https://github.com/jashkenas/backbone">Backbone.js</a> with a <code>childViews</code> hash to define relationships between views and a <code>compiledTemplate</code> property to define the root pre-compiled template function.  Other adaptors can also be used with the core library.</p>
+<p>Tungsten.js has no dependency on <a href="https://github.com/jquery/jquery">jQuery</a>.</p>
+<h2 id="setup">Setup</h2>
+<h3 id="install">Install</h3>
+<p><code>npm install tungstenjs --save</code></p>
+<p>For the latest, but unstable, version:</p>
+<p><code>npm install git+http://github.com:wayfair/tungstenjs.git#master --save</code></p>
+<h3 id="umd">UMD</h3>
+<p>The UMD build is the preferred method for including Tungsten.js in a project, and is generally included via <code>require(&#39;tungstenjs&#39;)</code>.
+Dependencies are bundled in the build.  It exposes <a href="http://underscorejs.org/">underscore</a> and <a href="http://backbonejs.org/">backbone</a>
+as <code>tungstenjs._</code> and <code>tungstenjs.Backbone</code> to be used globally if necessary.</p>
+<p>To compile templates, use
+<code>tungsten.templateHelper.compileTemplates({myTemplate: &#39;Hello {{name}.&#39;})</code>.
+Ordinarily this is done on the server at build time.</p>
+<p>An client-side only example of a Tungsten.js app using the UMD build is
+available in the <a href="https://github.com/wayfair/tungstenjs/tree/master/examples/browser-standalone">examples</a>.</p>
+<h3 id="bundler-e-g-webpack-">Bundler (e.g., webpack)</h3>
+<p>Tungsten.js can be built for your application using a module bundler such as <a href="http://webpack.github.io/">webpack</a>.  Because Backbone expects <code>jQuery</code> to be present, Tungsten.js includes a jQuery-less shim, <code>src/polyfill/jquery</code>, which is included in the default build.</p>
+<h3 id="requirements">Requirements</h3>
+<ul>
+<li><code>Node.js</code> (for builds; not necessary for production runtime)</li>
+<li><code>webpack</code> or other CommonJS compatible client-side module loader</li>
+<li><a href="http://mustache.github.io/">{{ mustache }}</a> renderer on server (for server-side rendering)</li>
+</ul>
+<h3 id="api">API</h3>
+<p>The API a developer interacts with when building an API with Tungsten.js is the API of the Backbone adaptor, which provides <code>View</code>, <code>Model</code>, and <code>Collection</code> properties.  These are available directly when importing the Tungsten.js build and are used as the base view, model, and collection constructors in the application.  As usual with Backbone, custom constructors can extend from each of these.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>When building a Tungsten.js app we recommend starting with an app model, app view, and app (<a href="https://mustache.github.io/">mustache</a>) template.  These are the entry points for a Tungsten.js applications.  A place to bootstrap the app and get everything started is also needed: often this is in the form of an init file:</p>
+<pre><code class="hljs"><span class="hljs-keyword">var</span> AppView = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./views/app_view'</span>);
+<span class="hljs-keyword">var</span> AppModel = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./models/app_model'</span>);
+<span class="hljs-keyword">var</span> template = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../templates/app_view.mustache'</span>);
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-keyword">new</span> AppView({
+  el: <span class="hljs-string">'#app'</span>,
+  template: template,
+  model: <span class="hljs-keyword">new</span> AppModel(<span class="hljs-built_in">window</span>.data)
+});</code></pre><p>See the Tungsten.js <a href="https://github.com/wayfair/tungstenjs/tree/master/examples/todomvc">TodoMVC</a> app for a complete example.</p>
+<h2 id="documentation">Documentation</h2>
+<p>Detailed documentation on Tungsten.js features can be found in <code>/docs</code>:</p>
+<ul>
+<li><a href="https://github.com/wayfair/tungstenjs/blob/master/docs_sourcetemplates.md">Templates</a></li>
+<li><a href="https://github.com/wayfair/tungstenjs/blob/master/docs_sourceviews.md">Views</a></li>
+<li><a href="https://github.com/wayfair/tungstenjs/blob/master/docs_sourcemodels.md">Models</a></li>
+<li><a href="https://github.com/wayfair/tungstenjs/blob/master/docs_sourcecomponents.md">Components</a></li>
+<li><a href="https://github.com/wayfair/tungstenjs/blob/master/docs_sourcedebugger.md">Debugger</a></li>
+<li><a href="https://github.com/wayfair/tungstenjs/blob/master/docs_sourcepatterns.md">Patterns</a></li>
+</ul>
+<h2 id="versioning">Versioning</h2>
+<p><code>master</code>  changes regularly and so is unsafe and may break existing APIs.  Published releases, however, attempt to follow <a href="http://semver.org/">semver</a>.  High level changelog available at <a href="https://github.com/wayfair/tungstenjs/blob/master/CHANGELOG.md">CHANGELOG.md</a>.</p>
+<h2 id="credits">Credits</h2>
+<p>Tungsten.js was created by <a href="http://twitter.com/thedeeg">Matt DeGennaro</a> and is maintained by the JavaScript team at <a href="http://engineering.wayfair.com/">Wayfair</a>.  Contributions are welcome.</p>
+<p>Tungsten.js uses portions of these and other open source libraries:</p>
+<ul>
+<li><a href="https://github.com/Matt-Esch/virtual-dom">virtual-dom</a></li>
+<li><a href="https://github.com/marcelklehr/vdom-virtualize">vdom-virtualize</a></li>
+<li><a href="https://github.com/fb55/htmlparser2">htmlparser2</a></li>
+<li><a href="https://github.com/jashkenas/backbone">backbone</a></li>
+<li><a href="https://github.com/blittle/backbone-nested-models">backbone-nested-models</a></li>
+<li><a href="https://github.com/GianlucaGuarini/Tocca.js">Tocca.js</a></li>
+</ul>
+<h2 id="license">License</h2>
+<p>Tungsten.js is distributed with an Apache Version 2.0 license.  See <a href="LICENSE">LICENSE</a> for details.  By contributing to Tungsten.js, you agree that your contributions will be licensed under its Apache Version 2.0 license.</p>
+
+        </div></div></div><script src="js/all.1470083030000.js"></script></body></html>
