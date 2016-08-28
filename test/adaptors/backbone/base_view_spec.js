@@ -418,7 +418,7 @@ describe('base_view.js constructed api', function() {
       jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
       childB.complete();
     });
-    it('should not trigger until all nested children resolve', function(done) {
+    it('should not trigger until all nested children complete', function(done) {
       var rootView = new BaseView();
       spyOn(rootView, 'trigger').and.callThrough();
       rootView.listenTo(rootView, 'complete', function() {
