@@ -63,7 +63,7 @@ var BaseView = Backbone.View.extend({
     // Initialize complete callback or block the parent 'complete' event
     if (this.options.parentView && typeof this.options.parentView.complete === 'function') {
       // Block
-      this.complete = this.parentView.complete(true);
+      this.complete = this.parentView.complete(BaseView.BLOCK_COMPLETION);
     } else {
       // Create callback
       this.complete = this.complete(() => this.trigger('complete'));
@@ -443,6 +443,13 @@ var BaseView = Backbone.View.extend({
     return blockComplete;
   }
 }, {
+
+  /**
+   * Calling 'complete(true)' may seem strange so using a constant so that it is clear what is happening
+   *
+   * @constant {Boolean} true
+   */
+  BLOCK_COMPLETION: true,
   tungstenView: true,
   extend: function(protoProps, staticProps) {
     if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {

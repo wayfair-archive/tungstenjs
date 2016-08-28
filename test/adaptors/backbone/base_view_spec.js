@@ -387,10 +387,11 @@ describe('base_view.js constructed api', function() {
       });
       view.complete();
     });
-    it('should block complete event', function() {
+    it('should allow child views to block', function() {
       var view = new BaseView();
       spyOn(view, 'trigger');
-      view.complete = view.complete(view.complete);
+      // Emulate a child view creating a block
+      view.complete = view.complete(BaseView.BLOCK_COMPLETION);
       view.complete();
       jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
     });
@@ -403,10 +404,10 @@ describe('base_view.js constructed api', function() {
       });
       // Emulate child views created
       var childA = {
-        complete: view.complete(view.complete)
+        complete: view.complete(BaseView.BLOCK_COMPLETION)
       };
       var childB = {
-        complete: view.complete(view.complete)
+        complete: view.complete(BaseView.BLOCK_COMPLETION)
       };
       view.complete();
       jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
@@ -418,7 +419,7 @@ describe('base_view.js constructed api', function() {
       jasmineExpect(view.trigger).not.toHaveBeenCalledWith('complete');
       childB.complete();
     });
-    it('should not trigger until all nested children complete', function(done) {
+    it('should trigger if nested children complete synchronously', function(done) {
       var rootView = new BaseView();
       spyOn(rootView, 'trigger').and.callThrough();
       rootView.listenTo(rootView, 'complete', function() {
@@ -427,27 +428,27 @@ describe('base_view.js constructed api', function() {
       });
       // Emulate child views created
       var childA = {
-        complete: rootView.complete(rootView.complete)
+        complete: rootView.complete(BaseView.BLOCK_COMPLETION)
       };
       var childB = {
-        complete: rootView.complete(rootView.complete)
+        complete: rootView.complete(BaseView.BLOCK_COMPLETION)
       };
       // Complete the rootView first before any children
       rootView.complete();
       jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
 
       // Emulate childA creating many children.
-      var nestedComplete = _.map(_.range(0, 100), () => childA.complete(childA.complete));
+      var nestedComplete = _.map(_.range(0, 100), () => childA.complete(BaseView.BLOCK_COMPLETION));
 
       childA.complete();
       jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
-      // This call should trigger the event and finish the test
       childB.complete();
       jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
 
+      // These should complete the rootView
       _.each(nestedComplete, (complete) => complete());
     });
-    it('should trigger if children complete asynchronously', function(done) {
+    it('should trigger if nested children complete asynchronously', function(done) {
       var rootView = new BaseView();
       spyOn(rootView, 'trigger').and.callThrough();
       rootView.listenTo(rootView, 'complete', function() {
@@ -456,10 +457,10 @@ describe('base_view.js constructed api', function() {
       });
       // Emulate child views created
       var childA = {
-        complete: rootView.complete(rootView.complete)
+        complete: rootView.complete(BaseView.BLOCK_COMPLETION)
       };
       var childB = {
-        complete: rootView.complete(rootView.complete)
+        complete: rootView.complete(BaseView.BLOCK_COMPLETION)
       };
       // Complete the rootView first before any children
       rootView.complete();
@@ -467,7 +468,8 @@ describe('base_view.js constructed api', function() {
 
       // Emulate childA creating many children.
       setTimeout(function() {
-        var nestedComplete = _.map(_.range(0, 100), () => childA.complete(childA.complete));
+        // The setTimeout calls below should finish the test
+        var nestedComplete = _.map(_.range(0, 100), () => childA.complete(BaseView.BLOCK_COMPLETION));
         setTimeout(() => _.each(nestedComplete, (complete) => setTimeout(complete, 1)), 1);
 
         childA.complete();
@@ -475,7 +477,6 @@ describe('base_view.js constructed api', function() {
       }, 1);
 
       setTimeout(function() {
-        // This call should trigger the event and finish the test
         childB.complete();
         jasmineExpect(rootView.trigger).not.toHaveBeenCalledWith('complete');
       }, 1);
