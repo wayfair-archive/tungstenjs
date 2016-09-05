@@ -27,7 +27,6 @@ var nonTransformedProperties = {
   'id': true,
   'label': true,
   'lang': true,
-  'list': true,
   'loop': true,
   'max': true,
   'method': true,
