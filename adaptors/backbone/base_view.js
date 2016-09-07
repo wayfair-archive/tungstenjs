@@ -94,24 +94,31 @@ var BaseView = Backbone.View.extend({
         if (this.options.dynamicInitialize || this.options.vtree) {
           // If certain options were set, render was already invoked, so childViews are attached
           this.postInitialize();
+          this.trigger('initialized');
           if (!this.options.dynamicInitialize) {
             this.validateVdom();
           }
         } else {
           setTimeout(() => {
-            this.attachChildViews();
-            this.postInitialize();
-            this.validateVdom();
+            this.attachChildViews(() => {
+              // Wait until all children are attached before calling postInitialize
+              this.postInitialize();
+              this.trigger('initialized');
+              this.validateVdom();
+            });
           }, 1);
         }
       } else {
         this.initializeRenderListener(dataItem);
         this.postInitialize();
+        this.trigger('initialized');
       }
     } else {
       this.initializeRenderListener(dataItem);
       this.postInitialize();
+      this.trigger('initialized');
     }
+
   },
   tungstenViewInstance: true,
   debouncer: null,
@@ -338,7 +345,18 @@ var BaseView = Backbone.View.extend({
    * Parse this.vtree for childViews and attach them to the DOM node
    * Used during initialization where a render is unnecessary
    */
-  attachChildViews: function() {
+  attachChildViews: function(callback) {
+    // start at one so that if all children initialize synchronously, it still won't fire
+    var numChildren = 1;
+    var attachedChildren = 0;
+    // listener to count up initialized children and call back once complete
+    var childInitialized = function() {
+      attachedChildren = attachedChildren + 1;
+      if (attachedChildren === numChildren) {
+        callback();
+      }
+    };
+
     var recurse = function(vnode, elem) {
       if (!elem) {
         return;
@@ -350,10 +368,16 @@ var BaseView = Backbone.View.extend({
           recurse(child, elem.childNodes[i]);
         } else if (child.type === 'Widget' && !child.view && typeof child.attach === 'function') {
           child.attach(elem.childNodes[i]);
+          // Increment child count and set listener
+          numChildren = numChildren + 1;
+          child.view.listenTo(child.view, 'initialized', childInitialized);
         }
       }
     };
     recurse(this.vtree, this.el);
+
+    // once all children have been processed invoke listener to account for initial difference
+    childInitialized();
   },
 
   /**
