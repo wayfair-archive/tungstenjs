@@ -26,6 +26,7 @@ var BaseView = Backbone.View.extend({
    */
   eventOptions: {},
   renderEvents: 'all',
+
   /**
    * Shared init logic
    */
@@ -57,6 +58,20 @@ var BaseView = Backbone.View.extend({
     if (this.options.parentView) {
       this.parentView = this.options.parentView;
     }
+
+    // Initialize complete callback or block the parent 'complete' event
+    if (this.options.parentView && typeof this.options.parentView.complete === 'function') {
+      // Block
+      this.complete = this.parentView.complete(BaseView.BLOCK_COMPLETION);
+    } else {
+      // Create callback
+      this.complete = this.complete(() => {
+        // Clean-up
+        this.complete = null;
+        this.trigger('complete');
+      });
+    }
+
     // Indicator that this is the view of a component
     if (this.options.isComponentView) {
       this.isComponentView = this.options.isComponentView;
@@ -102,6 +117,7 @@ var BaseView = Backbone.View.extend({
             this.attachChildViews();
             this.postInitialize();
             this.validateVdom();
+            this.complete();
           }, 1);
         }
       } else {
@@ -402,8 +418,41 @@ var BaseView = Backbone.View.extend({
       model = model.getDeep(propParts.join(':'));
     }
     model.unset(prop);
+  },
+
+  /**
+   * Returns a function to propagate down to children views. Each child can
+   * block the completion of parent until all children call complete()
+   *
+   * @param rootCallback The callback to trigger once everything completes
+   *
+   * @returns {Function} Closure around the block counter
+   */
+  complete: function(rootCallback) {
+    var blocks = 1;
+
+    function blockComplete(block) {
+      if (block) {
+        blocks++;
+        return blockComplete;
+      }
+
+      blocks--;
+      if (blocks < 1) {
+        return rootCallback();
+      }
+    }
+
+    return blockComplete;
   }
 }, {
+
+  /**
+   * Calling 'complete(true)' may seem strange. Using a constant to make behavior clear
+   *
+   * @constant {Boolean} true
+   */
+  BLOCK_COMPLETION: true,
   tungstenView: true,
   extend: function(protoProps, staticProps) {
     if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
