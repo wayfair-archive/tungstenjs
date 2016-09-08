@@ -64,7 +64,7 @@
 </span><span class="hljs-template-tag">{{^<span class="hljs-name">loading</span>}}</span><span class="xml">
   </span><span class="hljs-template-variable">{{ &gt; standard_view }}</span><span class="xml">
 </span><span class="hljs-template-tag">{{/<span class="hljs-name">loading</span>}}</span><span class="xml"></span></code></pre><h2 id="the-input-value-problem">The input value problem</h2>
-<p>A challenging case can occur when a text input should update a modela attribute on <code>keyup</code> or <code>input</code>, and also be able to be updated via setting that same property in the model.  The code ends up something like this:</p>
+<p>A challenging case can occur when a text input should update a model attribute on <code>keyup</code> or <code>input</code>, and also be able to be updated via setting that same property in the model.  The code ends up something like this:</p>
 <pre><code class="hljs"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"</span></span></span><span class="hljs-template-variable">{{val}}</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span>&gt;</span></span></code></pre><pre><code class="hljs">BaseView.extend({
   events: {
     <span class="hljs-string">'input .js-input'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>{
