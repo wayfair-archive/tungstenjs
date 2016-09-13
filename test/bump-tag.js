@@ -121,12 +121,11 @@ function final(error, match) {
             });
           },
           function writeJson(package, callback) {
-            package.files = ['dist'];
             fs.writeFile(packagePath, JSON.stringify(package, null, 2), function(error) {
               if (error) {
                 callback(error);
               } else {
-                prettyLog.success('Successfully added [files] attribute to package.json');
+                prettyLog.success('Successfully updated package.json');
               }
             });
           }
