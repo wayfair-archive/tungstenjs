@@ -94,6 +94,7 @@ var BaseView = Backbone.View.extend({
         if (this.options.dynamicInitialize || this.options.vtree) {
           // If certain options were set, render was already invoked, so childViews are attached
           this.postInitialize();
+          this.isInitialized = true;
           this.trigger('initialized');
           if (!this.options.dynamicInitialize) {
             this.validateVdom();
@@ -111,11 +112,13 @@ var BaseView = Backbone.View.extend({
       } else {
         this.initializeRenderListener(dataItem);
         this.postInitialize();
+        this.isInitialized = true;
         this.trigger('initialized');
       }
     } else {
       this.initializeRenderListener(dataItem);
       this.postInitialize();
+      this.isInitialized = true;
       this.trigger('initialized');
     }
 
@@ -369,8 +372,10 @@ var BaseView = Backbone.View.extend({
         } else if (child.type === 'Widget' && !child.view && typeof child.attach === 'function') {
           child.attach(elem.childNodes[i]);
           // Increment child count and set listener
-          numChildren = numChildren + 1;
-          child.view.listenTo(child.view, 'initialized', childInitialized);
+          if (!child.view.isInitialized) {
+            numChildren = numChildren + 1;
+            child.view.listenTo(child.view, 'initialized', childInitialized);
+          }
         }
       }
     };
