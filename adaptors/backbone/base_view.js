@@ -104,6 +104,7 @@ var BaseView = Backbone.View.extend({
             this.attachChildViews(() => {
               // Wait until all children are attached before calling postInitialize
               this.postInitialize();
+              this.isInitialized = true;
               this.trigger('initialized');
               this.validateVdom();
             });
