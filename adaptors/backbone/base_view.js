@@ -68,6 +68,9 @@ var BaseView = Backbone.View.extend({
 
     var dataItem = this.serialize();
 
+    // Set appropriate flags when initialized
+    this.listenToOnce(this, 'initialized', () => this.isInitialized = true);
+
     // Sanity check that compiledTemplate exists and has a toVdom method
     if (this.compiledTemplate && this.compiledTemplate.toVdom) {
       // Run attachView with this instance to attach childView widget points
@@ -94,7 +97,6 @@ var BaseView = Backbone.View.extend({
         if (this.options.dynamicInitialize || this.options.vtree) {
           // If certain options were set, render was already invoked, so childViews are attached
           this.postInitialize();
-          this.isInitialized = true;
           this.trigger('initialized');
           if (!this.options.dynamicInitialize) {
             this.validateVdom();
@@ -104,7 +106,6 @@ var BaseView = Backbone.View.extend({
             this.attachChildViews(() => {
               // Wait until all children are attached before calling postInitialize
               this.postInitialize();
-              this.isInitialized = true;
               this.trigger('initialized');
               this.validateVdom();
             });
@@ -113,13 +114,11 @@ var BaseView = Backbone.View.extend({
       } else {
         this.initializeRenderListener(dataItem);
         this.postInitialize();
-        this.isInitialized = true;
         this.trigger('initialized');
       }
     } else {
       this.initializeRenderListener(dataItem);
       this.postInitialize();
-      this.isInitialized = true;
       this.trigger('initialized');
     }
 
