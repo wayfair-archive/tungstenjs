@@ -468,7 +468,7 @@ describe('base_view.js constructed api', function() {
         el: elem
       });
     });
-    it('should handle initialization of dynamic views', function(done) {
+    it('should invoke postInitialized if there are dynamicInitialized child views', function(done) {
       var templateStr = '<div class="js-child-1" data-order="6"></div><div class="js-child-2" data-order="1"></div>';
 
       var initialized = 0;
