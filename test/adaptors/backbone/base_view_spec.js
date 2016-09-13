@@ -489,7 +489,6 @@ describe('base_view.js constructed api', function() {
         childViews: {
           'js-child-1': ChildView.extend({
             initialize: function(options) {
-              //
               options.dynamicInitialize = true;
               ChildView.prototype.initialize.call(this, options);
             }
