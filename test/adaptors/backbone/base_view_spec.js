@@ -468,6 +468,45 @@ describe('base_view.js constructed api', function() {
         el: elem
       });
     });
+    it('should handle initialization of dynamic views', function(done) {
+      var templateStr = '<div class="js-child-1" data-order="6"></div><div class="js-child-2" data-order="1"></div>';
+
+      var initialized = 0;
+      var template = compiler(templateStr, {});
+      var elem = document.createElement('div');
+      elem.innerHTML = templateStr;
+
+      var ChildView = BaseView.extend({
+        postInitialize: function() {
+          initialized = initialized + 1;
+        }
+      });
+
+      var MainView = BaseView.extend({
+        postInitialize: function () {
+          done();
+        },
+        childViews: {
+          'js-child-1': ChildView.extend({
+            initialize: function(options) {
+              //
+              options.dynamicInitialize = true;
+              ChildView.prototype.initialize.call(this, options);
+            }
+          }),
+          'js-child-2': ChildView
+        }
+      });
+
+      new MainView({
+        template: template,
+        el: elem,
+        postInitialize: function() {
+          expect(initialized).to.equal(2);
+          done();
+        }
+      });
+    });
   });
   describe('destroy', function() {
     it('should be a function', function() {
