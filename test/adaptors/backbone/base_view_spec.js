@@ -6,6 +6,7 @@ var Backbone = BackboneAdaptor.Backbone;
 var tungsten = require('../../../src/tungsten');
 var _ = require('underscore');
 var logger = require('../../../src/utils/logger');
+var compiler = require('../../../precompile/tungsten_template/inline');
 
 describe('base_view.js public api', function() {
   describe('extend', function() {
@@ -188,6 +189,65 @@ describe('base_view.js constructed api', function() {
       expect(BaseView.prototype.postInitialize).to.be.a('function');
       expect(BaseView.prototype.postInitialize).to.have.length(0);
     });
+    it('should invoke in an expected order', function(done) {
+      // Views will initialize top to bottom for each level
+      // A parent view is not initialized until all child views are
+      var templateStr = `<div class="js-child-1" data-order="6">
+        <div class="js-child-2" data-order="1"></div>
+        <div class="js-child-2" data-order="3">
+          <div class="js-child-3" data-order="2"></div>
+        </div>
+        <div class="js-child-2" data-order="5">
+          <div class="js-child-3" data-order="4"></div>
+        </div>
+      </div>`;
+
+      var template = compiler(templateStr, {});
+      var initialized = 0;
+
+      var elem = document.createElement('div');
+
+      function checkChild() {
+        initialized = initialized + 1;
+        var orderStr = this.el.getAttribute('data-order');
+        expect(orderStr).to.be.a('string');
+        var order = parseInt(orderStr, 10);
+        expect(order).to.equal(initialized);
+      }
+
+      var FourthView = BaseView.extend({
+        postInitialize: checkChild
+      });
+      var ThirdView = BaseView.extend({
+        postInitialize: checkChild,
+        childViews: {
+          'js-child-3': FourthView
+        }
+      });
+
+      var SecondView = BaseView.extend({
+        postInitialize: checkChild,
+        childViews: {
+          'js-child-2': ThirdView
+        }
+      });
+
+      var MainView = BaseView.extend({
+        postInitialize: function() {
+          expect(initialized).to.equal(6);
+          done();
+        },
+        childViews: {
+          'js-child-1': SecondView
+        }
+      });
+
+      new MainView({
+        template: template,
+        el: elem,
+        dynamicInitialize: true
+      });
+    });
   });
   describe('validateVdom', function() {
     it('should be a function', function() {
@@ -347,7 +407,66 @@ describe('base_view.js constructed api', function() {
   describe('attachChildViews', function() {
     it('should be a function', function() {
       expect(BaseView.prototype.attachChildViews).to.be.a('function');
-      expect(BaseView.prototype.attachChildViews).to.have.length(0);
+      expect(BaseView.prototype.attachChildViews).to.have.length(1);
+    });
+    it('should invoke postInitialize in the expected order', function(done) {
+      // Views will initialize top to bottom for each level
+      // A parent view is not initialized until all child views are
+      var templateStr = `<div class="js-child-1" data-order="6">
+        <div class="js-child-2" data-order="1"></div>
+        <div class="js-child-2" data-order="3">
+          <div class="js-child-3" data-order="2"></div>
+        </div>
+        <div class="js-child-2" data-order="5">
+          <div class="js-child-3" data-order="4"></div>
+        </div>
+      </div>`;
+
+      var template = compiler(templateStr, {});
+      var initialized = 0;
+
+      var elem = document.createElement('div');
+      elem.innerHTML = templateStr;
+
+      function checkChild() {
+        initialized = initialized + 1;
+        var orderStr = this.el.getAttribute('data-order');
+        expect(orderStr).to.be.a('string');
+        var order = parseInt(orderStr, 10);
+        expect(order).to.equal(initialized);
+      }
+
+      var FourthView = BaseView.extend({
+        postInitialize: checkChild
+      });
+      var ThirdView = BaseView.extend({
+        postInitialize: checkChild,
+        childViews: {
+          'js-child-3': FourthView
+        }
+      });
+
+      var SecondView = BaseView.extend({
+        postInitialize: checkChild,
+        childViews: {
+          'js-child-2': ThirdView
+        }
+      });
+
+      var MainView = BaseView.extend({
+        postInitialize: function() {
+          expect(initialized).to.equal(6);
+          done();
+        },
+        childViews: {
+          'js-child-1': SecondView
+        }
+      });
+
+      new MainView({
+        template: template,
+        el: elem
+      });
     });
   });
   describe('destroy', function() {
