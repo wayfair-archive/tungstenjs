@@ -108,7 +108,7 @@ To do this in Tungsten.js, set a condition in the template for the in-flight tem
 
 ## The input value problem
 
-A challenging case can occur when a text input should update a modela attribute on `keyup` or `input`, and also be able to be updated via setting that same property in the model.  The code ends up something like this:
+A challenging case can occur when a text input should update a model attribute on `keyup` or `input`, and also be able to be updated via setting that same property in the model.  The code ends up something like this:
 
 ```html
 <input value="{{val}}" type="text">
