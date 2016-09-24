@@ -185,7 +185,8 @@ if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
         isParent: true,
         getChildren: true,
         getDebugName: true,
-        toString: true
+        toString: true,
+        _onModelEvent: true
       };
       var getFunctions = require('../shared/get_functions');
       return getFunctions(trackedFunctions, getTrackableFunction, this, BaseCollection.prototype, blacklist);
