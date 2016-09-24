@@ -2,12 +2,18 @@
 
 var _ = require('underscore');
 var errors = require('../../src/utils/errors');
-
 var modelFunctionsToMap = ['trigger', 'set', 'get', 'has', 'doSerialize', 'save', 'fetch', 'sync', 'validate', 'isValid'];
 var modelFunctionsToDummy = ['on', 'off', 'listenTo'];
 
+module.exports = ComponentWidget;
+
 var getDummyFunction = function(fn) {
   return function() {
+    // Collection._addReference will bind all events to its models
+    // to avoid spamming errors about this, handle the specific case
+    if (arguments.length === 3 && arguments[0] === 'all' && arguments[1] === require('./base_collection').prototype._onModelEvent) {
+      return;
+    }
     errors.componentFunctionMayNotBeCalledDirectly(fn);
   };
 };
@@ -200,5 +206,3 @@ if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
     return '<span class="js-view-list-item u-clickable u-underlined" data-id="' + name + '">[' + name + ']</span>';
   };
 }
-
-module.exports = ComponentWidget;
