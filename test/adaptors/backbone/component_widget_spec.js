@@ -205,4 +205,29 @@ describe('component_widget public api', function() {
       expect(ctx.view).to.equal(expectedView);
     });
   });
+  describe('errors', function() {
+    it('should warn when invoking its .on() method', function() {
+      const errors = require('../../../src/utils/errors');
+      const Model = require('../../../adaptors/backbone/base_model');
+      spyOn(errors, 'componentFunctionMayNotBeCalledDirectly');
+      var ViewConstructor = function() {};
+      var model = new Model({});
+      var component = new ComponentWidget(ViewConstructor, model);
+      component.on('all', function() {});
+      jasmineExpect(errors.componentFunctionMayNotBeCalledDirectly).toHaveBeenCalled();
+    });
+    it('should not warn when its .on() method is invoked by a Collection', function() {
+      const errors = require('../../../src/utils/errors');
+      const Model = require('../../../adaptors/backbone/base_model');
+      const Collection = require('../../../adaptors/backbone/base_collection');
+      spyOn(errors, 'componentFunctionMayNotBeCalledDirectly');
+      var ViewConstructor = function() {};
+      var model = new Model({});
+      var component = new ComponentWidget(ViewConstructor, model);
+      var collection = new Collection([]);
+      collection.add(component);
+      collection.remove(component);
+      jasmineExpect(errors.componentFunctionMayNotBeCalledDirectly).not.toHaveBeenCalled();
+    });
+  });
 });
