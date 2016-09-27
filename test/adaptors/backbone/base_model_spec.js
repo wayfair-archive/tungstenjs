@@ -5,6 +5,7 @@ var BackboneAdaptor = require('../../../adaptors/backbone');
 var BaseModel = BackboneAdaptor.Model;
 var BaseCollection = BackboneAdaptor.Collection;
 var Backbone = BackboneAdaptor.Backbone;
+var ComponentWidget = BackboneAdaptor.ComponentWidget;
 var logger = require('../../../src/utils/logger');
 
 describe('base_model.js static api', function() {
@@ -73,6 +74,43 @@ describe('base_model.js constructed api', function() {
     it('should be a function', function() {
       expect(BaseModel.prototype.toJSON).to.be.a('function');
       expect(BaseModel.prototype.toJSON).to.have.length(0);
+    });
+    it('should not serialize child models without relations', function() {
+      var fooModel = new BaseModel({});
+      var model = new BaseModel({
+        foo: fooModel
+      });
+      var serialized = model.toJSON();
+      expect(serialized.foo).to.equal(fooModel);
+    });
+    it('should serialize child models without relations', function() {
+      var Model = BaseModel.extend({
+        relations: {
+          foo: BaseModel
+        }
+      });
+      var fooData = {
+        bar: 'baz'
+      };
+      var model = new Model({
+        foo: fooData
+      });
+      expect(model.get('foo')).to.be.instanceOf(BaseModel);
+      var serialized = model.toJSON();
+      expect(serialized.foo).to.deep.equal(fooData);
+    });
+    it('should serialize components without relations', function() {
+      var componentData = {
+        bar: 'baz'
+      };
+      var componentModel = new BaseModel(componentData);
+      var model = new BaseModel({
+        foo: new ComponentWidget(function() {}, componentModel, {})
+      });
+      expect(model.get('foo')).to.be.instanceOf(ComponentWidget);
+      var serialized = model.toJSON();
+      expect(serialized.foo).not.to.be.instanceOf(ComponentWidget);
+      expect(serialized.foo).to.deep.equal(componentData);
     });
   });
   describe('doSerialize', function() {
