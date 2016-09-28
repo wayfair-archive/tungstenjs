@@ -112,6 +112,14 @@ describe('base_model.js constructed api', function() {
       expect(serialized.foo).not.to.be.instanceOf(ComponentWidget);
       expect(serialized.foo).to.deep.equal(componentData);
     });
+    it('should serialize models with a length property', function() {
+      var BaseBackboneModel = BackboneAdaptor.Backbone.Model;
+      var data = {length: 2};
+      var backboneModel = new BaseBackboneModel(data);
+      var tungstenModel = new BaseModel(data);
+      expect(backboneModel.toJSON()).to.deep.equal(data);
+      expect(tungstenModel.toJSON()).to.deep.equal(data);
+    });
   });
   describe('doSerialize', function() {
     it('should be a function', function() {
