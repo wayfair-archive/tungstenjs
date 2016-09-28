@@ -695,7 +695,8 @@ BaseModel.prototype.toJSON = function() {
   var session = _.invert(_.result(this, 'session') || []);
 
   var data = {};
-  _.each(attrs, function(val, key) {
+  for (var key in attrs) {
+    var val = attrs[key];
     // Skip any derived or session properties
     if (!derived[key] && !session[key]) {
       // Recursively serialize any set relations
@@ -705,7 +706,7 @@ BaseModel.prototype.toJSON = function() {
         data[key] = val;
       }
     }
-  });
+  }
   return data;
 };
 
