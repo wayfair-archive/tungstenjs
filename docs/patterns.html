@@ -48,9 +48,7 @@
 <h2 id="avoid-accessing-child-views">Avoid accessing child views</h2>
 <p>Views shouldn&#39;t be aware of their child views once they&#39;re defined.  A parent view should never try to access one or more of its child views.  Instead, if such communication is necessary, it can happen by calling a method on the parent view&#39;s model and letting the model then call a method on a child model related to that child view.</p>
 <h2 id="trigger-and-listen-to-model-not-view-events">Trigger and listen to model, not view, events</h2>
-<p>All custom events should be triggered from, and listened to, from models, not views.  Views are generally only responsible for responding to DOM events and calling methods on the model.  If views need to communicate upwards, that communication should be done through the model instead.  A method can be called on the view&#39;s model to trigger an event that 
-          
-          s up from the model.</p>
+<p>All custom events should be triggered from, and listened to, from models, not views.  Views are generally only responsible for responding to DOM events and calling methods on the model.  If views need to communicate upwards, that communication should be done through the model instead.  A method can be called on the view&#39;s model to trigger an event thats up from the model.</p>
 <h2 id="avoid-accessing-parents">Avoid accessing parents</h2>
 <p>Parent views and parent models should never be directly accessed.  In both cases, communication should go through events bubbled from the child models.</p>
 <h2 id="let-events-bubble">Let events bubble</h2>
