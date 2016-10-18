@@ -57,6 +57,53 @@ Setting `exposedEvents` to `true` rather than an array will expose all events.
 
 Additional events can also be exposed by passing in an array of event names to `exposedEvents` on the component options object.
 
+Events on components are namespaced when exposed and they are also encapsulated by the component by default.
+
+To respond to events on a component's model, a parent or ancestor application/component can listen to the event on the model but will have to scope the listening action to the component. Events on the component's model must be exposed to its ancestor via the `exposedEvents` key.
+
+```javascript
+var ClockModel = BaseModel.extend({
+  postInitialize: function() {
+    this.listenTo(this, 'change:time_component:est_time', this.updateTime);
+    this.listenTo(this, 'tick:time_component', this.updateTime);
+  },
+
+  updateTime: function() {
+    // update the time
+  }
+});
+```
+
+Shown below is how the `change` event for `est_time` and a custom `tick` event on the `time_component` is exposed.
+
+```javascript
+var TimeModel = BaseModel.extend({
+  exposedEvents: ['change', 'change:est_time', 'tick'],
+  ...
+});
+```
+
+In the above snippet,`time_component` is a child component of the `ClockModel`. We listen for a `change` on the model but scope the listening to `time_component`'s `est_time` property and call `this.updateTime` as our callback method.
+
+The table below shows the various ways the above example could have been achieved.
+
+| Component exposed event| Parent listeners |
+| ------------- |:-------------:|
+| `exposedEvents: ['change']`| `this.listenTo(this, 'change:my_component', _.noop)`
+| `exposedEvents: ['change']`      | `this.listenTo(this, 'change', _.noop)`
+| `exposedEvents: ['change:selected']` | `this.listenTo(this, 'change:my_component:selected', _.noop)`
+| `exposedEvents: ['custom_event']` | `this.listenTo(this, 'custom_event:my_component', _.noop)`
+| `exposedEvents: ['custom_event']` | `this.listenTo(this, 'custom', _.noop)`
+| `exposedEvents: ['custom_event']` | `this.listenTo(this, 'custom:my_component', _.noop)`
+
+The preferred way to deal with events on components is to have them bubble as described. You can also listen directly on the component but that poses problems in some situations. Consider a scenario where we listen on the component, we would typically listen for a change on the application model like below
+
+```javascript
+this.listenTo(this.get('time_component'), 'change:est_time', this.updateTime);
+```
+
+This code works fine until we change `time_component`. For instance, if it gets destroyed and a new one is created then the property `est_time` on which we are listening for a change event becomes no longer valid. This effectively means our callback will never get called.
+
 ### Methods
 
 Custom methods from a component's model must be explicitly declared in an array on the model's `exposedFunctions` hash:
