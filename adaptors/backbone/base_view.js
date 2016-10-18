@@ -369,13 +369,12 @@ var BaseView = Backbone.View.extend({
         child = vnode.children[i];
         if (child.type === 'VirtualNode' && child.hasWidgets) {
           recurse(child, elem.childNodes[i]);
-        } else if (child.type === 'Widget' && !child.view && typeof child.attach === 'function') {
-          child.attach(elem.childNodes[i]);
-          // Increment child count and set listener
-          if (!child.view.isInitialized) {
+        } else if (child.type === 'Widget' && !child.isInitialized && typeof child.attach === 'function') {
+          if (typeof child.waitForAttach === 'function') {
             numChildren = numChildren + 1;
-            child.view.listenTo(child.view, 'initialized', childInitialized);
+            child.waitForAttach(childInitialized);
           }
+          child.attach(elem.childNodes[i]);
         }
       }
     };

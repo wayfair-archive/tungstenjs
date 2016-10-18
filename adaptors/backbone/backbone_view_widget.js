@@ -24,6 +24,8 @@ function BackboneViewWidget(template, childView, context, parentView) {
   this.template = template;
   this.context = context;
   this.parentView = parentView;
+  this._isInitializedCallbacks = [];
+  this.isInitialized = false;
 
   if (childView.tungstenView === true) {
     // If we're using the default syntax
@@ -69,6 +71,7 @@ BackboneViewWidget.prototype.init = function init() {
     parentView: this.parentView,
     dynamicInitialize: true
   });
+  this.isInitialized = true;
   return this.view.el;
 };
 
@@ -78,6 +81,7 @@ BackboneViewWidget.prototype.init = function init() {
 BackboneViewWidget.prototype.destroy = function destroy() {
   if (this.view && this.view.destroy) {
     this.view.destroy();
+    this.isInitialized = false;
   }
 };
 
@@ -93,6 +97,26 @@ BackboneViewWidget.prototype.attach = function attach(elem) {
     parentView: this.parentView,
     template: this.template
   });
+  this.isInitialized = true;
+  // If callbacks were registered for postInitialization, process them
+  if (this._isInitializedCallbacks) {
+    if (this.view.isInitialized) {
+      this._isInitializedCallbacks.forEach((fn) => fn());
+    } else {
+      this.view.once('initialized', () => {
+        this._isInitializedCallbacks.forEach((fn) => fn());
+        this._isInitializedCallbacks.length = 0;
+      });
+    }
+  }
+};
+
+/**
+ * Binds a function to process after this view's postInitialize method
+ * @param  {Function} callback
+ */
+BackboneViewWidget.prototype.waitForAttach = function(callback) {
+  this._isInitializedCallbacks.push(callback);
 };
 
 /**

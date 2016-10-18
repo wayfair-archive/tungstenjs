@@ -699,8 +699,8 @@ BaseModel.prototype.toJSON = function() {
     var val = attrs[key];
     // Skip any derived or session properties
     if (!derived[key] && !session[key]) {
-      // Recursively serialize any set relations
-      if ((relations[key] && typeof val.doSerialize === 'function') || (val && ComponentWidget.isComponent(val))) {
+      // Recursively serialize any set relations or Components
+      if (val && (relations[key] || ComponentWidget.isComponent(val)) && typeof val.doSerialize === 'function') {
         data[key] = val.doSerialize();
       } else {
         data[key] = val;

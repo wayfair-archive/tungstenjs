@@ -85,7 +85,7 @@ Parent views and parent models should never be directly accessed.  In both cases
 
 ## Let events bubble
 
-Events on child models or collections can be heard by selecting the child model/collection and listening directly on that, e.g. `this.listenTo(this.get('foo'), 'bar', doSomething);`.  This will work, but can be problematic if the child model/collection is removed at some point.  This becomes even more challenging if the child model/collection is nested multiple layers deep.  For these reasons, it's preferable to listen on one's self, and trust that events will bubble up.  So the above example would instead be `this.listenTo(this, 'bar', doSomething);`, or if the event should be namespaced to its property, `this.listenTo(this, 'foo:bar', doSomething);`.
+Events on child models or collections can be heard by selecting the child model/collection and listening directly on that, e.g. `this.listenTo(this.get('foo'), 'bar', doSomething);`.  This will work, but can be problematic if the child model/collection is removed at some point.  This becomes even more challenging if the child model/collection is nested multiple layers deep.  For these reasons, it's preferable to listen on one's self, and trust that events will bubble up.  So the above example would instead be `this.listenTo(this, 'bar', doSomething);`, or if the event should be namespaced to its property, `this.listenTo(this, 'bar:foo', doSomething);`.
 
 ## Treat render as an implementation detail
 

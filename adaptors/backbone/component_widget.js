@@ -35,6 +35,8 @@ function ComponentWidget(ViewConstructor, model, template, options, key) {
   this.model = model;
   this.model.isComponentModel = true;
   this.template = template;
+  this._isInitializedCallbacks = [];
+  this.isInitialized = false;
   this.key = key || _.uniqueId('w_component');
   this.model.session = (this.model.session || []).concat(['content', 'yield']);
   if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
@@ -134,6 +136,7 @@ ComponentWidget.prototype.init = function init() {
     dynamicInitialize: true,
     isComponentView: true
   });
+  this.isInitialized = true;
   return this.view.el;
 };
 
@@ -142,6 +145,7 @@ ComponentWidget.prototype.init = function init() {
  */
 ComponentWidget.prototype.destroy = function destroy() {
   if (this.view && this.view.destroy) {
+    this.isInitialized = false;
     this.view.destroy();
   }
 };
@@ -158,6 +162,26 @@ ComponentWidget.prototype.attach = function attach(elem) {
     template: this.template,
     isComponentView: true
   });
+  this.isInitialized = true;
+  // If callbacks were registered for postInitialization, process them
+  if (this._isInitializedCallbacks) {
+    if (this.view.isInitialized) {
+      this._isInitializedCallbacks.forEach((fn) => fn());
+    } else {
+      this.view.once('initialized', () => {
+        this._isInitializedCallbacks.forEach((fn) => fn());
+        this._isInitializedCallbacks.length = 0;
+      });
+    }
+  }
+};
+
+/**
+ * Binds a function to process after this view's postInitialize method
+ * @param  {Function} callback
+ */
+ComponentWidget.prototype.waitForAttach = function(callback) {
+  this._isInitializedCallbacks.push(callback);
 };
 
 /**
