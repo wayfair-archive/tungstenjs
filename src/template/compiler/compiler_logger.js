@@ -45,18 +45,12 @@ function logMessage(messageLevel, data) {
   }
 }
 
-module.exports.warn = function() {
-  for (var l = arguments.length, data = Array(l), i = 0; i < l; i++) {
-    data[i] = arguments[i];
-  }
-  logMessage(ERROR_LEVELS.WARNING, data);
+module.exports.warn = function(...args) {
+  logMessage(ERROR_LEVELS.WARNING, args);
 };
 
-module.exports.exception = function() {
-  for (var l = arguments.length, data = Array(l), i = 0; i < l; i++) {
-    data[i] = arguments[i];
-  }
-  logMessage(ERROR_LEVELS.EXCEPTION, data);
+module.exports.exception = function(...args) {
+  logMessage(ERROR_LEVELS.EXCEPTION, args);
 };
 
 module.exports.setStrictMode = function(value) {

@@ -101,8 +101,8 @@ function closest(elem, className) {
 }
 
 function getListener(objName, eventName) {
-  return function() {
-    logger.log(objName + ':' + eventName, arguments);
+  return function(...args) {
+    logger.log(objName + ':' + eventName, args);
   };
 }
 

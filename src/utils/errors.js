@@ -56,8 +56,8 @@ var messages = {
  * @return {function}      Function that calls logger with the provided message and type
  */
 function loggerize(message, type) {
-  return function() {
-    let output = message.apply(message, arguments);
+  return function(...args) {
+    let output = message.apply(message, args);
     if (_.isArray(output)) {
       logger[type].apply(logger, output);
     } else {
@@ -82,15 +82,15 @@ function extend(errorName, customMsg) {
       let origError = messages[type][errorName];
       // If origError returns multiple arguments, access the first (the error message) and append to it.
       if (_.isArray(origError())) {
-        messages[type][errorName] = function() {
-          let errorMessage = origError.apply(origError, arguments);
+        messages[type][errorName] = function(...args) {
+          let errorMessage = origError.apply(origError, args);
           errorMessage[0] = `${errorMessage[0]}. ${customMsg}`;
           return errorMessage;
         };
       } else {
         // Otherwise, simply append to the message.
-        messages[type][errorName] = function() {
-          return `${origError.apply(origError, arguments)}. ${customMsg}`;
+        messages[type][errorName] = function(...args) {
+          return `${origError.apply(origError, args)}. ${customMsg}`;
         };
       }
       // Loggerize the message and add it to module.exports.

@@ -38,7 +38,7 @@ ObjectPool.prototype.preallocate = function(num) {
  * Arguments passed into allocate will be passed through to the constructor
  * @return {Any} Allocated object
  */
-ObjectPool.prototype.allocate = function() {
+ObjectPool.prototype.allocate = function(...args) {
   var temp;
   if (this.size > 0) {
     // Reduce the available pool size
@@ -52,7 +52,7 @@ ObjectPool.prototype.allocate = function() {
     // If we don't have any preallocated ones available, make a new one
     temp = _.create(this.constructorFunc.prototype);
   }
-  this.constructorFunc.apply(temp, arguments);
+  this.constructorFunc.apply(temp, args);
   return temp;
 };
 

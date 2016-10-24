@@ -57,9 +57,9 @@ var BaseModel = Backbone.Model.extend({
       var methods = ['initialize'];
 
       var wrapOverride = function(first, second) {
-        return function() {
-          first.apply(this, arguments);
-          second.apply(this, arguments);
+        return function(...args) {
+          first.apply(this, args);
+          second.apply(this, args);
         };
       };
 
@@ -457,8 +457,7 @@ BaseModel.prototype.reset = function(attrs, options) {
 
 BaseModel.prototype.bindExposedEvent = function(event, prop, childComponent) {
   var self = this;
-  this.listenTo(childComponent.model, event, function() {
-    var args = Array.prototype.slice.call(arguments);
+  this.listenTo(childComponent.model, event, function(...args) {
     eventTrigger.bubbleEvent(self, prop, [event].concat(args));
   });
 };

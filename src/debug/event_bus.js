@@ -41,12 +41,8 @@ eventBus.off = function(eventName, callback) {
   }
 };
 
-eventBus.trigger = function(eventName) {
+eventBus.trigger = function(eventName, ...args) {
   var i;
-  var args = new Array(arguments.length - 1);
-  for (i = 1; i < arguments.length; i++) {
-    args[i - 1] = arguments[i];
-  }
 
   var events = registeredEvents[eventName];
   if (events) {

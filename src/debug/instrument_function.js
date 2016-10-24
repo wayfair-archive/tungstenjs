@@ -22,11 +22,11 @@ const logger = require('../utils/logger');
  *  => "myFunc" executed in 2.0034ms and returned: 4
  */
 module.exports = function instrumentFunction(fnName, fn) {
-  return function instrumentedFunction() {
-    logger.trace(`${fnName} called with arguments: `, arguments);
+  return function instrumentedFunction(...args) {
+    logger.trace(`${fnName} called with arguments: `, args);
 
     const timer = new Timer(fnName, false);
-    const returnValue = fn.apply(this, arguments);
+    const returnValue = fn.apply(this, args);
     const measurement = parseFloat(timer.getMeasurement()).toFixed(4);
 
     logger.trace(`${fnName} executed in ${measurement}ms and returned: `, returnValue);

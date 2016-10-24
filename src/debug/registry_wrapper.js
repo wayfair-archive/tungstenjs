@@ -18,12 +18,12 @@ function getTrackableFunction(obj, name, trackedFunctions) {
   var originalFn = obj[name];
   var fnName = `${debugName}.${name}`;
   var instrumentedFn = instrumentFunction(fnName, originalFn);
-  var fn = function tungstenTrackingPassthrough() {
+  var fn = function tungstenTrackingPassthrough(...args) {
     // Since objects are passed by reference, it can be updated without loosing reference
     if (trackedFunctions[name]) {
-      return instrumentedFn.apply(this, arguments);
+      return instrumentedFn.apply(this, args);
     } else {
-      return originalFn.apply(this, arguments);
+      return originalFn.apply(this, args);
     }
   };
   fn.original = originalFn;

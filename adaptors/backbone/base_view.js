@@ -439,9 +439,9 @@ var BaseView = Backbone.View.extend({
       var methods = ['initialize', 'render', 'delegateEvents', 'undelegateEvents'];
 
       var wrapOverride = function(first, second) {
-        return function() {
-          first.apply(this, arguments);
-          second.apply(this, arguments);
+        return function(...args) {
+          first.apply(this, args);
+          second.apply(this, args);
         };
       };
 

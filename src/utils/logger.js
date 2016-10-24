@@ -17,10 +17,10 @@ function getDefaultConsole() {
   if (console && typeof console.log === 'function') {
     return console.log;
   } else {
-    return function() {
+    return function(...args) {
       // Console isn't available until dev tools is open in old IE, so keep checking
       if (console && typeof console.log === 'function') {
-        console.log.apply(console, arguments);
+        console.log.apply(console, args);
       }
     };
   }

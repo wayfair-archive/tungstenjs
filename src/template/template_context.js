@@ -93,9 +93,9 @@ if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
  * Debug Helpers for determining context
  */
   var debugHelpers = {
-    context: function() {
-      if (arguments.length) {
-        logger.log('W/CONTEXT:', this, arguments);
+    context: function(...args) {
+      if (args.length) {
+        logger.log('W/CONTEXT:', this, args);
       } else {
         logger.log('W/CONTEXT:', this);
       }
@@ -106,10 +106,10 @@ if (typeof TUNGSTENJS_DEBUG_MODE !== 'undefined') {
     lastModelForDebugger: function() {
       return this.lastModel;
     },
-    debug: function() {
+    debug: function(...args) {
       var self = this;
-      for (var i = 0; i < arguments.length; i++) {
-        logger.log('W/DEBUG:', arguments[i], '=>', self.lookup(arguments[i]));
+      for (var i = 0; i < args.length; i++) {
+        logger.log('W/DEBUG:', args[i], '=>', self.lookup(args[i]));
       }
     }
   };

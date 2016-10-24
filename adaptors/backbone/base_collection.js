@@ -28,8 +28,7 @@ var BaseCollection = Backbone.Collection.extend({
   },
 
   bindExposedEvent: function(event, childComponent) {
-    this.listenTo(childComponent.model, event, function() {
-      var args = Array.prototype.slice.call(arguments);
+    this.listenTo(childComponent.model, event, function(...args) {
       this.trigger.apply(this, [event].concat(args));
       if (event.substr(0, 7) === 'change:') {
         this.trigger('change', this);
@@ -98,9 +97,9 @@ var BaseCollection = Backbone.Collection.extend({
       var methods = ['initialize'];
 
       var wrapOverride = function(first, second) {
-        return function() {
-          first.apply(this, arguments);
-          second.apply(this, arguments);
+        return function(...args) {
+          first.apply(this, args);
+          second.apply(this, args);
         };
       };
 
