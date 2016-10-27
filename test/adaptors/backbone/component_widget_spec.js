@@ -137,7 +137,6 @@ describe('component_widget public api', function() {
       expect(ComponentWidget.prototype.update).to.be.a('function');
       expect(ComponentWidget.prototype.update).to.equal(_.noop);
     });
-
   });
   describe('isComponent', function() {
     it('should be a function', function() {
@@ -228,6 +227,55 @@ describe('component_widget public api', function() {
       collection.add(component);
       collection.remove(component);
       jasmineExpect(errors.componentFunctionMayNotBeCalledDirectly).not.toHaveBeenCalled();
+    });
+  });
+  describe('repositioning', function() {
+    beforeEach(function() {
+      var self = this;
+      this.numViews = 0;
+      this.ViewConstructor = function() {
+        self.numViews += 1;
+        this.isInitialized = true;
+      };
+      this.ViewConstructor.prototype.destroy = function() {
+        self.numViews -= 1;
+        this.isInitialized = false;
+      };
+      this.model = new BackboneAdaptor.Model({});
+      this.template = {toVdom: _.noop};
+    });
+    /**
+     * Destroy then init occurs when the node is moved down
+     */
+    it('should not create multiple view instances when destoyed and then re-instantiated', function() {
+      var instance = new ComponentWidget(this.ViewConstructor, this.model, this.template, {});
+      instance.init();
+      expect(instance.view).not.to.equal(null);
+
+      instance.destroy();
+      expect(instance.view).to.equal(null);
+
+      instance.init();
+      expect(instance.view).not.to.equal(null);
+      expect(instance.view.isInitialized).to.equal(true);
+      expect(this.numViews).to.equal(1);
+    });
+
+    /**
+     * Double-init then destroy occurs when the node is moved up
+     */
+    it('should not create multiple view instances when re-instantiated and then destoyed ', function() {
+      var instance = new ComponentWidget(this.ViewConstructor, this.model, this.template, {});
+      instance.init();
+      expect(instance.view).not.to.equal(null);
+
+      instance.init();
+      expect(instance.view).not.to.equal(null);
+
+      instance.destroy();
+      expect(instance.view).not.to.equal(null);
+      expect(instance.view.isInitialized).to.equal(true);
+      expect(this.numViews).to.equal(1);
     });
   });
 });
