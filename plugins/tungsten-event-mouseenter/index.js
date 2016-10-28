@@ -1,7 +1,21 @@
+/* eslint-env browser */
+
 /**
  * Module to handle the shimming in delegated mouseenter events
  */
 'use strict';
+
+
+/**
+ * Check if passed object is a valid DOM Node
+ * @param  {Object}  node  object to be validated
+ * @return {Boolean}       whether object is a DOM node
+ */
+function isNode(node) {
+  return typeof Node === 'object' ? node instanceof Node :
+    node && typeof node === 'object' && typeof node.nodeType === 'number' &&
+    typeof node.nodeName === 'string';
+}
 
 /**
  * Fallback contains check from http://stackoverflow.com/a/6131052
@@ -10,6 +24,10 @@
  * @return {Boolean}           Whether container contains maybe
  */
 function contains(container, maybe) {
+  if (!isNode(container) || !isNode(maybe)) {
+    return false;
+  }
+
   // 16 is for a nodeType constant: window.Node.DOCUMENT_POSITION_CONTAINED_BY,
   // but the window.Node object is not available in IE8
   return container.contains ? container.contains(maybe) :
