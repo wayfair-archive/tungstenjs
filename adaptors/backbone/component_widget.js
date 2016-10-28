@@ -130,6 +130,9 @@ ComponentWidget.prototype.isComponent = true;
  * @return {Element} DOM node with the child view attached
  */
 ComponentWidget.prototype.init = function init() {
+  if (this.view) {
+    this.previousView = this.view;
+  }
   this.view = new this.ViewConstructor({
     template: this.template,
     model: this.model,
@@ -144,10 +147,13 @@ ComponentWidget.prototype.init = function init() {
  * Pass through to the view's destroy method
  */
 ComponentWidget.prototype.destroy = function destroy() {
-  if (this.view && this.view.destroy) {
-    this.isInitialized = false;
-    this.view.destroy();
+  var key = this.previousView ? 'previousView' : 'view';
+  var view = this[key];
+  if (view && typeof view.destroy === 'function') {
+    view.destroy();
   }
+  this.isInitialized = false;
+  this[key] = null;
 };
 
 /**
