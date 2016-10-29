@@ -5,7 +5,6 @@
  */
 'use strict';
 
-
 /**
  * Check if passed object is a valid DOM Node
  * @param  {Object}  node  object to be validated
