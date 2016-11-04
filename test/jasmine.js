@@ -44,8 +44,7 @@ jasmine.loadConfig({
     './testbuild.debug.js'
   ],
   'helpers': [
-    'environment.js',
-    '../precompile/tungsten_template/inline.js'
+    'environment.js'
   ]
 });
 jasmine.execute();
