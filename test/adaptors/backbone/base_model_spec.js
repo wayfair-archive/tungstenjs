@@ -180,6 +180,16 @@ describe('base_model.js constructed api', function() {
       });
       expect(testModel.get('collection').pluck('id').join('&')).to.equal('2&3&4');
       expect(testModel.get('collection').pluck('n').join('&')).to.equal('1&2&3');
+
+      testModel.set({
+        collection: new BaseCollection([
+          { id: 2, n: 2 },
+          { id: 3, n: 3 },
+          { id: 4, n: 4 }
+        ])
+      });
+      expect(testModel.get('collection').pluck('id').join('&')).to.equal('2&3&4');
+      expect(testModel.get('collection').pluck('n').join('&')).to.equal('2&3&4');
     });
   });
   describe('trigger', function() {
