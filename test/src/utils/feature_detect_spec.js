@@ -161,7 +161,7 @@ describe('feature_detect.js public API', function() {
 
     it('should not pass when an error was thrown', function() {
       window.addEventListener = function(type, listener, options) {
-        if (object.prototype.toString.call(options) === '[object Object]') {
+        if (Object.prototype.toString.call(options) === '[object Object]') {
           throw new Error();
         }
       };
