@@ -25,6 +25,8 @@
  * THE SOFTWARE.
  */
 'use strict';
+var featureDetect = require('../../src/utils/feature_detect');
+var supportsPassive = featureDetect.supportsPassiveEventListeners();
 
 if (typeof document.createEvent === 'function') {
   // some helpers borrowed from https://github.com/WebReflection/ie-touch
@@ -57,7 +59,11 @@ if (typeof document.createEvent === 'function') {
       i = eventsArray.length;
 
     while (i--) {
-      document.addEventListener(eventsArray[i], callback, false);
+      document.addEventListener(
+        eventsArray[i],
+        callback,
+        supportsPassive ? {passive: true} : false
+      );
     }
   };
   var getPointerEvent = function(event) {

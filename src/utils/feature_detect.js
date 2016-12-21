@@ -17,5 +17,19 @@ module.exports = {
       return false;
     }
     return /Edge\/|Trident\/|MSIE/i.test(window.navigator.userAgent);
+  },
+  // Taken from https://github.com/Modernizr/Modernizr/blob/master/feature-detects/dom/passiveeventlisteners.js
+  supportsPassiveEventListeners: function() {
+    var supportsPassiveOption = false;
+    try {
+      var opts = Object.defineProperty({}, 'passive', {
+        get: function() {
+          supportsPassiveOption = true;
+        }
+      });
+      window.addEventListener('test', null, opts);
+      // eslint-disable-next-line
+    } catch (e) {};
+    return supportsPassiveOption;
   }
 };
