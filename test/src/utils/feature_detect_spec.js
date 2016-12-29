@@ -140,4 +140,32 @@ describe('feature_detect.js public API', function() {
       expect(featureDetect.isIE()).to.be.false;
     });
   });
+
+  describe('supportsPassiveEventListeners', function() {
+    var originalAddEventListener = window.addEventListener;
+
+    afterEach(function() {
+      window.addEventListener = originalAddEventListener;
+    });
+
+    it('should be a function', function() {
+      expect(featureDetect.supportsPassiveEventListeners).to.be.a('function');
+    });
+
+    it('should pass when passive property was checked on options object', function() {
+      window.addEventListener = function(type, listener, options) {
+        options && options.passive;
+      };
+      expect(featureDetect.supportsPassiveEventListeners()).to.be.true;
+    });
+
+    it('should not pass when an error was thrown', function() {
+      window.addEventListener = function(type, listener, options) {
+        if (Object.prototype.toString.call(options) === '[object Object]') {
+          throw new Error();
+        }
+      };
+      expect(featureDetect.supportsPassiveEventListeners()).to.be.false;
+    });
+  });
 });

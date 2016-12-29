@@ -25,7 +25,8 @@
   },
   "env": {
     "es6": true,
-    "shared-node-browser": true
+    "browser": true,
+    "node": true
   },
   "globals": {
     "require": true,
