@@ -26,5 +26,6 @@ module.exports = webpackSettings.compileSource({
     libraryTarget: 'umd',
     library: ['tungsten', 'plugins', 'event', '[name]'],
     path: __dirname + '/dist'
-  }
+  },
+  devtool: 'source-map'
 });

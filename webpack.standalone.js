@@ -32,7 +32,11 @@ module.exports = function(options) {
       modules: [path.join(__dirname, 'node_modules')]
     },
     module: {
+      preLoaders: [
+        { test: /\.js$/, loader: 'source-map-loader' }
+      ],
       loaders: []
-    }
+    },
+    devtool: 'source-map'
   }, options.dev, options.test);
 };
