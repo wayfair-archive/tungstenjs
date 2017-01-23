@@ -7,6 +7,7 @@ var DefaultStack = require('./default');
 var Autofocus = require('../hooks/autofocus');
 var InputType = require('../hooks/input_type');
 var featureDetect = require('../../utils/feature_detect');
+var processSvgNamespaces = require('../process_svg_namespaces');
 
 function VdomStack(attributesOnly, debugMode) {
   DefaultStack.call(this, attributesOnly, debugMode);
@@ -33,6 +34,12 @@ VdomStack.prototype.processObject = function(obj) {
     if (!obj.properties.contentEditable) {
       obj.properties.contentEditable = 'inherit';
     }
+
+    // if we're rendering an element with a namespace, check if any attributes require namespacing
+    if (obj.properties.namespace) {
+      obj.properties.attributes = processSvgNamespaces(obj.properties.attributes);
+    }
+
     return tungsten.createVNode(obj.tagName, obj.properties, obj.children);
   } else if (obj.type === 'comment') {
     return new HTMLCommentWidget(obj.text);
