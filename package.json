@@ -32,9 +32,6 @@
     "revert-package": "git checkout -- package.json"
   },
   "dependencies": {
-    "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
-    "babel-plugin-transform-es2015-parameters": "^6.3.13",
-    "babel-plugin-transform-es2015-shorthand-properties": "^6.3.13",
     "backbone": "^1.1.2",
     "backbone.nativeajax": "^0.4.3",
     "data-set": "^4.0.0",
@@ -45,7 +42,6 @@
     "htmlparser2": "^3.8.3",
     "jsdom": "^6.5.0",
     "json-loader": "^0.5.2",
-    "punch": "^0.5.46",
     "purecss": "^0.6.0",
     "underscore": "^1.7.0",
     "virtual-dom": "^2.0.1",
@@ -55,6 +51,9 @@
     "async": "^1.5.2",
     "babel-core": "6.4.5",
     "babel-loader": "6.2.4",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
+    "babel-plugin-transform-es2015-parameters": "^6.3.13",
+    "babel-plugin-transform-es2015-shorthand-properties": "^6.3.13",
     "babel-plugin-transform-es2015-block-scoping": "^6.1.18",
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "babel-plugin-transform-es2015-template-literals": "^6.6.5",
