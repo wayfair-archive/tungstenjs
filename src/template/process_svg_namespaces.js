@@ -8,7 +8,7 @@ module.exports = function processSvgNamespace(properties) {
   }
 
   let namespacedAttrs = {};
-  let props = _.create(properties);
+  let props = _.extend({}, properties);
   props.attributes = namespacedAttrs;
 
   let attributes = properties.attributes;
