@@ -37,7 +37,7 @@ VdomStack.prototype.processObject = function(obj) {
 
     // if we're rendering an element with a namespace, check if any attributes require namespacing
     if (obj.properties.namespace) {
-      obj.properties.attributes = processSvgNamespaces(obj.properties.attributes);
+      obj.properties = processSvgNamespaces(obj.properties);
     }
 
     return tungsten.createVNode(obj.tagName, obj.properties, obj.children);
