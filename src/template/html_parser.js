@@ -35,6 +35,10 @@ var defaultStack = new DefaultStack(true);
 var _stack;
 var parser = new TungstenParser({
   onopentag: function(name, attributes) {
+    if (name === 'svg' || this.inSvg) {
+      attributes.namespace = 'http://www.w3.org/2000/svg';
+      this.inSvg = true;
+    }
     _stack.openElement(name, attributes);
   },
   oncomment: function(text) {
@@ -43,7 +47,10 @@ var parser = new TungstenParser({
   ontext: function(text) {
     _stack.createObject(text);
   },
-  onclosetag: function() {
+  onclosetag: function(name) {
+    if (name === 'svg') {
+      this.inSvg = false;
+    }
     var el = _stack.peek();
     _stack.closeElement(el);
   }
