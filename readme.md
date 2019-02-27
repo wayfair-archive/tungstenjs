@@ -7,6 +7,11 @@ Tungsten.js is a modular framework for creating web UIs with high-performance re
 
 [wayfair.github.io/tungstenjs/](https://wayfair.github.io/tungstenjs/)
 
+## Status
+
+**Tungsten.js is no longer maintained, and the project has been archived.**  Tungsten served as Wayfair's UI library since 2015, but as we shifted to a more component oriented architecture we realized [react.js](https://reactjs.org/) was a better fit for developing our user interfaces.  In 2017, we chose to adopt [react.js](https://tech.wayfair.com/2018/02/reflecting-on-wayfairs-conversion-to-react-and-redux/) as our primary web UI framework, and have since [migrated](https://tech.wayfair.com/2018/09/wayfairs-conversion-to-react-redux-seven-months-later/) many of our features and applications.
+
+
 ## What Tungsten.js Provides
 
 * High-performance virtual DOM updates powered by [virtual-dom](https://github.com/Matt-Esch/virtual-dom)
