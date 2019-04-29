@@ -1,5 +1,5 @@
 'use strict';
-var mouseenterleaveBind = require('../../../plugins/tungsten-event-mouseenter');
+var mouseEnterLeaveBind = require('../../../plugins/tungsten-event-mouseenter');
 describe('mouseenter_and_mouseleave_events', function() {
   var elem, otherElem, handler, obj;
   beforeEach(function() {
@@ -23,13 +23,27 @@ describe('mouseenter_and_mouseleave_events', function() {
         });
       };
       spyOn(obj, 'bindEventFn').and.callThrough();
-      mouseenterleaveBind(elem, 'mouseenter', '.js-foo', handler, {}, obj.bindEventFn);
+      mouseEnterLeaveBind(elem, 'mouseenter', '.js-foo', handler, {}, obj.bindEventFn);
       jasmineExpect(obj.bindEventFn).toHaveBeenCalledWith(elem, 'mouseover', '.js-foo', jasmine.any(Function), {});
     });
     it('should not call bindVirtualEvent when event is not mouseenter event', function() {
       var spy = jasmine.createSpy('spy');
-      mouseenterleaveBind(elem, 'notmouseenter', '.js-foo', handler, {}, spy);
+      mouseEnterLeaveBind(elem, 'notmouseenter', '.js-foo', handler, {}, spy);
       jasmineExpect(spy).not.toHaveBeenCalled();
+    });
+    it('should not call handler function when currentTarget is not a DOM node', function() {
+      obj.bindEventFn = function(el, eventName, selector, method) {
+        method({
+          currentTarget: {},
+          target: elem,
+          originalEvent: {
+            relatedTarget: otherElem
+          }
+        });
+      };
+      handler = jasmine.createSpy('handler');
+      mouseEnterLeaveBind(elem, 'mouseenter', '.js-foo', handler, {}, obj.bindEventFn);
+      jasmineExpect(handler).not.toHaveBeenCalled();
     });
 
   });
@@ -46,13 +60,27 @@ describe('mouseenter_and_mouseleave_events', function() {
         });
       };
       spyOn(obj, 'bindEventFn').and.callThrough();
-      mouseenterleaveBind(elem, 'mouseleave', '.js-foo', handler, {}, obj.bindEventFn);
+      mouseEnterLeaveBind(elem, 'mouseleave', '.js-foo', handler, {}, obj.bindEventFn);
       jasmineExpect(obj.bindEventFn).toHaveBeenCalledWith(elem, 'mouseout', '.js-foo', jasmine.any(Function), {});
     });
     it('should not call bindVirtualEvent when event is not mouseleave event', function() {
       var spy = jasmine.createSpy('spy');
-      mouseenterleaveBind(elem, 'notmouseleave', '.js-foo', handler, {}, spy);
+      mouseEnterLeaveBind(elem, 'notmouseleave', '.js-foo', handler, {}, spy);
       jasmineExpect(spy).not.toHaveBeenCalled();
+    });
+    it('should not call handler function when currentTarget is not a DOM node', function() {
+      obj.bindEventFn = function(el, eventName, selector, method) {
+        method({
+          currentTarget: {},
+          target: elem,
+          originalEvent: {
+            relatedTarget: otherElem
+          }
+        });
+      };
+      handler = jasmine.createSpy('handler');
+      mouseEnterLeaveBind(elem, 'mouseleave', '.js-foo', handler, {}, obj.bindEventFn);
+      jasmineExpect(handler).not.toHaveBeenCalled();
     });
 
   });

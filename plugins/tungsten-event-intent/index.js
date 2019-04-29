@@ -1,3 +1,5 @@
+/* eslint-env browser */
+
 /**
  * Module to handle "intent" delay on events
  */
