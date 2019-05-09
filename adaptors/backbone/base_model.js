@@ -416,7 +416,7 @@ BaseModel.prototype.setRelation = function(attr, val, options) {
     }
 
     if (relation && relation instanceof Backbone.Model) {
-      relation.set(val);
+      relation.set(val && val.toJSON ? val.toJSON() : val);
       return relation;
     }
 

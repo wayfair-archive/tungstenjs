@@ -180,6 +180,40 @@ describe('base_model.js constructed api', function() {
       });
       expect(testModel.get('collection').pluck('id').join('&')).to.equal('2&3&4');
       expect(testModel.get('collection').pluck('n').join('&')).to.equal('1&2&3');
+
+      testModel.set({
+        collection: new BaseCollection([
+          { id: 2, n: 2 },
+          { id: 3, n: 3 },
+          { id: 4, n: 4 }
+        ])
+      });
+      expect(testModel.get('collection').pluck('id').join('&')).to.equal('2&3&4');
+      expect(testModel.get('collection').pluck('n').join('&')).to.equal('2&3&4');
+    });
+    it('should update a nested model', function() {
+      var TestModel = BaseModel.extend({
+        relations: {
+          model: BaseModel
+        }
+      });
+      var testModel = new TestModel({
+        model: { id: 1, n: 1 }
+      });
+      expect(testModel.get('model')).to.be.instanceof(BaseModel);
+      expect(testModel.get('model').toJSON()).to.deep.equal({ id: 1, n: 1 });
+
+      testModel.set({
+        model: { id: 2 }
+      });
+      expect(testModel.get('model')).to.be.instanceof(BaseModel);
+      expect(testModel.get('model').toJSON()).to.deep.equal({ id: 2, n: 1 });
+
+      testModel.set({
+        model: new BaseModel({ n: 2 })
+      });
+      expect(testModel.get('model')).to.be.instanceof(BaseModel);
+      expect(testModel.get('model').toJSON()).to.deep.equal({ id: 2, n: 2 });
     });
   });
   describe('trigger', function() {
